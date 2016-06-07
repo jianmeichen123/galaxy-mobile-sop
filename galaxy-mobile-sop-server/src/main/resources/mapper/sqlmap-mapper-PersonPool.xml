@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.galaxyinternet.model.project.PersonPool" >
+  <resultMap id="BaseResultMap" type="com.galaxyinternet.model.project.PersonPool" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="tid" property="tid" jdbcType="BIGINT" />
+    <result column="person_name" property="personName" jdbcType="VARCHAR" />
+    <result column="person_sex" property="personSex" jdbcType="INTEGER" />
+    <result column="person_age" property="personAge" jdbcType="INTEGER" />
+    <result column="highest_degree" property="highestDegree" jdbcType="VARCHAR" />
+    <result column="work_time" property="workTime" jdbcType="INTEGER" />
+    <result column="person_duties" property="personDuties" jdbcType="VARCHAR" />
+    <result column="person_birthday" property="personBirthday" jdbcType="TIMESTAMP" />
+    <result column="person_idcard" property="personIdcard" jdbcType="VARCHAR" />
+    <result column="person_telephone" property="personTelephone" jdbcType="VARCHAR" />
+    <result column="person_email" property="personEmail" jdbcType="VARCHAR" />
+    <result column="person_character" property="personCharacter" jdbcType="VARCHAR" />
+    <result column="person_goodness" property="personGoodness" jdbcType="VARCHAR" />
+    <result column="person_disparity" property="personDisparity" jdbcType="VARCHAR" />
+    <result column="talk_ability" property="talkAbility" jdbcType="VARCHAR" />
+    <result column="team_ability" property="teamAbility" jdbcType="VARCHAR" />
+    <result column="business_strength" property="businessStrength" jdbcType="VARCHAR" />
+    <result column="free" property="free" jdbcType="INTEGER" />
+    <result column="team_role" property="teamRole" jdbcType="VARCHAR" />
+    <result column="member_relation" property="memberRelation" jdbcType="VARCHAR" />
+    <result column="labor_dispute" property="laborDispute" jdbcType="INTEGER" />
+    <result column="ability_star" property="abilityStar" jdbcType="INTEGER" />
+    <result column="level_star" property="levelStar" jdbcType="INTEGER" />
+    <result column="end_comment" property="endComment" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="updated_time" property="updatedTime" jdbcType="BIGINT" />
+    <result column="created_time" property="createdTime" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, tid, person_name, person_sex, person_age, highest_degree, work_time, person_duties, person_birthday, person_idcard, person_telephone, person_email, 
+    person_character, person_goodness, person_disparity, talk_ability, team_ability, 
+    business_strength, free, team_role, member_relation, labor_dispute, ability_star, 
+    level_star, end_comment, create_id, updated_time, created_time
+  </sql>
+  
+  
+  
+  <sql id="Base_Where_Clause">
+		<where>
+			<trim prefixOverrides="and">
+			  <if test="id != null"> and id =#{id}</if>
+			  <if test="tid != null"> and tid =#{tid}</if>
+			  <if test="ids != null">
+					AND id IN
+					<foreach collection="ids" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			  <if test="personName != null" > and person_name = #{personName,jdbcType=VARCHAR} </if>
+			</trim>
+		</where>
+		<if test="sorting != null">order by ${sorting}</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</sql>
+	
+	<!-- 查询总数 -->
+	<select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+		select count(id) from sop_person_pool
+		<include refid="Base_Where_Clause" />
+	</select>
+
+	<!-- 查询 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from sop_person_pool
+		<include refid="Base_Where_Clause" />
+	</select>
+	
+	<!-- 查询[已/未]绑定任务的人员记录 -->
+	<select id="selectNoToTask" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select 
+			
+			pool.id, pool.tid, pool.person_name, pool.person_sex, pool.person_age, 
+			pool.highest_degree, pool.work_time, pool.person_duties, 
+			pool.person_birthday, pool.person_idcard, pool.person_telephone, pool.person_email, 
+    		pool.person_character, pool.person_goodness, pool.person_disparity, pool.talk_ability, 
+    		pool.team_ability, pool.business_strength, pool.free, pool.team_role, pool.member_relation, 
+    		pool.labor_dispute, pool.ability_star, 
+    		pool.level_star, pool.end_comment, pool.create_id, pool.updated_time, pool.created_time
+		
+		from sop_person_pool pool inner join sop_project_person pp on pool.id = pp.person_id
+		<where>
+			<trim prefixOverrides="and">
+			  <if test="pid != null"> and pp.project_id =#{pid}</if>
+			  <if test="tid != null"> and pool.tid =#{tid}</if>
+			  <if test="tid == null"> and pool.tid is null</if>
+			</trim>
+		</where>
+	</select>
+
+	<!-- 根据ID查询 -->
+	<select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sop_person_pool where id = #{id}
+	</select>
+	
+  	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.galaxyinternet.model.project.PersonPool" >
+	    <![CDATA[
+	     insert into sop_person_pool (id,tid, person_name, person_sex, person_age, highest_degree, work_time, person_duties, person_birthday, person_idcard, person_telephone, person_email, 
+    		person_character, person_goodness, person_disparity, talk_ability, team_ability, 
+   			business_strength, free, team_role, member_relation, labor_dispute, ability_star, 
+    		level_star, end_comment, create_id, updated_time, created_time)
+	    values (#{id,jdbcType=BIGINT}, #{tid,jdbcType=BIGINT}, #{personName,jdbcType=VARCHAR}, #{personSex,jdbcType=INTEGER}, 
+	      #{personAge,jdbcType=INTEGER}, #{highestDegree,jdbcType=VARCHAR}, #{workTime,jdbcType=INTEGER}, #{personDuties,jdbcType=VARCHAR},
+	      #{personBirthday,jdbcType=TIMESTAMP}, #{personIdcard,jdbcType=VARCHAR}, #{personTelephone,jdbcType=VARCHAR}, 
+	      #{personEmail,jdbcType=VARCHAR}, #{personCharacter,jdbcType=VARCHAR}, 
+	      #{personGoodness,jdbcType=VARCHAR}, #{personDisparity,jdbcType=VARCHAR}, #{talkAbility,jdbcType=INTEGER}, #{teamAbility,jdbcType=INTEGER}, 
+	      #{businessStrength,jdbcType=VARCHAR}, 
+	      #{free,jdbcType=INTEGER}, #{teamRole,jdbcType=VARCHAR}, #{memberRelation,jdbcType=VARCHAR}, 
+	      #{laborDispute,jdbcType=INTEGER}, #{abilityStar,jdbcType=INTEGER}, #{levelStar,jdbcType=INTEGER}, 
+	      #{endComment,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
+	      #{updatedTime,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT})
+	    ]]>
+    </insert>
+    
+    <!-- 更新 -->
+	<update id="updateByIdSelective" parameterType="com.galaxyinternet.model.project.PersonPool">
+		update sop_person_pool
+		<set>
+			  <if test="tid != null" >  tid = #{tid,jdbcType=BIGINT}, </if>
+			  <if test="personName != null" >  person_name = #{personName,jdbcType=VARCHAR}, </if>
+		      <if test="personSex != null" >  person_sex = #{personSex,jdbcType=INTEGER}, </if>
+		      <if test="personAge != null" >  person_age = #{personAge,jdbcType=INTEGER}, </if>
+		      <if test="highestDegree != null" >  highest_degree = #{highestDegree,jdbcType=VARCHAR}, </if>
+		      <if test="workTime != null" >  work_time = #{workTime,jdbcType=INTEGER}, </if>
+		      <if test="personDuties != null" >  person_duties = #{personDuties,jdbcType=VARCHAR}, </if>
+		      <if test="personBirthday != null" >  person_birthday = #{personBirthday,jdbcType=TIMESTAMP}, </if>
+		      <if test="personIdcard != null" > person_idcard = #{personIdcard,jdbcType=VARCHAR}, </if>
+		      <if test="personTelephone != null" >  person_telephone = #{personTelephone,jdbcType=VARCHAR}, </if>
+		      <if test="personEmail != null" >   person_email = #{personEmail,jdbcType=VARCHAR}, </if>
+		      <if test="personCharacter != null" >   person_character = #{personCharacter,jdbcType=VARCHAR}, </if>
+		      <if test="personGoodness != null" >  person_goodness = #{personGoodness,jdbcType=VARCHAR}, </if>
+		      <if test="personDisparity != null" > person_disparity = #{personDisparity,jdbcType=VARCHAR}, </if>
+		      <if test="talkAbility != null" >  talk_ability = #{talkAbility,jdbcType=VARCHAR}, </if>
+		      <if test="teamAbility != null" >  team_ability = #{teamAbility,jdbcType=VARCHAR}, </if>
+		      <if test="businessStrength != null" >  business_strength = #{businessStrength,jdbcType=VARCHAR}, </if>
+		      <if test="free != null" >  free = #{free,jdbcType=INTEGER}, </if>
+		      <if test="teamRole != null" >  team_role = #{teamRole,jdbcType=VARCHAR}, </if>
+		      <if test="memberRelation != null" >  member_relation = #{memberRelation,jdbcType=VARCHAR}, </if>
+		      <if test="laborDispute != null" >  labor_dispute = #{laborDispute,jdbcType=INTEGER}, </if>
+		      <if test="abilityStar != null" >  ability_star = #{abilityStar,jdbcType=INTEGER}, </if>
+		      <if test="levelStar != null" >  level_star = #{levelStar,jdbcType=INTEGER}, </if>
+		      <if test="endComment != null" >  end_comment = #{endComment,jdbcType=VARCHAR}, </if>
+		      <if test="createId != null" >  create_id = #{createId,jdbcType=BIGINT}, </if>
+		      <if test="updatedTime != null" >  updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
+		      <if test="createdTime != null" >  created_time = #{createdTime,jdbcType=BIGINT}, </if>
+		</set>
+		<where>
+			<trim prefixOverrides="and">
+			  <if test="id != null"> and id =#{id}</if>
+			  <if test="personName != null" > and person_name = #{personName,jdbcType=VARCHAR} </if>
+			</trim>
+		</where>
+	</update>
+    <!-- 通过ID更新 -->
+	<update id="updateById" parameterType="com.galaxyinternet.model.project.PersonPool">
+		update sop_person_pool
+		<set>
+			  <if test="tid != null" >  tid = #{tid,jdbcType=BIGINT}, </if>
+			  <if test="personName != null" >  person_name = #{personName,jdbcType=VARCHAR}, </if>
+		      <if test="personSex != null" >  person_sex = #{personSex,jdbcType=INTEGER}, </if>
+		      <if test="personAge != null" >  person_age = #{personAge,jdbcType=INTEGER}, </if>
+		      <if test="highestDegree != null" >  highest_degree = #{highestDegree,jdbcType=VARCHAR}, </if>
+		      <if test="workTime != null" >  work_time = #{workTime,jdbcType=INTEGER}, </if>
+		      <if test="personDuties != null" >  person_duties = #{personDuties,jdbcType=VARCHAR}, </if>
+		      <if test="personBirthday != null" >  person_birthday = #{personBirthday,jdbcType=TIMESTAMP}, </if>
+		      <if test="personIdcard != null" > person_idcard = #{personIdcard,jdbcType=VARCHAR}, </if>
+		      <if test="personTelephone != null" >  person_telephone = #{personTelephone,jdbcType=VARCHAR}, </if>
+		      <if test="personEmail != null" >   person_email = #{personEmail,jdbcType=VARCHAR}, </if>
+		      <if test="personCharacter != null" >   person_character = #{personCharacter,jdbcType=VARCHAR}, </if>
+		      <if test="personGoodness != null" >  person_goodness = #{personGoodness,jdbcType=VARCHAR}, </if>
+		      <if test="personDisparity != null" > person_disparity = #{personDisparity,jdbcType=VARCHAR}, </if>
+		      <if test="talkAbility != null" >  talk_ability = #{talkAbility,jdbcType=VARCHAR}, </if>
+		      <if test="teamAbility != null" >  team_ability = #{teamAbility,jdbcType=VARCHAR}, </if>
+		      <if test="businessStrength != null" >  business_strength = #{businessStrength,jdbcType=VARCHAR}, </if>
+		      <if test="free != null" >  free = #{free,jdbcType=INTEGER}, </if>
+		      <if test="teamRole != null" >  team_role = #{teamRole,jdbcType=VARCHAR}, </if>
+		      <if test="memberRelation != null" >  member_relation = #{memberRelation,jdbcType=VARCHAR}, </if>
+		      <if test="laborDispute != null" >  labor_dispute = #{laborDispute,jdbcType=INTEGER}, </if>
+		      <if test="abilityStar != null" >  ability_star = #{abilityStar,jdbcType=INTEGER}, </if>
+		      <if test="levelStar != null" >  level_star = #{levelStar,jdbcType=INTEGER}, </if>
+		      <if test="endComment != null" >  end_comment = #{endComment,jdbcType=VARCHAR}, </if>
+		      <if test="createId != null" >  create_id = #{createId,jdbcType=BIGINT}, </if>
+		      <if test="updatedTime != null" >  updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
+		      <if test="createdTime != null" >  created_time = #{createdTime,jdbcType=BIGINT}, </if>
+		</set>
+		where id = #{id}
+	</update>
+    
+    <!-- 删除 -->
+	<delete id="delete" parameterType="java.util.Map">
+		delete from sop_person_pool
+		<include refid="Base_Where_Clause" />
+	</delete>
+     <!-- 根据ID删除 -->
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from sop_person_pool where id = #{id}
+	</delete>
+	
+	
+</mapper>

@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxyinternet.model.soptask.SopTask">
+	<resultMap id="BaseResultMap" type="SopTaskPO">
+		<id column="id" property="id" />
+		<result property="projectId" column="project_id" />
+		<result property="taskName" column="task_name" />
+		<result property="taskType" column="task_type" />
+		<result property="taskFlag" column="task_flag" />
+		<result property="taskOrder" column="task_order" />
+		<result property="taskDeadline" column="task_deadline" />
+		<result property="departmentId" column="department_id" />
+		<result property="assignUid" column="assign_uid" />
+		<result property="taskStatus" column="task_status" />
+		<result property="remark" column="remark" />
+		<result property="createdTime" column="created_time" />
+		<result property="updatedTime" column="updated_time" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,
+		project_id,
+		task_name,
+		task_type,
+		task_flag,
+		task_order,
+		task_deadline,
+		department_id,
+		assign_uid,
+		task_status,
+		remark,
+		updated_time,
+		created_time
+	</sql>
+
+	<sql id="Base_Where_Clause">
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and id =#{id}</if>
+				<if test="projectId != null"> and project_id =#{projectId}</if>
+				<if test="taskName != null"> and task_name =#{taskName}</if>
+				<if test="flagUrl != '' and flagUrl=='jz' ">
+				        and task_flag in ('2','3','4','5') <!--and assign_uid =#{assignUid} and task_status!='taskStatus:3'-->
+				</if>
+				<if test="flagUrl != '' and flagUrl=='pz' ">
+				        and task_flag ='8' <!--and assign_uid =#{assignUid} and task_status!='taskStatus:3'-->
+				</if>
+				 <if test="flagUrl != '' and flagUrl=='jl' ">
+				        and task_flag ='0' <!--and assign_uid =#{assignUid} and task_status!='taskStatus:3'-->
+				 </if>
+				 <if test="flagUrl != '' and flagUrl=='gq' ">
+				        and task_flag ='9' <!--and assign_uid =#{assignUid}   and task_status!='taskStatus:3'-->
+				 </if>
+				<!--    <if test="flagUrl != '' and flagUrl=='index' ">
+				        and task_status!='taskStatus:3'
+				 </if>
+				 -->
+				<if test="taskType != null and taskType!='' "> and task_type =#{taskType}</if>
+				<if test="taskFlag != null"> and task_flag =#{taskFlag}</if>
+				<if test="taskOrder != null"> and task_order =#{taskOrder}</if>
+				<if test="taskDeadline != null"> and task_deadline =#{taskDeadline}</if>
+				<if test="departmentId != null"> and department_id =#{departmentId}</if>	
+				<if test="assignUid != null">
+					and (assign_uid =#{assignUid} or task_status='taskStatus:1' )
+				</if>
+				<if test="taskStatus != null and taskStatus!='' "> and task_status =#{taskStatus}</if>
+				<if test="(taskStatus == null or taskStatus=='') and (taskOrder == null) "> and task_status !='taskStatus:3'</if>
+				<if test="remark != null"> and remark =#{remark}</if>
+				<if test="createdTime != null"> and created_time =#{createdTime}</if>
+				<if test="updatedTime != null"> and updated_time =#{updatedTime}</if>
+				<!-- 模糊查询 -->
+				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->
+				<if test="ids != null">
+					AND project_id IN
+					<foreach collection="ids" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</trim>
+		</where>
+		<if test="sorting != null">order by ${sorting}</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</sql>
+
+	<!-- 查询总数 -->
+	<select id="selectCount" resultType="java.lang.Long"
+		parameterType="java.util.Map">
+		select count(id) from sop_task
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and id =#{id}</if>
+				<if test="projectId != null"> and project_id =#{projectId}</if>
+				<if test="taskName != null"> and task_name =#{taskName}</if>
+				<if test="flagUrl != '' and flagUrl=='jz' ">
+				        and task_flag in ('2','3','4','5') <!--and assign_uid =#{assignUid} -->
+				</if>
+				<if test="flagUrl != '' and flagUrl=='pz' ">
+				        and task_flag in ('8','9') <!--and assign_uid =#{assignUid} -->
+				</if>
+				 <if test="flagUrl != '' and flagUrl=='jl' ">
+				        and task_flag ='0' <!--and assign_uid =#{assignUid} -->
+				 </if>
+				 <if test="flagUrl != '' and flagUrl=='gq' ">
+				        and task_flag ='7' <!--and assign_uid =#{assignUid} -->
+				 </if>
+				<!--  <if test="flagUrl != '' and flagUrl=='index' ">
+				        and task_status!='taskStatus:3'
+				 </if>
+			    -->  
+				<if test="taskType != null and taskType!='' "> and task_type =#{taskType}</if>
+				<if test="taskFlag != null"> and task_flag =#{taskFlag}</if>
+				<if test="taskOrder != null"> and task_order =#{taskOrder}</if>
+				<if test="taskDeadline != null"> and task_deadline =#{taskDeadline}</if>
+				<if test="departmentId != null"> and department_id =#{departmentId}</if>	
+				<if test="assignUid != null">
+					and (assign_uid =#{assignUid} or task_status='taskStatus:1' )
+				</if>
+				<if test="taskStatus != null and taskStatus!='' " > and task_status =#{taskStatus}</if>
+				<if test="(taskStatus == null or taskStatus=='') and (taskOrder == null) "> and task_status !='taskStatus:3'</if>
+				<if test="remark != null"> and remark =#{remark}</if>
+				<if test="createdTime != null"> and created_time =#{createdTime}</if>
+				<if test="updatedTime != null"> and updated_time =#{updatedTime}</if>
+				<!-- 模糊查询 -->
+				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->
+				<if test="ids != null">
+					AND project_id IN
+					<foreach collection="ids" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</trim>
+		</where>
+	</select>
+
+	<!-- 查询 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from sop_task
+		<include refid="Base_Where_Clause" />
+	</select>
+
+	<!-- 根据ID查询 -->
+	<select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sop_task where id = #{id}
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="SopTaskPO">
+	    <![CDATA[
+	        insert into
+	        sop_task (
+        	   id,
+        	   project_id,
+        	   task_name,
+        	   task_type,
+        	   task_flag,
+        	   task_order,
+        	   task_deadline,
+        	   department_id,
+        	   assign_uid,
+        	   task_status,
+        	   remark,
+        	   created_time
+	        ) values (
+        	   #{id},
+        	   #{projectId},	   
+        	   #{taskName},
+        	   #{taskType},
+        	   #{taskFlag},
+        	   #{taskOrder},
+        	   #{taskDeadline},
+        	   #{departmentId},
+        	   #{assignUid},
+        	   #{taskStatus},
+        	   #{remark},
+        	   #{createdTime}
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 更新 -->
+	<update id="updateByIdSelective" parameterType="SopTaskPO">
+		update sop_task
+		<set>
+			<if test="id != null">  id =#{id},</if>
+			<if test="projectId != null">  project_id =#{projectId},</if>
+			<if test="taskName != null">  task_name =#{taskName},</if>
+			<if test="taskType != null">  task_type =#{taskType},</if>
+			<if test="taskFlag != null"> task_flag =#{taskFlag},</if>
+			<if test="taskOrder != null">  task_order =#{taskOrder},</if>
+			<if test="taskDeadline != null">  task_deadline =#{taskDeadline},</if>
+			<if test="departmentId != null">  department_id =#{departmentId},</if>
+			<if test="assignUid != null">  assign_uid =#{assignUid},</if>
+			<if test="taskStatus != null">  task_status =#{taskStatus},</if>
+			<if test="remark != null">  remark =#{remark},</if>
+			<if test="createdTime != null">  created_time =#{createdTime},</if>
+			<if test="updatedTime != null">  updated_time =#{updatedTime}</if>
+		</set>
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and id =#{id}</if>
+				<if test="projectId != null"> and project_id =#{projectId}</if>
+				<if test="taskName != null"> and task_name =#{taskName}</if>
+				<if test="taskType != null"> and task_type =#{taskType}</if>
+				<if test="taskFlag != null"> and task_flag =#{taskFlag}</if>
+				<if test="taskOrder != null"> and task_order =#{taskOrder}</if>
+				<if test="taskDeadline != null"> and task_deadline =#{taskDeadline}</if>
+				<if test="departmentId != null"> and department_id =#{departmentId}</if>
+				<if test="assignUid != null"> and assign_uid =#{assignUid}</if>
+				<if test="taskStatus != null"> and task_status =#{taskStatus}</if>
+				<if test="remark != null"> and remark =#{remark}</if>
+				<if test="createdTime != null"> and created_time =#{createdTime}</if>
+				<if test="updatedTime != null"> and updated_time =#{updatedTime}</if>
+			</trim>
+		</where>
+	</update>
+	<!-- 通过ID更新 -->
+	<update id="updateById" parameterType="SopTaskPO">
+		update sop_task
+		<set>
+			<if test="id != null">  id =#{id},</if>
+			<if test="projectId != null">  project_id =#{projectId},</if>
+			<if test="taskName != null">  task_name =#{taskName},</if>
+			<if test="taskType != null">  task_type =#{taskType},</if>
+			<if test="taskFlag != null"> task_flag =#{taskFlag},</if>
+			<if test="taskOrder != null">  task_order =#{taskOrder},</if>
+			<if test="taskDeadline != null">  task_deadline =#{taskDeadline},</if>
+			<if test="departmentId != null">  department_id =#{departmentId},</if>
+			<if test="assignUid != null">  assign_uid =#{assignUid},</if>
+			<if test="taskStatus != null">  task_status =#{taskStatus},</if>
+			<if test="remark != null">  remark =#{remark},</if>
+			<if test="createdTime != null">  created_time =#{createdTime},</if>
+			<if test="updatedTime != null">  updated_time =#{updatedTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 修改项目状态 -->
+	<update id="updateTask" parameterType="SopTaskPO">
+		update sop_task 
+		<set>
+			<if test="assignUid != null">  assign_uid =#{assignUid},</if>
+			<if test="taskStatus != null">  task_status =#{taskStatus},</if>
+			<if test="updatedTime != null">  updated_time =#{updatedTime}</if>
+		</set>
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and id =#{id}</if>
+				<if test="projectId != null"> and project_id =#{projectId}</if>
+				<if test="taskType != null"> and task_type =#{taskType}</if>
+				<if test="taskFlag != null"> and task_flag =#{taskFlag}</if>
+			</trim>
+		</where>
+	</update>
+	
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="java.util.Map">
+		delete from sop_task
+		<where>
+			<trim prefixOverrides="and">
+				<if test="projectId != null"> and project_id =#{projectId}</if>
+				<if test="taskStatus != null and taskStatus!='' "> and task_status!='taskStatus:3'</if>
+				<!-- 模糊查询 -->		
+			</trim>
+		</where>
+	</delete>
+	<!-- 根据ID删除 -->
+	<delete id="deleteById" parameterType="SopTaskPO">
+		delete from sop_task where
+		id = #{id}
+	</delete>
+	
+	<!-- 根据taskStatus查询 -->
+	<select id="selectForTaskOver" resultMap="BaseResultMap" parameterType="com.galaxyinternet.bo.SopTaskBo">
+		select
+		<include refid="Base_Column_List" />
+		from sop_task
+		<where>
+			<trim prefixOverrides="and">
+				<if test="projectId != null"> and project_id =#{projectId}</if>
+				<if test="taskName != null"> and task_name =#{taskName}</if>
+				<if test="taskType != null"> and task_type =#{taskType}</if>
+				<if test="taskFlag != null"> and task_flag =#{taskFlag}</if>
+				<if test="departmentId != null"> and department_id =#{departmentId}</if>
+				<if test="assignUid != null"> and assign_uid =#{assignUid}</if>
+				<if test="taskStatus != null"> and task_status =#{taskStatus}</if>
+				<if test="taskStatusList != null"> 
+					and task_status in
+					<foreach collection="taskStatusList" item="taskStatusList" index="index" open="(" close=")" separator=",">
+			            #{taskStatusList}
+			        </foreach>
+				</if>
+			</trim>
+		</where>
+	</select>
+	
+	<!-- 根据taskFlag查询 -->
+	<select id="selectForTaskByFlag" resultMap="BaseResultMap" parameterType="com.galaxyinternet.bo.SopTaskBo">
+		select
+		<include refid="Base_Column_List" />
+		from sop_task
+		<where>
+			<trim prefixOverrides="and">
+				<if test="projectId != null"> and project_id =#{projectId}</if>
+				<if test="taskName != null"> and task_name =#{taskName}</if>
+				<if test="taskType != null"> and task_type =#{taskType}</if>
+				<if test="taskFlag != null"> and task_flag =#{taskFlag}</if>
+				<if test="departmentId != null"> and department_id =#{departmentId}</if>
+				<if test="assignUid != null"> and assign_uid =#{assignUid}</if>
+				<if test="taskStatus != null"> and task_status =#{taskStatus}</if>
+				<if test="taskFlagList != null"> 
+					and task_status in
+					<foreach collection="taskFlagList" item="taskFlag" index="index" open="(" close=")" separator=",">
+			            #{taskFlag}
+			        </foreach>
+				</if>
+			</trim>
+		</where>
+	</select>
+	
+	<!-- 查询待办总数 -->
+	<select id="selectTotalMission" resultType="java.lang.Long" parameterType="SopTaskPO">
+		select count(id) from sop_task
+		    where 
+		           assign_uid = #{assignUid} and 
+		           task_status ='taskStatus:2'
+	</select>
+	
+	<!-- 查询紧急总数 -->
+	<select id="selectTotalUrgent" resultType="java.lang.Long" parameterType="SopTaskPO">
+		select count(id) from sop_task
+		    where 
+		           assign_uid = #{assignUid} and 
+		           task_order > 0
+	</select>
+	
+	<!-- 根据projectId任务 -->
+	<select id="selectTaskByProjectId" resultMap="BaseResultMap" parameterType="com.galaxyinternet.bo.SopTaskBo">
+		select
+		<include refid="Base_Column_List" />
+		from sop_task
+		<where>
+			<trim prefixOverrides="and">
+				<if test="ids != null">
+					AND project_id IN
+					<foreach collection="projectIds" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</trim>
+		</where>
+	</select>
+	
+</mapper>
