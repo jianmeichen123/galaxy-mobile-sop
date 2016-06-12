@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.galaxyinternet</groupId>
     <artifactId>galaxy-mobile-sop</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.1-mobile</version><!-- SNAPSHOT -->
   </parent>
   <artifactId>galaxy-mobile-sop-server</artifactId>
   <packaging>war</packaging>
@@ -100,6 +100,7 @@
 
 			</properties>
 		</profile>
+		
 		<profile>
 			<id>nginx</id>
 			<activation>
@@ -138,6 +139,7 @@
 
 			</properties>
 		</profile>
+		
 		<profile>
 			<id>dev</id>
 			<activation>
@@ -156,13 +158,13 @@
 				<!-- dubbo -->
 				<dubbo.application.name>galaxySopDubboProvider</dubbo.application.name>
 				<dubbo.protocol.name>dubbo</dubbo.protocol.name>
-				<dubbo.registry.address>zookeeper://10.9.210.22:12181?client=zkclient</dubbo.registry.address>
+				<dubbo.registry.address>zookeeper://10.9.210.22:12184?client=zkclient</dubbo.registry.address>
 				<dubbo.protocol.port>8082</dubbo.protocol.port>
 
-				<project.server.url>http://fx.dev.galaxyinternet.com/</project.server.url>
-				<galaxy.project.platform.endpoint>http://fx.dev.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
-				<galaxy.project.report.endpoint>http://fx.dev.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
-				<galaxy.project.sop.endpoint>http://fx.dev.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
+				<project.server.url>http://fxmob.dev.galaxyinternet.com/</project.server.url>
+				<galaxy.project.platform.endpoint>http://fxmob.dev.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
+				<galaxy.project.report.endpoint>http://fxmob.dev.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
+				<galaxy.project.sop.endpoint>http://fxmob.dev.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
 				<!-- memcached <memcached.list_1.ip>192.168.101.22</memcached.list_1.ip> 
 					<memcached.list_1.port>11211</memcached.list_1.port> <memcached.object_1.ip>192.168.101.22</memcached.object_1.ip> 
 					<memcached.object_1.port>11211</memcached.object_1.port> <mongodb.dbname>community</mongodb.dbname> 
@@ -173,9 +175,11 @@
 					<redis.master>galaxymaster</redis.master> -->
 
 				<!-- <redis.url>101.200.78.14</redis.url> <redis.port>6379</redis.port> -->
-
+                
 			</properties>
 		</profile>
+		
+		<!-- 以下QA配置暂不使用，后续若使用，以dev配置为准 -->
 		<profile>
 			<id>qa</id>
 			<activation>
