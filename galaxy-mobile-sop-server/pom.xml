@@ -13,7 +13,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.2.1.RELEASE</spring.version>
-<!-- 		<DEPENDENCY.PROJECT>1.0.1-SNAPSHOT</DEPENDENCY.PROJECT> -->
+		<DEPENDENCY.PROJECT>1.0.1.mobile-SNAPSHOT</DEPENDENCY.PROJECT>
 	</properties>
 	
 	<repositories>
