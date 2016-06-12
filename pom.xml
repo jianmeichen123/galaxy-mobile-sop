@@ -4,7 +4,7 @@
 
   <groupId>com.galaxyinternet</groupId>
   <artifactId>galaxy-mobile-sop</artifactId>
-  <version>1.0.1-mobile</version><!-- SNAPSHOT -->
+  <version>1.0.1.mobile-SNAPSHOT</version><!-- SNAPSHOT -->
   <packaging>pom</packaging>
   <name/>
   <url/>
