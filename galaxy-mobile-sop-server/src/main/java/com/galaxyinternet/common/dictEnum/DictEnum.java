@@ -1,5 +1,7 @@
 package com.galaxyinternet.common.dictEnum;
 
+import com.galaxyinternet.common.enums.DictEnum.financeStatus;
+
 public enum DictEnum {
 	
 	项目类型("项目类型","projectType"),
@@ -17,6 +19,7 @@ public enum DictEnum {
 	档案存储类型("档案存储类型","fileType"),
 	//排期状态
 	scheduleStatusa("排期状态","scheduleStatus"),
+	融资状态("融资状态","financeStatus"),
 	项目状态("项目状态","projectStatus");
 	
 	private String name;
@@ -554,6 +557,63 @@ public enum DictEnum {
 			return null;
 		}
 	}
+	// 融资状态
+			public enum financeStatus {
+				尚未获投("尚未获投", "financeStatus:0"),
+				种子轮("种子轮", "financeStatus:1"),
+				天使轮("天使轮", "financeStatus:2"),
+				PreA轮("Pre-A轮", "financeStatus:3"),
+				A轮("A轮", "financeStatus:4"),
+				A2轮("A+轮", "financeStatus:5"),
+				PreB轮("Pre-B轮", "financeStatus:6"), 
+				B轮("B轮", "financeStatus:7"),
+				B2轮("B+轮", "financeStatus:8"),
+				C轮("C轮", "financeStatus:9"),
+				D轮("D轮", "financeStatus:10"),
+				E轮("E轮", "financeStatus:11"),
+				F轮上市前("F轮-上市前", "financeStatus:12"),
+				已上市("已上市", "financeStatus:13"),
+				新三板("新三板", "financeStatus:14"),
+				战略投资("战略投资", "financeStatus:15"),
+				已被收购("已被收购", "financeStatus:16");
+				private String name;
+				private String code;
+
+				private financeStatus(String name, String code) {
+					this.name = name;
+					this.code = code;
+				}
+
+				public String getName() {
+					return name;
+				}
+
+				public String getCode() {
+					return code;
+				}
+
+				/**
+				 * 根据code get name
+				 * 
+				 * @param reslut
+				 * @return
+				 */
+				public static String getNameByCode(String code) {
+
+					if (code != null && !code.trim().equals("")) {
+
+						financeStatus[] values = financeStatus.values();
+						for (int i = 0; i < values.length; i++) {
+							if (code.equals(values[i].getCode())) {
+								return values[i].getName();
+							}
+						}
+					}
+					return null;
+				}
+				
+				
+			}
 
 
 }
