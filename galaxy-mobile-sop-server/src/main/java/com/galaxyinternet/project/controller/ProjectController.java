@@ -149,11 +149,12 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		return this.projectService;
 	}
 
+	//TODO
 	/**
 	 * 新建项目接口
 	 * 
 	 * @author yangshuhua
-	 * @return
+	 * @return 2016/6/13 修改过
 	 */
 	@Token
 	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
@@ -293,12 +294,12 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return responseBody;
 	}
-
+//TODO
 	/**
 	 * 查询指定的项目信息接口
 	 * 
-	 * @author yangshuhua
-	 * @return
+	 * @author gxc
+	 * @return 2016/6/13修改
 	 */
 	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
@@ -323,6 +324,16 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					}
 				}
 			}
+			
+			if(project.getIndustryOwn()!=null){
+				Department Dt= new Department();
+				Dt.setId(project.getIndustryOwn());
+				Department queryTwo = departmentService.queryOne(Dt);
+				if (queryTwo != null) {
+					project.setIndustryOwnDs(queryTwo.getName());				
+				}
+			}						
+			
 		} else {
 			responseBody
 					.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
@@ -2514,5 +2525,85 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return roleIdList;
 	}
+	//TODO
+	//供app端实现保存公司法人信息
+	/**
+	 * 保存公司法人信息
+	 * @param project
+	 * @return 2016/6/13  app端 
+	 * 
+	 */
+	@RequestMapping(value="/saveCompanyInfo", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseData<Project> saveCompanyInfo(@RequestBody Project project)
+	{
+		ResponseData<Project> data = new ResponseData<Project>();
+		try
+		{
+			if(project == null || project.getId() == null)
+			{
+				data.getResult().addError("数据错误.");
+				return data;
+			}
+			Project po = projectService.queryById(project.getId());
+			if(po == null)
+			{
+				data.getResult().addError("数据错误.");
+				return data;
+			}
+			projectService.updateById(project);
+			
+			po.setProjectCompany(project.getProjectCompany());
+			po.setProjectCompanyCode(project.getProjectCompanyCode());
+			po.setCompanyLegal(project.getCompanyLegal());
+			po.setFormationDate(project.getFormationDate());
+			data.setEntity(po);
+		}
+		catch (Exception e)
+		{
+			if(logger.isErrorEnabled())
+			{
+				logger.error("保存法人信息错误:"+project,e);
+			}
+			data.getResult().addError(e.getMessage());
+		}
+		return data;
+	}
+	
+	//TODO
+	/**
+	 * 获取枚举里的融资状态列表
+	 * @param id
+	 * @param request
+	 * @return 2016/6/13 app端独有
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getFinanceStatusByParent", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Dict> getFinanceStatusByParent(HttpServletRequest request) {
+		ResponseData<Dict> responseBody = new ResponseData<Dict>();
+		List<Dict> dicts = new ArrayList<Dict>();
+		Dict dict = null;
+		Result result = new Result();
+		try {
+			for (DictEnum.financeStatus financeStatus : DictEnum.financeStatus.values()) {
+				dict = new Dict();
+				dict.setCode(financeStatus.getCode());
+				dict.setName(financeStatus.getName());
+				dicts.add(dict);
+			}
+		} catch (PlatformException e) {
+			result.setErrorCode(e.getCode() + "");
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setMessage("系统错误");
+			result.addError("系统错误");
+			logger.error("根据parentId查找数据字典错误", e);
+		}
+		result.setStatus(Status.OK);
+		responseBody.setEntityList(dicts);
+		responseBody.setResult(result);
+		return responseBody;
+	}
+	
 	
 }
