@@ -24,7 +24,9 @@ public class InitContainer {
 		// 启动自动运行线程管理类
 		autoMgr.start();
 		try {
-			is.close();
+			if(is!=null){
+				is.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

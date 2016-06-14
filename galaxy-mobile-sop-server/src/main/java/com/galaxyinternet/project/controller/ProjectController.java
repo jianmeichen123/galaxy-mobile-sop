@@ -149,7 +149,6 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		return this.projectService;
 	}
 
-	//TODO
 	/**
 	 * 新建项目接口
 	 * 
@@ -294,10 +293,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return responseBody;
 	}
-//TODO
+
 	/**
 	 * 查询指定的项目信息接口
-	 * 
 	 * @author gxc
 	 * @return 2016/6/13修改
 	 */
@@ -1906,7 +1904,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
 		}
-		SopFile sopFile = null;
+		SopFile sopFile = new SopFile();
 		String fileKey = null;
 		try {
 			if (p.getId() != null) {
@@ -1914,7 +1912,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			} else {
 				responseBody.setResult(new Result(Status.ERROR, null,
 						"所存在的更新文件丢失!"));
+				return responseBody;
 			}
+			if(sopFile==null){
+				responseBody.setResult(new Result(Status.ERROR, null,
+						"文件不存在"));
+				return responseBody;
+			}
+			
 			if (sopFile.getFileKey() == null) {
 				fileKey = String.valueOf(IdGenerator
 						.generateId(OSSHelper.class));
@@ -2525,7 +2530,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return roleIdList;
 	}
-	//TODO
+
 	//供app端实现保存公司法人信息
 	/**
 	 * 保存公司法人信息
@@ -2569,8 +2574,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return data;
 	}
-	
-	//TODO
+
 	/**
 	 * 获取枚举里的融资状态列表
 	 * @param id
