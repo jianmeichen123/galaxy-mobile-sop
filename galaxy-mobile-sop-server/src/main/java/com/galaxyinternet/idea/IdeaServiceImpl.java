@@ -68,7 +68,6 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 	
 	@Override
 	protected BaseDao<Idea, Long> getBaseDao() {
-		// TODO Auto-generated method stub
 		return ideaDao;
 	}
 	
@@ -165,7 +164,8 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 			
 			for(Idea idea : list)
 			{
-				Department depart = CollectionUtils.getItem(departments, "id", idea.getDepartmentId());
+				Department depart = new Department();
+				depart = CollectionUtils.getItem(departments, "id", idea.getDepartmentId());
 				String departmentDesc = depart != null ? depart.getName() : "";
 				String createdUname = CollectionUtils.getItemProp(users, "id", idea.getCreatedUid(), "realName");
 				String claimantUname = CollectionUtils.getItemProp(users, "id", idea.getClaimantUid(), "realName");
