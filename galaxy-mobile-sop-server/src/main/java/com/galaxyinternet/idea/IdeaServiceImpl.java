@@ -219,6 +219,7 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 		project.setProjectProgress(DictEnum.projectProgress.接触访谈.getCode());
 		project.setProjectType(DictEnum.projectType.内部创建.getCode());
 		project.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+		project.setFinanceStatus(DictEnum.financeStatus.尚未获投.getCode());
 		try 
 		{
 			String projectCode = generateProjectCode(project.getProjectDepartid());
