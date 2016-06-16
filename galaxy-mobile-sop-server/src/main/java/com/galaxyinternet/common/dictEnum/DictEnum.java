@@ -571,11 +571,12 @@ public enum DictEnum {
 				C轮("C轮", "financeStatus:9"),
 				D轮("D轮", "financeStatus:10"),
 				E轮("E轮", "financeStatus:11"),
-				F轮上市前("F轮-上市前", "financeStatus:12"),
+				F轮上市前("Pre-IPO", "financeStatus:12"),
 				已上市("已上市", "financeStatus:13"),
 				新三板("新三板", "financeStatus:14"),
 				战略投资("战略投资", "financeStatus:15"),
-				已被收购("已被收购", "financeStatus:16");
+				已被收购("已被收购", "financeStatus:16"),
+				不明确("不明确", "financeStatus:17");
 				private String name;
 				private String code;
 
