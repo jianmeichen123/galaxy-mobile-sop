@@ -179,6 +179,31 @@
 		</if>
 	</sql>
 	
+	<select id="selectPagingProjectList"  resultType="com.galaxyinternet.vo.ProjectVO"  parameterType="java.util.Map">
+				SELECT 
+						  id as id , 
+						  project_name as projectName,											
+						  project_type as projectType,
+						  project_share_ratio as  projectShareRatio,
+						  project_progress as projectProgress ,
+						  project_careerline  as projectCareerline,
+						  project_departId as  projectDepartid,
+						  created_time as createdTime
+				FROM  sop_project						  
+				<include refid="Base_Where_Clause" />				        	
+	</select>
+	
+	<select id="selectCountRecordByParam"  resultType="java.lang.Long"  parameterType="com.galaxyinternet.bo.project.ProjectBo">
+	          	select count(id) from sop_project
+	          	<where>
+		          	<trim prefixOverrides="and">
+						  <if test="projectDepartid != null" >and  project_departId = #{projectDepartid,jdbcType=BIGINT} </if>
+						  <if test="createUid != null" > and create_uid = #{createUid,jdbcType=BIGINT} </if>
+						 <if test="projectStatus != null" > and project_status = #{projectStatus,jdbcType=VARCHAR} </if>
+					 </trim>
+				</where>
+	</select>
+	
 	<!-- 查询总数 -->
 	<select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
 		select count(id) from sop_project

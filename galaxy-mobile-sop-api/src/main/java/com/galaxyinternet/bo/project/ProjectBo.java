@@ -39,8 +39,7 @@ public class ProjectBo extends Project {
 	
 	private boolean fromIdea;
 	
-	
-	
+	private String sorting;//多个排序字段
 	
 	public String getProType() {
 		return proType;
@@ -168,5 +167,13 @@ public class ProjectBo extends Project {
 
 	public void setFromIdea(boolean fromIdea) {
 		this.fromIdea = fromIdea;
+	}
+
+	public String getSorting() {
+		return sorting;
+	}
+
+	public void setSorting(String sorting) {
+		this.sorting = sorting;
 	}
 }

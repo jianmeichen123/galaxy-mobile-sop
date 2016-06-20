@@ -210,6 +210,8 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 		project.setCreatedTime(new Date().getTime());
 		project.setCreateUid(idea.getClaimantUid());
 		project.setCurrencyUnit(0);
+		//新增初始的行业归属
+		project.setIndustryOwn(idea.getDepartmentId());
 		if(user != null)
 		{
 			project.setCreateUname(user.getRealName());
