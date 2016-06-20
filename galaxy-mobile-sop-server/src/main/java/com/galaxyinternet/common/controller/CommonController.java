@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.bo.DictBo;
 import com.galaxyinternet.bo.UserBo;
+import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.constants.UserConstant;
 import com.galaxyinternet.framework.core.exception.DaoException;
@@ -280,5 +281,48 @@ public class CommonController extends BaseControllerImpl<User, UserBo>{
 		responseBody.setResult(new Result(Status.OK, null, "获取字典项成功！"));
 		return responseBody;
 	}
+	/**
+	 * 查询法人信息的接口
+	 */
 
+	/***
+	 * 获取项目信息
+	 * 
+	 * @param pid
+	 * @param request
+	 * @return
+	 * projectCompany :公司名称;
+		companyLegal:法人;
+		组织代码:projectCompanyCode;
+		成立时间:formationDate;
+	 */
+	@com.galaxyinternet.common.annotation.Logger
+	@ResponseBody
+	@RequestMapping(value = "/getfr/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ProjectBo> projectInfo(@PathVariable("pid") String pid,
+			HttpServletRequest request) {
+
+		ProjectBo projectBo = new ProjectBo();
+		// 查询项目信息
+		ResponseData<ProjectBo> responseBody = new ResponseData<ProjectBo>();
+		Project project = projectService.queryById(Long.parseLong(pid));
+		if (project == null) {
+			responseBody
+					.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
+			return responseBody;
+		}
+		// 获取法人信息
+
+		//公司名称
+		projectBo.setProjectCompany(project.getProjectCompany());
+		//法人
+		projectBo.setCompanyLegal(project.getCompanyLegal());
+		//组织代码
+		projectBo.setProjectCompanyCode(project.getProjectCompanyCode());
+		//成立时间
+		projectBo.setFormationDate(project.getFormationDate());
+
+		responseBody.setEntity(projectBo);
+		return responseBody;
+	}
 }
