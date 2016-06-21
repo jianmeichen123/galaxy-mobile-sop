@@ -68,7 +68,6 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 	
 	@Override
 	protected BaseDao<Idea, Long> getBaseDao() {
-		// TODO Auto-generated method stub
 		return ideaDao;
 	}
 	
@@ -165,7 +164,8 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 			
 			for(Idea idea : list)
 			{
-				Department depart = CollectionUtils.getItem(departments, "id", idea.getDepartmentId());
+				Department depart = new Department();
+				depart = CollectionUtils.getItem(departments, "id", idea.getDepartmentId());
 				String departmentDesc = depart != null ? depart.getName() : "";
 				String createdUname = CollectionUtils.getItemProp(users, "id", idea.getCreatedUid(), "realName");
 				String claimantUname = CollectionUtils.getItemProp(users, "id", idea.getClaimantUid(), "realName");
@@ -210,6 +210,8 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 		project.setCreatedTime(new Date().getTime());
 		project.setCreateUid(idea.getClaimantUid());
 		project.setCurrencyUnit(0);
+		//新增初始的行业归属
+		project.setIndustryOwn(idea.getDepartmentId());
 		if(user != null)
 		{
 			project.setCreateUname(user.getRealName());
@@ -218,7 +220,8 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 		project.setStockTransfer(0);
 		project.setProjectProgress(DictEnum.projectProgress.接触访谈.getCode());
 		project.setProjectType(DictEnum.projectType.内部创建.getCode());
-		project.setProjectStatus(DictEnum.meetingResult.待定.getCode());
+		project.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+		project.setFinanceStatus(DictEnum.financeStatus.尚未获投.getCode());
 		try 
 		{
 			String projectCode = generateProjectCode(project.getProjectDepartid());
