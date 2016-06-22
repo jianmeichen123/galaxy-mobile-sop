@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.galaxyinternet.bo.DictBo;
 import com.galaxyinternet.bo.UserBo;
+import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.constants.UserConstant;
 import com.galaxyinternet.framework.core.exception.DaoException;
@@ -26,9 +28,13 @@ import com.galaxyinternet.framework.core.model.ResponseData;
 import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
+import com.galaxyinternet.model.department.Department;
+import com.galaxyinternet.model.dict.Dict;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.user.Menus;
 import com.galaxyinternet.model.user.User;
+import com.galaxyinternet.service.DepartmentService;
+import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.UserRoleService;
 import com.galaxyinternet.utils.RoleUtils;
@@ -41,10 +47,12 @@ public class CommonController extends BaseControllerImpl<User, UserBo>{
 	
 	@Autowired
 	private UserRoleService userRoleService;
-	
+	@Autowired
+	private DepartmentService departmentService;
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
-	
+	@Autowired
+	private DictService dictService;
 	private String serverUrl;
 	@Autowired
 	private ProjectService projectService;
@@ -227,8 +235,94 @@ public class CommonController extends BaseControllerImpl<User, UserBo>{
 		return responseBody;
 		
 	}
-	
-	
-	
+	//TODO
+	/**
+	 * gxc
+	 * app端获取事业部
+	 * @version 2016-06-14 修改
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getCareerlineList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Department> getCareerlineList(HttpServletRequest request) {
+		ResponseData<Department> responseBody = new ResponseData<Department>();
+		User user = (User) getUserFromSession(request);
+		
+		Department query = new Department();
+		query.setType(1);
+		List<Department> careerlineList = departmentService.queryList(query);
+		for(Department department : careerlineList){
+			if(user.getDepartmentId().longValue() == department.getId().longValue()){
+				department.setCurrentUser(true);
+				break;
+			}
+		}
+		responseBody.setEntityList(careerlineList);
+		responseBody.setResult(new Result(Status.OK, null, "获取事业线成功！"));
+		return responseBody;
+	}
+	/**
+	 * 2016/6/14
+	 * app端查询字典
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getDictionaryList/{parentCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<DictBo> getDictionaryList(@PathVariable("parentCode") String parentCode,HttpServletRequest request) {
+		ResponseData<DictBo> responseBody = new ResponseData<DictBo>();
+		List<Dict> dictList = dictService.selectByParentCode(parentCode);
+		List<DictBo> dicts = new ArrayList<DictBo>();
+		DictBo dict = null;
+		for (Dict s: dictList) {
+				dict = new DictBo();
+				dict.setCode(s.getCode());
+				dict.setName(s.getName());
+				dicts.add(dict);
+			}
+		responseBody.setEntityList(dicts);
+		responseBody.setResult(new Result(Status.OK, null, "获取字典项成功！"));
+		return responseBody;
+	}
+	/**
+	 * 查询法人信息的接口
+	 */
 
+	/***
+	 * 获取项目信息
+	 * 
+	 * @param pid
+	 * @param request
+	 * @return
+	 * projectCompany :公司名称;
+		companyLegal:法人;
+		组织代码:projectCompanyCode;
+		成立时间:formationDate;
+	 */
+	@com.galaxyinternet.common.annotation.Logger
+	@ResponseBody
+	@RequestMapping(value = "/getfr/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ProjectBo> projectInfo(@PathVariable("pid") String pid,
+			HttpServletRequest request) {
+
+		ProjectBo projectBo = new ProjectBo();
+		// 查询项目信息
+		ResponseData<ProjectBo> responseBody = new ResponseData<ProjectBo>();
+		Project project = projectService.queryById(Long.parseLong(pid));
+		if (project == null) {
+			responseBody
+					.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
+			return responseBody;
+		}
+		// 获取法人信息
+
+		//公司名称
+		projectBo.setProjectCompany(project.getProjectCompany());
+		//法人
+		projectBo.setCompanyLegal(project.getCompanyLegal());
+		//组织代码
+		projectBo.setProjectCompanyCode(project.getProjectCompanyCode());
+		//成立时间
+		projectBo.setFormationDate(project.getFormationDate());
+
+		responseBody.setEntity(projectBo);
+		return responseBody;
+	}
 }
