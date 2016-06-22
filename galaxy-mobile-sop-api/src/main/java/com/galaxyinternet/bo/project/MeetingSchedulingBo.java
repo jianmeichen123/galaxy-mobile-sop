@@ -10,7 +10,27 @@ public class MeetingSchedulingBo extends MeetingScheduling {
 	
 	private String nameLike;//模糊查询条件匹配
 
+	//新增的字段用于app端进行待排期和已排期的数字统计
+	private Integer CountscheduleStatusy;
+	private Integer CountscheduleStatusd;
 	
+	
+	public Integer getCountscheduleStatusy() {
+		return CountscheduleStatusy;
+	}
+
+	public void setCountscheduleStatusy(Integer countscheduleStatusy) {
+		CountscheduleStatusy = countscheduleStatusy;
+	}
+
+	public Integer getCountscheduleStatusd() {
+		return CountscheduleStatusd;
+	}
+
+	public void setCountscheduleStatusd(Integer countscheduleStatusd) {
+		CountscheduleStatusd = countscheduleStatusd;
+	}
+
 	public String getNameLike() {
 		return nameLike;
 	}

@@ -268,6 +268,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						* 100 / project.getProjectShareRatio());
 			}
 		}
+		if(null!=project.getIndustryOwn()&&project.getIndustryOwn().longValue()==0){
+			project.setIndustryOwn(null);
+		}
 
 		Project p = projectService.queryById(project.getId());
 		if (p == null) {
@@ -330,7 +333,55 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				if (queryTwo != null) {
 					project.setIndustryOwnDs(queryTwo.getName());				
 				}
-			}						
+			}
+			//1.添加项目描述的暂无标识
+			if(project.getProjectDescribe()!=null){
+				project.setProjectDescribezw(1);
+			}else{
+				project.setProjectDescribezw(0);
+			}
+			//2.添加公司定位的暂无标识
+			if(project.getCompanyLocation()!=null){
+				project.setCompanyLocationzw(1);
+			}else{
+				project.setCompanyLocationzw(0);
+			}
+			//3.用户画像的暂无标识
+			if(project.getUserPortrait()!=null){
+				project.setUserPortraitzw(1);
+			}else{
+				project.setUserPortraitzw(0);
+			}
+			//4.产品服务的暂无标识
+			if(project.getProjectBusinessModel()!=null){
+				project.setProjectBusinessModelzw(1);
+			}else{
+				project.setProjectBusinessModelzw(0);
+			}
+			//5.竟情分析的暂无标识
+			if(project.getProspectAnalysis()!=null){
+				project.setProspectAnalysiszw(1);
+			}else{
+				project.setProspectAnalysiszw(0);
+			}
+			//6.运营数据的暂无标识
+			if(project.getOperationalData()!=null){
+				project.setOperationalDatazw(1);
+			}else{
+				project.setOperationalDatazw(0);
+			}
+			//7.行业分析的暂无标识
+			if(project.getIndustryAnalysis()!=null){
+				project.setIndustryAnalysiszw(1);
+			}else{
+				project.setIndustryAnalysiszw(0);
+			}
+			//8.下一轮融资路径的暂无标识
+			if(project.getNextFinancingSource()!=null){
+				project.setNextFinancingSourcezw(1);
+			}else{
+				project.setNextFinancingSourcezw(0);
+			}			
 			
 		} else {
 			responseBody
@@ -1498,8 +1549,38 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					.queryList(me);
 			if (!meetingList.isEmpty()) {
 				for (MeetingScheduling meet : meetingList) {
-					meet.setStatus(DictEnum.meetingResult.否决.getCode());
-					meet.setScheduleStatus(DictEnum.meetingSheduleResult.已否决.getCode());
+
+					
+					/**当否决项目时,将(当前)排期未排期的会议删掉 .注:已经通过排期的会议状态不进行更改**/
+					//1.否决CEO评审
+					if(DictEnum.projectProgress.CEO评审.getCode().equals(project.getProjectProgress())
+							&& DictEnum.meetingType.CEO评审.getCode().equals(meet.getMeetingType())){
+						if(DictEnum.meetingSheduleResult.待排期.getCode() == meet.getScheduleStatus()){
+							meetingSchedulingService.deleteById(meet.getId());
+						}
+					}
+					//2.否决内部评审
+					if(DictEnum.projectProgress.内部评审.getCode().equals(project.getProjectProgress())
+							&& DictEnum.meetingType.内评会.getCode().equals(meet.getMeetingType())){
+						if(DictEnum.meetingSheduleResult.待排期.getCode() == meet.getScheduleStatus()){
+							meetingSchedulingService.deleteById(meet.getId());
+						}
+					}
+					//3.否决立项会
+					if(DictEnum.projectProgress.立项会.getCode().equals(project.getProjectProgress())
+							&& DictEnum.meetingType.立项会.getCode().equals(meet.getMeetingType())){
+						if(DictEnum.meetingSheduleResult.待排期.getCode() == meet.getScheduleStatus()){
+							meetingSchedulingService.deleteById(meet.getId());
+						}
+					}
+					//4.否决投决会
+					if(DictEnum.projectProgress.投资决策会.getCode().equals(project.getProjectProgress())
+							&& DictEnum.meetingType.投决会.getCode().equals(meet.getMeetingType())){
+						if(DictEnum.meetingSheduleResult.待排期.getCode() == meet.getScheduleStatus()){
+							meetingSchedulingService.deleteById(meet.getId());
+						}
+					}					
+				
 				}
 			}
 			meetingSchedulingService.updateBatch(meetingList);
@@ -1985,7 +2066,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		responseBody.setResult(result);
 		return responseBody;
 	}
-
+//TODO
 	/**
 	 * 排期池列表查询
 	 * 
@@ -2576,6 +2657,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	}
 
 	/**
+	 * 根据枚举获取
 	 * 获取枚举里的融资状态列表
 	 * @param id
 	 * @param request
@@ -2609,5 +2691,72 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		return responseBody;
 	}
 	
-	
+	/**
+	 * app端排期会排期(待排期,已排期)
+	 * 	 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/queryMescheduling", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<MeetingScheduling> queryMescheduling(HttpServletRequest request, @RequestBody MeetingSchedulingBo query) {
+
+		ResponseData<MeetingScheduling> responseBody = new ResponseData<MeetingScheduling>();
+			
+		try {
+			MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+			MeetingScheduling m1 = new MeetingScheduling();
+			m1.setScheduleStatus(0);
+			List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(m1);
+			if(ms1!=null && ms1.size()>0){
+				mebo.setCountscheduleStatusd(ms1.size());
+			}else{
+				mebo.setCountscheduleStatusd(0);
+			}			
+			MeetingScheduling m2 = new MeetingScheduling();
+			m2.setScheduleStatus(1);
+			List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(m2);
+			if(ms2!=null && ms2.size()>0){
+				mebo.setCountscheduleStatusy(ms2.size());
+			}else{
+				mebo.setCountscheduleStatusy(0);
+			}
+			PageRequest pageable = new PageRequest(query.getPageNum(),query.getPageSize());
+			Page<MeetingScheduling> pageList = meetingSchedulingService.queryMeetingPageList(query, pageable);
+			if(pageList!=null){
+				if (!pageList.getContent().isEmpty()){
+					List<MeetingScheduling> schedulingList=pageList.getContent();
+					
+					List<String> ids = new ArrayList<String>();
+					for (MeetingScheduling ms : schedulingList) {
+						
+						ids.add(String.valueOf(ms.getProjectId()));
+					}
+					/**
+					 * 查询出相关的所有项目
+					 */
+					ProjectBo pb = new ProjectBo();
+					pb.setIds(ids);
+					List<Project> projectList = projectService.queryList(pb);				
+					// 组装数据
+					for (MeetingScheduling ms : schedulingList) {
+						for (Project p : projectList) {
+							if (ms.getProjectId().longValue() == p.getId().longValue()) {					
+								ms.setProjectName(p.getProjectName());					
+							}
+						}
+						
+					}
+				}								
+			}
+			responseBody.setPageList(pageList);
+			responseBody.setEntity(mebo);
+		} catch (PlatformException e) {
+			responseBody.setResult(new Result(Status.ERROR, null,
+					"queryList faild"));
+			if (logger.isErrorEnabled()) {
+				logger.error("queryList ", e);
+			}
+		}
+		return responseBody;
+	}
+
 }
