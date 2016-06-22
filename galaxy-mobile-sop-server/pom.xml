@@ -3,7 +3,8 @@
   <parent>
     <groupId>com.galaxyinternet</groupId>
     <artifactId>galaxy-mobile-sop</artifactId>
-    <version>1.0.1.mobile-SNAPSHOT</version><!-- SNAPSHOT -->
+    <version>1.0.3.mobile-SNAPSHOT</version>
+<!--    <version>1.0.1.mobile</version> -->
   </parent>
   <artifactId>galaxy-mobile-sop-server</artifactId>
   <packaging>war</packaging>
@@ -13,7 +14,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.2.1.RELEASE</spring.version>
-		<dependency.project>1.0.1.mobile-SNAPSHOT</dependency.project>
+		<dependency.project>1.0.3.mobile-SNAPSHOT</dependency.project>
+<!--             <dependency.project>1.0.1.mobile</dependency.project>   -->
 	</properties>
 	
 	<repositories>
@@ -147,17 +149,17 @@
 			</activation>
 			<properties>
 				<!-- 开发数据库 -->
-<!-- 				<jdbc.url> -->
-<!-- 					jdbc:mysql://10.9.11.232:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8 -->
-<!-- 				</jdbc.url> -->
+				<jdbc.url>
+					jdbc:mysql://10.9.11.232:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
+				</jdbc.url>
 
 				 <!-- 仿真数据库 -->
-				<jdbc.url>
-					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
-				</jdbc.url>
+<!-- 				<jdbc.url> -->
+<!-- 					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8 -->
+<!-- 				</jdbc.url> -->
 				
 				<jdbc.username>fxuser</jdbc.username>
-				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password>
+				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>
 				<!-- 本地项目地址 -->
 				<log4j.path>${catalina.base}/logs/</log4j.path>
 				<sop.oss.tempfile.path>/data/apps/osstemp/</sop.oss.tempfile.path>
@@ -184,8 +186,7 @@
                 
 			</properties>
 		</profile>
-		
-		<!-- 以下QA配置暂不使用，后续若使用，以dev配置为准 -->
+			
 		<profile>
 			<id>qa</id>
 			<activation>
@@ -205,13 +206,13 @@
 				<!-- dubbo -->
 				<dubbo.application.name>galaxyDubboprovider</dubbo.application.name>
 				<dubbo.protocol.name>dubbo</dubbo.protocol.name>
-				<dubbo.registry.address>zookeeper://10.9.210.22:12182?client=zkclient</dubbo.registry.address>
+				<dubbo.registry.address>zookeeper://10.9.210.22:12185?client=zkclient</dubbo.registry.address>
 				<dubbo.protocol.port>8085</dubbo.protocol.port>
 
-				<project.server.url>http://fx.qa.galaxyinternet.com/</project.server.url>
-				<galaxy.project.platform.endpoint>http://fx.qa.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
-				<galaxy.project.report.endpoint>http://fx.qa.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
-				<galaxy.project.sop.endpoint>http://fx.qa.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
+				<project.server.url>http://fxmob.qa.galaxyinternet.com/</project.server.url>
+				<galaxy.project.platform.endpoint>http://fxmob.qa.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
+				<galaxy.project.report.endpoint>http://fxmob.qa.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
+				<galaxy.project.sop.endpoint>http://fxmob.qa.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
 			</properties>
 		</profile>
 		<profile>

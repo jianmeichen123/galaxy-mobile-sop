@@ -68,11 +68,103 @@ public class Project extends PagableEntity {
     private List<Long> deptIdList;
 	private Long startTime; 
 	private Long endTime;
+	/**
+	 * app端新增判断暂无的字段
+	 * 		1.项目概述:projectDescribe
+			2.公司定位:companyLocation
+			3.用户画像:userPortrait
+			4.产品服务:projectBusinessModel
+			5.竟情分析:prospectAnalysis                 1表示有数据   0 表示无数据 
+			6.运营数据:operationalData
+			7.行业分析:industryAnalysis
+			8.下一轮融资路径:nextFinancingSource
+	 */
+	//项目概述判断是否是暂无
+	private Integer projectDescribezw;
+	//公司定位判断是否是暂无
+	private Integer companyLocationzw;
+	//用户画像判断是否是暂无
+	private Integer userPortraitzw;
+	//产品服务判断是否是暂无
+	private Integer projectBusinessModelzw;
+	//竟情分析判断是否是暂无
+	private Integer prospectAnalysiszw;
+	
+	//运营数据判断是否是暂无
+	private Integer operationalDatazw;
 	
 	
+	//行业分析判断是否是暂无
+	private Integer industryAnalysiszw;
+	//下一轮融资路径判断是否是暂无
+	private Integer nextFinancingSourcezw;
 	
 	
-    public Long getId() {
+    public Integer getProjectDescribezw() {
+		return projectDescribezw;
+	}
+
+	public void setProjectDescribezw(Integer projectDescribezw) {
+		this.projectDescribezw = projectDescribezw;
+	}
+
+	public Integer getCompanyLocationzw() {
+		return companyLocationzw;
+	}
+
+	public void setCompanyLocationzw(Integer companyLocationzw) {
+		this.companyLocationzw = companyLocationzw;
+	}
+
+	public Integer getUserPortraitzw() {
+		return userPortraitzw;
+	}
+
+	public void setUserPortraitzw(Integer userPortraitzw) {
+		this.userPortraitzw = userPortraitzw;
+	}
+
+	public Integer getProjectBusinessModelzw() {
+		return projectBusinessModelzw;
+	}
+
+	public void setProjectBusinessModelzw(Integer projectBusinessModelzw) {
+		this.projectBusinessModelzw = projectBusinessModelzw;
+	}
+
+	public Integer getProspectAnalysiszw() {
+		return prospectAnalysiszw;
+	}
+
+	public void setProspectAnalysiszw(Integer prospectAnalysiszw) {
+		this.prospectAnalysiszw = prospectAnalysiszw;
+	}
+
+	public Integer getOperationalDatazw() {
+		return operationalDatazw;
+	}
+
+	public void setOperationalDatazw(Integer operationalDatazw) {
+		this.operationalDatazw = operationalDatazw;
+	}
+
+	public Integer getIndustryAnalysiszw() {
+		return industryAnalysiszw;
+	}
+
+	public void setIndustryAnalysiszw(Integer industryAnalysiszw) {
+		this.industryAnalysiszw = industryAnalysiszw;
+	}
+
+	public Integer getNextFinancingSourcezw() {
+		return nextFinancingSourcezw;
+	}
+
+	public void setNextFinancingSourcezw(Integer nextFinancingSourcezw) {
+		this.nextFinancingSourcezw = nextFinancingSourcezw;
+	}
+
+	public Long getId() {
         return id;
     }
 

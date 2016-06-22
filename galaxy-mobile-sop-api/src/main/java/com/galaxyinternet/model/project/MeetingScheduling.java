@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.galaxyinternet.common.enums.DictEnum;
 import com.galaxyinternet.framework.core.model.PagableEntity;
 import com.galaxyinternet.framework.core.utils.DateUtil;
 
@@ -67,6 +68,9 @@ public class MeetingScheduling extends PagableEntity {
 	
 	private List<Long> ids;//排期id集合
 
+	private String meetingTypeStr;
+	
+	
 	public Timestamp getReserveTimeEnd() {
 		if (StringUtils.isNotBlank(this.reserveTimeEndStr)) {
 			Date tmp = null;
@@ -88,7 +92,7 @@ public class MeetingScheduling extends PagableEntity {
 		this.reserveTimeEnd = reserveTimeEnd;
 		if (reserveTimeEnd != null) {
 			reserveTimeEndStr = DateUtil
-					.convertDateToStringForChina(reserveTimeEnd);
+					.convertDateToStringChina(reserveTimeEnd);
 		}
 	}
 
@@ -170,7 +174,9 @@ public class MeetingScheduling extends PagableEntity {
 
 	public void setMeetingType(String meetingType) {
 		this.meetingType = meetingType == null ? null : meetingType.trim();
-    	
+		if(meetingType!=null){
+			this.meetingTypeStr=DictEnum.getNameByCode(meetingType);
+		}
 		
 	}
 
@@ -189,7 +195,7 @@ public class MeetingScheduling extends PagableEntity {
 	public void setMeetingDate(Date meetingDate) {
 		this.meetingDate = meetingDate;
 		if (meetingDate != null) {
-			meetingDateStr = DateUtil.convertDateToStringForChina(meetingDate);
+			meetingDateStr = DateUtil.convertDateToStringChina(meetingDate);
 		}
 	}
 
@@ -224,7 +230,7 @@ public class MeetingScheduling extends PagableEntity {
 	public void setApplyTime(Timestamp applyTime) {
 		this.applyTime = applyTime;
 		if (applyTime != null) {
-			applyTimeStr = DateUtil.convertDateToStringForChina(applyTime);
+			applyTimeStr = DateUtil.convertDateToStringChina(applyTime);
 		}
 	}
 
@@ -249,7 +255,7 @@ public class MeetingScheduling extends PagableEntity {
 		this.reserveTimeStart = reserveStartTime;
 		if (reserveStartTime != null) {
 			reserveTimeStartStr = DateUtil
-					.convertDateToStringForChina(reserveTimeStart);
+					.convertDateToStringChina(reserveTimeStart);
 		}
 	}
 
@@ -340,5 +346,11 @@ public class MeetingScheduling extends PagableEntity {
 	public void setIds(List<Long> ids) {
 		this.ids = ids;
 	}
-    
+
+	//meettypeStr
+	
+	public String getMeetingTypeStr() {
+		return meetingTypeStr;
+	}
+
 }
