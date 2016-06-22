@@ -2702,7 +2702,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		ResponseData<MeetingScheduling> responseBody = new ResponseData<MeetingScheduling>();
 			
 		try {
-			MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+			/*MeetingSchedulingBo mebo = new MeetingSchedulingBo();
 			MeetingScheduling m1 = new MeetingScheduling();
 			m1.setScheduleStatus(0);
 			List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(m1);
@@ -2714,6 +2714,23 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			MeetingScheduling m2 = new MeetingScheduling();
 			m2.setScheduleStatus(1);
 			List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(m2);
+			if(ms2!=null && ms2.size()>0){
+				mebo.setCountscheduleStatusy(ms2.size());
+			}else{
+				mebo.setCountscheduleStatusy(0);
+			}*/
+			
+			MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+			
+			query.setScheduleStatus(0);
+			List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(query);
+			if(ms1!=null && ms1.size()>0){
+				mebo.setCountscheduleStatusd(ms1.size());
+			}else{
+				mebo.setCountscheduleStatusd(0);
+			}						
+			query.setScheduleStatus(1);
+			List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(query);
 			if(ms2!=null && ms2.size()>0){
 				mebo.setCountscheduleStatusy(ms2.size());
 			}else{
@@ -2782,7 +2799,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 			List<String> ids = new ArrayList<String>();
 			for (MeetingScheduling ms : schedulingList) {
-				/*byte Edit = 1;
+				byte Edit = 1;
 				Integer sheduleStatus = ms.getScheduleStatus();
 				if (sheduleStatus == 2 || sheduleStatus == 3) {
 					Edit = 0;
@@ -2794,7 +2811,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						Edit = 0;
 					}
 				}
-				ms.setIsEdit(Edit);*/
+				ms.setIsEdit(Edit);
 				ids.add(String.valueOf(ms.getProjectId()));
 			}
 
