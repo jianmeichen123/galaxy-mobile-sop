@@ -92,7 +92,7 @@ public class MeetingScheduling extends PagableEntity {
 		this.reserveTimeEnd = reserveTimeEnd;
 		if (reserveTimeEnd != null) {
 			reserveTimeEndStr = DateUtil
-					.convertDateToStringForChina(reserveTimeEnd);
+					.convertDateToStringChina(reserveTimeEnd);
 		}
 	}
 
@@ -195,7 +195,7 @@ public class MeetingScheduling extends PagableEntity {
 	public void setMeetingDate(Date meetingDate) {
 		this.meetingDate = meetingDate;
 		if (meetingDate != null) {
-			meetingDateStr = DateUtil.convertDateToStringForChina(meetingDate);
+			meetingDateStr = DateUtil.convertDateToStringChina(meetingDate);
 		}
 	}
 
@@ -230,7 +230,7 @@ public class MeetingScheduling extends PagableEntity {
 	public void setApplyTime(Timestamp applyTime) {
 		this.applyTime = applyTime;
 		if (applyTime != null) {
-			applyTimeStr = DateUtil.convertDateToString(applyTime);
+			applyTimeStr = DateUtil.convertDateToStringChina(applyTime);
 		}
 	}
 
@@ -255,7 +255,7 @@ public class MeetingScheduling extends PagableEntity {
 		this.reserveTimeStart = reserveStartTime;
 		if (reserveStartTime != null) {
 			reserveTimeStartStr = DateUtil
-					.convertDateToStringForChina(reserveTimeStart);
+					.convertDateToStringChina(reserveTimeStart);
 		}
 	}
 

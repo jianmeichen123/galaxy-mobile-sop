@@ -2719,34 +2719,107 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}else{
 				mebo.setCountscheduleStatusy(0);
 			}
-			PageRequest pageable = new PageRequest(query.getPageNum(),query.getPageSize());
-			Page<MeetingScheduling> pageList = meetingSchedulingService.queryMeetingPageList(query, pageable);
-			if(pageList!=null){
-				if (!pageList.getContent().isEmpty()){
-					List<MeetingScheduling> schedulingList=pageList.getContent();
-					
-					List<String> ids = new ArrayList<String>();
-					for (MeetingScheduling ms : schedulingList) {
-						
-						ids.add(String.valueOf(ms.getProjectId()));
-					}
-					/**
-					 * 查询出相关的所有项目
-					 */
-					ProjectBo pb = new ProjectBo();
-					pb.setIds(ids);
-					List<Project> projectList = projectService.queryList(pb);				
-					// 组装数据
-					for (MeetingScheduling ms : schedulingList) {
-						for (Project p : projectList) {
-							if (ms.getProjectId().longValue() == p.getId().longValue()) {					
-								ms.setProjectName(p.getProjectName());					
-							}
-						}
-						
-					}
-				}								
+			
+			
+			/**
+			 * 查询出所有的事业线
+			 */
+			List<Long> depids = new ArrayList<Long>();
+			Map<Long, Department> careerlineMap = new HashMap<Long, Department>();
+			Department d = new Department();
+			if (query.getCareline() != null) {
+				Department de = departmentService.queryById(new Long(query
+						.getCareline()));
+				careerlineMap.put(de.getId(), de);
+				depids.add(de.getId());
+			} else {
+				d.setType(1);
+				List<Department> careerlineList = departmentService
+						.queryList(d);
+				for (Department department : careerlineList) {
+					careerlineMap.put(department.getId(), department);
+					depids.add(department.getId());
+				}
+				
 			}
+			/**
+			 * 查询出相关的所有项目
+			 */
+			List<Project> projectCommonList = new ArrayList<Project>();
+			List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+			Page<MeetingScheduling> pageList = null;
+			ProjectBo mpb = new ProjectBo();
+			if (query.getKeyword() != null) {
+				mpb.setKeyword(query.getKeyword());
+			}
+			mpb.setDeptIdList(depids);
+			projectCommonList = projectService.queryList(mpb);
+			/**
+			 * 根据相关项目查找排期池数据
+			 */
+			List<Long> pids = new ArrayList<Long>();
+			if (projectCommonList != null && projectCommonList.size() > 0) {
+				for (Project pr : projectCommonList) {
+					pids.add(pr.getId());
+				}
+				query.setProjectIdList(pids);				
+				pageList = meetingSchedulingService
+						.getMeetingList(
+								query,
+								new PageRequest(query.getPageNum(), query.getPageSize()));
+				schedulingList = pageList.getContent();
+			} else {
+				responseBody.setEntity(mebo);
+				return responseBody;
+			}
+			/***
+			 * 若无数据则返回
+			 */
+			if (schedulingList.size() == 0) {
+				responseBody.setEntity(mebo);
+				return responseBody;
+			}
+
+			List<String> ids = new ArrayList<String>();
+			for (MeetingScheduling ms : schedulingList) {
+				/*byte Edit = 1;
+				Integer sheduleStatus = ms.getScheduleStatus();
+				if (sheduleStatus == 2 || sheduleStatus == 3) {
+					Edit = 0;
+				}
+				if (ms.getReserveTimeStart() != null) {
+					long time = System.currentTimeMillis();
+					long startTime = ms.getReserveTimeStart().getTime();
+					if ((time > startTime) && sheduleStatus == 1) {
+						Edit = 0;
+					}
+				}
+				ms.setIsEdit(Edit);*/
+				ids.add(String.valueOf(ms.getProjectId()));
+			}
+
+			/**
+			 * 查询出相关的所有项目
+			 */
+			ProjectBo pb = new ProjectBo();
+			pb.setIds(ids);
+			List<Project> projectList = projectService.queryList(pb);
+
+			// 组装数据
+			for (MeetingScheduling ms : schedulingList) {
+				for (Project p : projectList) {
+					if (ms.getProjectId().longValue() == p.getId().longValue()) {
+						
+						ms.setProjectCode(p.getProjectCode());
+						ms.setProjectName(p.getProjectName());
+						ms.setProjectCareerline(careerlineMap.get(
+								p.getProjectDepartid()).getName());
+						ms.setCreateUname(p.getCreateUname());
+					}
+
+				}
+			}
+						
 			responseBody.setPageList(pageList);
 			responseBody.setEntity(mebo);
 		} catch (PlatformException e) {
