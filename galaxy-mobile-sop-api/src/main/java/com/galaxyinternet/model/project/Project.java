@@ -100,6 +100,12 @@ public class Project extends PagableEntity {
 	private Integer nextFinancingSourcezw;
 	
 	
+  	//数据转换app端修改实际的融资额度
+    private String formatFinalValuations;
+    private String formatFinalContribution;
+
+    private String formatFinalShareRatio;
+	
     public Integer getProjectDescribezw() {
 		return projectDescribezw;
 	}
@@ -513,6 +519,10 @@ public class Project extends PagableEntity {
 	}
 
 	public Double getFinalValuations() {
+    	if(this.formatFinalValuations != null && !"".equals(this.formatFinalValuations.trim())){
+			this.finalValuations = NumberUtils.toFormatNoSplit(this.formatFinalValuations.trim());
+		}
+       
 		return finalValuations;
 	}
 
@@ -521,6 +531,9 @@ public class Project extends PagableEntity {
 	}
 
 	public Double getFinalContribution() {
+		if(this.formatFinalContribution != null && !"".equals(this.formatFinalContribution.trim())){
+			this.finalContribution = NumberUtils.toFormatNoSplit(this.formatFinalContribution.trim());
+		}
 		return finalContribution;
 	}
 
@@ -529,6 +542,10 @@ public class Project extends PagableEntity {
 	}
 
 	public Double getFinalShareRatio() {
+		if(this.formatFinalShareRatio != null && !"".equals(this.formatFinalShareRatio.trim())){
+			this.finalShareRatio = NumberUtils.toFormatNoSplit(this.formatFinalShareRatio.trim());
+		}
+		
 		return finalShareRatio;
 	}
 
@@ -591,4 +608,34 @@ public class Project extends PagableEntity {
 		this.operationalData = operationalData;
 	}
 
+	public String getFormatFinalValuations() {
+		return formatFinalValuations;
+	}
+
+	public void setFormatFinalValuations(String formatFinalValuations) {
+		this.formatFinalValuations = formatFinalValuations;
+	}
+
+	public String getFormatFinalContribution() {
+		return formatFinalContribution;
+	}
+
+	public void setFormatFinalContribution(String formatFinalContribution) {
+		this.formatFinalContribution = formatFinalContribution;
+	}
+
+	public String getFormatFinalShareRatio() {
+		return formatFinalShareRatio;
+	}
+
+	public void setFormatFinalShareRatio(String formatFinalShareRatio) {
+		this.formatFinalShareRatio = formatFinalShareRatio;
+	}
+
+	
+	
+	
+	
+	
+	
 }
