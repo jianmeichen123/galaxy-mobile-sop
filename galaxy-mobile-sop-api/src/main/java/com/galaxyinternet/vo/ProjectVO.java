@@ -18,7 +18,7 @@ public class ProjectVO extends PagableEntity {
 	private static final long serialVersionUID = -173701740149276113L;
 
 	private String projectName;//项目名称
-	private Double projectContribution; //初始投资额(融资金额)
+	private BigDecimal  projectContribution; //初始投资额(融资金额)
 	private String projectType;//项目类型编码 分内部、外部项目
 	private String projectTypeName;//项目类型名称	
 	private String projectProgress; //项目阶段编码
@@ -77,10 +77,10 @@ public class ProjectVO extends PagableEntity {
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
-	public Double getProjectContribution() {
+	public BigDecimal getProjectContribution() {
 		return projectContribution;
 	}
-	public void setProjectContribution(Double projectContribution) {
+	public void setProjectContribution(BigDecimal projectContribution) {
 		this.projectContribution = projectContribution;
 	}
 	public String getProjectType() {

@@ -180,7 +180,7 @@
 	</sql>
 	
 	<select id="selectPagingProjectList"  resultType="com.galaxyinternet.vo.ProjectVO"  parameterType="java.util.Map">
-				SELECT 
+				       SELECT 
 							   id  as id ,
 							   project_name as projectName,
 							   project_code  as   projectCode,
@@ -193,7 +193,7 @@
 							   project_valuations  as  projectValuations ,
 							   final_valuations as finalValuations ,
 							   finance_status   as  financeStatus,
-							   project_contribution ,
+							   project_contribution as projectContribution ,
 							   final_contribution  as  finalContribution,
 							   currency_unit  as  currencyUnit,
 							   project_share_ratio  as  projectShareRatio ,
@@ -209,7 +209,7 @@
 							   project_status  as  projectStatus ,					
 							   updated_time  as updatedTime,
 							   created_time   as  createdTime
-							FROM
+						FROM
 							    sop_project				  
 				<include refid="Base_Where_Clause" />				        	
 	</select>
