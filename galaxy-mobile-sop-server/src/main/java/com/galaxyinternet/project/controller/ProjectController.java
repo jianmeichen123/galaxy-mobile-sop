@@ -3,6 +3,7 @@ package com.galaxyinternet.project.controller;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2690,7 +2691,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		responseBody.setResult(result);
 		return responseBody;
 	}
-	
+	//TODO
 	/**
 	 * app端排期会排期(待排期,已排期)
 	 * 	 
@@ -2701,41 +2702,27 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 		ResponseData<MeetingScheduling> responseBody = new ResponseData<MeetingScheduling>();
 			
-		try {
-			/*MeetingSchedulingBo mebo = new MeetingSchedulingBo();
-			MeetingScheduling m1 = new MeetingScheduling();
-			m1.setScheduleStatus(0);
-			List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(m1);
-			if(ms1!=null && ms1.size()>0){
-				mebo.setCountscheduleStatusd(ms1.size());
-			}else{
-				mebo.setCountscheduleStatusd(0);
-			}			
-			MeetingScheduling m2 = new MeetingScheduling();
-			m2.setScheduleStatus(1);
-			List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(m2);
-			if(ms2!=null && ms2.size()>0){
-				mebo.setCountscheduleStatusy(ms2.size());
-			}else{
-				mebo.setCountscheduleStatusy(0);
-			}*/
-			
-			MeetingSchedulingBo mebo = new MeetingSchedulingBo();
-			
-			query.setScheduleStatus(0);
-			List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(query);
-			if(ms1!=null && ms1.size()>0){
-				mebo.setCountscheduleStatusd(ms1.size());
-			}else{
-				mebo.setCountscheduleStatusd(0);
-			}						
-			query.setScheduleStatus(1);
-			List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(query);
-			if(ms2!=null && ms2.size()>0){
-				mebo.setCountscheduleStatusy(ms2.size());
-			}else{
-				mebo.setCountscheduleStatusy(0);
+		if(query.getStartTime()!=null && query.getEndTime()!=null){
+			       String  text  = query.getStartTime();
+			       String  te = query.getEndTime();
+			       Date  dt  =  null;  
+			       SimpleDateFormat  df  =  new  SimpleDateFormat("yyyy-MM-dd");  
+			       df.setLenient(false);//这个的功能是不把1996-13-3 转换为1997-1-3
+			        try
+			       {  
+			         dt  =  df.parse(text); 
+			         dt  =  df.parse(te);
+			       }
+			       catch(Exception  e)
+			       {  
+			         dt=new  Date();
+			         
+			         responseBody.setResult(new Result(Status.ERROR, null, "你传入的日期不合法，请重新输入!"));
+			         return responseBody;
+			       }  
 			}
+		
+		try {
 			
 			
 			/**
@@ -2786,57 +2773,77 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 								new PageRequest(query.getPageNum(), query.getPageSize()));
 				schedulingList = pageList.getContent();
 			} else {
+				MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+				mebo.setCountscheduleStatusd(0);
+				mebo.setCountscheduleStatusy(0);
 				responseBody.setEntity(mebo);
 				return responseBody;
-			}
-			/***
-			 * 若无数据则返回
-			 */
+			} 
 			if (schedulingList.size() == 0) {
+				MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+				mebo.setCountscheduleStatusd(0);
+				mebo.setCountscheduleStatusy(0);
 				responseBody.setEntity(mebo);
 				return responseBody;
 			}
-
-			List<String> ids = new ArrayList<String>();
-			for (MeetingScheduling ms : schedulingList) {
-				byte Edit = 1;
-				Integer sheduleStatus = ms.getScheduleStatus();
-				if (sheduleStatus == 2 || sheduleStatus == 3) {
-					Edit = 0;
-				}
-				if (ms.getReserveTimeStart() != null) {
-					long time = System.currentTimeMillis();
-					long startTime = ms.getReserveTimeStart().getTime();
-					if ((time > startTime) && sheduleStatus == 1) {
+			if(schedulingList!=null && schedulingList.size()>0){	
+				List<String> ids = new ArrayList<String>();
+				for (MeetingScheduling ms : schedulingList) {
+					byte Edit = 1;
+					Integer sheduleStatus = ms.getScheduleStatus();
+					if (sheduleStatus == 2 || sheduleStatus == 3) {
 						Edit = 0;
 					}
-				}
-				ms.setIsEdit(Edit);
-				ids.add(String.valueOf(ms.getProjectId()));
-			}
-
-			/**
-			 * 查询出相关的所有项目
-			 */
-			ProjectBo pb = new ProjectBo();
-			pb.setIds(ids);
-			List<Project> projectList = projectService.queryList(pb);
-
-			// 组装数据
-			for (MeetingScheduling ms : schedulingList) {
-				for (Project p : projectList) {
-					if (ms.getProjectId().longValue() == p.getId().longValue()) {
-						
-						ms.setProjectCode(p.getProjectCode());
-						ms.setProjectName(p.getProjectName());
-						ms.setProjectCareerline(careerlineMap.get(
-								p.getProjectDepartid()).getName());
-						ms.setCreateUname(p.getCreateUname());
+					if (ms.getReserveTimeStart() != null) {
+						long time = System.currentTimeMillis();
+						long startTime = ms.getReserveTimeStart().getTime();
+						if ((time > startTime) && sheduleStatus == 1) {
+							Edit = 0;
+						}
 					}
-
+					ms.setIsEdit(Edit);
+					ids.add(String.valueOf(ms.getProjectId()));
 				}
+	
+				/**
+				 * 查询出相关的所有项目
+				 */
+				ProjectBo pb = new ProjectBo();
+				pb.setIds(ids);
+				List<Project> projectList = projectService.queryList(pb);
+	
+				// 组装数据
+				for (MeetingScheduling ms : schedulingList) {
+					for (Project p : projectList) {
+						if (ms.getProjectId().longValue() == p.getId().longValue()) {
+							
+							ms.setProjectCode(p.getProjectCode());
+							ms.setProjectName(p.getProjectName());
+							ms.setProjectCareerline(careerlineMap.get(
+									p.getProjectDepartid()).getName());
+							ms.setCreateUname(p.getCreateUname());
+						}
+	
+					}
+				}
+				
 			}
-						
+			MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+			
+			query.setScheduleStatus(0);
+			List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(query);
+			if(ms1!=null && ms1.size()>0){
+				mebo.setCountscheduleStatusd(ms1.size());
+			}else{
+				mebo.setCountscheduleStatusd(0);
+			}						
+			query.setScheduleStatus(1);
+			List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(query);
+			if(ms2!=null && ms2.size()>0){
+				mebo.setCountscheduleStatusy(ms2.size());
+			}else{
+				mebo.setCountscheduleStatusy(0);
+			}
 			responseBody.setPageList(pageList);
 			responseBody.setEntity(mebo);
 		} catch (PlatformException e) {
