@@ -47,7 +47,14 @@
 					</foreach>
 				</if>
 				<!-- 模糊查询 -->
-				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->
+				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->			 						
+				
+				<if test="startTime != null and endTime != null">				
+				 	and reserve_time_start				 	
+						BETWEEN STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )
+						AND STR_TO_DATE(CONCAT(#{endTime} , ' 23:59:59') ,'%Y-%m-%d %H:%i:%s' )		 							 
+				</if> 
+			 								 																				 																
 			</trim>
 		</where>
 		<if test="sorting != null">order by ${sorting}</if> 
