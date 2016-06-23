@@ -28,6 +28,12 @@ public class AppProgress extends PagableRecordEntity {
      * 访谈对象
      */
     private String interviewTarget;
+    
+    /**
+     * 2016/6/23 新加字段 访谈阶段的会议数目
+     * 访谈记录的数目
+     */
+    private Integer interviewCount;
     /**
      * 访谈时间
      */
@@ -404,5 +410,17 @@ public class AppProgress extends PagableRecordEntity {
 	public void setSchedulingFlag(Integer schedulingFlag) {
 		this.schedulingFlag = schedulingFlag;
 	}
+
+	public Integer getInterviewCount() {
+		return interviewCount;
+	}
+
+	public void setInterviewCount(Integer interviewCount) {
+		this.interviewCount = interviewCount;
+	}
+	
+	
+	
+	
 	
 }
