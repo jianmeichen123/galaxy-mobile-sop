@@ -309,6 +309,10 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	public ResponseData<Project> selectProject(@PathVariable("pid") String pid,
 			HttpServletRequest request) {
 		ResponseData<Project> responseBody = new ResponseData<Project>();
+		
+		SopFile query = new SopFile();
+		
+
 		Project project = projectService.queryById(Long.parseLong(pid));
 		if (project != null) {
 			Department Department = new Department();//
@@ -335,6 +339,22 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					project.setIndustryOwnDs(queryTwo.getName());				
 				}
 			}
+			//商业计划书 的 暂无 
+			if(StringUtils.isBlank(pid)){
+				responseBody.setResult(new Result(Status.ERROR,"传入的projectId为空"));
+				return responseBody;
+			}
+			
+				query.setProjectId(Long.parseLong(pid));
+				query.setFileWorktype(DictEnum.fileWorktype.商业计划.getCode());
+				PageRequest pageRequest = new PageRequest(0, 3, Direction.DESC,
+						"created_time");
+				Page<SopFile> sopFilePage = sopFileService.queryFileList(query, pageRequest);
+				if(sopFilePage.getContent().size()<=0){
+					project.setBusinessPlanFilezw(0);
+				}else{
+					project.setBusinessPlanFilezw(1);
+				}
 			//1.添加项目描述的暂无标识
 			if(project.getProjectDescribe()!=null){
 				project.setProjectDescribezw(1);

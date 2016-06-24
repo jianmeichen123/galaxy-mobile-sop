@@ -98,7 +98,8 @@ public class Project extends PagableEntity {
 	private Integer industryAnalysiszw;
 	//下一轮融资路径判断是否是暂无
 	private Integer nextFinancingSourcezw;
-	
+	//商业计划书判断是否暂无
+	private Integer BusinessPlanFilezw;
 	
   	//数据转换app端修改实际的融资额度
     private String formatFinalValuations;
@@ -630,6 +631,14 @@ public class Project extends PagableEntity {
 
 	public void setFormatFinalShareRatio(String formatFinalShareRatio) {
 		this.formatFinalShareRatio = formatFinalShareRatio;
+	}
+
+	public Integer getBusinessPlanFilezw() {
+		return BusinessPlanFilezw;
+	}
+
+	public void setBusinessPlanFilezw(Integer businessPlanFilezw) {
+		BusinessPlanFilezw = businessPlanFilezw;
 	}
 
 	
