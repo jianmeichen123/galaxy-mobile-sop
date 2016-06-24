@@ -2798,14 +2798,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				mebo.setCountscheduleStatusy(0);
 				responseBody.setEntity(mebo);
 				return responseBody;
-			} 
-			if (schedulingList.size() == 0) {
-				MeetingSchedulingBo mebo = new MeetingSchedulingBo();
-				mebo.setCountscheduleStatusd(0);
-				mebo.setCountscheduleStatusy(0);
-				responseBody.setEntity(mebo);
-				return responseBody;
-			}
+			} 			
 			if(schedulingList!=null && schedulingList.size()>0){	
 				List<String> ids = new ArrayList<String>();
 				for (MeetingScheduling ms : schedulingList) {
