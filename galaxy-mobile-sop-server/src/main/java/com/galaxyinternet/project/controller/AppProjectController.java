@@ -188,16 +188,6 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							}else{
 								probean.setProjectCareerline("");
 							}
-							
-							Department dt=new Department();
-							dt.setId(probean.getIndustryOwn());
-							Department queryDep = departmentService.queryOne(dt);
-							if(queryDep!=null){
-								probean.setIndustryOwnStr(queryDep.getName());
-							}else{
-								probean.setIndustryOwnStr("");
-							}
-							
 						    /*
 						     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
 						     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比

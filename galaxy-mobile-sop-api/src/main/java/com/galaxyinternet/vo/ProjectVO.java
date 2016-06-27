@@ -13,7 +13,6 @@ import com.galaxyinternet.framework.core.model.PagableEntity;
  * @date  2016年6月16日 下午5:05:51
  */
 public class ProjectVO extends PagableEntity {
-
 	
 	private static final long serialVersionUID = -173701740149276113L;
 
@@ -25,21 +24,15 @@ public class ProjectVO extends PagableEntity {
 	private String projectProgressName; //项目阶段名称
 	private String projectCareerline; //项目所属投资事业线名称（部门名称）
     private Long projectDepartid;//项目所属部门id
-//	private String projectStatus;//项目状态编码  
     
-    //###############################
-
     private String projectCode ;
     private Long ideaId ;
-    private Integer stockTransfer ; //是否涉及股权转让，0表示不涉及，1表示涉及'
-       
+    private Integer stockTransfer ; //是否涉及股权转让，0表示不涉及，1表示涉及'     
     private Long industryOwn ;// '行业归属ID'
-	private String industryOwnStr ; //行业归属名称
-    
+	private String industry; //行业归属名称   
     private BigDecimal  projectValuations ; // '初始估值',
     private BigDecimal  finalValuations ; // '实际估值',
-    private String financeStatus; // '融资状态',
-  
+    private String financeStatus; // '融资状态',  
     private BigDecimal finalContribution; // '实际投资额',
     private Integer  currencyUnit ; // '资金单位，0表示人民币，1表示美元，2表示英镑，3表示欧元',
     private BigDecimal projectShareRatio ; // '所占股份百分比',
@@ -51,8 +44,10 @@ public class ProjectVO extends PagableEntity {
     private Long createUid ; // '项目创建者的用户ID',
     private String createUname; // '项目创建者名',
     private String createUposition ; // '字典 项目创建者的职位',
-
+    private Long updatedTime ; // '项目的最近一次修改日期',
+    private Long createdTime ; // '项目的创建日期'
     private String projectStatus; // '0:跟进中,1:投后运营,2:已否决,3:已退出',
+    
     //private  project_describe` text COLLATE utf8_bin COMMENT '项目的概述',
    // private project_business_model` text COLLATE utf8_bin COMMENT '项目的商业模式描述',
    // private company_location` text COLLATE utf8_bin COMMENT '公司的发展定位',
@@ -61,18 +56,16 @@ public class ProjectVO extends PagableEntity {
   //  private next_financing_source` text COLLATE utf8_bin COMMENT '下一轮融资路径',
  //   private industry_analysis` text COLLATE utf8_bin COMMENT '行业分析',
   //  private operational_data` text COLLATE utf8_bin COMMENT '运营数据',
-    private Long updatedTime ; // '项目的最近一次修改日期',
-    private Long createdTime ; // '项目的创建日期'
-
-    //###############################
-    public String getIndustryOwnStr() {
-		return industryOwnStr;
-	}
-	public void setIndustryOwnStr(String industryOwnStr) {
-		this.industryOwnStr = industryOwnStr;
-	}
+ 
+    
 	public String getProjectName() {
 		return projectName;
+	}
+	public String getIndustry() {
+		return industry;
+	}
+	public void setIndustry(String industry) {
+		this.industry = industry;
 	}
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
