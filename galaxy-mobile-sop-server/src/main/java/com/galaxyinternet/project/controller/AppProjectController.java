@@ -167,10 +167,10 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 					projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
 				}		
 				List<Order> orderList = new ArrayList<Order>();
-				orderList.add(new Order(Direction.ASC, "project_type"));
-				orderList.add(new Order(Direction.DESC, "project_progress"));
-				orderList.add(new Order(Direction.DESC, "created_time"));
 				orderList.add(new Order(Direction.DESC, "updated_time"));
+				orderList.add(new Order(Direction.DESC, "created_time"));			
+//				orderList.add(new Order(Direction.ASC, "project_type"));
+//				orderList.add(new Order(Direction.DESC, "project_progress"));
 				Sort sort = new Sort(orderList);
 //				projectBo.setSorting("project_type ASC,project_progress DESC,created_time DESC,updated_time DESC ");		
 				genProjectBean = appProjectService.queryPagingProjectList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
