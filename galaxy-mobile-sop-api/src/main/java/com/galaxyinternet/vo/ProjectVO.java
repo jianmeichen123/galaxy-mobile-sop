@@ -28,8 +28,7 @@ public class ProjectVO extends PagableEntity {
     private String projectCode ;
     private Long ideaId ;
     private Integer stockTransfer ; //是否涉及股权转让，0表示不涉及，1表示涉及'     
-    private Long industryOwn ;// '行业归属ID'
-	private String industry; //行业归属名称   
+    private Long industryOwn ;// '行业归属ID'   
     private BigDecimal  projectValuations ; // '初始估值',
     private BigDecimal  finalValuations ; // '实际估值',
     private String financeStatus; // '融资状态',  
@@ -46,6 +45,7 @@ public class ProjectVO extends PagableEntity {
     private String createUposition ; // '字典 项目创建者的职位',
     private Long updatedTime ; // '项目的最近一次修改日期',
     private Long createdTime ; // '项目的创建日期'
+    private String industry;
     private String projectStatus; // '0:跟进中,1:投后运营,2:已否决,3:已退出',
     
     //private  project_describe` text COLLATE utf8_bin COMMENT '项目的概述',

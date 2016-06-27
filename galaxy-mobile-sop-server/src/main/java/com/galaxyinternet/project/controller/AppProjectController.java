@@ -138,6 +138,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	   	 * &nbsp;1.项目状态 projectStatus<br>
 	   	 * &nbsp;2.当前页号pageNum<br>
 	   	 * &nbsp;3.每页记录数pageSize<br>
+	   	 * &nbsp;4.其它字段项目表字段，暂不列出
 	   	 *  版本（1.3）<br>
 	   	 * @param request
 	   	 * @param project
@@ -198,8 +199,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							}
 							if(StringUtils.isNotBlank(probean.getProjectProgress())){
 								probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));
-							}
-							
+							}						
 					 }
 				}
 				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
