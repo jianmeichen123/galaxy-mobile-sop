@@ -76,7 +76,7 @@ public class ProjectDaoImpl extends BaseDaoImpl<Project, Long> implements Projec
 			long count = sqlSessionTemplate.selectOne(getSqlName("selectCountRecordByParam"), query);
 		   return count;
 		}catch(Exception e){
-			throw new DaoException(String.format("根据项目状态统计数据量出错！语句:%s", getSqlName("selectCountRecordByParam")), e);
+			throw new DaoException(String.format("根据项目状态统计数据量出错！语句:%s" ,  getSqlName("selectCountRecordByParam")), e);
 		}
 		
 	}

@@ -1,7 +1,5 @@
 package com.galaxyinternet.vo;
 
-import java.util.List;
-
 import com.galaxyinternet.framework.core.model.BaseEntity;
 import com.galaxyinternet.framework.core.model.Page;
 /**

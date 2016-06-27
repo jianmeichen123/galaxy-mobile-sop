@@ -138,6 +138,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	   	 * &nbsp;1.项目状态 projectStatus<br>
 	   	 * &nbsp;2.当前页号pageNum<br>
 	   	 * &nbsp;3.每页记录数pageSize<br>
+	   	 * &nbsp;4.其它字段项目表字段，暂不列出
 	   	 *  版本（1.3）<br>
 	   	 * @param request
 	   	 * @param project
@@ -166,10 +167,10 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 					projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
 				}		
 				List<Order> orderList = new ArrayList<Order>();
-				orderList.add(new Order(Direction.ASC, "project_type"));
-				orderList.add(new Order(Direction.DESC, "project_progress"));
-				orderList.add(new Order(Direction.DESC, "created_time"));
 				orderList.add(new Order(Direction.DESC, "updated_time"));
+				orderList.add(new Order(Direction.DESC, "created_time"));			
+//				orderList.add(new Order(Direction.ASC, "project_type"));
+//				orderList.add(new Order(Direction.DESC, "project_progress"));
 				Sort sort = new Sort(orderList);
 //				projectBo.setSorting("project_type ASC,project_progress DESC,created_time DESC,updated_time DESC ");		
 				genProjectBean = appProjectService.queryPagingProjectList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
@@ -198,8 +199,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							}
 							if(StringUtils.isNotBlank(probean.getProjectProgress())){
 								probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));
-							}
-							
+							}						
 					 }
 				}
 				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());

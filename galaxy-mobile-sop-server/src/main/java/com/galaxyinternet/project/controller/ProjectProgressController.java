@@ -365,7 +365,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		return responseBody;
 	}
 
-
+	@com.galaxyinternet.common.annotation.Logger(operationScope = { LogType.LOG, LogType.MESSAGE })
 	@ResponseBody
 	@RequestMapping(value = "/updateInterview", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<SopFile> updateInterview(@RequestBody InterviewRecord interviewRecord, HttpServletRequest request ) {
@@ -666,7 +666,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		return responseBody;
 	}
 	
-	
+	@com.galaxyinternet.common.annotation.Logger(operationScope = { LogType.LOG, LogType.MESSAGE })
 	@ResponseBody
 	@RequestMapping(value = "/updatemeet", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<SopFile> updatemeet(@RequestBody MeetingRecord meetingRecord, HttpServletRequest request ) {
