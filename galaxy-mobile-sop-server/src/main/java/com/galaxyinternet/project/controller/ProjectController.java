@@ -1375,6 +1375,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	 * 
 	 * @author yangshuhua
 	 */
+	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
 	@RequestMapping(value = "/inlx/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<Project> inLxmeetingPool(HttpServletRequest request,
