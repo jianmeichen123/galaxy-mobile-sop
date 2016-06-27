@@ -227,8 +227,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			if (id > 0) {
 				responseBody.setResult(new Result(Status.OK, null, "项目添加成功!"));
 				responseBody.setId(id);
-				ControllerUtils.setRequestParamsForMessageTip(request,
-						project.getProjectName(), project.getId());
+				ControllerUtils.setRequestParamsForMessageTip(request,project.getProjectName(), project.getId(),"1");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -243,7 +242,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	 * @return
 	 * @throws ParseException
 	 */
-	@com.galaxyinternet.common.annotation.Logger
+	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
 	@ResponseBody
 	@RequestMapping(value = "/up", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<Project> resetProject(@RequestBody Project project,
@@ -294,7 +293,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		if (num > 0) {
 			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
 			ControllerUtils.setRequestParamsForMessageTip(request,
-					project.getProjectName(), project.getId());
+					project.getProjectName(), project.getId(),"2");
 		}
 		return responseBody;
 	}
@@ -1264,8 +1263,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				projectService.updateById(project);
 				responseBody.setResult(new Result(Status.OK, ""));
 				responseBody.setId(project.getId());
-				ControllerUtils.setRequestParamsForMessageTip(request,
-						project.getProjectName(), project.getId());
+				ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId(),StageChangeHandler._6_2_);
 			} catch (Exception e) {
 				responseBody.setResult(new Result(Status.ERROR, null,
 						"异常，启动内部评审失败!"));
