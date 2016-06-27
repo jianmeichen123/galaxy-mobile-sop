@@ -911,6 +911,11 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					
 					interviewRecord.setProjectId(Long.parseLong(pid));
 					List<InterviewRecord> listSop = interviewRecordService.queryList(interviewRecord);
+					if(listSop!=null){
+						appProgress.setInterviewCount(listSop.size());
+					}else{
+						appProgress.setInterviewCount(0);
+					}
 					if (listSop!=null && listSop.size()>0) {
 						InterviewRecord me = listSop.get(0);						
 						appProgress.setInterviewTime(me.getViewDateStr());//访谈时间
