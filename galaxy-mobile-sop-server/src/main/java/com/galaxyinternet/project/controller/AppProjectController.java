@@ -1,5 +1,6 @@
 package com.galaxyinternet.project.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -189,17 +190,50 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							}else{
 								probean.setProjectCareerline("");
 							}
+							//financeStatus
+							Department dt=new Department();
+							dt.setId(probean.getIndustryOwn());
+							Department queryDep = departmentService.queryOne(dt);
+							if(queryDep!=null){
+								probean.setIndustry(queryDep.getName());//行业归属名称
+							}else{
+								probean.setIndustry("");
+							}
 						    /*
 						     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
 						     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比
 						     * 新项目保存时，上述字段值数字（未有公式运算或转换处理），全是直接存储
 						     */
 							if(StringUtils.isNotBlank(probean.getProjectType())){
-								probean.setProjectTypeName(DictEnum.projectType.getNameByCode(probean.getProjectType()));
+								probean.setProjectTypeName(DictEnum.projectType.getNameByCode(probean.getProjectType()));//项目类型名称
 							}
 							if(StringUtils.isNotBlank(probean.getProjectProgress())){
-								probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));
-							}						
+								probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));//项目进度名称
+							}	
+							if(StringUtils.isNotBlank(probean.getFinanceStatus())){
+								probean.setFinanceStatusName(DictEnum.financeStatus.getNameByCode(probean.getFinanceStatus()));//融资状态名称
+							}
+							if(StringUtils.isNotBlank(probean.getProjectStatus())){
+								probean.setProjectStatusName(DictEnum.projectStatus.getNameByCode(probean.getProjectStatus()));//项目状态编码
+							}
+							if(probean.getProjectValuations()==null){//初始估值
+								probean.setProjectValuations(new BigDecimal(0.00));
+							}
+							if(probean.getFinalValuations()==null){//实际估值
+								probean.setFinalValuations(new BigDecimal(0.00));
+							}
+							if(probean.getProjectContribution()==null){//初始投资额
+								probean.setProjectContribution(new BigDecimal(0.00));
+							}
+							if(probean.getFinalContribution()==null){//实际投资额
+								probean.setFinalContribution(new BigDecimal(0.00));
+							}//
+							if(probean.getProjectShareRatio()==null){//所占股份百分比
+								probean.setProjectShareRatio(new BigDecimal(0.00));
+							}//
+							if(probean.getFinalShareRatio()==null){//实际所占股份百分比
+								probean.setFinalShareRatio(new BigDecimal(0.00));
+							}
 					 }
 				}
 				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());

@@ -31,8 +31,9 @@ public class ProjectVO extends PagableEntity {
     private Long industryOwn ;// '行业归属ID'   
     private BigDecimal  projectValuations ; // '初始估值',
     private BigDecimal  finalValuations ; // '实际估值',
-    private String financeStatus; // '融资状态',  
-    private BigDecimal finalContribution; // '实际投资额',
+    private String financeStatus; // '融资状态'编码
+    private String financeStatusName; //'融资状态'名称
+    private BigDecimal finalContribution ; // '实际投资额',
     private Integer  currencyUnit ; // '资金单位，0表示人民币，1表示美元，2表示英镑，3表示欧元',
     private BigDecimal projectShareRatio ; // '所占股份百分比',
     private BigDecimal finalShareRatio ;//'实际所占股份百分比',
@@ -46,7 +47,8 @@ public class ProjectVO extends PagableEntity {
     private Long updatedTime ; // '项目的最近一次修改日期',
     private Long createdTime ; // '项目的创建日期'
     private String industry;
-    private String projectStatus; // '0:跟进中,1:投后运营,2:已否决,3:已退出',
+    private String projectStatus; //项目状态编码;  '0:跟进中,1:投后运营,2:已否决,3:已退出',
+    private String projectStatusName;  //项目状态名称;
     
     //private  project_describe` text COLLATE utf8_bin COMMENT '项目的概述',
    // private project_business_model` text COLLATE utf8_bin COMMENT '项目的商业模式描述',
@@ -237,6 +239,18 @@ public class ProjectVO extends PagableEntity {
 	}
 	public void setProjectCareerline(String projectCareerline) {
 		this.projectCareerline = projectCareerline;
+	}
+	public String getFinanceStatusName() {
+		return financeStatusName;
+	}
+	public void setFinanceStatusName(String financeStatusName) {
+		this.financeStatusName = financeStatusName;
+	}
+	public String getProjectStatusName() {
+		return projectStatusName;
+	}
+	public void setProjectStatusName(String projectStatusName) {
+		this.projectStatusName = projectStatusName;
 	}
    
 }
