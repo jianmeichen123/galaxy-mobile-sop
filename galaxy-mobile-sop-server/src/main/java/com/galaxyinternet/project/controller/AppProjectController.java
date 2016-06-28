@@ -180,8 +180,27 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 					genProjectBean.getPvPage().setContent(new ArrayList<ProjectVO>());
 					genProjectBean.getPvPage().setTotal(0L);
 				}else{
-					 for(int i=0;i<genProjectBean.getPvPage().getContent().size();i++){
-			    			ProjectVO probean = genProjectBean.getPvPage().getContent().get(i);
+					Page<ProjectVO> page = genProjectBean.getPvPage();
+					List<ProjectVO> filterList = page.getContent();
+
+					 for(int i=0;i<filterList.size();i++){
+			    			ProjectVO probean = filterList.get(i);
+			    			/* =============================================
+			    			 * 临时增加针对1.3特别逻辑处理的功能，待新版本时，可注释或删除以下代码
+			    			 * =============================================
+			    			 */
+			    			 if(StringUtils.isNotBlank(probean.getProjectProgress())){
+									if (projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode())
+											&& probean.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())) {
+										filterList.remove(i);
+									}
+			    			 }
+			    			
+			    			/* =============================================
+			    			 * =============================================
+			    			 * =============================================
+			    			 */
+			    			
 							Department Department=new Department();
 							Department.setId(probean.getProjectDepartid());
 							Department queryOne = departmentService.queryOne(Department);
@@ -216,36 +235,44 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							if(StringUtils.isNotBlank(probean.getProjectStatus())){
 								probean.setProjectStatusName(DictEnum.projectStatus.getNameByCode(probean.getProjectStatus()));//项目状态编码
 							}
-//							if(probean.getProjectValuations()==null){//初始估值
-//								probean.setProjectValuations(new BigDecimal(0.00));
-//							}
-//							if(probean.getFinalValuations()==null){//实际估值
-//								probean.setFinalValuations(new BigDecimal(0.00));
-//							}
-//							if(probean.getProjectContribution()==null){//初始投资额
-//								probean.setProjectContribution(new BigDecimal(0.00));
-//							}
-//							if(probean.getFinalContribution()==null){//实际投资额
-//								probean.setFinalContribution(new BigDecimal(0.00));
-//							}//
-//							if(probean.getProjectShareRatio()==null){//所占股份百分比
-//								probean.setProjectShareRatio(new BigDecimal(0.00));
-//							}//
-//							if(probean.getFinalShareRatio()==null){//实际所占股份百分比
-//								probean.setFinalShareRatio(new BigDecimal(0.00));
-//							}
-					 }
+					 }					 
+					 page.setContent(filterList);
+					 genProjectBean.setPvPage(page);
 				}
+				//1.3原版暂时注释，待新版本时，释放=======================
+//				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+//				long gjzNum = appProjectService.queryCountProjectByParam(projectBo);
+//				projectBo.setProjectStatus(DictEnum.projectStatus.THYY.getCode());
+//				long thyyNum = appProjectService.queryCountProjectByParam(projectBo);	
+//				projectBo.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
+//				long yfjNum = appProjectService.queryCountProjectByParam(projectBo);
+				//1.3原版========================================
+				
+				/* =====================================
+				 * 【临时】变更1.3的需求逻辑，待新版本时，可注释以下代码
+				 * =====================================
+				 */
 				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
 				long gjzNum = appProjectService.queryCountProjectByParam(projectBo);
-				projectBo.setProjectStatus(DictEnum.projectStatus.THYY.getCode());
+				
+				projectBo.setProjectStatus(null);
+				projectBo.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
 				long thyyNum = appProjectService.queryCountProjectByParam(projectBo);	
+				
+				gjzNum-=thyyNum;
+							
 				projectBo.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
+				projectBo.setProjectProgress(null);
 				long yfjNum = appProjectService.queryCountProjectByParam(projectBo);
-			
+				/* =====================================
+				 * =====================================
+				 * =====================================
+				 */
+				
 				genProjectBean.setGjzCount(gjzNum);
 				genProjectBean.setThyyCount(thyyNum);
 				genProjectBean.setYfjCount(yfjNum);
+				
 			}catch(Exception ex){
 				logger.error("移动端后台查询项目列表异常", ex);
 				responseBody.setResult(new Result(Status.ERROR, "","移动端-查询项目列表后台异常"));
