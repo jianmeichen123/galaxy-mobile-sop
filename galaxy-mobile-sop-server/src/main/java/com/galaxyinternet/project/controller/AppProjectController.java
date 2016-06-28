@@ -216,24 +216,24 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							if(StringUtils.isNotBlank(probean.getProjectStatus())){
 								probean.setProjectStatusName(DictEnum.projectStatus.getNameByCode(probean.getProjectStatus()));//项目状态编码
 							}
-							if(probean.getProjectValuations()==null){//初始估值
-								probean.setProjectValuations(new BigDecimal(0.00));
-							}
-							if(probean.getFinalValuations()==null){//实际估值
-								probean.setFinalValuations(new BigDecimal(0.00));
-							}
-							if(probean.getProjectContribution()==null){//初始投资额
-								probean.setProjectContribution(new BigDecimal(0.00));
-							}
-							if(probean.getFinalContribution()==null){//实际投资额
-								probean.setFinalContribution(new BigDecimal(0.00));
-							}//
-							if(probean.getProjectShareRatio()==null){//所占股份百分比
-								probean.setProjectShareRatio(new BigDecimal(0.00));
-							}//
-							if(probean.getFinalShareRatio()==null){//实际所占股份百分比
-								probean.setFinalShareRatio(new BigDecimal(0.00));
-							}
+//							if(probean.getProjectValuations()==null){//初始估值
+//								probean.setProjectValuations(new BigDecimal(0.00));
+//							}
+//							if(probean.getFinalValuations()==null){//实际估值
+//								probean.setFinalValuations(new BigDecimal(0.00));
+//							}
+//							if(probean.getProjectContribution()==null){//初始投资额
+//								probean.setProjectContribution(new BigDecimal(0.00));
+//							}
+//							if(probean.getFinalContribution()==null){//实际投资额
+//								probean.setFinalContribution(new BigDecimal(0.00));
+//							}//
+//							if(probean.getProjectShareRatio()==null){//所占股份百分比
+//								probean.setProjectShareRatio(new BigDecimal(0.00));
+//							}//
+//							if(probean.getFinalShareRatio()==null){//实际所占股份百分比
+//								probean.setFinalShareRatio(new BigDecimal(0.00));
+//							}
 					 }
 				}
 				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
