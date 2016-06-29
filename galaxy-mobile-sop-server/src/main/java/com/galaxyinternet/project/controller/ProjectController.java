@@ -187,7 +187,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		 * if(count>0){
 		 */
 		if (null != projectList && projectList.size() > 0) {
-			responseBody.setResult(new Result(Status.ERROR, null, "用户名重复!"));
+			responseBody.setResult(new Result(Status.ERROR, null, "项目名称重复!"));
 			return responseBody;
 		}
 		User user = (User) getUserFromSession(request);
@@ -2882,5 +2882,134 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return responseBody;
 	}
+	
+	
+	
+	
+	//TODO
+	/**all
+	 * app端排期会排期(待排期,已排期)
+	 * 	 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/queryMeschedulingAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<MeetingScheduling> queryMeschedulingAll(HttpServletRequest request, @RequestBody MeetingSchedulingBo query) {
+
+		ResponseData<MeetingScheduling> responseBody = new ResponseData<MeetingScheduling>();
+			
+		try {
+			
+			
+			/**
+			 * 查询出所有的事业线
+			 */
+			List<Long> depids = new ArrayList<Long>();
+			Map<Long, Department> careerlineMap = new HashMap<Long, Department>();
+			Department d = new Department();
+			if (query.getCareline() != null) {
+				Department de = departmentService.queryById(new Long(query
+						.getCareline()));
+				careerlineMap.put(de.getId(), de);
+				depids.add(de.getId());
+			} else {
+				d.setType(1);
+				List<Department> careerlineList = departmentService
+						.queryList(d);
+				for (Department department : careerlineList) {
+					careerlineMap.put(department.getId(), department);
+					depids.add(department.getId());
+				}
+				
+			}
+			/**
+			 * 查询出相关的所有项目
+			 */
+			List<Project> projectCommonList = new ArrayList<Project>();
+			List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+			Page<MeetingScheduling> pageList = null;
+			ProjectBo mpb = new ProjectBo();
+			if (query.getKeyword() != null) {
+				mpb.setKeyword(query.getKeyword());
+			}
+			mpb.setDeptIdList(depids);
+			projectCommonList = projectService.queryList(mpb);
+			/**
+			 * 根据相关项目查找排期池数据
+			 */
+			List<Long> pids = new ArrayList<Long>();
+			if (projectCommonList != null && projectCommonList.size() > 0) {
+				for (Project pr : projectCommonList) {
+					pids.add(pr.getId());
+				}
+				query.setProjectIdList(pids);				
+				pageList = meetingSchedulingService
+						.queryMeschedulingAll(
+								query,
+								new PageRequest(query.getPageNum(), query.getPageSize()));
+				schedulingList = pageList.getContent();
+			} else {
+				
+				return responseBody;
+			} 			
+			if(schedulingList!=null && schedulingList.size()>0){	
+				List<String> ids = new ArrayList<String>();
+				for (MeetingScheduling ms : schedulingList) {
+					byte Edit = 1;
+					Integer sheduleStatus = ms.getScheduleStatus();
+					if (sheduleStatus == 2 || sheduleStatus == 3) {
+						Edit = 0;
+					}
+					if (ms.getReserveTimeStart() != null) {
+						long time = System.currentTimeMillis();
+						long startTime = ms.getReserveTimeStart().getTime();
+						if ((time > startTime) && sheduleStatus == 1) {
+							Edit = 0;
+						}
+					}
+					ms.setIsEdit(Edit);
+					ids.add(String.valueOf(ms.getProjectId()));
+				}
+	
+				/**
+				 * 查询出相关的所有项目
+				 */
+				ProjectBo pb = new ProjectBo();
+				pb.setIds(ids);
+				List<Project> projectList = projectService.queryList(pb);
+	
+				// 组装数据
+				for (MeetingScheduling ms : schedulingList) {
+					for (Project p : projectList) {
+						if (ms.getProjectId().longValue() == p.getId().longValue()) {
+							
+							ms.setProjectCode(p.getProjectCode());
+							ms.setProjectName(p.getProjectName());
+							ms.setProjectCareerline(careerlineMap.get(
+									p.getProjectDepartid()).getName());
+							ms.setCreateUname(p.getCreateUname());
+						}
+	
+					}
+				}
+				
+			}		
+			responseBody.setPageList(pageList);
+			
+		} catch (PlatformException e) {
+			responseBody.setResult(new Result(Status.ERROR, null,
+					"queryList faild"));
+			if (logger.isErrorEnabled()) {
+				logger.error("queryList ", e);
+			}
+		}
+		return responseBody;
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }
