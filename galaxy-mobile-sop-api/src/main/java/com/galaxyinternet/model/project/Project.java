@@ -101,6 +101,13 @@ public class Project extends PagableEntity {
 	//商业计划书判断是否暂无
 	private Integer BusinessPlanFilezw;
 	
+	//团队成员暂无 2016/6/29
+	private Integer teamPersonzw;
+	//股权结构暂无2016/6/29
+	private Integer shareszw;
+	
+	
+	
   	//数据转换app端修改实际的融资额度
     private String formatFinalValuations;
     private String formatFinalContribution;
@@ -641,6 +648,22 @@ public class Project extends PagableEntity {
 
 	public void setBusinessPlanFilezw(Integer businessPlanFilezw) {
 		BusinessPlanFilezw = businessPlanFilezw;
+	}
+
+	public Integer getTeamPersonzw() {
+		return teamPersonzw;
+	}
+
+	public void setTeamPersonzw(Integer teamPersonzw) {
+		this.teamPersonzw = teamPersonzw;
+	}
+
+	public Integer getShareszw() {
+		return shareszw;
+	}
+
+	public void setShareszw(Integer shareszw) {
+		this.shareszw = shareszw;
 	}
 
 	
