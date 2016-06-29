@@ -283,11 +283,11 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 				pb.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
 				thyyNum = appProjectService.queryCountProjectByParam(pb);
 					
-//				}else{
-//	
-//				}
-
-				gjzNum-=thyyNum;
+   
+                if( ! StringUtils.isNotBlank(projectBo.getProjectProgress())  && projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode())){
+                	gjzNum-=thyyNum;
+                }
+				
 							
 				projectBo.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
 				if(StringUtils.isNotBlank(projectBo.getProjectProgress())  && projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())){
