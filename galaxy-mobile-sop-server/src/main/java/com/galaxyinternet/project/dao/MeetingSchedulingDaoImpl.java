@@ -93,6 +93,20 @@ public class MeetingSchedulingDaoImpl extends BaseDaoImpl<MeetingScheduling, Lon
 		}
 	}
 
+	/**
+	 * 搜索排期集合
+	 */
+	@Override
+	public Page<MeetingScheduling> queryMeschedulingAll(MeetingScheduling query, PageRequest pageRequest) {
+		// TODO Auto-generated method stub
+				try {
+					List<MeetingScheduling> list=sqlSessionTemplate.selectList(getSqlName("selectqueryAll"), getParams(query, pageRequest));
+					return new  Page<MeetingScheduling>(list, pageRequest, this.selectCount(query));
+				} catch (Exception e) {
+					throw new DaoException(String.format("查询对象出错！语句：%s", getSqlName("selectqueryAll")), e);
+				}
+	}
+
 	
 	
 }
