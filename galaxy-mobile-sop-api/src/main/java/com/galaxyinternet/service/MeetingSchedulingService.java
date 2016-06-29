@@ -58,5 +58,12 @@ public interface MeetingSchedulingService extends BaseService<MeetingScheduling>
      * @return
      */
     public List<MeetingScheduling> getMeetingListByIds(MeetingScheduling bo);
+    /**
+     * 
+     * 搜索排期集合
+     * 
+     */
+    public Page<MeetingScheduling> queryMeschedulingAll(MeetingScheduling query,PageRequest pageRequest);
+    
 
 }
