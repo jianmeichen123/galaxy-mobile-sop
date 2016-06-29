@@ -189,7 +189,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 			    			 * 临时增加针对1.3特别逻辑处理的功能，待新版本时，可注释或删除以下代码
 			    			 * =============================================
 			    			 */
-			    			 if(StringUtils.isNotBlank(probean.getProjectProgress())){
+			    			 if(StringUtils.isNotBlank(probean.getProjectProgress()) && StringUtils.isNotBlank(projectBo.getProjectStatus()) ){
 									if (projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode())
 											&& probean.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())) {
 										filterList.remove(i);
@@ -253,6 +253,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 				 * =====================================
 				 */
 				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+				projectBo.setProjectProgress(null);
 				long gjzNum = appProjectService.queryCountProjectByParam(projectBo);
 				
 				projectBo.setProjectStatus(null);
