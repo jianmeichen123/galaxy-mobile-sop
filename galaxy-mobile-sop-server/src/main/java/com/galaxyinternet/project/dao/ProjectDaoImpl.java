@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.dao.project.ProjectDao;
 import com.galaxyinternet.framework.core.constants.SqlId;
+import com.galaxyinternet.framework.core.dao.BaseDao;
 import com.galaxyinternet.framework.core.dao.impl.BaseDaoImpl;
 import com.galaxyinternet.framework.core.exception.DaoException;
 import com.galaxyinternet.framework.core.model.Page;
@@ -84,9 +85,9 @@ public class ProjectDaoImpl extends BaseDaoImpl<Project, Long> implements Projec
 	@Override
 	public Page<ProjectVO> queryPagingList(ProjectBo query , Pageable pageable) {
 		// TODO Auto-generated method stub
-		Assert.notNull(query);	
+		Assert.notNull(query);		
 		try {
-			List<ProjectVO> contentList = sqlSessionTemplate.selectList(getSqlName("selectPagingProjectList"), getParams(query, pageable));
+			List<ProjectVO> contentList = sqlSessionTemplate.selectList( getSqlName("selectPagingProjectList"),getParams(query, pageable));
 					
 			return new  Page<ProjectVO>(contentList, pageable, this.selectCount(query));
 		} catch (Exception e) {

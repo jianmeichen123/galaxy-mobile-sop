@@ -69,6 +69,7 @@ import com.galaxyinternet.model.project.MeetingScheduling;
 import com.galaxyinternet.model.project.PersonPool;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.project.ProjectPerson;
+import com.galaxyinternet.model.project.ProjectShares;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.soptask.SopTask;
@@ -87,6 +88,7 @@ import com.galaxyinternet.service.PassRateService;
 import com.galaxyinternet.service.PersonPoolService;
 import com.galaxyinternet.service.ProjectPersonService;
 import com.galaxyinternet.service.ProjectService;
+import com.galaxyinternet.service.ProjectSharesService;
 import com.galaxyinternet.service.SopFileService;
 import com.galaxyinternet.service.SopTaskService;
 import com.galaxyinternet.service.SopVoucherFileService;
@@ -99,6 +101,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
+	@Autowired
+	private ProjectSharesService projectSharesService;
 	@Autowired
 	private ProjectService projectService;
 	@Autowired
@@ -354,6 +358,34 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					project.setBusinessPlanFilezw(0);
 				}else{
 					project.setBusinessPlanFilezw(1);
+				}
+				//团队成员的暂无
+				PersonPoolBo personPoolBo = new PersonPoolBo();
+				personPoolBo.setProjectId(Long.parseLong(pid));
+				personPoolBo.setPageNum(0);
+				personPoolBo.setPageSize(10);
+				Page<PersonPool> pagepersonList = personPoolService.queryPageListByPid(
+						personPoolBo, new PageRequest(personPoolBo.getPageNum(),
+								personPoolBo.getPageSize()));
+				if(pagepersonList==null){
+					project.setTeamPersonzw(0);
+				}else if(pagepersonList!=null&&pagepersonList.getContent().size()==0){
+					project.setTeamPersonzw(0);
+				}else{
+					project.setTeamPersonzw(1);
+				}
+				//股权结构的暂无
+				ProjectShares projectShares = new ProjectShares();
+				projectShares.setPageNum(0);
+				projectShares.setPageSize(10);
+				projectShares.setProjectId(Long.parseLong(pid));
+				Page<ProjectShares> pageshareList = projectSharesService.queryPageList(projectShares, new PageRequest(projectShares.getPageNum(), projectShares.getPageSize()));
+				if(pageshareList==null){
+					project.setShareszw(0);
+				}else if(pageshareList!=null&&pageshareList.getContent().size()==0){
+					project.setShareszw(0);
+				}else{
+					project.setShareszw(1);
 				}
 			//1.添加项目描述的暂无标识
 			if(project.getProjectDescribe()!=null){
