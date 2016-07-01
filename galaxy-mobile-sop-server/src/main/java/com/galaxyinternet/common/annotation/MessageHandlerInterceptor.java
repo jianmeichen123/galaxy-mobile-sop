@@ -102,7 +102,7 @@ public class MessageHandlerInterceptor extends HandlerInterceptorAdapter {
 							public void run() {
 								for (final LogType ltype : logTypes) {
 									if (ltype == LogType.MESSAGE) {
-										insertMessageTip(populateOperationMessage(type, user, map));
+//										insertMessageTip(populateOperationMessage(type, user, map));
 									} else if (ltype == LogType.LOG) {
 										insertOperationLog(populateOperationLog(operLogType, user, map, recordType));
 									} else if (ltype == LogType.IDEANEWS) {
