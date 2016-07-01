@@ -226,6 +226,7 @@
 				<galaxy.project.sop.endpoint>http://fxmob.qa.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
 			</properties>
 		</profile>
+
 		<profile>
 			<id>qatest</id>
 			<activation>
