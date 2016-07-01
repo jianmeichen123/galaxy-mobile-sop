@@ -404,8 +404,9 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 			GeneralProjectVO genProjectBean = new GeneralProjectVO();
 			try{
 				System.out.println("#############项目名称:  " + projectBo.getProjectName());
-//				System.out.println("###################项目进度编码:  "+projectBo.getProjectProgress());
-				System.out.println("###################项目类型:  "+projectBo.getProjectType() );			
+//     			System.out.println("###################项目进度编码:  "+projectBo.getProjectProgress());
+//				System.out.println("###################项目类型:  "+projectBo.getProjectType() );		
+				System.out.println("###################融资状态:  "+projectBo.getFinanceStatus() );			
 			}catch(Exception ex){
 				logger.error("移动端后台查询项目列表异常", ex);
 				responseBody.setResult(new Result(Status.ERROR, "","移动端-查询项目列表后台异常"));
