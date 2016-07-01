@@ -43,6 +43,7 @@ public class ProjectBo extends Project {
 	
 	private String thyyFlag;
 	
+	private Integer sflag;
 	
 	public String getProType() {
 		return proType;
@@ -187,4 +188,16 @@ public class ProjectBo extends Project {
 	public void setThyyFlag(String thyyFlag) {
 		this.thyyFlag = thyyFlag;
 	}
+
+	public Integer getSflag() {
+		return sflag;
+	}
+
+	public void setSflag(Integer sflag) {
+		this.sflag = sflag;
+	}
+	
+	
+	
+	
 }
