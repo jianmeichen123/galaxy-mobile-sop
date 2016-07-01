@@ -251,33 +251,33 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 				if ( StringUtils.isNotBlank(projectBo.getProjectStatus()) && projectBo.getProjectStatus().equals(DictEnum.projectStatus.YFJ.getCode()) ){
 					
 					if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){				
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}	
 					}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}	
 					}	
 				} else if ( StringUtils.isNotBlank(projectBo.getProjectStatus())  && projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode()) ){
 					   
 						if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){				
-							if( gjzNum!=0 && gjzNum>thyyNum ){
+							if( gjzNum!=0 && gjzNum>=thyyNum ){
 								gjzNum -= thyyNum;
 							}	
 						}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
-							if( gjzNum!=0 && gjzNum>thyyNum ){
+							if( gjzNum!=0 && gjzNum>=thyyNum ){
 								gjzNum -= thyyNum;
 							}	
 						}
 						
 				}else if ( StringUtils.isNotBlank(projectBo.getThyyFlag()) && projectBo.getThyyFlag().equals("1") ){					
 					if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}
 					}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}	
 					}
