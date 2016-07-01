@@ -3,8 +3,8 @@
   <parent>
     <groupId>com.galaxyinternet</groupId>
     <artifactId>galaxy-mobile-sop</artifactId>
-<!--     <version>1.0.3.mobile-SNAPSHOT</version> -->
-   <version>1.0.3.mobile</version>
+    <version>1.0.3.mobile-SNAPSHOT</version>
+<!--    <version>1.0.3.mobile</version> -->
   </parent>
   <artifactId>galaxy-mobile-sop-server</artifactId>
   <packaging>war</packaging>
@@ -14,8 +14,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.2.1.RELEASE</spring.version>
-<!-- 		<dependency.project>1.0.3.mobile-SNAPSHOT</dependency.project> -->
-            <dependency.project>1.0.3.mobile</dependency.project>  
+		<dependency.project>1.0.3.mobile-SNAPSHOT</dependency.project>
+<!--             <dependency.project>1.0.3.mobile</dependency.project>   -->
 	</properties>
 	
 	<repositories>

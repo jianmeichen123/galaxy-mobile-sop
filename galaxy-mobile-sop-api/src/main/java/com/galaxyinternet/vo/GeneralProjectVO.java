@@ -21,7 +21,7 @@ public class GeneralProjectVO extends BaseEntity{
    /** 已否决的项目总数  */	
    private Long yfjCount;
    /** 项目列表分页Bean */
-   private Page<ProjectVO> pvPage;
+   private Page<ProjectVO> pvPage;//
    
 	public Long getGjzCount() {
 		return gjzCount;
