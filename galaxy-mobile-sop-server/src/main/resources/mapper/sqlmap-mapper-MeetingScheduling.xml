@@ -47,7 +47,14 @@
 					</foreach>
 				</if>
 				<!-- 模糊查询 -->
-				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->
+				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->			 						
+				
+				<if test="startTime != null and endTime != null">				
+				 	and reserve_time_start				 	
+						BETWEEN STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )
+						AND STR_TO_DATE(CONCAT(#{endTime} , ' 23:59:59') ,'%Y-%m-%d %H:%i:%s' )		 							 
+				</if> 
+			 								 																				 																
 			</trim>
 		</where>
 		<if test="sorting != null">order by ${sorting}</if> 
@@ -57,7 +64,30 @@
 			limit #{offset}, #{limit}
 		</if>
 	</sql>
-	
+	<!-- 排期会搜索 -->
+	<sql id="Base_Where_Clausee">
+		<where>
+			<trim prefixOverrides="and">			   
+				<if test="projectIdList != null">
+					 project_id IN
+					<foreach collection="projectIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				AND (schedule_status = 0 OR schedule_status=1 )
+				<!-- 模糊查询 -->
+				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->			 						
+			 								 																				 																
+			</trim>
+		</where>
+		<if test="sorting != null">order by ${sorting}</if> 
+		<if test="sorting == null">order by meeting_count desc,meeting_date desc</if> 
+		
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</sql>
 	<!-- 查询总数 -->
 	<select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
 		select count(id) from sop_meeting_scheduling
@@ -70,6 +100,13 @@
 		<include refid="Base_Column_List" />
 		from sop_meeting_scheduling
 		<include refid="Base_Where_Clause" />
+	</select>
+	<!-- 新增排期列表检索 -->
+	<select id="selectqueryAll" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from sop_meeting_scheduling
+		<include refid="Base_Where_Clausee" />
 	</select>
 	<!-- 查询top5立项会 -->
     <select id="selectTop5ProjectMeetingByType" resultMap="BaseResultMap" parameterType="java.lang.String">

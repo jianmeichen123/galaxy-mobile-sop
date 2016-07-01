@@ -180,28 +180,172 @@
 	</sql>
 	
 	<select id="selectPagingProjectList"  resultType="com.galaxyinternet.vo.ProjectVO"  parameterType="java.util.Map">
-				SELECT 
-						  id as id , 
-						  project_name as projectName,											
-						  project_type as projectType,
-						  project_share_ratio as  projectShareRatio,
-						  project_progress as projectProgress ,
-						  project_careerline  as projectCareerline,
-						  project_departId as  projectDepartid,
-						  created_time as createdTime
-				FROM  sop_project						  
+				       SELECT 
+							   id  as id ,
+							   project_name as projectName,
+							   project_code  as   projectCode,
+							   idea_id as  ideaId ,
+							   project_type   as  projectType,
+							   stock_transfer as  stockTransfer ,
+							   project_careerline as  projectCareerline ,
+							   project_departId  as projectDepartid ,
+							   industry_own as  industryOwn,
+							   project_valuations  as  projectValuations ,
+							   final_valuations as finalValuations ,
+							   finance_status   as  financeStatus,
+							   project_contribution as projectContribution ,
+							   final_contribution  as  finalContribution,
+							   currency_unit  as  currencyUnit,
+							   project_share_ratio  as  projectShareRatio ,
+							   final_share_ratio  as  finalShareRatio ,
+							   project_company   as  projectCompany,
+							   formation_date  as  formationDate ,
+							   company_legal  as  companyLegal ,
+							   project_company_code  as  projectCompanyCode,
+							   create_uid  as  createUid,
+							   create_uname  as  createUname ,
+							   create_uposition  as createUposition ,
+							   project_progress  as projectProgress ,
+							   project_status  as  projectStatus ,					
+							   updated_time  as updatedTime,
+							   created_time   as  createdTime
+						FROM
+							    sop_project				  
 				<include refid="Base_Where_Clause" />				        	
 	</select>
 	
 	<select id="selectCountRecordByParam"  resultType="java.lang.Long"  parameterType="com.galaxyinternet.bo.project.ProjectBo">
 	          	select count(id) from sop_project
-	          	<where>
-		          	<trim prefixOverrides="and">
-						  <if test="projectDepartid != null" >and  project_departId = #{projectDepartid,jdbcType=BIGINT} </if>
-						  <if test="createUid != null" > and create_uid = #{createUid,jdbcType=BIGINT} </if>
-						 <if test="projectStatus != null" > and project_status = #{projectStatus,jdbcType=VARCHAR} </if>
-					 </trim>
-				</where>
+	          	
+<!-- 	          	<include refid="Base_Where_Clause" /> -->
+<!-- 	          	<where> -->
+<!-- 		          	<trim prefixOverrides="and"> -->
+<!-- 						  <if test="projectDepartid != null" >and  project_departId = #{projectDepartid,jdbcType=BIGINT} </if> -->
+<!-- 						  <if test="createUid != null" > and create_uid = #{createUid,jdbcType=BIGINT} </if> -->
+<!-- 						 <if test="projectStatus != null" > and project_status = #{projectStatus,jdbcType=VARCHAR} </if> -->
+<!-- 					 </trim> -->
+<!-- 				</where> -->
+                 <where>
+			<trim prefixOverrides="and">
+			  <if test="id != null"> and id =#{id}</if>
+			   <if test="createUid != null" > and create_uid = #{createUid,jdbcType=BIGINT} </if>
+			    <if test="projectProgress != null" > and project_progress = #{projectProgress,jdbcType=VARCHAR} </if>
+			   <if test="projectType != null" > and project_type = #{projectType,jdbcType=VARCHAR} </if>
+			  
+		      
+		      <if test="projectDepartid != null" > and project_departId = #{projectDepartid,jdbcType=BIGINT} </if>
+			  <if test="deptIdList != null">
+					AND project_departId IN
+					<foreach collection="deptIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+			  </if>
+		      <if test="industryOwn != null" > and industry_own = #{industryOwn,jdbcType=BIGINT} </if>
+		      <if test="stockTransfer != null" > and stock_transfer = #{stockTransfer,jdbcType=INTEGER} </if>
+		      
+		      <if test="projectValuations != null" > and project_valuations = #{projectValuations,jdbcType=DECIMAL} </if>
+		      <if test="finalValuations != null" > and final_valuations = #{finalValuations,jdbcType=DECIMAL} </if>
+		      <if test="financeStatus != null" > and finance_status = #{financeStatus,jdbcType=VARCHAR} </if>
+		     
+		      <if test="projectContribution != null" >  and project_contribution = #{projectContribution,jdbcType=DECIMAL} </if>
+		      <if test="finalContribution != null" >  and final_contribution = #{finalContribution,jdbcType=DECIMAL} </if>
+		      <if test="currencyUnit != null" > and currency_unit = #{currencyUnit,jdbcType=INTEGER} </if>
+		      <if test="projectShareRatio != null" > and project_share_ratio = #{projectShareRatio,jdbcType=DECIMAL} </if>
+		      <if test="finalShareRatio != null" > and final_share_ratio = #{finalShareRatio,jdbcType=DECIMAL} </if>
+		      <if test="projectCareerline != null" > and project_careerline = #{projectCareerline,jdbcType=VARCHAR} </if>
+		      <if test="projectCompany != null" > and project_company = #{projectCompany,jdbcType=VARCHAR} </if>
+		      <if test="formationDate != null" > and formation_date = #{formationDate,jdbcType=BIGINT} </if>
+		      <if test="projectCompanyCode != null" > and project_company_code = #{projectCompanyCode,jdbcType=VARCHAR} </if>
+		      <if test="companyLegal != null" > and company_legal = #{companyLegal,jdbcType=VARCHAR} </if>
+		      
+		      <if test="createUposition != null" > and create_uposition = #{createUposition,jdbcType=VARCHAR} </if>
+		     
+		      <if test="projectStatus != null" > and project_status = #{projectStatus,jdbcType=VARCHAR} </if>
+		      <if test="updatedTime != null" > and updated_time = #{updatedTime,jdbcType=BIGINT} </if>
+		      <if test="createdTime != null" > and created_time = #{createdTime,jdbcType=BIGINT} </if>
+		      
+		      <if test="startTime != null"> <![CDATA[  and created_time >= #{startTime,jdbcType=BIGINT} ]]> </if>
+			  <if test="endTime != null"> <![CDATA[ and created_time <= #{endTime,jdbcType=BIGINT} ]]> </if>
+		      
+		      <if test="projectDescribe != null" > and project_describe = #{projectDescribe,jdbcType=LONGVARCHAR} </if>
+		      <if test="projectBusinessModel != null" > and project_business_model = #{projectBusinessModel,jdbcType=LONGVARCHAR} </if>
+		      <if test="companyLocation != null" > and company_location = #{companyLocation,jdbcType=LONGVARCHAR} </if>
+		      <if test="userPortrait != null" > and user_portrait = #{userPortrait,jdbcType=LONGVARCHAR} </if>
+		      <if test="prospectAnalysis != null" > and prospect_analysis = #{prospectAnalysis,jdbcType=LONGVARCHAR} </if>
+				
+				
+			  <if test="projectName != null" > and project_name = #{projectName,jdbcType=VARCHAR} </if>
+			  <if test="createUname != null" > and create_uname = #{createUname,jdbcType=VARCHAR} </if>
+		      <if test="projectCode != null" > and project_code = #{projectCode,jdbcType=VARCHAR} </if>
+				<!-- 模糊查询 -->
+				<if test="keyword != null">
+					<choose>
+						<when test="flagkeyword=='concatcode'" >
+							and (project_name like CONCAT("%",#{keyword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>
+							or create_uname like CONCAT("%",#{keyword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>
+							)
+						</when>
+						<when test="flagkeyword==null">
+							and (project_name like CONCAT("%",#{keyword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>
+							or project_code like CONCAT("%",#{keyword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>
+							)
+						</when>
+						<when test="flagkeyword=='onlyName'">
+							and project_name like CONCAT("%",#{keyword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>
+						</when>
+					</choose>
+				</if>
+				<!--根据计划额度查询  -->
+				<if test="rComplany != null"> 
+					<if test="aComplany != null">
+					 	and project_contribution <![CDATA[ >=]]> #{aComplany,jdbcType=DECIMAL} 					 							 
+					</if> 
+					<if test="bComplany != null">
+						and project_contribution  &lt; #{bComplany,jdbcType=DECIMAL} 
+					</if>								 												
+				</if>
+				
+				<!-- 过滤已关闭项目 -->
+				<if test="resultCloseFilter != null">
+					AND project_status !=  #{resultCloseFilter,jdbcType=VARCHAR}
+				</if>
+				<if test="ids != null">
+					AND id IN
+					<foreach collection="ids" index="item" item="item" open="("
+	                      separator="," close=")">
+	                          #{item}
+                    </foreach>
+				</if>
+				<if test="projectProgressList != null">
+					AND project_progress IN
+					<foreach collection="projectProgressList" index="item" item="item" open="(" separator="," close=")">
+	                          #{item}
+                    </foreach>
+				</if>
+				<if test="fromIdea == true">
+					and idea_id is not null
+				</if>
+				<if test="ideaId != null">
+					and idea_id = #{ideaId}
+				</if>
+			</trim>
+		</where>  
 	</select>
 	
 	<!-- 查询总数 -->

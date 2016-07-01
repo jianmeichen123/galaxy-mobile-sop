@@ -36,5 +36,10 @@ public interface MeetingSchedulingDao extends BaseDao<MeetingScheduling, Long> {
      * @return
      */
     public List<MeetingScheduling> getMeetingListByIds(MeetingScheduling bo);
-
+    
+    /**
+     * 新增搜索排期会排期
+     * 
+     */
+    public Page<MeetingScheduling> queryMeschedulingAll(MeetingScheduling query,PageRequest pageRequest);
 }

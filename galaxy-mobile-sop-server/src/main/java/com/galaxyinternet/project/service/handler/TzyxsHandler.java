@@ -21,6 +21,7 @@ import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.soptask.SopTask;
+import com.galaxyinternet.operationMessage.handler.StageChangeHandler;
 
 /**
  * 上传投资意向书/投资意向书的签署证明
@@ -51,6 +52,7 @@ public class TzyxsHandler implements Handler {
 	@Transactional
 	public SopResult handler(ViewQuery query, Project project) throws Exception {
 		ProjectQuery q = (ProjectQuery) query;
+		String messageType = null;
 		if(q.getVoucherType() != null && q.getVoucherType().intValue() == 1){
 			//保存签署证明记录信息
 			SopVoucherFile qvf = new SopVoucherFile();
@@ -82,6 +84,7 @@ public class TzyxsHandler implements Handler {
 			project.setProjectProgress(DictEnum.projectProgress.尽职调查.getCode());
 			project.setUpdatedTime((new Date()).getTime());
 			projectDao.updateById(project);
+			messageType = StageChangeHandler._6_6_;
 			
 			SopTask task = new SopTask();
 			//条件
@@ -132,7 +135,7 @@ public class TzyxsHandler implements Handler {
 				task.setDepartmentId(SopConstant.DEPARTMENT_CW_ID);
 				sopTaskDao.insert(task);
 			}
-			return new SopResult(Status.OK,null,"上传投资意向书签署证明成功!",UrlNumber.six);
+			return new SopResult(Status.OK,null,"上传投资意向书签署证明成功!",UrlNumber.six,messageType);
 		}else{
 			//投资意向书
 			SopFile qf = new SopFile();

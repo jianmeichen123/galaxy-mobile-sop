@@ -128,6 +128,7 @@ public class SopTaskProcessController extends BaseControllerImpl<SopTask, SopTas
 		return mv;
 	}
 	
+	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
 	@RequestMapping("/uploadFile")
 	public Result uploadFile(SopFile bo, HttpServletRequest request)
@@ -224,6 +225,7 @@ public class SopTaskProcessController extends BaseControllerImpl<SopTask, SopTas
 	 * @param id 传入sop_file.id；
 	 * @return
 	 */
+	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
 	@RequestMapping(value = "/taskUrged", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<User> taskUrged(Long id,HttpServletRequest request)

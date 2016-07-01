@@ -2,9 +2,7 @@ package com.galaxyinternet.project.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,6 +136,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	   	 * &nbsp;1.项目状态 projectStatus<br>
 	   	 * &nbsp;2.当前页号pageNum<br>
 	   	 * &nbsp;3.每页记录数pageSize<br>
+	   	 * &nbsp;4.其它字段项目表字段，暂不列出
 	   	 *  版本（1.3）<br>
 	   	 * @param request
 	   	 * @param project
@@ -164,29 +163,187 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 					projectBo.setCreateUid(user.getId()); //项目创建者
 				}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
 					projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
-				}		
+				}				
+				/* =====================================
+				 * 【临时】变更1.3的需求逻辑，待新版本时，可注释以下代码
+				 * =====================================
+				 */
+				
+				//===================================GJZ Count
+				ProjectBo gjzPb = new ProjectBo();
+				gjzPb.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+				if(projectBo.getCreateUid()!=null){
+					gjzPb.setCreateUid(projectBo.getCreateUid());
+				}
+				if (projectBo.getProjectDepartid()!=null){
+					gjzPb.setProjectDepartid(projectBo.getProjectDepartid());
+				}
+				if(StringUtils.isNotBlank(projectBo.getFinanceStatus())){
+					gjzPb.setFinanceStatus(projectBo.getFinanceStatus());
+				}
+				if(StringUtils.isNotBlank(projectBo.getProjectType())){
+					gjzPb.setProjectType(projectBo.getProjectType());
+				}
+				if(StringUtils.isNotBlank(projectBo.getProjectProgress())){
+					if(projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())){
+						gjzPb.setProjectProgress(null);
+					}else{
+						gjzPb.setProjectProgress(projectBo.getProjectProgress());
+					}	
+				}
+				long gjzNum = appProjectService.queryCountProjectByParam(gjzPb);
+				//===================================GJZ Count
+				
+				//===================================YFJ Count
+				ProjectBo yfjPb = new ProjectBo();
+				yfjPb.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
+				if(projectBo.getCreateUid()!=null){
+					yfjPb.setCreateUid(projectBo.getCreateUid());
+				}
+				if (projectBo.getProjectDepartid()!=null){
+					yfjPb.setProjectDepartid(projectBo.getProjectDepartid());
+				}
+				if(StringUtils.isNotBlank(projectBo.getFinanceStatus())){
+					yfjPb.setFinanceStatus(projectBo.getFinanceStatus());
+				}
+				if(StringUtils.isNotBlank(projectBo.getProjectType())){
+					yfjPb.setProjectType(projectBo.getProjectType());
+				}
+				if(StringUtils.isNotBlank(projectBo.getProjectProgress())){
+					if(projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())){
+						yfjPb.setProjectProgress(null);
+					}else{
+						yfjPb.setProjectProgress(projectBo.getProjectProgress());
+					}				
+				}
+				long yfjNum = appProjectService.queryCountProjectByParam(yfjPb);
+				//===================================YFJ Count
+				
+				//===================================thyy Count
+				ProjectBo thyyPb = new ProjectBo();
+//				thyyPb.setProjectStatus(DictEnum.projectStatus.THYY.getCode());
+				if(projectBo.getCreateUid()!=null){
+					thyyPb.setCreateUid(projectBo.getCreateUid());
+				}
+				if (projectBo.getProjectDepartid()!=null){
+					thyyPb.setProjectDepartid(projectBo.getProjectDepartid());
+				}
+				if(StringUtils.isNotBlank(projectBo.getFinanceStatus())){
+					thyyPb.setFinanceStatus(projectBo.getFinanceStatus());
+				}
+				if(StringUtils.isNotBlank(projectBo.getProjectType())){
+					thyyPb.setProjectType(projectBo.getProjectType());
+				}
+				thyyPb.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());				
+				long thyyNum = appProjectService.queryCountProjectByParam(thyyPb);
+				//===================================thyy Count  
+				
+//			if (!StringUtils.isNotBlank(projectBo.getProjectProgress())
+//					&& StringUtils.isNotBlank(projectBo.getProjectStatus())
+//					&& projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode())) {
+//				
+//				if( gjzNum!=0 && gjzNum>thyyNum ){
+//					gjzNum -= thyyNum;
+//				}
+//				
+//			}
+				
+				if ( StringUtils.isNotBlank(projectBo.getProjectStatus()) && projectBo.getProjectStatus().equals(DictEnum.projectStatus.YFJ.getCode()) ){
+					
+					if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){				
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
+							gjzNum -= thyyNum;
+						}	
+					}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
+							gjzNum -= thyyNum;
+						}	
+					}	
+				} else if ( StringUtils.isNotBlank(projectBo.getProjectStatus())  && projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode()) ){
+					   
+						if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){				
+							if( gjzNum!=0 && gjzNum>=thyyNum ){
+								gjzNum -= thyyNum;
+							}	
+						}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
+							if( gjzNum!=0 && gjzNum>=thyyNum ){
+								gjzNum -= thyyNum;
+							}	
+						}
+						
+				}else if ( StringUtils.isNotBlank(projectBo.getThyyFlag()) && projectBo.getThyyFlag().equals("1") ){					
+					if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
+							gjzNum -= thyyNum;
+						}
+					}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
+							gjzNum -= thyyNum;
+						}	
+					}
+					 
+				}
+				
+				/*=====================================
+				 * =====================================
+				 */              
+//				projectBo.setSorting("project_type ASC,project_progress DESC,created_time DESC,updated_time DESC ");	
+				if(StringUtils.isNotBlank(projectBo.getThyyFlag()) && projectBo.getThyyFlag().equals("1")){
+					projectBo.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
+				}
 				List<Order> orderList = new ArrayList<Order>();
-				orderList.add(new Order(Direction.ASC, "project_type"));
-				orderList.add(new Order(Direction.DESC, "project_progress"));
-				orderList.add(new Order(Direction.DESC, "created_time"));
 				orderList.add(new Order(Direction.DESC, "updated_time"));
-				Sort sort = new Sort(orderList);
-//				projectBo.setSorting("project_type ASC,project_progress DESC,created_time DESC,updated_time DESC ");		
+				orderList.add(new Order(Direction.DESC, "created_time"));			
+//				orderList.add(new Order(Direction.ASC, "project_type"));
+//				orderList.add(new Order(Direction.DESC, "project_progress"));
+				Sort sort = new Sort(orderList);	
 				genProjectBean = appProjectService.queryPagingProjectList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
 				
 				if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
 					genProjectBean.getPvPage().setContent(new ArrayList<ProjectVO>());
 					genProjectBean.getPvPage().setTotal(0L);
 				}else{
-					 for(int i=0;i<genProjectBean.getPvPage().getContent().size();i++){
-			    			ProjectVO probean = genProjectBean.getPvPage().getContent().get(i);
+					Page<ProjectVO> page = genProjectBean.getPvPage();
+					List<ProjectVO> filterList = page.getContent();
+                    
+				   List<ProjectVO> filterIndex = new ArrayList<ProjectVO>();
+					 for(int i=0;i<filterList.size();i++){
+			    			ProjectVO probean = filterList.get(i);
+			    			/* =============================================
+			    			 * 临时增加针对1.3特别逻辑处理的功能，待新版本时，可注释或删除以下代码
+			    			 * =============================================
+			    			 */
+			    			 if(StringUtils.isNotBlank(probean.getProjectProgress()) && StringUtils.isNotBlank(projectBo.getProjectStatus()) ){
+									if (projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode())
+											&& probean.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())) {
+										
+										filterIndex .add(probean) ;										
+									}
+			    			 }		    			
+			    			/* =============================================
+			    			 * =============================================
+			    			 * =============================================
+			    			 */
+			    			
 							Department Department=new Department();
-							Department.setId(probean.getProjectDepartid());
-							Department queryOne = departmentService.queryOne(Department);
-							if(queryOne!=null){
-								probean.setProjectCareerline(queryOne.getName());
-							}else{
-								probean.setProjectCareerline("");
+							if(StringUtils.isNotBlank(probean.getProjectDepartid().toString())){
+								Department.setId(probean.getProjectDepartid());
+								Department queryOne = departmentService.queryOne(Department);
+								if(queryOne!=null){
+									probean.setProjectCareerline(queryOne.getName());
+								}else{
+									probean.setProjectCareerline("");
+								}
+							}												
+							Department dt=new Department();
+							if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+								dt.setId(probean.getIndustryOwn());
+								Department queryDep = departmentService.queryOne(dt);
+								if(queryDep!=null){
+									probean.setIndustry(queryDep.getName());
+								}else{
+									probean.setIndustry("");
+								}
 							}
 						    /*
 						     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
@@ -194,24 +351,62 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 						     * 新项目保存时，上述字段值数字（未有公式运算或转换处理），全是直接存储
 						     */
 							if(StringUtils.isNotBlank(probean.getProjectType())){
-								probean.setProjectTypeName(DictEnum.projectType.getNameByCode(probean.getProjectType()));
+								probean.setProjectTypeName(DictEnum.projectType.getNameByCode(probean.getProjectType()));//项目类型名称
 							}
 							if(StringUtils.isNotBlank(probean.getProjectProgress())){
-								probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));
+								probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));//项目进度名称
+							}	
+							if(StringUtils.isNotBlank(probean.getFinanceStatus())){
+								probean.setFinanceStatusName(DictEnum.financeStatus.getNameByCode(probean.getFinanceStatus()));//融资状态名称
 							}
-							
+							if(StringUtils.isNotBlank(probean.getProjectStatus())){
+								probean.setProjectStatusName(DictEnum.projectStatus.getNameByCode(probean.getProjectStatus()));//项目状态编码
+							}
+					 }	
+					 if(filterIndex!=null && filterIndex.size()>0){
+						 
+						 for(int j=0; j<filterIndex.size(); j++){
+							 filterList.remove( filterIndex.get(j) );
+						 }
+						
 					 }
+					 page.setContent(filterList);
+					 genProjectBean.setPvPage(page);
 				}
-				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
-				long gjzNum = appProjectService.queryCountProjectByParam(projectBo);
-				projectBo.setProjectStatus(DictEnum.projectStatus.THYY.getCode());
-				long thyyNum = appProjectService.queryCountProjectByParam(projectBo);	
-				projectBo.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
-				long yfjNum = appProjectService.queryCountProjectByParam(projectBo);
-			
+				//1.3原版暂时注释，待新版本时，释放=======================
+//				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+//				long gjzNum = appProjectService.queryCountProjectByParam(projectBo);
+//				projectBo.setProjectStatus(DictEnum.projectStatus.THYY.getCode());
+//				long thyyNum = appProjectService.queryCountProjectByParam(projectBo);	
+//				projectBo.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
+//				long yfjNum = appProjectService.queryCountProjectByParam(projectBo);
+				//1.3原版========================================
+				
 				genProjectBean.setGjzCount(gjzNum);
 				genProjectBean.setThyyCount(thyyNum);
 				genProjectBean.setYfjCount(yfjNum);
+				
+			}catch(Exception ex){
+				logger.error("移动端后台查询项目列表异常", ex);
+				responseBody.setResult(new Result(Status.ERROR, "","移动端-查询项目列表后台异常"));
+				return responseBody;
+			}
+			responseBody.setEntity(genProjectBean);
+			responseBody.setResult(new Result(Status.OK, ""));
+			return responseBody;
+		}
+		
+		@ResponseBody
+		@RequestMapping(value = "/countThyySum",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseData<GeneralProjectVO> queryCountThyyProjectListByParam(HttpServletRequest request, @RequestBody ProjectBo projectBo){
+			User user = (User) getUserFromSession(request);			
+			ResponseData<GeneralProjectVO> responseBody = new ResponseData<GeneralProjectVO>();
+			GeneralProjectVO genProjectBean = new GeneralProjectVO();
+			try{
+				System.out.println("#############项目名称:  " + projectBo.getProjectName());
+//     			System.out.println("###################项目进度编码:  "+projectBo.getProjectProgress());
+//				System.out.println("###################项目类型:  "+projectBo.getProjectType() );		
+				System.out.println("###################融资状态:  "+projectBo.getFinanceStatus() );			
 			}catch(Exception ex){
 				logger.error("移动端后台查询项目列表异常", ex);
 				responseBody.setResult(new Result(Status.ERROR, "","移动端-查询项目列表后台异常"));

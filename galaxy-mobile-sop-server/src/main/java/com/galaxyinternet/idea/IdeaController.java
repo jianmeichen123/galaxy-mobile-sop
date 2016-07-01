@@ -463,11 +463,27 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 			responseBody.setResult(new Result(Status.ERROR, null, "缺失必要的参数!"));
 			return responseBody;
 		}
+		
+		
 		UrlNumber urlNum=null;
 		User user = (User) request.getSession().getAttribute(Constants.SESSION_USER_KEY);
 		try {
-			idea.setClaimantUid(user.getId());
-			idea.setClaimantUname(user.getRealName());
+			Idea queryIdea = ideaService.queryById(idea.getId());
+			//如果创意已经放弃则返回
+			if(DictEnum.IdeaProgress.CYLGZ.getCode().equals(queryIdea.getIdeaProgress())){
+				responseBody.setResult(new Result(Status.ERROR, "CYLGZ", "创意已经放弃!"));
+				return responseBody;
+			}
+			if(queryIdea !=null && queryIdea.getIdeaProgress()!=null){
+				if(queryIdea.getIdeaProgress().equals(SopConstant.IDEA_PROGRESS_GZ)){
+					responseBody.setResult(new Result(Status.ERROR, null, "操作过期"));
+					return responseBody;
+				}
+			}else{
+				responseBody.setResult(new Result(Status.ERROR, null, "创意信息错误"));
+				return responseBody;
+			}
+			idea.setGiveUpId(user.getId());
 			int queryById = ideaService.updateById(idea);
 		    urlNum=UrlNumber.one;
 			if(queryById<=0){
@@ -945,7 +961,7 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 			 * if(count>0){
 			 */
 			if (null != projectList && projectList.size() > 0) {
-				resp.setResult(new Result(Status.ERROR, null, "和已有项目名称重复!"));
+				resp.setResult(new Result(Status.ERROR, "cjxmcf", "和已有项目名称重复!"));
 				return resp;
 			}
 			

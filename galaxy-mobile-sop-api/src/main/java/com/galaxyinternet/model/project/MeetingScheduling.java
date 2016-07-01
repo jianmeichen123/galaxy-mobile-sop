@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.galaxyinternet.common.enums.DictEnum;
 import com.galaxyinternet.framework.core.model.PagableEntity;
 import com.galaxyinternet.framework.core.utils.DateUtil;
 
@@ -67,6 +68,9 @@ public class MeetingScheduling extends PagableEntity {
 	
 	private List<Long> ids;//排期id集合
 
+	private String meetingTypeStr;
+	
+	
 	public Timestamp getReserveTimeEnd() {
 		if (StringUtils.isNotBlank(this.reserveTimeEndStr)) {
 			Date tmp = null;
@@ -170,7 +174,9 @@ public class MeetingScheduling extends PagableEntity {
 
 	public void setMeetingType(String meetingType) {
 		this.meetingType = meetingType == null ? null : meetingType.trim();
-    	
+		if(meetingType!=null){
+			this.meetingTypeStr=DictEnum.meetingType.getNameByCode(meetingType);
+		}
 		
 	}
 
@@ -340,5 +346,11 @@ public class MeetingScheduling extends PagableEntity {
 	public void setIds(List<Long> ids) {
 		this.ids = ids;
 	}
-    
+
+	//meettypeStr
+	
+	public String getMeetingTypeStr() {
+		return meetingTypeStr;
+	}
+
 }

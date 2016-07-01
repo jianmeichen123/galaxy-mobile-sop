@@ -68,11 +68,117 @@ public class Project extends PagableEntity {
     private List<Long> deptIdList;
 	private Long startTime; 
 	private Long endTime;
+	/**
+	 * app端新增判断暂无的字段
+	 * 		1.项目概述:projectDescribe
+			2.公司定位:companyLocation
+			3.用户画像:userPortrait
+			4.产品服务:projectBusinessModel
+			5.竟情分析:prospectAnalysis                 1表示有数据   0 表示无数据 
+			6.运营数据:operationalData
+			7.行业分析:industryAnalysis
+			8.下一轮融资路径:nextFinancingSource
+	 */
+	//项目概述判断是否是暂无
+	private Integer projectDescribezw;
+	//公司定位判断是否是暂无
+	private Integer companyLocationzw;
+	//用户画像判断是否是暂无
+	private Integer userPortraitzw;
+	//产品服务判断是否是暂无
+	private Integer projectBusinessModelzw;
+	//竟情分析判断是否是暂无
+	private Integer prospectAnalysiszw;
+	
+	//运营数据判断是否是暂无
+	private Integer operationalDatazw;
+	
+	
+	//行业分析判断是否是暂无
+	private Integer industryAnalysiszw;
+	//下一轮融资路径判断是否是暂无
+	private Integer nextFinancingSourcezw;
+	//商业计划书判断是否暂无
+	private Integer BusinessPlanFilezw;
+	
+	//团队成员暂无 2016/6/29
+	private Integer teamPersonzw;
+	//股权结构暂无2016/6/29
+	private Integer shareszw;
 	
 	
 	
+  	//数据转换app端修改实际的融资额度
+    private String formatFinalValuations;
+    private String formatFinalContribution;
+
+    private String formatFinalShareRatio;
 	
-    public Long getId() {
+    public Integer getProjectDescribezw() {
+		return projectDescribezw;
+	}
+
+	public void setProjectDescribezw(Integer projectDescribezw) {
+		this.projectDescribezw = projectDescribezw;
+	}
+
+	public Integer getCompanyLocationzw() {
+		return companyLocationzw;
+	}
+
+	public void setCompanyLocationzw(Integer companyLocationzw) {
+		this.companyLocationzw = companyLocationzw;
+	}
+
+	public Integer getUserPortraitzw() {
+		return userPortraitzw;
+	}
+
+	public void setUserPortraitzw(Integer userPortraitzw) {
+		this.userPortraitzw = userPortraitzw;
+	}
+
+	public Integer getProjectBusinessModelzw() {
+		return projectBusinessModelzw;
+	}
+
+	public void setProjectBusinessModelzw(Integer projectBusinessModelzw) {
+		this.projectBusinessModelzw = projectBusinessModelzw;
+	}
+
+	public Integer getProspectAnalysiszw() {
+		return prospectAnalysiszw;
+	}
+
+	public void setProspectAnalysiszw(Integer prospectAnalysiszw) {
+		this.prospectAnalysiszw = prospectAnalysiszw;
+	}
+
+	public Integer getOperationalDatazw() {
+		return operationalDatazw;
+	}
+
+	public void setOperationalDatazw(Integer operationalDatazw) {
+		this.operationalDatazw = operationalDatazw;
+	}
+
+	public Integer getIndustryAnalysiszw() {
+		return industryAnalysiszw;
+	}
+
+	public void setIndustryAnalysiszw(Integer industryAnalysiszw) {
+		this.industryAnalysiszw = industryAnalysiszw;
+	}
+
+	public Integer getNextFinancingSourcezw() {
+		return nextFinancingSourcezw;
+	}
+
+	public void setNextFinancingSourcezw(Integer nextFinancingSourcezw) {
+		this.nextFinancingSourcezw = nextFinancingSourcezw;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -417,10 +523,16 @@ public class Project extends PagableEntity {
 		this.financeStatus = financeStatus == null ? null : financeStatus.trim();
         if(financeStatus != null){
 			this.financeStatusDs = DictEnum.financeStatus.getNameByCode(financeStatus);
+		}else{
+			this.financeStatusDs ="不明确";
 		}
 	}
 
 	public Double getFinalValuations() {
+    	if(this.formatFinalValuations != null && !"".equals(this.formatFinalValuations.trim())){
+			this.finalValuations = NumberUtils.toFormatNoSplit(this.formatFinalValuations.trim());
+		}
+       
 		return finalValuations;
 	}
 
@@ -429,6 +541,9 @@ public class Project extends PagableEntity {
 	}
 
 	public Double getFinalContribution() {
+		if(this.formatFinalContribution != null && !"".equals(this.formatFinalContribution.trim())){
+			this.finalContribution = NumberUtils.toFormatNoSplit(this.formatFinalContribution.trim());
+		}
 		return finalContribution;
 	}
 
@@ -437,6 +552,10 @@ public class Project extends PagableEntity {
 	}
 
 	public Double getFinalShareRatio() {
+		if(this.formatFinalShareRatio != null && !"".equals(this.formatFinalShareRatio.trim())){
+			this.finalShareRatio = NumberUtils.toFormatNoSplit(this.formatFinalShareRatio.trim());
+		}
+		
 		return finalShareRatio;
 	}
 
@@ -499,4 +618,58 @@ public class Project extends PagableEntity {
 		this.operationalData = operationalData;
 	}
 
+	public String getFormatFinalValuations() {
+		return formatFinalValuations;
+	}
+
+	public void setFormatFinalValuations(String formatFinalValuations) {
+		this.formatFinalValuations = formatFinalValuations;
+	}
+
+	public String getFormatFinalContribution() {
+		return formatFinalContribution;
+	}
+
+	public void setFormatFinalContribution(String formatFinalContribution) {
+		this.formatFinalContribution = formatFinalContribution;
+	}
+
+	public String getFormatFinalShareRatio() {
+		return formatFinalShareRatio;
+	}
+
+	public void setFormatFinalShareRatio(String formatFinalShareRatio) {
+		this.formatFinalShareRatio = formatFinalShareRatio;
+	}
+
+	public Integer getBusinessPlanFilezw() {
+		return BusinessPlanFilezw;
+	}
+
+	public void setBusinessPlanFilezw(Integer businessPlanFilezw) {
+		BusinessPlanFilezw = businessPlanFilezw;
+	}
+
+	public Integer getTeamPersonzw() {
+		return teamPersonzw;
+	}
+
+	public void setTeamPersonzw(Integer teamPersonzw) {
+		this.teamPersonzw = teamPersonzw;
+	}
+
+	public Integer getShareszw() {
+		return shareszw;
+	}
+
+	public void setShareszw(Integer shareszw) {
+		this.shareszw = shareszw;
+	}
+
+	
+	
+	
+	
+	
+	
 }

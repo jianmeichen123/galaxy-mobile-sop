@@ -353,5 +353,12 @@ public class MeetingSchedulingServiceImpl
 		return meetingSchedulingDao.getMeetingListByIds(bo);
 	}
 
+	@Override
+	public Page<MeetingScheduling> queryMeschedulingAll(MeetingScheduling query, PageRequest pageRequest) {
+		// TODO Auto-generated method stub
+				Page<MeetingScheduling> list=meetingSchedulingDao.queryMeschedulingAll(query,pageRequest);
+				return list;
+	}
+
 
 }

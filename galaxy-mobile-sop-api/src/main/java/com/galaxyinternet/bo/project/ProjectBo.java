@@ -41,6 +41,9 @@ public class ProjectBo extends Project {
 	
 	private String sorting;//多个排序字段
 	
+	private String thyyFlag;
+	
+	
 	public String getProType() {
 		return proType;
 	}
@@ -175,5 +178,13 @@ public class ProjectBo extends Project {
 
 	public void setSorting(String sorting) {
 		this.sorting = sorting;
+	}
+
+	public String getThyyFlag() {
+		return thyyFlag;
+	}
+
+	public void setThyyFlag(String thyyFlag) {
+		this.thyyFlag = thyyFlag;
 	}
 }
