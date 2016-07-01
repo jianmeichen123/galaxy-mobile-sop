@@ -961,7 +961,7 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 			 * if(count>0){
 			 */
 			if (null != projectList && projectList.size() > 0) {
-				resp.setResult(new Result(Status.ERROR, null, "和已有项目名称重复!"));
+				resp.setResult(new Result(Status.ERROR, "cjxmcf", "和已有项目名称重复!"));
 				return resp;
 			}
 			
