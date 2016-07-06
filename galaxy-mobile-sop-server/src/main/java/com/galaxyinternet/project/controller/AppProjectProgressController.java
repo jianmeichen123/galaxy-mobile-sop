@@ -1,10 +1,13 @@
 package com.galaxyinternet.project.controller;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -13,11 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.bo.project.ProjectBo;
+import com.galaxyinternet.common.constants.SopConstant;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
 import com.galaxyinternet.exception.PlatformException;
@@ -36,12 +42,14 @@ import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.AppSopFile;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
+import com.galaxyinternet.model.soptask.SopTask;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.SopFileService;
+import com.galaxyinternet.service.SopTaskService;
 import com.galaxyinternet.service.SopVoucherFileService;
 import com.galaxyinternet.service.UserRoleService;
 import com.galaxyinternet.service.UserService;
@@ -52,6 +60,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 
 	final Logger logger = LoggerFactory.getLogger(AppProjectProgressController.class);
 
+	@Autowired
+	private SopTaskService sopTaskService;
 	@Autowired
 	private UserService userService;
 
@@ -457,14 +467,24 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						appProgress.setId(me.getId()); //会议ID
 						
 						//添加排情结果标识
+						if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+							MeetingScheduling query = new MeetingScheduling();
+							query.setProjectId(me.getProjectId());
+							query.setMeetingType(DictEnum.meetingType.投决会.getCode());
+							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+							if(mslist!=null && mslist.size()>0){
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+							}
+						}
+					}else{
 						MeetingScheduling query = new MeetingScheduling();
-						query.setProjectId(me.getProjectId());
+						query.setProjectId(Long.parseLong(pid));
 						query.setMeetingType(DictEnum.meetingType.投决会.getCode());
 						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
 						if(mslist!=null && mslist.size()>0){
-							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//默认0表示待排期，1表示已排期，2表示已通过，3表示已否决
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
 						}
-					}			
+					}				
 					appProgresslist.add(appProgress);						
 				}
 				// 尽职调查
@@ -883,14 +903,24 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						appProgress.setMeetCode(me.getMeetingType());
 						
 						//添加排情结果标识
+						if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+							MeetingScheduling query = new MeetingScheduling();
+							query.setProjectId(me.getProjectId());
+							query.setMeetingType(DictEnum.meetingType.立项会.getCode());
+							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+							if(mslist!=null && mslist.size()>0){
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//  0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+							}
+						}
+					}else{
 						MeetingScheduling query = new MeetingScheduling();
-						query.setProjectId(me.getProjectId());
+						query.setProjectId(Long.parseLong(pid));
 						query.setMeetingType(DictEnum.meetingType.立项会.getCode());
 						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
 						if(mslist!=null && mslist.size()>0){
-							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//默认0表示待排期，1表示已排期，2表示已通过，3表示已否决
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
 						}
-					}
+					}	
 					appProgresslist.add(appProgress);			
 				}
 				// CEO评审
@@ -926,12 +956,22 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						appProgress.setMeetCode(me.getMeetingType());
 						
 						//添加排情结果标识
+						if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+							MeetingScheduling query = new MeetingScheduling();
+							query.setProjectId(me.getProjectId());
+							query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
+							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+							if(mslist!=null && mslist.size()>0){
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+							}
+						}
+					}else{
 						MeetingScheduling query = new MeetingScheduling();
-						query.setProjectId(me.getProjectId());
+						query.setProjectId(Long.parseLong(pid));
 						query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
 						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
 						if(mslist!=null && mslist.size()>0){
-							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//默认0表示待排期，1表示已排期，2表示已通过，3表示已否决
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
 						}
 					}				
 					appProgresslist.add(appProgress);
@@ -1084,4 +1124,108 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 			}
 	   	}
 
+	   	/**
+	   	 * app端进行申请排期的按钮
+	   	 * @param meetingRecord
+	   	 * @param request
+	   	 * @return
+	   	 */
+		   	@ResponseBody
+			@RequestMapping(value = "/appPq", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+		   	public ResponseData<MeetingRecord> appPq(@RequestBody MeetingRecordBo meetingRecord,HttpServletRequest request) {
+				ResponseData<MeetingRecord> responseBody = new ResponseData<MeetingRecord>();
+				try {
+					Project project = new Project();
+					if(meetingRecord.getProjectId()!=null){					
+						project = projectService.queryById(meetingRecord.getProjectId());				
+					}else{
+						responseBody.setResult(new Result(Status.ERROR, null, "项目ID缺失"));
+						return responseBody;
+					}
+	
+					String currProjectProgress = project.getProjectProgress().trim(); //当前项目阶段
+					String currMeetingType = meetingRecord.getMeetingType().trim(); //当前会议类型
+					String currMeetingResult = meetingRecord.getMeetingResult().trim(); //当前会议结果
+									
+					if (currProjectProgress.equals(DictEnum.projectProgress.CEO评审.getCode())
+							&& currMeetingType.equals(DictEnum.meetingType.CEO评审.getCode())){
+						
+						MeetingScheduling scheduEntity = new MeetingScheduling();
+						scheduEntity.setProjectId(project.getId());
+						scheduEntity.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
+						MeetingScheduling querySchedu = meetingSchedulingService.queryOne(scheduEntity);
+						
+						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
+							querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+							querySchedu.setReserveTimeStart(null);
+							querySchedu.setReserveTimeEnd(null);
+							querySchedu.setStatus(DictEnum.meetingResult.待定.getCode());
+							
+							
+							querySchedu.setApplyTime(new Timestamp(new Date().getTime()));
+							querySchedu.setUpdatedTime((new Date()).getTime()); //变更操作时间
+							meetingSchedulingService.updateBySelective(querySchedu); 
+							
+						}
+					}
+					else if (currProjectProgress.equals(DictEnum.projectProgress.立项会.getCode())
+							&& currMeetingType.equals(DictEnum.meetingType.立项会.getCode())){
+						
+						MeetingScheduling scheduling = new MeetingScheduling();			
+						List<Long> idList = new ArrayList<Long>();
+						idList.add(project.getId());
+						scheduling.setProjectIdList(idList);
+						scheduling.setMeetingType(DictEnum.meetingType.立项会.getCode());
+						MeetingScheduling queryScheduling = meetingSchedulingService.queryOne(scheduling);	
+						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
+							queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());
+							queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+							queryScheduling.setReserveTimeStart(null);
+							queryScheduling.setReserveTimeEnd(null);
+													
+							queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
+							queryScheduling.setUpdatedTime((new Date()).getTime());
+							meetingSchedulingService.updateBySelective(queryScheduling);
+						}	
+					}
+					else if (currProjectProgress.equals(DictEnum.projectProgress.投资决策会.getCode())
+							&& currMeetingType.equals(DictEnum.meetingType.投决会.getCode())){					
+						MeetingScheduling scheduling = new MeetingScheduling();			
+						List<Long> idList = new ArrayList<Long>();
+						idList.add(project.getId());
+						scheduling.setProjectIdList(idList);
+						scheduling.setMeetingType(DictEnum.meetingType.投决会.getCode());
+						MeetingScheduling queryScheduling = meetingSchedulingService.queryOne(scheduling);		
+						
+						Project proEntity = new Project();
+						proEntity.setId(project.getId());			
+						if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
+					    	/* 1.更新项目的当前阶段的排期结果为“待排期”,排期起始和结束时间置空，待秘书重新选择
+					    	 * 2.更新过会次数、变更操作时间   */	    	
+					    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+					    	queryScheduling.setReserveTimeStart(null);
+					    	queryScheduling.setReserveTimeEnd(null);
+					    	queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());								    					    	
+					    	queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
+					    	queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
+					    	meetingSchedulingService.updateBySelective(queryScheduling); 
+					    }
+					    
+					}
+					else {
+						responseBody.setResult(new Result(Status.OK, "xg", "并不需要申请排期"));
+						return responseBody;
+					}
+				} catch (Exception e) {
+					responseBody.setResult(new Result(Status.ERROR,null, "排期添加失败"));
+					if(logger.isErrorEnabled()){
+						logger.error("addpq 排期添加失败 ",e);
+					}
+				}
+					responseBody.setResult(new Result(Status.OK, "sqpqcg", "申请排期成功"));
+					return responseBody;
+				
+		   	}
+	   	
+	   	
 }

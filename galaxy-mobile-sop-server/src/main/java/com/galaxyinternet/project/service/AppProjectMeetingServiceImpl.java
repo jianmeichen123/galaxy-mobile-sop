@@ -54,6 +54,9 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 		meetingRecord.setFileId(fid);
 		Long meetingId = meetingRecordDao.insert(meetingRecord);
 		
+		
+
+		
 		String currProjectProgress = project.getProjectProgress().trim(); //当前项目阶段
 		String currMeetingType = meetingRecord.getMeetingType().trim(); //当前会议类型
 		String currMeetingResult = meetingRecord.getMeetingResult().trim(); //当前会议结果		
@@ -97,7 +100,17 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 			MeetingScheduling querySchedu = meetingSchedulingDao.selectOne(scheduEntity);
 			
 			if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
-				querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+				
+				
+
+				querySchedu.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
+				querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.已通过.getCode());
+				querySchedu.setStatus(DictEnum.meetingResult.通过.getCode());
+				querySchedu.setUpdatedTime((new Date()).getTime());
+				querySchedu.setMeetingCount(querySchedu.getMeetingCount() + 1);
+				meetingSchedulingDao.updateBySelective(querySchedu);
+				
+				/*querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 				querySchedu.setReserveTimeStart(null);
 				querySchedu.setReserveTimeEnd(null);
 				querySchedu.setStatus(DictEnum.meetingResult.通过.getCode());
@@ -105,7 +118,7 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 				querySchedu.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
 				querySchedu.setMeetingCount(querySchedu.getMeetingCount() + 1);//过会次数据累加1
 				querySchedu.setUpdatedTime((new Date()).getTime()); //变更操作时间
-				meetingSchedulingDao.updateBySelective(querySchedu); 
+				meetingSchedulingDao.updateBySelective(querySchedu); */
 				
 			}else if(currMeetingResult.equals(DictEnum.meetingResult.否决.getCode())){
 				Project proEntity = new Project();
@@ -160,7 +173,7 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 			MeetingScheduling queryScheduling = meetingSchedulingDao.selectOne(scheduling);		
 					
 			if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
-				queryScheduling.setStatus(DictEnum.meetingResult.通过.getCode());
+				/*queryScheduling.setStatus(DictEnum.meetingResult.通过.getCode());
 				queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 				queryScheduling.setReserveTimeStart(null);
 				queryScheduling.setReserveTimeEnd(null);
@@ -168,6 +181,12 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 				queryScheduling.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
 				queryScheduling.setMeetingCount(queryScheduling.getMeetingCount() + 1);
 				queryScheduling.setUpdatedTime((new Date()).getTime());
+				meetingSchedulingDao.updateBySelective(queryScheduling);*/
+				queryScheduling.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
+				queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.已通过.getCode());
+				queryScheduling.setStatus(DictEnum.meetingResult.通过.getCode());
+				queryScheduling.setUpdatedTime((new Date()).getTime());
+				queryScheduling.setMeetingCount(queryScheduling.getMeetingCount() + 1);
 				meetingSchedulingDao.updateBySelective(queryScheduling);
 			}
 			else if (currMeetingResult.equals(DictEnum.meetingResult.否决.getCode())){
@@ -225,7 +244,7 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 			
 			Project proEntity = new Project();
 			proEntity.setId(project.getId());			
-		    if (currMeetingResult.equals(DictEnum.meetingResult.通过.getCode())){
+		   if (currMeetingResult.equals(DictEnum.meetingResult.通过.getCode())){
 		    	//更新当前项目的阶段状态为下一阶段“投资协议”
 		    	proEntity.setProjectProgress(DictEnum.projectProgress.投资协议.getCode());
 		    	proEntity.setUpdatedTime((new Date()).getTime());
@@ -238,7 +257,7 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 				queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
 				meetingSchedulingDao.updateBySelective(queryScheduling); 
 			}
-		    else if (currMeetingResult.equals(DictEnum.meetingResult.否决.getCode())){
+		   else if (currMeetingResult.equals(DictEnum.meetingResult.否决.getCode())){
 		    	//关闭项目，更新项目的状态为“已关闭”、变更操作时间
 		    	proEntity.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
 		    	proEntity.setUpdatedTime((new Date()).getTime());
@@ -252,16 +271,24 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 				meetingSchedulingDao.updateBySelective(queryScheduling); 
 		    }
 		    else if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
-		    	/* 1.更新项目的当前阶段的排期结果为“待排期”,排期起始和结束时间置空，待秘书重新选择
+		    	/*1.更新项目的当前阶段的排期结果为“待排期”,排期起始和结束时间置空，待秘书重新选择
 		    	 * 2.更新过会次数、变更操作时间   */	    	
-		    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+/*		    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 		    	queryScheduling.setReserveTimeStart(null);
 		    	queryScheduling.setReserveTimeEnd(null);
 		    	queryScheduling.setStatus(DictEnum.meetingResult.通过.getCode());				
 		    	queryScheduling.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
 		    	queryScheduling.setMeetingCount(queryScheduling.getMeetingCount() + 1);//过会次数据累加1
 		    	queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
-				meetingSchedulingDao.updateBySelective(queryScheduling); 
+				meetingSchedulingDao.updateBySelective(queryScheduling); */
+				
+				queryScheduling.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
+				queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.已通过.getCode());
+				queryScheduling.setStatus(DictEnum.meetingResult.通过.getCode());
+				queryScheduling.setUpdatedTime((new Date()).getTime());
+				queryScheduling.setMeetingCount(queryScheduling.getMeetingCount() + 1);
+				meetingSchedulingDao.updateBySelective(queryScheduling);
+		    	
 		    }
 		}
 		return meetingId;

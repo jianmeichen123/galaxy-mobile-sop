@@ -173,7 +173,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				|| project.getProjectType() == null
 				|| "".equals(project.getProjectType().trim())
 				|| project.getCreateDate() == null
-				|| "".equals(project.getCreateDate().trim())) {
+				|| "".equals(project.getCreateDate().trim())
+				|| project.getIndustryOwn() == null) {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
 		}
