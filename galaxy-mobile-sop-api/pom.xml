@@ -7,7 +7,7 @@
 <!--    <version>1.0.3.mobile</version> -->
   </parent>
   <artifactId>galaxy-mobile-sop-api</artifactId>
-  <packaging>jar</packaging>
+  <packaging>jar</packaging> 
 	<name />
 	<description />
 	<properties>

@@ -18,7 +18,7 @@
   <modules>
   	<module>galaxy-mobile-sop-api</module>
   	<module>galaxy-mobile-sop-server</module>
-  </modules>
+  </modules> 
   
   <!-- 如有Nexus私服, 取消注释并指向正确的服务器地址. -->
 	<repositories>
