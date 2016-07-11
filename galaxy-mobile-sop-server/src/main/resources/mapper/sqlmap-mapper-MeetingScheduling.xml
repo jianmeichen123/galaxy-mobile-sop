@@ -49,10 +49,10 @@
 				<!-- 模糊查询 -->
 				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->			 						
 				
-				<if test="startTime != null and endTime != null">				
-				 	and reserve_time_start				 	
-						BETWEEN STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )
-						AND STR_TO_DATE(CONCAT(#{endTime} , ' 23:59:59') ,'%Y-%m-%d %H:%i:%s' )		 							 
+				<if test="startTime != null ">				
+				 	and 				 	
+					<![CDATA[ reserve_time_start > STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )]]>	 
+								 							 
 				</if> 
 			 								 																				 																
 			</trim>
@@ -75,7 +75,8 @@
 						#{item}
 					</foreach>
 				</if>
-				AND (schedule_status = 0 OR schedule_status=1 )
+					AND (schedule_status = 0 OR (schedule_status=1  and 				 	
+					<![CDATA[ reserve_time_start > STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )]]>) )
 				<!-- 模糊查询 -->
 				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->			 						
 			 								 																				 																
