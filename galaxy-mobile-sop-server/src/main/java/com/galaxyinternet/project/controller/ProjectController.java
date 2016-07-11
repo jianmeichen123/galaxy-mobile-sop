@@ -2769,143 +2769,356 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 		ResponseData<MeetingScheduling> responseBody = new ResponseData<MeetingScheduling>();
 			
-		if(query.getStartTime()!=null && query.getEndTime()!=null){
-			       String  text  = query.getStartTime();
-			       String  te = query.getEndTime();
-			       Date  dt  =  null;  
-			       SimpleDateFormat  df  =  new  SimpleDateFormat("yyyy-MM-dd");  
-			       df.setLenient(false);//这个的功能是不把1996-13-3 转换为1997-1-3
-			        try
-			       {  
-			         dt  =  df.parse(text); 
-			         dt  =  df.parse(te);
-			       }
-			       catch(Exception  e)
-			       {  
-			         dt=new  Date();
-			         
-			         responseBody.setResult(new Result(Status.ERROR, null, "你传入的日期不合法，请重新输入!"));
-			         return responseBody;
-			       }  
-			}
-		
 		try {
 			
-			
-			/**
-			 * 查询出所有的事业线
-			 */
-			List<Long> depids = new ArrayList<Long>();
-			Map<Long, Department> careerlineMap = new HashMap<Long, Department>();
-			Department d = new Department();
-			if (query.getCareline() != null) {
-				Department de = departmentService.queryById(new Long(query
-						.getCareline()));
-				careerlineMap.put(de.getId(), de);
-				depids.add(de.getId());
-			} else {
-				d.setType(1);
-				List<Department> careerlineList = departmentService
-						.queryList(d);
-				for (Department department : careerlineList) {
-					careerlineMap.put(department.getId(), department);
-					depids.add(department.getId());
+			User user = (User) getUserFromSession(request);
+
+			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user
+					.getId());
+
+			if (roleIdList.contains(UserConstant.TZJL)){
+				if(query.getScheduleStatus()==1){
+				 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+				    String dateString = formatter.format(new Date());  
+				    query.setStartTime(dateString); 
 				}
-				
-			}
-			/**
-			 * 查询出相关的所有项目
-			 */
-			List<Project> projectCommonList = new ArrayList<Project>();
-			List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
-			Page<MeetingScheduling> pageList = null;
-			ProjectBo mpb = new ProjectBo();
-			if (query.getKeyword() != null) {
-				mpb.setKeyword(query.getKeyword());
-			}
-			mpb.setDeptIdList(depids);
-			projectCommonList = projectService.queryList(mpb);
-			/**
-			 * 根据相关项目查找排期池数据
-			 */
-			List<Long> pids = new ArrayList<Long>();
-			if (projectCommonList != null && projectCommonList.size() > 0) {
-				for (Project pr : projectCommonList) {
-					pids.add(pr.getId());
-				}
-				query.setProjectIdList(pids);				
-				pageList = meetingSchedulingService
-						.getMeetingList(
-								query,
-								new PageRequest(query.getPageNum(), query.getPageSize()));
-				schedulingList = pageList.getContent();
-			} else {
-				MeetingSchedulingBo mebo = new MeetingSchedulingBo();
-				mebo.setCountscheduleStatusd(0);
-				mebo.setCountscheduleStatusy(0);
-				responseBody.setEntity(mebo);
-				return responseBody;
-			} 			
-			if(schedulingList!=null && schedulingList.size()>0){	
-				List<String> ids = new ArrayList<String>();
-				for (MeetingScheduling ms : schedulingList) {
-					byte Edit = 1;
-					Integer sheduleStatus = ms.getScheduleStatus();
-					if (sheduleStatus == 2 || sheduleStatus == 3) {
-						Edit = 0;
-					}
-					if (ms.getReserveTimeStart() != null) {
-						long time = System.currentTimeMillis();
-						long startTime = ms.getReserveTimeStart().getTime();
-						if ((time > startTime) && sheduleStatus == 1) {
-							Edit = 0;
-						}
-					}
-					ms.setIsEdit(Edit);
-					ids.add(String.valueOf(ms.getProjectId()));
-				}
-	
 				/**
 				 * 查询出相关的所有项目
 				 */
-				ProjectBo pb = new ProjectBo();
-				pb.setIds(ids);
-				List<Project> projectList = projectService.queryList(pb);
-	
-				// 组装数据
-				for (MeetingScheduling ms : schedulingList) {
-					for (Project p : projectList) {
-						if (ms.getProjectId().longValue() == p.getId().longValue()) {
-							
-							ms.setProjectCode(p.getProjectCode());
-							ms.setProjectName(p.getProjectName());
-							ms.setProjectCareerline(careerlineMap.get(
-									p.getProjectDepartid()).getName());
-							ms.setCreateUname(p.getCreateUname());
+				List<Project> projectCommonList = new ArrayList<Project>();
+				List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+				Page<MeetingScheduling> pageList = null;
+				ProjectBo mpb = new ProjectBo();
+				if (query.getKeyword() != null) {
+					mpb.setKeyword(query.getKeyword());
+				}
+				mpb.setCreateUid(user.getId());
+				projectCommonList = projectService.queryList(mpb);
+				/**
+				 * 根据相关项目查找排期池数据
+				 */
+				List<Long> pids = new ArrayList<Long>();
+				if (projectCommonList != null && projectCommonList.size() > 0) {
+					for (Project pr : projectCommonList) {
+						pids.add(pr.getId());
+					}
+					query.setProjectIdList(pids);				
+					pageList = meetingSchedulingService
+							.getMeetingList(
+									query,
+									new PageRequest(query.getPageNum(), query.getPageSize()));
+					schedulingList = pageList.getContent();
+				} else {
+					MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+					mebo.setCountscheduleStatusd(0);
+					mebo.setCountscheduleStatusy(0);
+					responseBody.setEntity(mebo);
+					return responseBody;
+				} 			
+				if(schedulingList!=null && schedulingList.size()>0){	
+					List<String> ids = new ArrayList<String>();
+					for (MeetingScheduling ms : schedulingList) {
+						byte Edit = 1;
+						Integer sheduleStatus = ms.getScheduleStatus();
+						if (sheduleStatus == 2 || sheduleStatus == 3) {
+							Edit = 0;
 						}
-	
+						if (ms.getReserveTimeStart() != null) {
+							long time = System.currentTimeMillis();
+							long startTime = ms.getReserveTimeStart().getTime();
+							if ((time > startTime) && sheduleStatus == 1) {
+								Edit = 0;
+							}
+						}
+						ms.setIsEdit(Edit);
+						ids.add(String.valueOf(ms.getProjectId()));
+					}
+		
+					/**
+					 * 查询出相关的所有项目
+					 */
+					ProjectBo pb = new ProjectBo();
+					pb.setIds(ids);
+					List<Project> projectList = projectService.queryList(pb);
+		
+					// 组装数据
+					for (MeetingScheduling ms : schedulingList) {
+						for (Project p : projectList) {
+							if (ms.getProjectId().longValue() == p.getId().longValue()) {								
+								ms.setProjectCode(p.getProjectCode());
+								ms.setProjectName(p.getProjectName());							
+								ms.setCreateUname(p.getCreateUname());
+							}
+		
+						}
+					}
+					
+				}
+				MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+				
+				query.setScheduleStatus(0);
+				if(query.getScheduleStatus()==0){
+					query.setStartTime(null);
+					List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(query);
+					if(ms1!=null && ms1.size()>0){
+						mebo.setCountscheduleStatusd(ms1.size());
+					}else{
+						mebo.setCountscheduleStatusd(0);
+					}	
+				}
+				query.setScheduleStatus(1);
+				if(query.getScheduleStatus()==1){
+					  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+					    String dateString = formatter.format(new Date());  
+					    query.setStartTime(dateString); 
+					List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(query);
+					if(ms2!=null && ms2.size()>0){
+						mebo.setCountscheduleStatusy(ms2.size());
+					}else{
+						mebo.setCountscheduleStatusy(0);
 					}
 				}
+				responseBody.setPageList(pageList);
+				responseBody.setEntity(mebo);
+				return responseBody;
+			}
+			else if (roleIdList.contains(UserConstant.HHR)){
+
+				if(query.getScheduleStatus()==1){
+					 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+					    String dateString = formatter.format(new Date());  
+					    query.setStartTime(dateString); 
+					}
+				/**
+				 * 查询出相关的所有项目
+				 */
+				List<Project> projectCommonList = new ArrayList<Project>();
+				List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+				Page<MeetingScheduling> pageList = null;
+				ProjectBo mpb = new ProjectBo();
+				if (query.getKeyword() != null) {
+					mpb.setKeyword(query.getKeyword());
+				}
+				mpb.setProjectDepartid(user.getDepartmentId());
+				projectCommonList = projectService.queryList(mpb);
+				/**
+				 * 根据相关项目查找排期池数据
+				 */
+				List<Long> pids = new ArrayList<Long>();
+				if (projectCommonList != null && projectCommonList.size() > 0) {
+					for (Project pr : projectCommonList) {
+						pids.add(pr.getId());
+					}
+					query.setProjectIdList(pids);				
+					pageList = meetingSchedulingService
+							.getMeetingList(
+									query,
+									new PageRequest(query.getPageNum(), query.getPageSize()));
+					schedulingList = pageList.getContent();
+				} else {
+					MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+					mebo.setCountscheduleStatusd(0);
+					mebo.setCountscheduleStatusy(0);
+					responseBody.setEntity(mebo);
+					return responseBody;
+				} 			
+				if(schedulingList!=null && schedulingList.size()>0){	
+					List<String> ids = new ArrayList<String>();
+					for (MeetingScheduling ms : schedulingList) {
+						byte Edit = 1;
+						Integer sheduleStatus = ms.getScheduleStatus();
+						if (sheduleStatus == 2 || sheduleStatus == 3) {
+							Edit = 0;
+						}
+						if (ms.getReserveTimeStart() != null) {
+							long time = System.currentTimeMillis();
+							long startTime = ms.getReserveTimeStart().getTime();
+							if ((time > startTime) && sheduleStatus == 1) {
+								Edit = 0;
+							}
+						}
+						ms.setIsEdit(Edit);
+						ids.add(String.valueOf(ms.getProjectId()));
+					}
+		
+					/**
+					 * 查询出相关的所有项目
+					 */
+					ProjectBo pb = new ProjectBo();
+					pb.setIds(ids);
+					List<Project> projectList = projectService.queryList(pb);
+		
+					// 组装数据
+					for (MeetingScheduling ms : schedulingList) {
+						for (Project p : projectList) {
+							if (ms.getProjectId().longValue() == p.getId().longValue()) {								
+								ms.setProjectCode(p.getProjectCode());
+								ms.setProjectName(p.getProjectName());								
+								ms.setCreateUname(p.getCreateUname());
+							}
+		
+						}
+					}
+					
+				}
+				MeetingSchedulingBo mebo = new MeetingSchedulingBo();
 				
+				query.setScheduleStatus(0);
+				if(query.getScheduleStatus()==0){
+					query.setStartTime(null);
+					List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(query);
+					if(ms1!=null && ms1.size()>0){
+						mebo.setCountscheduleStatusd(ms1.size());
+					}else{
+						mebo.setCountscheduleStatusd(0);
+					}	
+				}
+				query.setScheduleStatus(1);
+				if(query.getScheduleStatus()==1){
+					  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+					    String dateString = formatter.format(new Date());  
+					    query.setStartTime(dateString); 
+					List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(query);
+					if(ms2!=null && ms2.size()>0){
+						mebo.setCountscheduleStatusy(ms2.size());
+					}else{
+						mebo.setCountscheduleStatusy(0);
+					}
+				}
+				responseBody.setPageList(pageList);
+				responseBody.setEntity(mebo);
+				return responseBody;
 			}
-			MeetingSchedulingBo mebo = new MeetingSchedulingBo();
-			
-			query.setScheduleStatus(0);
-			List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(query);
-			if(ms1!=null && ms1.size()>0){
-				mebo.setCountscheduleStatusd(ms1.size());
-			}else{
-				mebo.setCountscheduleStatusd(0);
-			}						
-			query.setScheduleStatus(1);
-			List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(query);
-			if(ms2!=null && ms2.size()>0){
-				mebo.setCountscheduleStatusy(ms2.size());
-			}else{
-				mebo.setCountscheduleStatusy(0);
-			}
-			responseBody.setPageList(pageList);
-			responseBody.setEntity(mebo);
+			else {
+				if(query.getScheduleStatus()==1){
+					 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+					    String dateString = formatter.format(new Date());  
+					    query.setStartTime(dateString); 
+					} 
+				/**
+				 * 查询出所有的事业线
+				 */
+				List<Long> depids = new ArrayList<Long>();
+				Map<Long, Department> careerlineMap = new HashMap<Long, Department>();
+				Department d = new Department();
+				if (query.getCareline() != null) {
+					Department de = departmentService.queryById(new Long(query
+							.getCareline()));
+					careerlineMap.put(de.getId(), de);
+					depids.add(de.getId());
+				} else {
+					d.setType(1);
+					List<Department> careerlineList = departmentService
+							.queryList(d);
+					for (Department department : careerlineList) {
+						careerlineMap.put(department.getId(), department);
+						depids.add(department.getId());
+					}
+					
+				}
+				/**
+				 * 查询出相关的所有项目
+				 */
+				List<Project> projectCommonList = new ArrayList<Project>();
+				List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+				Page<MeetingScheduling> pageList = null;
+				ProjectBo mpb = new ProjectBo();
+				if (query.getKeyword() != null) {
+					mpb.setKeyword(query.getKeyword());
+				}
+				mpb.setDeptIdList(depids);
+				projectCommonList = projectService.queryList(mpb);
+				/**
+				 * 根据相关项目查找排期池数据
+				 */
+				List<Long> pids = new ArrayList<Long>();
+				if (projectCommonList != null && projectCommonList.size() > 0) {
+					for (Project pr : projectCommonList) {
+						pids.add(pr.getId());
+					}
+					query.setProjectIdList(pids);				
+					pageList = meetingSchedulingService
+							.getMeetingList(
+									query,
+									new PageRequest(query.getPageNum(), query.getPageSize()));
+					schedulingList = pageList.getContent();
+				} else {
+					MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+					mebo.setCountscheduleStatusd(0);
+					mebo.setCountscheduleStatusy(0);
+					responseBody.setEntity(mebo);
+					return responseBody;
+				} 			
+				if(schedulingList!=null && schedulingList.size()>0){	
+					List<String> ids = new ArrayList<String>();
+					for (MeetingScheduling ms : schedulingList) {
+						byte Edit = 1;
+						Integer sheduleStatus = ms.getScheduleStatus();
+						if (sheduleStatus == 2 || sheduleStatus == 3) {
+							Edit = 0;
+						}
+						if (ms.getReserveTimeStart() != null) {
+							long time = System.currentTimeMillis();
+							long startTime = ms.getReserveTimeStart().getTime();
+							if ((time > startTime) && sheduleStatus == 1) {
+								Edit = 0;
+							}
+						}
+						ms.setIsEdit(Edit);
+						ids.add(String.valueOf(ms.getProjectId()));
+					}
+		
+					/**
+					 * 查询出相关的所有项目
+					 */
+					ProjectBo pb = new ProjectBo();
+					pb.setIds(ids);
+					List<Project> projectList = projectService.queryList(pb);
+		
+					// 组装数据
+					for (MeetingScheduling ms : schedulingList) {
+						for (Project p : projectList) {
+							if (ms.getProjectId().longValue() == p.getId().longValue()) {
+								
+								ms.setProjectCode(p.getProjectCode());
+								ms.setProjectName(p.getProjectName());
+								ms.setProjectCareerline(careerlineMap.get(
+										p.getProjectDepartid()).getName());
+								ms.setCreateUname(p.getCreateUname());
+							}
+		
+						}
+					}
+					
+				}
+				MeetingSchedulingBo mebo = new MeetingSchedulingBo();
+				
+				query.setScheduleStatus(0);
+				if(query.getScheduleStatus()==0){
+					query.setStartTime(null);
+					List<MeetingScheduling> ms1 = meetingSchedulingService.queryList(query);
+					if(ms1!=null && ms1.size()>0){
+						mebo.setCountscheduleStatusd(ms1.size());
+					}else{
+						mebo.setCountscheduleStatusd(0);
+					}	
+				}
+				query.setScheduleStatus(1);
+				if(query.getScheduleStatus()==1){
+					  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+					    String dateString = formatter.format(new Date());  
+					    query.setStartTime(dateString); 
+					List<MeetingScheduling> ms2 = meetingSchedulingService.queryList(query);
+					if(ms2!=null && ms2.size()>0){
+						mebo.setCountscheduleStatusy(ms2.size());
+					}else{
+						mebo.setCountscheduleStatusy(0);
+					}
+				}
+				responseBody.setPageList(pageList);
+				responseBody.setEntity(mebo);
+				return responseBody;
+				}
 		} catch (PlatformException e) {
 			responseBody.setResult(new Result(Status.ERROR, null,
 					"queryList faild"));
@@ -2914,6 +3127,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		}
 		return responseBody;
+
 	}
 	
 	
@@ -2931,103 +3145,260 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		ResponseData<MeetingScheduling> responseBody = new ResponseData<MeetingScheduling>();
 			
 		try {
-			
-			
-			/**
-			 * 查询出所有的事业线
-			 */
-			List<Long> depids = new ArrayList<Long>();
-			Map<Long, Department> careerlineMap = new HashMap<Long, Department>();
-			Department d = new Department();
-			if (query.getCareline() != null) {
-				Department de = departmentService.queryById(new Long(query
-						.getCareline()));
-				careerlineMap.put(de.getId(), de);
-				depids.add(de.getId());
-			} else {
-				d.setType(1);
-				List<Department> careerlineList = departmentService
-						.queryList(d);
-				for (Department department : careerlineList) {
-					careerlineMap.put(department.getId(), department);
-					depids.add(department.getId());
-				}
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+		    String dateString = formatter.format(new Date());  
+		    query.setStartTime(dateString); 
+			User user = (User) getUserFromSession(request);
+
+			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+			if (roleIdList.contains(UserConstant.TZJL)){
 				
-			}
-			/**
-			 * 查询出相关的所有项目
-			 */
-			List<Project> projectCommonList = new ArrayList<Project>();
-			List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
-			Page<MeetingScheduling> pageList = null;
-			ProjectBo mpb = new ProjectBo();
-			if (query.getKeyword() != null) {
-				mpb.setKeyword(query.getKeyword());
-			}
-			mpb.setDeptIdList(depids);
-			projectCommonList = projectService.queryList(mpb);
-			/**
-			 * 根据相关项目查找排期池数据
-			 */
-			List<Long> pids = new ArrayList<Long>();
-			if (projectCommonList != null && projectCommonList.size() > 0) {
-				for (Project pr : projectCommonList) {
-					pids.add(pr.getId());
-				}
-				query.setProjectIdList(pids);				
-				pageList = meetingSchedulingService
-						.queryMeschedulingAll(
-								query,
-								new PageRequest(query.getPageNum(), query.getPageSize()));
-				schedulingList = pageList.getContent();
-			} else {
-				
-				return responseBody;
-			} 			
-			if(schedulingList!=null && schedulingList.size()>0){	
-				List<String> ids = new ArrayList<String>();
-				for (MeetingScheduling ms : schedulingList) {
-					byte Edit = 1;
-					Integer sheduleStatus = ms.getScheduleStatus();
-					if (sheduleStatus == 2 || sheduleStatus == 3) {
-						Edit = 0;
-					}
-					if (ms.getReserveTimeStart() != null) {
-						long time = System.currentTimeMillis();
-						long startTime = ms.getReserveTimeStart().getTime();
-						if ((time > startTime) && sheduleStatus == 1) {
-							Edit = 0;
-						}
-					}
-					ms.setIsEdit(Edit);
-					ids.add(String.valueOf(ms.getProjectId()));
-				}
-	
+
 				/**
 				 * 查询出相关的所有项目
 				 */
-				ProjectBo pb = new ProjectBo();
-				pb.setIds(ids);
-				List<Project> projectList = projectService.queryList(pb);
-	
-				// 组装数据
-				for (MeetingScheduling ms : schedulingList) {
-					for (Project p : projectList) {
-						if (ms.getProjectId().longValue() == p.getId().longValue()) {
-							
-							ms.setProjectCode(p.getProjectCode());
-							ms.setProjectName(p.getProjectName());
-							ms.setProjectCareerline(careerlineMap.get(
-									p.getProjectDepartid()).getName());
-							ms.setCreateUname(p.getCreateUname());
-						}
-	
-					}
+				List<Project> projectCommonList = new ArrayList<Project>();
+				List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+				Page<MeetingScheduling> pageList = null;
+				ProjectBo mpb = new ProjectBo();
+				if (query.getKeyword() != null) {
+					mpb.setKeyword(query.getKeyword());
 				}
+				mpb.setCreateUid(user.getId());
+				projectCommonList = projectService.queryList(mpb);
+				/**
+				 * 根据相关项目查找排期池数据
+				 */
+				List<Long> pids = new ArrayList<Long>();
+				if (projectCommonList != null && projectCommonList.size() > 0) {
+					for (Project pr : projectCommonList) {
+						pids.add(pr.getId());
+					}
+					query.setProjectIdList(pids);				
+					pageList = meetingSchedulingService
+							.queryMeschedulingAll(
+									query,
+									new PageRequest(query.getPageNum(), query.getPageSize()));
+					schedulingList = pageList.getContent();
+				} else {
+					
+					return responseBody;
+				} 			
+				if(schedulingList!=null && schedulingList.size()>0){	
+					List<String> ids = new ArrayList<String>();
+					for (MeetingScheduling ms : schedulingList) {
+						byte Edit = 1;
+						Integer sheduleStatus = ms.getScheduleStatus();
+						if (sheduleStatus == 2 || sheduleStatus == 3) {
+							Edit = 0;
+						}
+						if (ms.getReserveTimeStart() != null) {
+							long time = System.currentTimeMillis();
+							long startTime = ms.getReserveTimeStart().getTime();
+							if ((time > startTime) && sheduleStatus == 1) {
+								Edit = 0;
+							}
+						}
+						ms.setIsEdit(Edit);
+						ids.add(String.valueOf(ms.getProjectId()));
+					}
+		
+					/**
+					 * 查询出相关的所有项目
+					 */
+					ProjectBo pb = new ProjectBo();
+					pb.setIds(ids);
+					List<Project> projectList = projectService.queryList(pb);
+		
+					// 组装数据
+					for (MeetingScheduling ms : schedulingList) {
+						for (Project p : projectList) {
+							if (ms.getProjectId().longValue() == p.getId().longValue()) {
+								
+								ms.setProjectCode(p.getProjectCode());
+								ms.setProjectName(p.getProjectName());								
+								ms.setCreateUname(p.getCreateUname());
+							}
+		
+						}
+					}
+					
+				}		
+				responseBody.setPageList(pageList);
+				return responseBody;
+			}
+			else if (roleIdList.contains(UserConstant.HHR)){
 				
-			}		
-			responseBody.setPageList(pageList);
-			
+				/**
+				 * 查询出相关的所有项目
+				 */
+				List<Project> projectCommonList = new ArrayList<Project>();
+				List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+				Page<MeetingScheduling> pageList = null;
+				ProjectBo mpb = new ProjectBo();
+				if (query.getKeyword() != null) {
+					mpb.setKeyword(query.getKeyword());
+				}
+				mpb.setProjectDepartid(user.getDepartmentId());
+				projectCommonList = projectService.queryList(mpb);
+				/**
+				 * 根据相关项目查找排期池数据
+				 */
+				List<Long> pids = new ArrayList<Long>();
+				if (projectCommonList != null && projectCommonList.size() > 0) {
+					for (Project pr : projectCommonList) {
+						pids.add(pr.getId());
+					}
+					query.setProjectIdList(pids);				
+					pageList = meetingSchedulingService
+							.queryMeschedulingAll(
+									query,
+									new PageRequest(query.getPageNum(), query.getPageSize()));
+					schedulingList = pageList.getContent();
+				} else {
+					
+					return responseBody;
+				} 			
+				if(schedulingList!=null && schedulingList.size()>0){	
+					List<String> ids = new ArrayList<String>();
+					for (MeetingScheduling ms : schedulingList) {
+						byte Edit = 1;
+						Integer sheduleStatus = ms.getScheduleStatus();
+						if (sheduleStatus == 2 || sheduleStatus == 3) {
+							Edit = 0;
+						}
+						if (ms.getReserveTimeStart() != null) {
+							long time = System.currentTimeMillis();
+							long startTime = ms.getReserveTimeStart().getTime();
+							if ((time > startTime) && sheduleStatus == 1) {
+								Edit = 0;
+							}
+						}
+						ms.setIsEdit(Edit);
+						ids.add(String.valueOf(ms.getProjectId()));
+					}
+		
+					/**
+					 * 查询出相关的所有项目
+					 */
+					ProjectBo pb = new ProjectBo();
+					pb.setIds(ids);
+					List<Project> projectList = projectService.queryList(pb);
+		
+					// 组装数据
+					for (MeetingScheduling ms : schedulingList) {
+						for (Project p : projectList) {
+							if (ms.getProjectId().longValue() == p.getId().longValue()) {
+								
+								ms.setProjectCode(p.getProjectCode());
+								ms.setProjectName(p.getProjectName());								
+								ms.setCreateUname(p.getCreateUname());
+							}
+		
+						}
+					}
+					
+				}		
+				responseBody.setPageList(pageList);
+				return responseBody;
+			}else{
+
+				/**
+				 * 查询出所有的事业线
+				 */
+				List<Long> depids = new ArrayList<Long>();
+				Map<Long, Department> careerlineMap = new HashMap<Long, Department>();
+				Department d = new Department();
+				if (query.getCareline() != null) {
+					Department de = departmentService.queryById(new Long(query
+							.getCareline()));
+					careerlineMap.put(de.getId(), de);
+					depids.add(de.getId());
+				} else {
+					d.setType(1);
+					List<Department> careerlineList = departmentService
+							.queryList(d);
+					for (Department department : careerlineList) {
+						careerlineMap.put(department.getId(), department);
+						depids.add(department.getId());
+					}
+					
+				}
+				/**
+				 * 查询出相关的所有项目
+				 */
+				List<Project> projectCommonList = new ArrayList<Project>();
+				List<MeetingScheduling> schedulingList = new ArrayList<MeetingScheduling>();
+				Page<MeetingScheduling> pageList = null;
+				ProjectBo mpb = new ProjectBo();
+				if (query.getKeyword() != null) {
+					mpb.setKeyword(query.getKeyword());
+				}
+				mpb.setDeptIdList(depids);
+				projectCommonList = projectService.queryList(mpb);
+				/**
+				 * 根据相关项目查找排期池数据
+				 */
+				List<Long> pids = new ArrayList<Long>();
+				if (projectCommonList != null && projectCommonList.size() > 0) {
+					for (Project pr : projectCommonList) {
+						pids.add(pr.getId());
+					}
+					query.setProjectIdList(pids);				
+					pageList = meetingSchedulingService
+							.queryMeschedulingAll(
+									query,
+									new PageRequest(query.getPageNum(), query.getPageSize()));
+					schedulingList = pageList.getContent();
+				} else {
+					
+					return responseBody;
+				} 			
+				if(schedulingList!=null && schedulingList.size()>0){	
+					List<String> ids = new ArrayList<String>();
+					for (MeetingScheduling ms : schedulingList) {
+						byte Edit = 1;
+						Integer sheduleStatus = ms.getScheduleStatus();
+						if (sheduleStatus == 2 || sheduleStatus == 3) {
+							Edit = 0;
+						}
+						if (ms.getReserveTimeStart() != null) {
+							long time = System.currentTimeMillis();
+							long startTime = ms.getReserveTimeStart().getTime();
+							if ((time > startTime) && sheduleStatus == 1) {
+								Edit = 0;
+							}
+						}
+						ms.setIsEdit(Edit);
+						ids.add(String.valueOf(ms.getProjectId()));
+					}
+		
+					/**
+					 * 查询出相关的所有项目
+					 */
+					ProjectBo pb = new ProjectBo();
+					pb.setIds(ids);
+					List<Project> projectList = projectService.queryList(pb);
+		
+					// 组装数据
+					for (MeetingScheduling ms : schedulingList) {
+						for (Project p : projectList) {
+							if (ms.getProjectId().longValue() == p.getId().longValue()) {
+								
+								ms.setProjectCode(p.getProjectCode());
+								ms.setProjectName(p.getProjectName());
+								ms.setProjectCareerline(careerlineMap.get(
+										p.getProjectDepartid()).getName());
+								ms.setCreateUname(p.getCreateUname());
+							}
+		
+						}
+					}
+					
+				}		
+				responseBody.setPageList(pageList);
+				return responseBody;
+			}
 		} catch (PlatformException e) {
 			responseBody.setResult(new Result(Status.ERROR, null,
 					"queryList faild"));
