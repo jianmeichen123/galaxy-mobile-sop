@@ -5,7 +5,7 @@
   <groupId>com.galaxyinternet</groupId>
   <artifactId>galaxy-mobile-sop</artifactId>
   <version>1.0.3.mobile-SNAPSHOT</version>
-   <!-- <version>1.0.1.mobile</version> -->
+<!--    <version>1.0.3.mobile</version> -->
   <packaging>pom</packaging>
   <name/>
   <url/>
@@ -18,7 +18,7 @@
   <modules>
   	<module>galaxy-mobile-sop-api</module>
   	<module>galaxy-mobile-sop-server</module>
-  </modules>
+  </modules> 
   
   <!-- 如有Nexus私服, 取消注释并指向正确的服务器地址. -->
 	<repositories>

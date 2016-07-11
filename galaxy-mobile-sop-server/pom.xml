@@ -4,7 +4,7 @@
     <groupId>com.galaxyinternet</groupId>
     <artifactId>galaxy-mobile-sop</artifactId>
     <version>1.0.3.mobile-SNAPSHOT</version>
-<!--    <version>1.0.1.mobile</version> -->
+<!--    <version>1.0.3.mobile</version> --> 
   </parent>
   <artifactId>galaxy-mobile-sop-server</artifactId>
   <packaging>war</packaging>
@@ -15,7 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.2.1.RELEASE</spring.version>
 		<dependency.project>1.0.3.mobile-SNAPSHOT</dependency.project>
-<!--             <dependency.project>1.0.1.mobile</dependency.project>   -->
+<!--         <dependency.project>1.0.3.mobile</dependency.project>   -->
 	</properties>
 	
 	<repositories>
@@ -86,6 +86,7 @@
 				</jdbc.url>
 				<jdbc.username>fxuser</jdbc.username>
 				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>
+
 				<!-- 本地项目地址 -->
 				<log4j.path>${catalina.base}/logs/</log4j.path>
 				<sop.oss.tempfile.path>/data/apps/osstemp/</sop.oss.tempfile.path>
@@ -151,13 +152,7 @@
 				<!-- 开发数据库 -->
 				<jdbc.url>
 					jdbc:mysql://10.9.11.232:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
-				</jdbc.url>
-
-				 <!-- 仿真数据库 -->
-<!-- 				<jdbc.url> -->
-<!-- 					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8 -->
-<!-- 				</jdbc.url> -->
-				
+				</jdbc.url>				
 				<jdbc.username>fxuser</jdbc.username>
 				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>
 				<!-- 本地项目地址 -->
@@ -193,6 +188,7 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
+
 			    <!-- 仿真数据库 -->
 				<jdbc.url>
 					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
@@ -200,16 +196,15 @@
 			    <jdbc.username>fxuser</jdbc.username>
  				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password>
 			    <!-- 仿真数据库 -->
-			
-			
+						
 				<!-- 数据库连接地址和数据库名 -->
+
 <!-- 				<jdbc.url> -->
 <!-- 					jdbc:mysql://10.9.11.234:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8 -->
 <!-- 				</jdbc.url> -->
 <!-- 				<jdbc.username>fxuser</jdbc.username> -->
-<!-- 				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password> -->
-				
-				
+<!-- 				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password> -->							
+
 				<!-- 本地项目地址 -->
 				<log4j.path>${catalina.base}/logs/</log4j.path>
 				<sop.oss.tempfile.path>/data/apps/osstemp/</sop.oss.tempfile.path>

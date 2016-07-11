@@ -1,7 +1,5 @@
 package com.galaxyinternet.common.dictEnum;
 
-import com.galaxyinternet.common.enums.DictEnum.financeStatus;
-
 public enum DictEnum {
 	
 	项目类型("项目类型","projectType"),

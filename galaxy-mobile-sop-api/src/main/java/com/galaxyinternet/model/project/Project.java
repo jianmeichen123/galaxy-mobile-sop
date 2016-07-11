@@ -114,7 +114,73 @@ public class Project extends PagableEntity {
 
     private String formatFinalShareRatio;
 	
-    public Integer getProjectDescribezw() {
+//TODO  
+    
+    //新增项目列表
+    private String industry;
+    
+    private String projectTypeName;//项目类型名称
+    
+    private String projectProgressName; //项目阶段名称
+    
+    private String financeStatusName; //'融资状态'名称
+        
+    private String projectStatusName;  //项目状态名称;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public String getIndustry() {
+		return industry;
+	}
+
+	public void setIndustry(String industry) {
+		this.industry = industry;
+	}
+
+	public String getProjectTypeName() {
+		return projectTypeName;
+	}
+
+	public void setProjectTypeName(String projectTypeName) {
+		this.projectTypeName = projectTypeName;
+	}
+
+	public String getProjectProgressName() {
+		return projectProgressName;
+	}
+
+	public void setProjectProgressName(String projectProgressName) {
+		this.projectProgressName = projectProgressName;
+	}
+
+	public String getFinanceStatusName() {
+		return financeStatusName;
+	}
+
+	public void setFinanceStatusName(String financeStatusName) {
+		this.financeStatusName = financeStatusName;
+	}
+
+	public String getProjectStatusName() {
+		return projectStatusName;
+	}
+
+	public void setProjectStatusName(String projectStatusName) {
+		this.projectStatusName = projectStatusName;
+	}
+
+	//TODO
+	
+	
+	public Integer getProjectDescribezw() {
 		return projectDescribezw;
 	}
 

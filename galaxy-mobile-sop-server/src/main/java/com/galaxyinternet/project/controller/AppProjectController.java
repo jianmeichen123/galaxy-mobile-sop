@@ -2,7 +2,9 @@ package com.galaxyinternet.project.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +34,12 @@ import com.galaxyinternet.model.department.Department;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.AppProjectService;
+import com.galaxyinternet.service.AppProjecttService;
 import com.galaxyinternet.service.DepartmentService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.UserRoleService;
 import com.galaxyinternet.vo.GeneralProjectVO;
+import com.galaxyinternet.vo.GeneralProjecttVO;
 import com.galaxyinternet.vo.ProjectVO;
 /**
  * ios对接接口
@@ -49,6 +53,8 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	final Logger logger = LoggerFactory.getLogger(AppProjectController.class);
 	@Autowired
 	private AppProjectService appProjectService;
+	@Autowired
+	private AppProjecttService appProjecttService;
 	@Autowired
 	private DepartmentService departmentService;
 	@Autowired
@@ -251,33 +257,33 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 				if ( StringUtils.isNotBlank(projectBo.getProjectStatus()) && projectBo.getProjectStatus().equals(DictEnum.projectStatus.YFJ.getCode()) ){
 					
 					if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){				
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}	
 					}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}	
 					}	
 				} else if ( StringUtils.isNotBlank(projectBo.getProjectStatus())  && projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode()) ){
 					   
 						if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){				
-							if( gjzNum!=0 && gjzNum>thyyNum ){
+							if( gjzNum!=0 && gjzNum>=thyyNum ){
 								gjzNum -= thyyNum;
 							}	
 						}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
-							if( gjzNum!=0 && gjzNum>thyyNum ){
+							if( gjzNum!=0 && gjzNum>=thyyNum ){
 								gjzNum -= thyyNum;
 							}	
 						}
 						
 				}else if ( StringUtils.isNotBlank(projectBo.getThyyFlag()) && projectBo.getThyyFlag().equals("1") ){					
 					if( StringUtils.isNotBlank(projectBo.getProjectProgress())  &&  projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode()) ){
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}
 					}else if (StringUtils.isBlank(projectBo.getProjectProgress())  ){
-						if( gjzNum!=0 && gjzNum>thyyNum ){
+						if( gjzNum!=0 && gjzNum>=thyyNum ){
 							gjzNum -= thyyNum;
 						}	
 					}
@@ -395,7 +401,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 			responseBody.setResult(new Result(Status.OK, ""));
 			return responseBody;
 		}
-		
+		//
 		@ResponseBody
 		@RequestMapping(value = "/countThyySum",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 		public ResponseData<GeneralProjectVO> queryCountThyyProjectListByParam(HttpServletRequest request, @RequestBody ProjectBo projectBo){
@@ -403,143 +409,10 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 			ResponseData<GeneralProjectVO> responseBody = new ResponseData<GeneralProjectVO>();
 			GeneralProjectVO genProjectBean = new GeneralProjectVO();
 			try{
-				if(user==null){
-					responseBody.setResult(new Result(Status.ERROR, "User用户信息在Session中不存在，无法执行项目列表查询！"));
-					return responseBody;
-				}
-				List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
-				if(roleIdList==null || roleIdList.size()==0){
-					responseBody.setResult(new Result(Status.ERROR, "当前用户未配置任何角色，将不执行项目列表查询功能！"));
-					return responseBody;
-				}
-				//根据登录人的角色，设置不同的待查询项（备注：董事长和CEO全查，获取全部）
-				if(roleIdList.contains(UserConstant.TZJL)){//投资经理
-					projectBo.setCreateUid(user.getId()); //项目创建者
-				}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
-					projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
-				}		
-				List<Order> orderList = new ArrayList<Order>();
-				orderList.add(new Order(Direction.DESC, "updated_time"));
-				orderList.add(new Order(Direction.DESC, "created_time"));			
-				Sort sort = new Sort(orderList);
-				
-				/* =====================================
-				 * 【临时】变更1.3的需求逻辑，待新版本时，可注释以下代码
-				 * =====================================
-				 */
-				
-				projectBo.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
-				if(StringUtils.isNotBlank(projectBo.getProjectProgress())  && projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())){
-					projectBo.setProjectProgress(null);
-				}
-				long gjzNum = appProjectService.queryCountProjectByParam(projectBo);
-								
-				long thyyNum = 0L;
-				
-				ProjectBo pb = new ProjectBo();				
-				if(roleIdList.contains(UserConstant.TZJL)){//投资经理
-				pb.setCreateUid(projectBo.getCreateUid());//项目创建者
-				}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
-					pb.setProjectDepartid(projectBo.getProjectDepartid()); //所属部门（事业线）ID
-				}
-				pb.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
-				thyyNum = appProjectService.queryCountProjectByParam(pb);
-					
-   
-               if( ! StringUtils.isNotBlank(projectBo.getProjectProgress())  && projectBo.getProjectStatus().equals(DictEnum.projectStatus.GJZ.getCode())){
-               	gjzNum-=thyyNum;
-                }
-				
-							
-				projectBo.setProjectStatus(DictEnum.projectStatus.YFJ.getCode());
-				if(StringUtils.isNotBlank(projectBo.getProjectProgress())  && projectBo.getProjectProgress().equals(DictEnum.projectProgress.投后运营.getCode())){
-					projectBo.setProjectProgress(null);
-				}
-				long yfjNum = appProjectService.queryCountProjectByParam(projectBo);
-				
-				/* =====================================
-				 * =====================================
-				 * =====================================
-				 */
-				
-				genProjectBean.setGjzCount(gjzNum);
-				genProjectBean.setThyyCount(thyyNum);
-				genProjectBean.setYfjCount(yfjNum);
-				
-				//======================================================
-
-				if(StringUtils.isNotBlank(projectBo.getThyyFlag()) && projectBo.getThyyFlag().equals("1")){
-					projectBo.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
-				}
-				genProjectBean = appProjectService.queryPagingProjectList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
-				
-				if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
-					genProjectBean.getPvPage().setContent(new ArrayList<ProjectVO>());
-					genProjectBean.getPvPage().setTotal(0L);
-				}else{
-					Page<ProjectVO> page = genProjectBean.getPvPage();
-					List<ProjectVO> filterList = page.getContent();
-                    				
-					 for(int i=0;i<filterList.size();i++){
-			    			ProjectVO probean = filterList.get(i);			    			
-			    			
-							Department Department=new Department();
-							if(StringUtils.isNotBlank(probean.getProjectDepartid().toString())){
-								Department.setId(probean.getProjectDepartid());
-								Department queryOne = departmentService.queryOne(Department);
-								if(queryOne!=null){
-									probean.setProjectCareerline(queryOne.getName());
-								}else{
-									probean.setProjectCareerline("");
-								}
-							}
-							
-							//financeStatus
-							Department dt=new Department();
-							if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
-								dt.setId(probean.getIndustryOwn());
-								Department queryDep = departmentService.queryOne(dt);
-								if(queryDep!=null){
-									probean.setIndustry(queryDep.getName());//行业归属名称
-								}else{
-									probean.setIndustry("");
-								}
-							}
-							
-						    /*
-						     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
-						     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比
-						     * 新项目保存时，上述字段值数字（未有公式运算或转换处理），全是直接存储
-						     */
-							if(StringUtils.isNotBlank(probean.getProjectType())){
-								probean.setProjectTypeName(DictEnum.projectType.getNameByCode(probean.getProjectType()));//项目类型名称
-							}
-							if(StringUtils.isNotBlank(probean.getProjectProgress())){
-								probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));//项目进度名称
-							}	
-							if(StringUtils.isNotBlank(probean.getFinanceStatus())){
-								probean.setFinanceStatusName(DictEnum.financeStatus.getNameByCode(probean.getFinanceStatus()));//融资状态名称
-							}
-							if(StringUtils.isNotBlank(probean.getProjectStatus())){
-								probean.setProjectStatusName(DictEnum.projectStatus.getNameByCode(probean.getProjectStatus()));//项目状态编码
-							}
-					 }	
-					
-					 page.setContent(filterList);
-					 genProjectBean.setPvPage(page);
-				}	
-//				long thyyNum = 0L;
-					
-//				ProjectBo pb = new ProjectBo();				
-//				if(roleIdList.contains(UserConstant.TZJL)){//投资经理
-//					pb.setCreateUid(projectBo.getCreateUid());//项目创建者
-//				}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
-//					pb.setProjectDepartid(projectBo.getProjectDepartid()); //所属部门（事业线）ID
-//				}
-//				pb.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
-//				thyyNum = appProjectService.queryCountProjectByParam(pb);
-//				genProjectBean.setThyyCount(thyyNum);
-				
+				System.out.println("#############项目名称:  " + projectBo.getProjectName());
+//     			System.out.println("###################项目进度编码:  "+projectBo.getProjectProgress());
+//				System.out.println("###################项目类型:  "+projectBo.getProjectType() );		
+				System.out.println("###################融资状态:  "+projectBo.getFinanceStatus() );			
 			}catch(Exception ex){
 				logger.error("移动端后台查询项目列表异常", ex);
 				responseBody.setResult(new Result(Status.ERROR, "","移动端-查询项目列表后台异常"));
@@ -550,4 +423,129 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 			return responseBody;
 		}
 
+		/**
+		 * 测试项目列表
+		 * @param request
+		 * @param projectBo
+		 * @return
+		 */
+			@ResponseBody
+			@RequestMapping(value = "/queryProjectListByTdj",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+			public ResponseData<GeneralProjecttVO> queryProjectListByTdj(HttpServletRequest request, @RequestBody ProjectBo projectBo) {		
+				User user = (User) getUserFromSession(request);			
+				ResponseData<GeneralProjecttVO> responseBody = new ResponseData<GeneralProjecttVO>();
+				GeneralProjecttVO genProjectBean = new GeneralProjecttVO();
+				
+				try{
+					if(user==null){
+						responseBody.setResult(new Result(Status.ERROR, "User用户信息在Session中不存在，无法执行项目列表查询！"));
+						return responseBody;
+					}
+					List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+					if(roleIdList==null || roleIdList.size()==0){
+						responseBody.setResult(new Result(Status.ERROR, "当前用户未配置任何角色，将不执行项目列表查询功能！"));
+						return responseBody;
+					}
+					//根据登录人的角色，设置不同的待查询项（备注：董事长和CEO全查，获取全部）
+					if(roleIdList.contains(UserConstant.TZJL)){//投资经理
+						projectBo.setCreateUid(user.getId()); //项目创建者
+					}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
+						projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
+					}		
+					List<Order> orderList = new ArrayList<Order>();
+					orderList.add(new Order(Direction.DESC, "updated_time"));
+					orderList.add(new Order(Direction.DESC, "created_time"));			
+		
+					Sort sort = new Sort(orderList);
+					if(projectBo.getSflag()==1){
+						//跟进中
+						genProjectBean = appProjecttService.querygjzProjectList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
+					}
+					if(projectBo.getSflag()==2){
+						//投后运营
+						genProjectBean = appProjecttService.querythyyList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
+					}
+					if(projectBo.getSflag()==3){
+						//否决
+						genProjectBean = appProjecttService.queryfjList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
+					}
+					if(projectBo.getSflag()==4){
+						genProjectBean = appProjecttService.queryPageList(projectBo,  new PageRequest(projectBo.getPageNum(), projectBo.getPageSize(),sort));
+					}
+					if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
+						genProjectBean.getPvPage().setContent(new ArrayList<Project>());
+						genProjectBean.getPvPage().setTotal(0L);
+					}else{
+						Page<Project> page = genProjectBean.getPvPage();
+						List<Project> filterList = page.getContent();
+	                    
+					 
+						 for(int i=0;i<filterList.size();i++){
+							 Project probean = filterList.get(i);				    			
+								Department Department=new Department();
+								if(StringUtils.isNotBlank(probean.getProjectDepartid().toString())){
+									Department.setId(probean.getProjectDepartid());
+									Department queryOne = departmentService.queryOne(Department);
+									if(queryOne!=null){
+										probean.setProjectCareerline(queryOne.getName());
+									}else{
+										probean.setProjectCareerline("");
+									}
+								}
+								
+								//financeStatus
+								Department dt=new Department();
+								if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+									dt.setId(probean.getIndustryOwn());
+									Department queryDep = departmentService.queryOne(dt);
+									if(queryDep!=null){
+										probean.setIndustry(queryDep.getName());//行业归属名称
+									}else{
+										probean.setIndustry("");
+									}
+								}
+								
+							    /*
+							     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
+							     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比
+							     * 新项目保存时，上述字段值数字（未有公式运算或转换处理），全是直接存储
+							     */
+								if(StringUtils.isNotBlank(probean.getProjectType())){
+									probean.setProjectTypeName(DictEnum.projectType.getNameByCode(probean.getProjectType()));//项目类型名称
+								}
+								if(StringUtils.isNotBlank(probean.getProjectProgress())){
+									probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));//项目进度名称
+								}	
+								if(StringUtils.isNotBlank(probean.getFinanceStatus())){
+									probean.setFinanceStatusName(DictEnum.financeStatus.getNameByCode(probean.getFinanceStatus()));//融资状态名称
+								}
+								if(StringUtils.isNotBlank(probean.getProjectStatus())){
+									probean.setProjectStatusName(DictEnum.projectStatus.getNameByCode(probean.getProjectStatus()));//项目状态编码
+								}
+						 }	
+						 
+						 page.setContent(filterList);
+						 genProjectBean.setPvPage(page);
+					}
+					Long gjzNum = appProjecttService.queryProjectgjzCount(projectBo);
+					
+					Long thyyNum = appProjecttService.queryProjectthyyCount(projectBo);
+					
+					Long yfjNum = appProjecttService.queryProjectfjCount(projectBo);
+					
+					genProjectBean.setGjzCount(gjzNum);
+					genProjectBean.setThyyCount(thyyNum);
+					genProjectBean.setYfjCount(yfjNum);
+					
+				}catch(Exception ex){
+					logger.error("移动端后台查询项目列表异常", ex);
+					responseBody.setResult(new Result(Status.ERROR, "","移动端-查询项目列表后台异常"));
+					return responseBody;
+				}
+				
+				responseBody.setEntity(genProjectBean);
+				responseBody.setResult(new Result(Status.OK, ""));
+				return responseBody;
+			
+			}
 }

@@ -285,8 +285,8 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			}
 			responseBody.setResult(new Result(Status.OK, ""));
 			responseBody.setId(id);
-			ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId());
-			
+			//ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId());
+			ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "3", UrlNumber.one);
 		} catch (Exception e) {
 			responseBody.setResult(new Result(Status.ERROR,null, "访谈添加失败"));
 			
@@ -1063,7 +1063,8 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			}
 			responseBody.setResult(new Result(Status.OK, ""));
 			responseBody.setId(viewId);
-			ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId());
+			//ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId());
+			ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "3", UrlNumber.one);
 		} catch (Exception e) {
 			responseBody.setResult(new Result(Status.ERROR,null, "访谈添加失败"));
 			

@@ -220,6 +220,139 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 		}	
 		
 		
+		
+		/**
+		 * App端接口--添加会议(无录音文件)新版本需要
+		 * @param meetingRecord
+		 * @param request
+		 * @param response
+		 * @return
+		 */
+		@com.galaxyinternet.common.annotation.Logger(operationScope = { LogType.LOG, LogType.MESSAGE })
+		@ResponseBody
+		@RequestMapping(value = "/addIosFileMeetByNoFileTwo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseData<MeetingRecord> addIosFileMeetByNoFileTwo(@RequestBody MeetingRecordBo meetingRecord,HttpServletRequest request,HttpServletResponse response  ) {
+			
+			ResponseData<MeetingRecord> responseBody = new ResponseData<MeetingRecord>();
+			User user = (User) request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			//参数是否空值检查
+			if(meetingRecord.getProjectId() == null 
+					|| meetingRecord.getMeetingDate() == null 
+					|| StringUtils.isBlank(meetingRecord.getMeetingType())
+					|| StringUtils.isBlank(meetingRecord.getMeetingResult())) {
+				responseBody.setResult(new Result(Status.ERROR,null, "请完善会议信息，参数值不完整或缺失"));
+				return responseBody;
+			}
+			//检查当前会议类型是否存在"已有通过的会议"，若有，则不能再添加会议纪要
+			MeetingRecord mrQuery = new MeetingRecord();
+			mrQuery.setProjectId(meetingRecord.getProjectId());
+			mrQuery.setMeetingType(meetingRecord.getMeetingType());
+			mrQuery.setMeetingResult(DictEnum.meetingResult.通过.getCode());
+			Long mrCount = meetingRecordService.queryCount(mrQuery);
+			if(mrCount != null && mrCount.longValue() > 0L)
+			{
+				responseBody.setResult(new Result(Status.ERROR, "","已有通过的会议，不能再添加会议纪要!"));
+				return responseBody;
+			}			
+			//检查立项会、投决会、CEO评审是否存在待排期记录
+			String currMeetingType = meetingRecord.getMeetingType().trim();
+		if (currMeetingType.equals(DictEnum.meetingType.立项会.getCode())
+				|| currMeetingType.equals(DictEnum.meetingType.投决会.getCode())
+				|| currMeetingType.equals(DictEnum.meetingType.CEO评审.getCode())) {
+				
+				MeetingScheduling ms = new MeetingScheduling();
+				ms.setProjectId(meetingRecord.getProjectId());
+				ms.setMeetingType(meetingRecord.getMeetingType());
+//				ms.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+				List<MeetingScheduling> mslist = meetingSchedulingService.queryList(ms);				
+				if(mslist==null || mslist.isEmpty()){
+					responseBody.setResult(new Result(Status.ERROR, "","未在排期池中，不能添加会议记录!"));
+					return responseBody;
+				}else{
+					int scheduleStatus = mslist.get(0).getScheduleStatus().intValue();
+//					String status = mslist.get(0).getStatus();
+							
+					if(scheduleStatus==DictEnum.meetingSheduleResult.已否决.getCode()){
+						responseBody.setResult(new Result(Status.ERROR, "","项目排期结果己否决，不能添加会议记录!"));
+						return responseBody;
+					}
+//					else if (scheduleStatus==DictEnum.meetingSheduleResult.已通过.getCode() && status .equals( DictEnum.meetingResult.通过.getCode() )){
+//						responseBody.setResult(new Result(Status.ERROR, "","项目会议已通过，不能添加会议记录!"));
+//						return responseBody;
+//					}
+				}
+			}			
+			try {
+				String prograss = "";
+//				UrlNumber uNum = null;
+				if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.内评会.getCode())){       
+					prograss = DictEnum.projectProgress.内部评审.getCode();                                 	
+//					uNum = UrlNumber.one;
+				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){ 
+					prograss = DictEnum.projectProgress.CEO评审.getCode(); 								
+//					uNum = UrlNumber.two;
+				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.立项会.getCode())){	
+					prograss = DictEnum.projectProgress.立项会.getCode(); 										
+//					uNum = UrlNumber.three;
+				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.投决会.getCode())){
+					prograss = DictEnum.projectProgress.投资决策会.getCode(); 								
+//					uNum = UrlNumber.four;
+				}				
+				//检查project id 及Project 是否为空
+				Project project = new Project();
+				project = projectService.queryById(meetingRecord.getProjectId());
+				String err = errMessage(project,user,prograss);
+				if(err!=null && err.length()>0){
+					responseBody.setResult(new Result(Status.ERROR,null, err));
+					return responseBody;
+				}			
+				//保存
+				Long id = null;			
+				if(meetingRecord.getFkey()!=null){
+					if( meetingRecord.getFileLength()==null||meetingRecord.getFname()==null){
+						responseBody.setResult(new Result(Status.ERROR,null, "请完善附件信息"));
+						return responseBody;
+					}
+					if(meetingRecord.getBucketName()==null){
+						meetingRecord.setBucketName(OSSFactory.getDefaultBucketName());
+					}		
+							
+					Map<String,String> nameMap = transFileNames(meetingRecord.getFname());
+					SopFile sopFile = new SopFile();
+					sopFile.setBucketName(meetingRecord.getBucketName());
+					sopFile.setFileKey(meetingRecord.getFkey());
+					sopFile.setFileLength(meetingRecord.getFileLength());
+					sopFile.setFileName(nameMap.get("fileName"));
+					sopFile.setFileSuffix(nameMap.get("fileSuffix"));
+					
+					sopFile.setProjectId(project.getId());
+					sopFile.setProjectProgress(project.getProjectProgress());
+					sopFile.setFileUid(user.getId());	 //上传人
+					sopFile.setCareerLine(user.getDepartmentId());
+					sopFile.setFileType(DictEnum.fileType.音频文件.getCode());   //存储类型
+					sopFile.setFileSource(DictEnum.fileSource.内部.getCode());  //档案来源
+					//sopFile.setFileWorktype(fileWorkType);    //业务分类
+					sopFile.setFileStatus(DictEnum.fileStatus.已上传.getCode());  //档案状态					
+//					id = meetingRecordService.insertMeet(meetingRecord,project,sopFile,equalNowPrograss);
+					id = appPmService.addMeeting(meetingRecord, project, sopFile);
+				}else if(!ServletFileUpload.isMultipartContent(request)){
+					SopFile file = new SopFile();
+					file.setCareerLine(user.getDepartmentId());
+					file.setFileUid(user.getId());
+//					id = meetingRecordService.insertMeet(meetingRecord,project,file,equalNowPrograss);
+					id = appPmService.addMeeting(meetingRecord, project, file);
+				}
+				responseBody.setId(id);
+				responseBody.setResult(new Result(Status.OK, ""));			
+			} catch (Exception e) {
+				responseBody.setResult(new Result(Status.ERROR,null, "会议添加失败"));
+				if(logger.isErrorEnabled()){
+					logger.error("addfilemeet 会议添加失败 ",e);
+				}
+			}
+			return responseBody;
+		}	
+		
 		/**
 		 * App端接口--添加会议（有录音文件）
 		 *  测试调用URL/galaxy/projectmeeting/approgress/addAudioFile
@@ -268,6 +401,13 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 		}
 		
 		/**
+		 * 
+		 * 
+		 * 以下的暂不使用
+		 * 
+		 * 
+		 * 
+		 * 
 		 * App端接口--添加会议（有录音文件）
 		 * @param meetingRecord
 		 * @param request

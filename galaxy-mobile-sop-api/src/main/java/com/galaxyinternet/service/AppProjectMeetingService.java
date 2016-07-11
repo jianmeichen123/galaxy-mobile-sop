@@ -21,6 +21,17 @@ public interface AppProjectMeetingService {
 	public Long addingMeeting(MeetingRecord meetingRecord,Project project,SopFile sopFile) throws Exception;
 	
 	
+	/* * 添加会议（新）功能方法
+	 * @param meetingRecord
+	 * @param project
+	 * @param sopFile
+	 * @return
+	 * @throws Exception
+	 */
+	public Long addMeeting(MeetingRecord meetingRecord,Project project,SopFile sopFile) throws Exception;
+	
+	
+	
 	//创意流程里的添加会议
 	public void addIdeaFileByMeeting(MeetingRecord meetingRecord , Idea idea, Long careerLine ,Long fileUid ,AppSopFile sopFile)throws Exception;
 
