@@ -1155,7 +1155,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						scheduEntity.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
 						MeetingScheduling querySchedu = meetingSchedulingService.queryOne(scheduEntity);
 						
-						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
+						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode()) && !querySchedu.getStatus().equals(DictEnum.meetingResult.待定.getCode())){
 							querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 							querySchedu.setReserveTimeStart(null);
 							querySchedu.setReserveTimeEnd(null);
@@ -1166,6 +1166,10 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							querySchedu.setUpdatedTime((new Date()).getTime()); //变更操作时间
 							meetingSchedulingService.updateBySelective(querySchedu); 
 							
+						} else {
+							responseBody.setResult(new Result(Status.ERROR, "cfpq",
+									"项目不能重复申请CEO评审排期!"));
+							return responseBody;
 						}
 					}
 					else if (currProjectProgress.equals(DictEnum.projectProgress.立项会.getCode())
@@ -1177,7 +1181,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						scheduling.setProjectIdList(idList);
 						scheduling.setMeetingType(DictEnum.meetingType.立项会.getCode());
 						MeetingScheduling queryScheduling = meetingSchedulingService.queryOne(scheduling);	
-						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
+						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode()) && !queryScheduling.getStatus().equals(DictEnum.meetingResult.待定.getCode())){
 							queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());
 							queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 							queryScheduling.setReserveTimeStart(null);
@@ -1186,6 +1190,10 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
 							queryScheduling.setUpdatedTime((new Date()).getTime());
 							meetingSchedulingService.updateBySelective(queryScheduling);
+						} else {
+							responseBody.setResult(new Result(Status.ERROR, "cfpq",
+									"项目不能重复申请立项会排期!"));
+							return responseBody;
 						}	
 					}
 					else if (currProjectProgress.equals(DictEnum.projectProgress.投资决策会.getCode())
@@ -1199,7 +1207,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						
 						Project proEntity = new Project();
 						proEntity.setId(project.getId());			
-						if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())){
+						if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode()) && !queryScheduling.getStatus().equals(DictEnum.meetingResult.待定.getCode())){
 					    	/* 1.更新项目的当前阶段的排期结果为“待排期”,排期起始和结束时间置空，待秘书重新选择
 					    	 * 2.更新过会次数、变更操作时间   */	    	
 					    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
@@ -1209,7 +1217,11 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					    	queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
 					    	queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
 					    	meetingSchedulingService.updateBySelective(queryScheduling); 
-					    }
+					    } else {
+							responseBody.setResult(new Result(Status.ERROR, "cfpq",
+									"项目不能重复申请投决会排期!"));
+							return responseBody;
+						}
 					    
 					}
 					else {
