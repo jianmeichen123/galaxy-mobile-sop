@@ -113,14 +113,22 @@
 							<if test="escapeChar ">
 								escape '/'
 							</if>
-							or create_uname like CONCAT("%",#{keyword},"%")
+							or project_name like CONCAT("%",#{ceeword},"%")
 							<if test="escapeChar ">
 								escape '/'
 							</if>
+							or create_uname like CONCAT("%",#{keyword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>							
 							)
 						</when>
 						<when test="flagkeyword==null">
 							and (project_name like CONCAT("%",#{keyword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>
+							or project_name like CONCAT("%",#{ceeword},"%")
 							<if test="escapeChar ">
 								escape '/'
 							</if>
@@ -131,10 +139,15 @@
 							)
 						</when>
 						<when test="flagkeyword=='onlyName'">
-							and project_name like CONCAT("%",#{keyword},"%")
+							and (project_name like CONCAT("%",#{keyword},"%")
 							<if test="escapeChar ">
 								escape '/'
 							</if>
+							or project_name like CONCAT("%",#{ceeword},"%")
+							<if test="escapeChar ">
+								escape '/'
+							</if>
+								)
 						</when>
 					</choose>
 				</if>

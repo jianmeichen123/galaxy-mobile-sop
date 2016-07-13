@@ -45,6 +45,22 @@ public class ProjectBo extends Project {
 	
 	private Integer sflag;
 	
+	/**
+	 * 模糊查询关键字
+	 */
+	protected String ceeword;
+	
+	
+	
+	
+	public String getCeeword() {
+		return ceeword;
+	}
+
+	public void setCeeword(String ceeword) {
+		this.ceeword = ceeword;
+	}
+
 	public String getProType() {
 		return proType;
 	}
