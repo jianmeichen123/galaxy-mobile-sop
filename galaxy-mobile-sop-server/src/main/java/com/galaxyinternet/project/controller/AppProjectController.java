@@ -470,6 +470,10 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 						genProjectBean = appProjecttService.queryfjList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
 					}
 					if(projectBo.getSflag()==4){
+						if(projectBo.getKeyword()!=null){
+							projectBo.setCeeword(projectBo.getKeyword().toUpperCase());
+						
+						}
 						genProjectBean = appProjecttService.queryPageList(projectBo,  new PageRequest(projectBo.getPageNum(), projectBo.getPageSize(),sort));
 					}
 					if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
