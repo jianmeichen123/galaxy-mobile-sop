@@ -70,7 +70,6 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	}	
 	
 	 /**
-	  * 
 	  * 供app端根据角色不同查看不同的项目列表
 	  * 版本（1.0-1.2）
 	  * 
