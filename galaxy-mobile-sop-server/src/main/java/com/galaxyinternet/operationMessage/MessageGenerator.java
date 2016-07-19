@@ -23,6 +23,7 @@ import com.galaxyinternet.platform.constant.PlatformConst;
 public class MessageGenerator implements InitializingBean,ApplicationContextAware
 {
 	private ApplicationContext context;
+	
 	private List<MessageHandler> handlers;
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
