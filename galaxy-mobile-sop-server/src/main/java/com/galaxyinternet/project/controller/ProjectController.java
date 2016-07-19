@@ -304,6 +304,69 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	}
 
 	/**
+	 * 为了消息提醒修改了 编辑项目的接口 2016/7/18修改
+	 * 修改项目信息接口
+	 * 
+	 * @author yangshuhua
+	 * @return
+	 * @throws ParseException
+	 */
+	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
+	@ResponseBody
+	@RequestMapping(value = "/editProject", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Project> editProject(@RequestBody Project project,
+			HttpServletRequest request) throws ParseException {
+		ResponseData<Project> responseBody = new ResponseData<Project>();
+		if (project == null || project.getId() == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
+			return responseBody;
+		}
+
+		// 执行转换
+		project.getProjectContribution();
+		project.getProjectValuations();
+		project.getCurrencyUnit();
+		project.getProjectShareRatio();
+
+		User user = (User) getUserFromSession(request);
+		if (project.getProjectValuations() == null) {
+			if (project.getProjectShareRatio() != null
+					&& project.getProjectShareRatio() > 0
+					&& project.getProjectContribution() != null
+					&& project.getProjectContribution() > 0) {
+				project.setProjectValuations(project.getProjectContribution()
+						* 100 / project.getProjectShareRatio());
+			}
+		}
+		if(null!=project.getIndustryOwn()&&project.getIndustryOwn().longValue()==0){
+			project.setIndustryOwn(null);
+		}
+
+		Project p = projectService.queryById(project.getId());
+		if (p == null) {
+			responseBody
+					.setResult(new Result(Status.ERROR, null, "未找到相应的项目信息!"));
+			return responseBody;
+		}
+		// 项目创建者用户ID与当前登录人ID是否一样
+		if (user.getId().longValue() != p.getCreateUid().longValue()) {
+			responseBody
+					.setResult(new Result(Status.ERROR, null, "没有权限修改该项目!"));
+			return responseBody;
+		}
+		project.setUpdatedTime(System.currentTimeMillis());
+		project.setCreatedTime(DateUtil.convertStringToDate(
+				p.getCreateDate().trim(), "yyyy-MM-dd").getTime());
+
+		int num = projectService.updateById(project);
+		if (num > 0) {
+			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
+			ControllerUtils.setRequestParamsForMessageTip(request,
+					project.getProjectName(), project.getId(),"2");
+		}
+		return responseBody;
+	}
+	/**
 	 * 查询指定的项目信息接口
 	 * @author gxc
 	 * @return 2016/6/13修改
