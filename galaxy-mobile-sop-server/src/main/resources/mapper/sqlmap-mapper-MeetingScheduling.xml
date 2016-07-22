@@ -185,6 +185,8 @@
 			<if test="meetingDate != null" > meeting_date = #{meetingDate,jdbcType=TIMESTAMP}, </if>
 			<if test="status != null" > status = #{status,jdbcType=VARCHAR}, </if>
 			<if test="remark != null" > remark = #{remark,jdbcType=VARCHAR}, </if>
+			reserve_time_start = #{reserveTimeStart},
+			reserve_time_end = #{reserveTimeEnd},
 			<if test="updatedTime != null" > updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
 			<if test="scheduleStatus != null" > schedule_status = #{scheduleStatus}, </if>
 			<if test="applyTime != null" > apply_time = #{applyTime}, </if>
