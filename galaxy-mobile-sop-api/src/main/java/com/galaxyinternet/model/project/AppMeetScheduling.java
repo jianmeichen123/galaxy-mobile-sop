@@ -5,13 +5,13 @@ import com.galaxyinternet.framework.core.model.PagableEntity;
 public class AppMeetScheduling extends PagableEntity{
 	private static final long serialVersionUID = 1L;
 	
-	private String tjh;
-	private String lxh;
-	private String ceops;
+	private String tjh; //投决会
+	private String lxh; //立项会
+	private String ceops; //ceo评审
 	
-	private Long tjhCount;
-	private Long lxhCount;
-	private Long ceopsCount;
+	private Long tjhCount; //投决会数量
+	private Long lxhCount; //立项会数量
+	private Long ceopsCount; //ceo评审数量
 	public String getTjh() {
 		return tjh;
 	}
