@@ -303,6 +303,29 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 				query.setIds(ideaIds);
 			}
 			Page<Idea> page = ideaService.queryPageList(query, pageable);
+			
+			IdeaBo ide = new IdeaBo();
+			String p = "ideaProgress:1,ideaProgress:4";
+			String q = "ideaProgress:2,ideaProgress:3,ideaProgress:5,ideaProgress:6,ideaProgress:7";
+			
+			if(roleIdList.contains(UserConstant.TZJL)){
+				query.setIdeaProgressStr(p);
+				query.setRelatedUid(null);
+				Long r = ideaService.queryCount(query);
+				ide.setCydCount(r);
+				query.setIdeaProgressStr(q);
+				query.setRelatedUid(user.getId());
+				Long y = ideaService.queryCount(query);
+				ide.setCyyCount(y);
+			}else{
+				query.setIdeaProgressStr(p);				
+				Long r = ideaService.queryCount(query);
+				ide.setCydCount(r);
+				query.setIdeaProgressStr(q);				
+				Long y = ideaService.queryCount(query);
+				ide.setCyyCount(y);
+			}
+			resp.setEntity(ide);
 			resp.setPageList(page);
 		} catch (Exception e) {
 			resp.getResult().addError("查询创意出错");

@@ -1161,7 +1161,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							querySchedu.setReserveTimeStart(null);
 							querySchedu.setReserveTimeEnd(null);
 							querySchedu.setStatus(DictEnum.meetingResult.待定.getCode());
-							
+							querySchedu.setReserveTimeEndStr(null);
+							querySchedu.setReserveTimeStartStr(null);
 							
 							querySchedu.setApplyTime(new Timestamp(new Date().getTime()));
 							querySchedu.setUpdatedTime((new Date()).getTime()); //变更操作时间
@@ -1187,7 +1188,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 							queryScheduling.setReserveTimeStart(null);
 							queryScheduling.setReserveTimeEnd(null);
-													
+							queryScheduling.setReserveTimeEndStr(null);
+							queryScheduling.setReserveTimeStartStr(null);						
 							queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
 							queryScheduling.setUpdatedTime((new Date()).getTime());
 							meetingSchedulingService.updateBySelective(queryScheduling);
@@ -1215,6 +1217,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 					    	queryScheduling.setReserveTimeStart(null);
 					    	queryScheduling.setReserveTimeEnd(null);
+							queryScheduling.setReserveTimeEndStr(null);
+							queryScheduling.setReserveTimeStartStr(null);
 					    	queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());								    					    	
 					    	queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
 					    	queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));

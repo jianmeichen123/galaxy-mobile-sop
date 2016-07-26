@@ -1,7 +1,12 @@
 package com.galaxyinternet.project.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.galaxyinternet.bo.project.MeetingSchedulingBo;
 import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
@@ -31,11 +37,13 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.department.Department;
+import com.galaxyinternet.model.project.AppMeetScheduling;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.AppProjectService;
 import com.galaxyinternet.service.AppProjecttService;
 import com.galaxyinternet.service.DepartmentService;
+import com.galaxyinternet.service.MeetingSchedulingService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.UserRoleService;
 import com.galaxyinternet.vo.GeneralProjectVO;
@@ -57,6 +65,8 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	private AppProjecttService appProjecttService;
 	@Autowired
 	private DepartmentService departmentService;
+	@Autowired
+	private MeetingSchedulingService meetingSchedulingService;
 	@Autowired
 	private ProjectService projectService;
 	@Autowired
@@ -551,4 +561,168 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 				return responseBody;
 			
 			}
+			//TODO	
+			/**
+			 * 查询会议排期的日历页面
+			 * @param request
+			 * @param query
+			 * @return
+			 */
+			@ResponseBody
+			@RequestMapping(value = "/queryMeetScheduling",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+			public ResponseData<MeetingSchedulingBo> queryMeetScheduling(HttpServletRequest request, @RequestBody MeetingSchedulingBo query) {		
+				ResponseData<MeetingSchedulingBo> responseBody = new ResponseData<MeetingSchedulingBo>();
+				User user = (User) getUserFromSession(request);
+				SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd");
+	
+					List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user
+						.getId());
+					//获取传过来的年月的第一天
+					if(query.getYear()!=null&&query.getMonth()!=null){
+						
+						Date d = getFirstDayOfMonth(Integer.valueOf(query.getYear()),Integer.valueOf(query.getMonth())-1);
+						query.setStartTime(ss.format(d));
+						//获取传过来的年月的最后一天
+						Date f = getLastDayOfMonth(Integer.valueOf(query.getYear()),Integer.valueOf(query.getMonth())-1);
+						query.setEndTime(ss.format(f));		
+					}
+				if (roleIdList.contains(UserConstant.TZJL)) {
+					query.setUid(user.getId());					
+				} else if (roleIdList.contains(UserConstant.HHR)) {
+					query.setProjectDepartid(user.getDepartmentId());					
+				} else if (roleIdList.contains(UserConstant.CEOMS)) {
+				
+					//需要进新接口  数目未排期的数目
+					Long iu = meetingSchedulingService.selectdpqCount(query);
+					responseBody.setId(iu);
+				}
+				
+				try{
+					
+					
+					Map<String, Object> depmap = new HashMap<String, Object>();
+					List<MeetingSchedulingBo> listmb = meetingSchedulingService.selectMonthScheduling(query);
+					for(MeetingSchedulingBo mo :listmb){						 						
+						 String aa = ss.format(mo.getReserveTimeStart());
+						 if(!depmap.containsKey(aa)){
+							 AppMeetScheduling ams =new AppMeetScheduling();
+							 query.setDayTime(aa);
+							 query.setMeetingType(DictEnum.meetingType.立项会.getCode());							 
+							 Long y = meetingSchedulingService.selectMonthSchedulingCount(query);
+							 ams.setLxh(DictEnum.meetingType.立项会.getCode());
+							 ams.setLxhCount(y);
+							 query.setMeetingType(DictEnum.meetingType.投决会.getCode());
+							 Long k = meetingSchedulingService.selectMonthSchedulingCount(query);
+							 ams.setTjh(DictEnum.meetingType.投决会.getCode());
+							 ams.setTjhCount(k);
+							 query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
+							 Long g = meetingSchedulingService.selectMonthSchedulingCount(query);
+							 ams.setCeops(DictEnum.meetingType.CEO评审.getCode());
+							 ams.setCeopsCount(g);
+							 depmap.put(aa, ams);
+						 }
+					}
+					
+					//获取初始的当日事项
+					MeetingSchedulingBo bop = new MeetingSchedulingBo();
+					String bb = ss.format(new Date());
+					bop.setDateTime(bb);
+					if(query.getUid()!=null){
+						bop.setUid(query.getUid());
+					}
+					if(query.getProjectDepartid()!=null){
+						bop.setProjectDepartid(query.getProjectDepartid());
+					}
+					List<MeetingSchedulingBo> lisb = meetingSchedulingService.selectDayScheduling(bop);
+					
+					responseBody.setUserData(depmap);
+					/*responseBody.setEntityList(listmb);*/
+					responseBody.setEntityList(lisb);
+					
+				} catch (PlatformException e) {
+					responseBody.setResult(new Result(Status.ERROR, null,
+							"queryUserList faild"));
+					if (logger.isErrorEnabled()) {
+						logger.error("queryUserList ", e);
+					}
+				}
+				return responseBody;
+			
+			}
+			
+
+			
+			/**
+			 * 排期日历的当日事项
+			 * @param request
+			 * @param query
+			 * @return 2016/7/26 传入的是当日时间的string类型 dateTime "yyyy-MM-dd"
+			 */
+			@ResponseBody
+			@RequestMapping(value = "/selectDayScheduling",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+			public ResponseData<MeetingSchedulingBo> selectDayScheduling(HttpServletRequest request, @RequestBody MeetingSchedulingBo query) {		
+				ResponseData<MeetingSchedulingBo> responseBody = new ResponseData<MeetingSchedulingBo>();
+				User user = (User) getUserFromSession(request);
+
+				
+				List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user
+						.getId());
+
+				if (roleIdList.contains(UserConstant.TZJL)) {
+					query.setUid(user.getId());					
+				} else if (roleIdList.contains(UserConstant.HHR)) {
+					query.setProjectDepartid(user.getDepartmentId());					
+				} 
+				
+				try{
+														
+
+					List<MeetingSchedulingBo> lisb = meetingSchedulingService.selectDayScheduling(query);
+					
+
+					responseBody.setEntityList(lisb);
+					
+				} catch (PlatformException e) {
+					responseBody.setResult(new Result(Status.ERROR, null,
+							"selectDayScheduling faild"));
+					if (logger.isErrorEnabled()) {
+						logger.error("selectDayScheduling ", e);
+					}
+				}
+				return responseBody;
+			
+			}
+			
+			
+			
+			//获取指定年月的第一天
+			 public static Date getFirstDayOfMonth(Integer year, Integer month) {
+			        Calendar calendar = Calendar.getInstance();
+			        if (year == null) {
+			            year = calendar.get(Calendar.YEAR);
+			        }
+			        if (month == null) {
+			            month = calendar.get(Calendar.MONTH);
+			        }
+			        calendar.set(year, month, 1);
+			        return calendar.getTime();
+			    }
+			//获取指定年月的最后一天
+			 public static Date getLastDayOfMonth(Integer year, Integer month) {
+			        Calendar calendar = Calendar.getInstance();
+			        if (year == null) {
+			            year = calendar.get(Calendar.YEAR);
+			        }
+			        if (month == null) {
+			            month = calendar.get(Calendar.MONTH);
+			        }
+			        calendar.set(year, month, 1);
+			        calendar.roll(Calendar.DATE, -1);
+			        return calendar.getTime();
+			    }
+
+			
+			
+			
+			
 }

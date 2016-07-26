@@ -241,6 +241,14 @@ public class SopTaskController extends BaseControllerImpl<SopTask, SopTaskBo> {
 				list.setTotal((long)0);
 				list.setContent(SopTaskBoList);
 			}
+			sopTaskBo.setTaskStatus(DictEnum.taskStatus.待认领.getCode());
+			Long p = sopTaskService.queryCount(sopTaskBo);
+			sopTaskBo.setTaskStatus(DictEnum.taskStatus.待完工.getCode());
+			Long q = sopTaskService.queryCount(sopTaskBo);
+			SopTaskBo soBo=new SopTaskBo();
+			soBo.setRwdCount(p);
+			soBo.setRwyCount(q);
+			responseBody.setEntity(soBo);
 			responseBody.setPageList(list);	
 			result.setStatus(Status.OK);
 		} catch (PlatformException e) {
