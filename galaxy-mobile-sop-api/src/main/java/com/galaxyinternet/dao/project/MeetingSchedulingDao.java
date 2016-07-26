@@ -42,4 +42,32 @@ public interface MeetingSchedulingDao extends BaseDao<MeetingScheduling, Long> {
      * 
      */
     public Page<MeetingScheduling> queryMeschedulingAll(MeetingScheduling query,PageRequest pageRequest);
+    
+    /**
+     * 新增查询日历上的排期会排期
+     */
+    
+    public List<MeetingSchedulingBo> selectMonthScheduling (MeetingSchedulingBo query);
+    
+    /**
+     * 查询日历上的每天出现的会议类型及次数
+     */
+    
+    public Long selectMonthSchedulingCount(MeetingSchedulingBo query);
+    
+    
+    /**
+     * 新增查询当日的事项
+     */
+    
+    public List<MeetingSchedulingBo> selectDayScheduling (MeetingSchedulingBo query);
+    
+    /**
+     * 查询未排期的总数
+     */
+    
+    public Long selectdpqCount(MeetingSchedulingBo query);
+    
+    
+    
 }
