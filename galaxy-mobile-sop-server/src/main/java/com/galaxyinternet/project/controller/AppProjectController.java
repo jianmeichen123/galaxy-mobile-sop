@@ -569,17 +569,17 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 			 * @return
 			 */
 			@ResponseBody
-			@RequestMapping(value = "/queryMeetScheduling",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-			public ResponseData<MeetingSchedulingBo> queryMeetScheduling(HttpServletRequest request, @RequestBody MeetingSchedulingBo query) {		
+			@RequestMapping(value = "/queryMeetSchedulingrl",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+			public ResponseData<MeetingSchedulingBo> queryMeetSchedulingrl(HttpServletRequest request, @RequestBody MeetingSchedulingBo query) {		
 				ResponseData<MeetingSchedulingBo> responseBody = new ResponseData<MeetingSchedulingBo>();
 				User user = (User) getUserFromSession(request);
 				SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd");
 	
 					List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user
 						.getId());
-					//获取传过来的年月的第一天
+					
 					if(query.getYear()!=null&&query.getMonth()!=null){
-						
+						//获取传过来的年月的第一天
 						Date d = getFirstDayOfMonth(Integer.valueOf(query.getYear()),Integer.valueOf(query.getMonth())-1);
 						query.setStartTime(ss.format(d));
 						//获取传过来的年月的最后一天
@@ -636,8 +636,8 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 					List<MeetingSchedulingBo> lisb = meetingSchedulingService.selectDayScheduling(bop);
 					
 					responseBody.setUserData(depmap);
-					/*responseBody.setEntityList(listmb);*/
-					responseBody.setEntityList(lisb);
+					responseBody.setEntityList(listmb);
+					/*responseBody.setEntityList(lisb);*/
 					
 				} catch (PlatformException e) {
 					responseBody.setResult(new Result(Status.ERROR, null,
