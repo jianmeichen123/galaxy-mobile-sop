@@ -162,6 +162,19 @@ public class SopFile extends PagableRecordEntity {
   	private MultipartFile multipartFile;
 
   
+  	/**
+  	 * 
+  	 * app2期多文件上传需要的字段 2016/7/27
+  	 * @return
+  	 */
+  	private Integer fileIsdel; //逻辑删除的标识  0代表删除,1代表未删除 
+  	
+  	private Long meetingId;//关联的会议id
+  	
+  	private Integer meetFlag;//会议的标识代表的是那个会议 如 0代表访谈1代表会议
+  	
+  	
+  	
 	public MultipartFile getMultipartFile() {
 		return multipartFile;
 	}
@@ -562,6 +575,30 @@ public class SopFile extends PagableRecordEntity {
 
 	public void setFileworktypeList(List<String> fileworktypeList) {
 		this.fileworktypeList = fileworktypeList;
+	}
+
+	public Integer getFileIsdel() {
+		return fileIsdel;
+	}
+
+	public void setFileIsdel(Integer fileIsdel) {
+		this.fileIsdel = fileIsdel;
+	}
+
+	public Long getMeetingId() {
+		return meetingId;
+	}
+
+	public void setMeetingId(Long meetingId) {
+		this.meetingId = meetingId;
+	}
+
+	public Integer getMeetFlag() {
+		return meetFlag;
+	}
+
+	public void setMeetFlag(Integer meetFlag) {
+		this.meetFlag = meetFlag;
 	}
 
 	
