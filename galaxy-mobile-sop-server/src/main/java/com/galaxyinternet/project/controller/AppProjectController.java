@@ -636,8 +636,8 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 					List<MeetingSchedulingBo> lisb = meetingSchedulingService.selectDayScheduling(bop);
 					
 					responseBody.setUserData(depmap);
-					responseBody.setEntityList(listmb);
-					/*responseBody.setEntityList(lisb);*/
+					/*responseBody.setEntityList(listmb);*/
+					responseBody.setEntityList(lisb);
 					
 				} catch (PlatformException e) {
 					responseBody.setResult(new Result(Status.ERROR, null,
