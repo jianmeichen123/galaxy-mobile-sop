@@ -276,7 +276,9 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 	}
 	
 	
-	
+	/**
+	 * 2016/7/28修改 会议返回的sofile表的数据 为接收多条记录返回list集合
+	 */
 	// 项目tab查询     projectId
 	// 列表查询， uid;  project_name\project_code ~ keyword  ||  startTime;  endTime; 
 	@Override
@@ -346,12 +348,26 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 				bo.setUid(proIdUidMap.get(ib.getProjectId()));
 				if(ib.getFileId()!=null){
 					SopFile file  = sopFileDao.selectById(ib.getFileId());
-					if(file!=null){
+/*					if(file!=null){
 						bo.setFileId(ib.getFileId());
 						bo.setFname(file.getFileName());
 						bo.setFkey(file.getFileKey());
+					}*/
+					List<SopFile> sp=sopFileDao.selectList(file);
+					if(sp!=null&&sp.size()>0){
+						bo.setLsf(sp);
 					}
-				}
+				}else{
+					SopFile file = new SopFile();
+					file.setMeetingId(ib.getId());
+					file.setMeetFlag(1);
+					file.setFileIsdel(1);
+				
+					List<SopFile> sp=sopFileDao.selectList(file);
+					if(sp!=null&&sp.size()>0){
+						bo.setLsf(sp);
+					}
+				}					
 				meetBoList.add(bo);
 			}
 			meetPage = new Page<MeetingRecordBo>(meetBoList, pageable, total);

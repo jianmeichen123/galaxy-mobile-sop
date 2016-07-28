@@ -61,10 +61,10 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 	public Long updateViewForFile(SopFile sopFile, InterviewRecord view) {
 		Long fileid = sopFileDao.insert(sopFile);
 		view.setFileId(fileid);
-		int updateN = interviewRecordDao.updateById(view);
+/*		int updateN = interviewRecordDao.updateById(view);
 		if(updateN == 0 ){
 			return null;
-		}
+		}*/
 		return fileid;
 	}
 	
@@ -138,11 +138,26 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 				bo.setCreatedId(ib.getCreatedId());
 				if(ib.getFileId()!=null){
 					SopFile file  = sopFileDao.selectById(ib.getFileId());
-					if(file!=null){
+					/*if(file!=null){
 						bo.setFileId(ib.getFileId());
 						bo.setFname(file.getFileName());
 						bo.setFkey(file.getFileKey());
+					}*/
+					List<SopFile> sp=sopFileDao.selectList(file);
+					if(sp!=null&&sp.size()>0){
+						bo.setLsf(sp);
 					}
+				}else{
+					SopFile file = new SopFile();
+					file.setMeetingId(ib.getId());
+					file.setMeetFlag(0);
+					file.setFileIsdel(1);
+				
+					List<SopFile> sp=sopFileDao.selectList(file);
+					if(sp!=null&&sp.size()>0){
+						bo.setLsf(sp);
+					}
+										
 				}
 				viewBoList.add(bo);
 			}

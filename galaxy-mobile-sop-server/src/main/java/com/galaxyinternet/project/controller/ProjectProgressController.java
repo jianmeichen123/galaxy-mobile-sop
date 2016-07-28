@@ -238,6 +238,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 				sopFile.setFileSource(DictEnum.fileSource.内部.getCode());  //档案来源
 				//sopFile.setFileWorktype(fileWorkType);    //业务分类
 				sopFile.setFileStatus(DictEnum.fileStatus.已上传.getCode());  //档案状态
+				
 				id = interviewRecordService.insertInterview(interviewRecord,sopFile);
 			}else if(!ServletFileUpload.isMultipartContent(request)){
 				id = interviewRecordService.insert(interviewRecord);
@@ -298,7 +299,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
-	
+	//TODO
 	/**
 	 * OSS访谈录音追加
 	 * @param   interviewRecord 
@@ -344,6 +345,10 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			//sopFile.setFileWorktype(fileWorkType);    //业务分类
 			sopFile.setFileStatus(DictEnum.fileStatus.已上传.getCode());  //档案状态
 			
+			//以下是新增的字段
+			sopFile.setFileIsdel(1);
+			sopFile.setMeetFlag(0);
+			sopFile.setMeetingId(viewid);
 			//调用接口 修改view 新增 sopfile，返回fileid
 			Long fileid = interviewRecordService.updateViewForFile(sopFile,view);
 			if(fileid == null){
@@ -385,7 +390,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
-	
+	//TODO
 	
 	/**
 	 * 访谈查询,
@@ -687,7 +692,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		}
 		return responseBody;
 	}
-	
+	//TODO
 	/**
 	 * 内部评审、 CEO评审 、 立项会、投决会  阶段
 	 * 			查询个人项目下的会议记录

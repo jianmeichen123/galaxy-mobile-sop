@@ -3,6 +3,7 @@ package com.galaxyinternet.bo.project;
 import java.util.List;
 
 import com.galaxyinternet.model.project.MeetingRecord;
+import com.galaxyinternet.model.sopfile.SopFile;
 
 public class MeetingRecordBo  extends MeetingRecord{
 	private static final long serialVersionUID = 1L;
@@ -25,7 +26,10 @@ public class MeetingRecordBo  extends MeetingRecord{
 	private String property;// 排序的字段名称
 	
 	private Long departId; //部门id
-	
+	/**
+	 * 为实现多个录音的上传新增的list集合
+	 */
+	private List<SopFile> lsf; //2016/7/28 为app端2期需求新建的list集合记录多条
 	public String getProName() {
 		return proName;
 	}
@@ -145,6 +149,12 @@ public class MeetingRecordBo  extends MeetingRecord{
 	}
 	public void setDepartId(Long departId) {
 		this.departId = departId;
+	}
+	public List<SopFile> getLsf() {
+		return lsf;
+	}
+	public void setLsf(List<SopFile> lsf) {
+		this.lsf = lsf;
 	}
 	
 	
