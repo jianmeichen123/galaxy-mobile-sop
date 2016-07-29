@@ -51,7 +51,7 @@
 				
 				<if test="startTime != null ">				
 				 	and 				 	
-					<![CDATA[ reserve_time_start > STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )]]>	 
+					<![CDATA[ reserve_time_start >= STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )]]>	 
 								 							 
 				</if> 
 			 								 																				 																
@@ -76,7 +76,7 @@
 					</foreach>
 				</if>
 					AND (schedule_status = 0 OR (schedule_status=1  and 				 	
-					<![CDATA[ reserve_time_start > STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )]]>) )
+					<![CDATA[ reserve_time_start >= STR_TO_DATE(CONCAT(#{startTime} , ' 00:00:00') ,'%Y-%m-%d %H:%i:%s' )]]>) )
 				<!-- 模糊查询 -->
 				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->			 						
 			 								 																				 																
@@ -185,9 +185,9 @@
 			<if test="meetingDate != null" > meeting_date = #{meetingDate,jdbcType=TIMESTAMP}, </if>
 			<if test="status != null" > status = #{status,jdbcType=VARCHAR}, </if>
 			<if test="remark != null" > remark = #{remark,jdbcType=VARCHAR}, </if>
+			reserve_time_start = #{reserveTimeStart},
+			reserve_time_end = #{reserveTimeEnd},
 			<if test="updatedTime != null" > updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
-			 reserve_time_start = #{reserveTimeStart}, 
-			 reserve_time_end = #{reserveTimeEnd},
 			<if test="scheduleStatus != null" > schedule_status = #{scheduleStatus}, </if>
 			<if test="applyTime != null" > apply_time = #{applyTime}, </if>
 		</set>
