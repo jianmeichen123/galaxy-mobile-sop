@@ -312,24 +312,33 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 		sfEntity.setFileKey(sopFile.getFileKey());//阿里云key
 		sfEntity.setFileName(sopFile.getFileName());//文件前缀名
 		sfEntity.setFileSuffix(sopFile.getFileSuffix());//文件后缀名
+		
+		//2016/7/28 修改 app2期新需求 还有待测试 
+		
+		sfEntity.setMeetingId(sopFile.getMeetingId());
+		sfEntity.setMeetFlag(1);
+		sfEntity.setFileIsdel(1);
+		
 		sopFileDao.insert(sfEntity);
 		
-		MeetingRecord mrEntity = new MeetingRecord();
+/*		MeetingRecord mrEntity = new MeetingRecord();
 		mrEntity.setId(sopFile.getMeetingId());//会议Id
-		
-		SopFile query = new SopFile();
+*/		
+		/*SopFile query = new SopFile();
 		query.setProjectId(p1.getId());
-		query.setProjectProgress(p1.getProjectProgress());
+		query.setProjectProgress(p1.getProjectProgress());*/
 //		query.setFileType(DictEnum.fileType.音频文件.getCode());	
-		query.setFileKey(sopFile.getFileKey());
+	/*	query.setFileKey(sopFile.getFileKey());
 		List<SopFile> list =sopFileDao.selectList(query);
 		SopFile _sf = new SopFile();
 		if(list!=null && list.size()>0){
 			 _sf = list.get(0);
-		}
-	
-		mrEntity.setFileId(_sf.getId());
-		meetingRecordDao.updateById(mrEntity);
+		}*/
+		//2016/7/28 为app端2期新增需求 不向meetrecord表里插入录音记录
+		//不需要加上fileId
+		/*mrEntity.setFileId(_sf.getId());*/
+		
+		/*meetingRecordDao.updateById(mrEntity);*/
 	}
 
 	@Transactional

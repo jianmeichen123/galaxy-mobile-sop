@@ -3,6 +3,7 @@ package com.galaxyinternet.bo.project;
 import java.util.List;
 
 import com.galaxyinternet.model.project.InterviewRecord;
+import com.galaxyinternet.model.sopfile.SopFile;
 
 public class InterviewRecordBo extends InterviewRecord{
 
@@ -31,6 +32,8 @@ public class InterviewRecordBo extends InterviewRecord{
 
 	private Long departId; //部门id
 	
+	//需求app2期 批量查看文件的
+	private List<SopFile> lsf;
 	public Integer getPageNum() {
 		if(pageNum == null){
 			pageNum = 0;
@@ -153,6 +156,12 @@ public class InterviewRecordBo extends InterviewRecord{
 	}
 	public void setDepartId(Long departId) {
 		this.departId = departId;
+	}
+	public List<SopFile> getLsf() {
+		return lsf;
+	}
+	public void setLsf(List<SopFile> lsf) {
+		this.lsf = lsf;
 	}
 
 

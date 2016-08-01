@@ -61,10 +61,10 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 	public Long updateViewForFile(SopFile sopFile, InterviewRecord view) {
 		Long fileid = sopFileDao.insert(sopFile);
 		view.setFileId(fileid);
-		int updateN = interviewRecordDao.updateById(view);
+/*		int updateN = interviewRecordDao.updateById(view);
 		if(updateN == 0 ){
 			return null;
-		}
+		}*/
 		return fileid;
 	}
 	
@@ -143,6 +143,7 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 						bo.setFname(file.getFileName());
 						bo.setFkey(file.getFileKey());
 					}
+					
 				}
 				viewBoList.add(bo);
 			}
@@ -153,7 +154,78 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 		
 		return viewPage;
 	}
-
+	
+	/**
+	 * app2期新的接口为了实现访谈返回多个录音文件
+	 */
+	// 项目tab查询     projectId
+	// 列表查询， uid;  project_name\project_code ~ keyword  ||  startTime;  endTime; 
+	@Override
+	public Page<InterviewRecordBo> queryAppInterviewPage(InterviewRecordBo query, Pageable pageable) {
+		Page<InterviewRecordBo> viewPage = null;
+		List<InterviewRecordBo> viewBoList = null;
+		List<InterviewRecord> viewList = null;
+		Long total = null;
+		Map<Long,String> proIdNameMap = new HashMap<Long,String>();
+		
+		if(query.getProjectId()!=null){   // 项目tab查询
+			Project po = projectDao.selectById(query.getProjectId());
+			proIdNameMap.put(query.getProjectId(), po.getProjectName());
+			viewList = interviewRecordDao.selectList(query, pageable);
+			total = interviewRecordDao.selectCount(query);
+		}else{    //列表查询_个人创建/部门
+			Project  proQ = new Project();
+			proQ.setCreateUid(query.getUid());
+			proQ.setProjectDepartid(query.getDepartId());
+			proQ.setKeyword(query.getKeyword());
+			List<Project> proList = projectDao.selectList(proQ);
+			
+			//获取 projectId List
+			if(proList!=null&&!proList.isEmpty()){
+				List<Long> proIdList = new ArrayList<Long>();
+				for(Project apro : proList){
+					proIdList.add(apro.getId());
+					proIdNameMap.put(apro.getId(), apro.getProjectName());
+				}
+				//查询访谈列表  
+				query.setProIdList(proIdList);
+				viewList = interviewRecordDao.selectList(query, pageable);
+				total = interviewRecordDao.selectCount(query);
+			}
+		}
+		
+		if(viewList!=null&&!viewList.isEmpty()){
+			viewBoList = new ArrayList<InterviewRecordBo>();
+			for(InterviewRecord ib : viewList){
+				InterviewRecordBo bo = new InterviewRecordBo();
+				bo.setId(ib.getId());
+				bo.setProjectId(ib.getProjectId());
+				bo.setProName(proIdNameMap.get(ib.getProjectId()));
+				bo.setViewDateStr(ib.getViewDateStr());
+				bo.setViewTarget(ib.getViewTarget());
+				bo.setViewNotes(ib.getViewNotes());
+				bo.setCreatedId(ib.getCreatedId());
+			
+				SopFile file = new SopFile();
+				file.setMeetingId(ib.getId());
+				file.setMeetFlag(0);
+				file.setFileIsdel(1);
+			
+				List<SopFile> sp=sopFileDao.selectList(file);
+				if(sp!=null&&sp.size()>0){
+					bo.setLsf(sp);
+										
+				}
+				viewBoList.add(bo);
+			}
+			viewPage = new Page<InterviewRecordBo>(viewBoList, pageable, total);
+		}else{
+			viewPage = new Page<InterviewRecordBo>(new ArrayList<InterviewRecordBo>() , pageable, 0l);
+		}
+		
+		return viewPage;
+	}
+	
 
 	
 }

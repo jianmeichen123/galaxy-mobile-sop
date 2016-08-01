@@ -2344,7 +2344,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				uids.add(String.valueOf(pr.getCreateUid()));
 			}
 			// 获取投资经理的过会率
-			PassRateBo borate = new PassRateBo();
+/*			PassRateBo borate = new PassRateBo();
 			borate.setUids(uids);
 			borate.setRateType(type.intValue());
 			List<PassRate> prateList = passRateService.queryListById(borate);
@@ -2354,11 +2354,36 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				for (PassRate pr : prateList) {
 					passRateMap.put(pr.getUid(), pr);
 				}
-			}
+			}*/
 			// 组装数据
 			for (MeetingScheduling ms : schedulingList) {
 				for (Project p : projectList) {
 					if (ms.getProjectId().longValue() == p.getId().longValue()) {
+						PassRateBo borate = new PassRateBo();
+						/*if (passRateMap.get(p.getCreateUid()) != null) {
+							ms.setMeetingRate(passRateMap.get(p.getCreateUid())
+									.getRate());
+						} else {
+							ms.setMeetingRate(new Double(0));
+						}*/
+						if(ms.getMeetingType().equals(DictEnum.meetingType.立项会.getCode())){
+							borate.setRateType(0);							
+						}else if(ms.getMeetingType().equals(DictEnum.meetingType.投决会.getCode())){
+							borate.setRateType(1);
+						}else if(ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							borate.setRateType(2);
+						}												
+						// 获取投资经理的过会率						
+						borate.setUids(uids);						
+						List<PassRate> prateList = passRateService.queryListById(borate);
+						Map<Long, PassRate> passRateMap = new HashMap<Long, PassRate>();
+						
+						if (prateList.size() > 0) {
+							for (PassRate pr : prateList) {
+								passRateMap.put(pr.getUid(), pr);
+							}
+						}
+
 						if (passRateMap.get(p.getCreateUid()) != null) {
 							ms.setMeetingRate(passRateMap.get(p.getCreateUid())
 									.getRate());

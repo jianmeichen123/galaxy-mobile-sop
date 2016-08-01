@@ -23,5 +23,9 @@ public interface MeetingRecordService extends BaseService<MeetingRecord> {
 
 	Long addCyMeetRecord(MeetingRecord meetingRecord, SopFile sopFile);
 	
+	//app2期新增的查询会议时查询出多个录音文件
+	public Page<MeetingRecordBo> queryAppMeetPage(MeetingRecordBo query, Pageable pageable);
+	
+	
 
 }
