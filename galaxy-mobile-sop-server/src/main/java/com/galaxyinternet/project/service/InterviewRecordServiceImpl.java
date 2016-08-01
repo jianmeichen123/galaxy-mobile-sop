@@ -61,10 +61,10 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 	public Long updateViewForFile(SopFile sopFile, InterviewRecord view) {
 		Long fileid = sopFileDao.insert(sopFile);
 		view.setFileId(fileid);
-/*		int updateN = interviewRecordDao.updateById(view);
+		int updateN = interviewRecordDao.updateById(view);
 		if(updateN == 0 ){
 			return null;
-		}*/
+		}
 		return fileid;
 	}
 	

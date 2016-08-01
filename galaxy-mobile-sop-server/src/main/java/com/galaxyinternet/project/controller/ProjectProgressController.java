@@ -345,10 +345,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			//sopFile.setFileWorktype(fileWorkType);    //业务分类
 			sopFile.setFileStatus(DictEnum.fileStatus.已上传.getCode());  //档案状态
 			
-			//以下是新增的字段
-			sopFile.setFileIsdel(1);
-			sopFile.setMeetFlag(0);
-			sopFile.setMeetingId(viewid);
+
 			//调用接口 修改view 新增 sopfile，返回fileid
 			Long fileid = interviewRecordService.updateViewForFile(sopFile,view);
 			if(fileid == null){
