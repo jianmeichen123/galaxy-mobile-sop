@@ -157,7 +157,7 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 	
 	/**
 	 * app2期新的接口为了实现访谈返回多个录音文件
-	 */
+	 *//*
 	// 项目tab查询     projectId
 	// 列表查询， uid;  project_name\project_code ~ keyword  ||  startTime;  endTime; 
 	@Override
@@ -225,7 +225,7 @@ public class InterviewRecordServiceImpl extends BaseServiceImpl<InterviewRecord>
 		
 		return viewPage;
 	}
-	
+	*/
 
 	
 }
