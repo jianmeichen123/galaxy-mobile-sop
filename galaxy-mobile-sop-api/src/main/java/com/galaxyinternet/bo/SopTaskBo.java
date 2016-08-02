@@ -24,6 +24,11 @@ public class SopTaskBo extends  SopTask{
 	private String concatcode;
 	private String assignUidName; //认领人的名字(配合APP端)
 	
+	/**
+	 * 任务列表的已认领和待认领数字
+	 */
+	private Long rwdCount; //待认领任务的数字
+	private Long rwyCount; //已认领任务的数字
 	
 	public String getAssignUidName() {
 		return assignUidName;
@@ -151,6 +156,22 @@ public class SopTaskBo extends  SopTask{
 
 	public void setProjectIds(List<Long> projectIds) {
 		this.projectIds = projectIds;
+	}
+
+	public Long getRwdCount() {
+		return rwdCount;
+	}
+
+	public void setRwdCount(Long rwdCount) {
+		this.rwdCount = rwdCount;
+	}
+
+	public Long getRwyCount() {
+		return rwyCount;
+	}
+
+	public void setRwyCount(Long rwyCount) {
+		this.rwyCount = rwyCount;
 	}
 	
 	

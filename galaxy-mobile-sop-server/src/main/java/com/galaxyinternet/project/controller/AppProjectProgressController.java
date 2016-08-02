@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,15 +22,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.bo.project.ProjectBo;
-import com.galaxyinternet.common.constants.SopConstant;
+import com.galaxyinternet.common.annotation.LogType;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
+import com.galaxyinternet.common.utils.ControllerUtils;
 import com.galaxyinternet.exception.PlatformException;
 import com.galaxyinternet.framework.core.constants.UserConstant;
 import com.galaxyinternet.framework.core.model.ResponseData;
 import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
+import com.galaxyinternet.model.operationLog.UrlNumber;
 import com.galaxyinternet.model.project.AppCounts;
 import com.galaxyinternet.model.project.AppFileDTO;
 import com.galaxyinternet.model.project.AppProgress;
@@ -42,7 +43,6 @@ import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.AppSopFile;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
-import com.galaxyinternet.model.soptask.SopTask;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
@@ -1130,6 +1130,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 	   	 * @param request
 	   	 * @return
 	   	 */
+	   		@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
 		   	@ResponseBody
 			@RequestMapping(value = "/appPq", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 		   	public ResponseData<MeetingRecord> appPq(@RequestBody MeetingRecordBo meetingRecord,HttpServletRequest request) {
@@ -1162,12 +1163,13 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							querySchedu.setReserveTimeEndStr(null);
 							querySchedu.setReserveTimeStartStr(null);
 							querySchedu.setStatus(DictEnum.meetingResult.待定.getCode());
-							
+							querySchedu.setReserveTimeEndStr(null);
+							querySchedu.setReserveTimeStartStr(null);
 							
 							querySchedu.setApplyTime(new Timestamp(new Date().getTime()));
 							querySchedu.setUpdatedTime((new Date()).getTime()); //变更操作时间
 							meetingSchedulingService.updateBySelective(querySchedu); 
-							
+							ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.1", UrlNumber.one);
 						} else {
 							responseBody.setResult(new Result(Status.ERROR, "cfpq",
 									"项目不能重复申请CEO评审排期!"));
@@ -1194,6 +1196,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
 							queryScheduling.setUpdatedTime((new Date()).getTime());
 							meetingSchedulingService.updateBySelective(queryScheduling);
+							ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.2", UrlNumber.two);
 						} else {
 							responseBody.setResult(new Result(Status.ERROR, "cfpq",
 									"项目不能重复申请立项会排期!"));
@@ -1223,23 +1226,27 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					    	queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
 					    	queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
 					    	meetingSchedulingService.updateBySelective(queryScheduling); 
+					    	ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.3", UrlNumber.three);
 					    } else {
 							responseBody.setResult(new Result(Status.ERROR, "cfpq",
 									"项目不能重复申请投决会排期!"));
 							return responseBody;
 						}
+						
 					    
 					}
 					else {
 						responseBody.setResult(new Result(Status.OK, "xg", "并不需要申请排期"));
 						return responseBody;
 					}
+					
 				} catch (Exception e) {
 					responseBody.setResult(new Result(Status.ERROR,null, "排期添加失败"));
 					if(logger.isErrorEnabled()){
 						logger.error("addpq 排期添加失败 ",e);
 					}
 				}
+				
 					responseBody.setResult(new Result(Status.OK, "sqpqcg", "申请排期成功"));
 					return responseBody;
 				

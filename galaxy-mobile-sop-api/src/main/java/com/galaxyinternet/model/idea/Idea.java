@@ -43,7 +43,6 @@ public class Idea extends PagableEntity
 	
 	
 	
-	
 	private String isforindex;
 	
 	private String departmentEditable;
@@ -261,4 +260,7 @@ public class Idea extends PagableEntity
 		this.relatedUid = relatedUid;
 	}
 
+	
+	
+	
 }

@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 
 import com.galaxyinternet.bo.project.MeetingSchedulingBo;
 import com.galaxyinternet.dao.project.MeetingSchedulingDao;
+import com.galaxyinternet.framework.core.constants.SqlId;
 import com.galaxyinternet.framework.core.dao.impl.BaseDaoImpl;
 import com.galaxyinternet.framework.core.exception.DaoException;
 import com.galaxyinternet.framework.core.model.Page;
@@ -105,6 +106,50 @@ public class MeetingSchedulingDaoImpl extends BaseDaoImpl<MeetingScheduling, Lon
 				} catch (Exception e) {
 					throw new DaoException(String.format("查询对象出错！语句：%s", getSqlName("selectqueryAll")), e);
 				}
+	}
+
+
+	@Override
+	public List<MeetingSchedulingBo> selectMonthScheduling(MeetingSchedulingBo query) {
+		try {
+			return sqlSessionTemplate.selectList(getSqlName("selectMonthScheduling"),query);
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询排期出错！语句：%s", getSqlName("selectMonthScheduling")),
+					e);
+		}
+	}
+
+
+	@Override
+	public Long selectMonthSchedulingCount(MeetingSchedulingBo query) {
+		try {
+			Long count= sqlSessionTemplate.selectOne(getSqlName("selectMonthSchedulingCount"),query);
+			return count;
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询对象总数出错！语句：%s", getSqlName("selectMonthSchedulingCount")),e);
+		}
+	}
+
+
+	@Override
+	public List<MeetingSchedulingBo> selectDayScheduling(MeetingSchedulingBo query) {
+		try {
+			return sqlSessionTemplate.selectList(getSqlName("selectDayScheduling"),query);
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询当日事项出错！语句：%s", getSqlName("selectDayScheduling")),
+					e);
+		}
+	}
+
+
+	@Override
+	public Long selectdpqCount(MeetingSchedulingBo query) {
+		try {
+			Long count= sqlSessionTemplate.selectOne(getSqlName("selectdpqCount"),query);
+			return count;
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询全部未排期数出错！语句：%s", getSqlName("selectdpqCount")),e);
+		}
 	}
 
 	

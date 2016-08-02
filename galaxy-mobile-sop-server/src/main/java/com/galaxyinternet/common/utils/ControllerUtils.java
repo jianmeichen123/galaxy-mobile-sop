@@ -76,6 +76,7 @@ public class ControllerUtils {
 	{
 		setRequestParamsForMessageTip(request,user,projectName,projectId,null,number);
 	}
+	
 	public static void setRequestParamsForMessageTip(HttpServletRequest request, User user, String projectName, Long projectId, String messageType, UrlNumber number) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(PlatformConst.REQUEST_SCOPE_PROJECT_NAME, projectName);
