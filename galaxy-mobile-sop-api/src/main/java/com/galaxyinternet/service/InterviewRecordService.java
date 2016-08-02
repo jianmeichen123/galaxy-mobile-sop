@@ -18,7 +18,7 @@ public interface InterviewRecordService extends BaseService<InterviewRecord> {
 
 	public Page<InterviewRecordBo> queryInterviewPage(InterviewRecordBo query, Pageable pageable);
 	
-	//访谈查询app2期新接口
-	public Page<InterviewRecordBo> queryAppInterviewPage(InterviewRecordBo query, Pageable pageable);
+	/*//访谈查询app2期新接口
+	public Page<InterviewRecordBo> queryAppInterviewPage(InterviewRecordBo query, Pageable pageable);*/
 
 }

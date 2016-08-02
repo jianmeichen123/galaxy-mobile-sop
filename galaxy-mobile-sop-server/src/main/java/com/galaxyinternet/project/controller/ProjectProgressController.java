@@ -468,7 +468,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	 * 			高管： 	    查询所有			的访谈记录  
 	 * @param   interviewRecord 
 	 * @return
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/queryAppInterview", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<InterviewRecordBo> queryAppInterview(HttpServletRequest request,@RequestBody InterviewRecordBo query ) {
@@ -528,7 +528,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		}
 		
 		return responseBody;
-	}
+	}*/
 	
 	
 	/**
@@ -829,13 +829,13 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
-	/**
+/*	*//**
 	 * app2期新的会议查询列表返回的是多个录音文件
 	 * @param request
 	 * @param query
 	 * @return    
 	 * 2016/7/29
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/queryAppMeet", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<MeetingRecordBo> queryAppMeet(HttpServletRequest request,@RequestBody MeetingRecordBo query ) {
@@ -896,7 +896,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		}
 		
 		return responseBody;
-	}
+	}*/
 	/**
 	 * 会议详情;  
 	 * @param  mid 会议id

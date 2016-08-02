@@ -999,12 +999,12 @@ public class SopFileController extends BaseControllerImpl<SopFile, SopFileBo> {
 		return responseBody;
 		
 	}
-	/**
+/*	*//**
 	 * app2期多个录音文件的删除(逻辑删除) 2016/7/27
 	 * @param request
 	 * @param id
 	 * @return
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/delectByfileId/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<SopFile> delectByfileId(HttpServletRequest request,@PathVariable Long id){
@@ -1028,5 +1028,5 @@ public class SopFileController extends BaseControllerImpl<SopFile, SopFileBo> {
 		return responseBody;
 		
 	}
-	
+	*/
 }
