@@ -363,9 +363,9 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 		return meetPage;
 	}
 	
-	/**
+/*	*//**
 	 * 2016/7/28修改 会议返回的sofile表的数据 为接收多条记录返回list集合app2期新增
-	 */
+	 *//*
 	// 项目tab查询     projectId
 	// 列表查询， uid;  project_name\project_code ~ keyword  ||  startTime;  endTime; 
 	@Override
@@ -454,7 +454,7 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 		
 		return meetPage;
 	}
-		
+		*/
 	
 	
 		

@@ -345,10 +345,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			//sopFile.setFileWorktype(fileWorkType);    //业务分类
 			sopFile.setFileStatus(DictEnum.fileStatus.已上传.getCode());  //档案状态
 			
-			//以下是新增的字段
-			sopFile.setFileIsdel(1);
-			sopFile.setMeetFlag(0);
-			sopFile.setMeetingId(viewid);
+
 			//调用接口 修改view 新增 sopfile，返回fileid
 			Long fileid = interviewRecordService.updateViewForFile(sopFile,view);
 			if(fileid == null){
@@ -471,7 +468,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	 * 			高管： 	    查询所有			的访谈记录  
 	 * @param   interviewRecord 
 	 * @return
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/queryAppInterview", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<InterviewRecordBo> queryAppInterview(HttpServletRequest request,@RequestBody InterviewRecordBo query ) {
@@ -531,7 +528,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		}
 		
 		return responseBody;
-	}
+	}*/
 	
 	
 	/**
@@ -832,13 +829,13 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
-	/**
+/*	*//**
 	 * app2期新的会议查询列表返回的是多个录音文件
 	 * @param request
 	 * @param query
 	 * @return    
 	 * 2016/7/29
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/queryAppMeet", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<MeetingRecordBo> queryAppMeet(HttpServletRequest request,@RequestBody MeetingRecordBo query ) {
@@ -899,7 +896,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		}
 		
 		return responseBody;
-	}
+	}*/
 	/**
 	 * 会议详情;  
 	 * @param  mid 会议id
