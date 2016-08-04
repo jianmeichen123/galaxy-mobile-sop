@@ -35,6 +35,7 @@ function createMenus(current){
 	   			 html += '</ul></li>';
 	   		 }
 	   	 });
+	   	html += "<li><a href='"+platformUrl.tofeedbackList+"'>意见反馈</a></li>";
 	   	 $("#menus").html(html);
 	   	 $(".pagebox .lft div").click(function(event) {
 	   		 $(this).siblings().stop().slideToggle();

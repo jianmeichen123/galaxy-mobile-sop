@@ -518,8 +518,9 @@ var platformUrl = {
 	/**
 	 * 获取商业计划
 	 */	
-	getBusinessPlanFile : Constants.sopEndpointURL + "/galaxy/sopFile/getBusinessPlanFile"
-	
+	getBusinessPlanFile : Constants.sopEndpointURL + "/galaxy/sopFile/getBusinessPlanFile",
+	tofeedbackList : Constants.sopEndpointURL + "/galaxy/feedback/tofeedbackList",
+	queryFeedbackList:Constants.sopEndpointURL + "/galaxy/feedback/queryFeedbackList",
 }
 
 /**
