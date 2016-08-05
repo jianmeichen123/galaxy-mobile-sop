@@ -521,6 +521,9 @@ var platformUrl = {
 	getBusinessPlanFile : Constants.sopEndpointURL + "/galaxy/sopFile/getBusinessPlanFile",
 	tofeedbackList : Constants.sopEndpointURL + "/galaxy/feedback/tofeedbackList",
 	queryFeedbackList:Constants.sopEndpointURL + "/galaxy/feedback/queryFeedbackList",
+
+	toappUserList : Constants.sopEndpointURL + "/galaxy/user/userdeng",
+
 }
 
 /**

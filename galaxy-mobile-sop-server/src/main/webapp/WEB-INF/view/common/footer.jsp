@@ -36,6 +36,7 @@ function createMenus(current){
 	   		 }
 	   	 });
 	   	html += "<li><a href='"+platformUrl.tofeedbackList+"'>意见反馈</a></li>";
+		html += "<li><a href='"+platformUrl.toappUserList+"'>登录过的用户查询</a></li>";
 	   	 $("#menus").html(html);
 	   	 $(".pagebox .lft div").click(function(event) {
 	   		 $(this).siblings().stop().slideToggle();
