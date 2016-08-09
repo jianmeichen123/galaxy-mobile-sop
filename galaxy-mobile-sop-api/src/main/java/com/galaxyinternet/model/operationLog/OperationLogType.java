@@ -21,14 +21,14 @@ public enum OperationLogType {
 	//添加会议记录的弹出框中点击‘保存’。
 	INNER_REVIEW_SCHEDULE("/galaxy/project/stageChange/"+UrlNumber.two, OperType.ADD.getOperationType(), "会议记录",SopStage.INNER_REVIEW_SCHEDULE.getStageName()), 
 	ADD_MEETING_FILE_ONE("/galaxy/project/progress/addfilemeet/"+UrlNumber.one, OperType.ADD.getOperationType(), "会议记录",SopStage.INNER_REVIEW_SCHEDULE.getStageName()),
-	ADD_MEETING_ONE("/galaxy/project/progress/addmeet/"+UrlNumber.one, OperType.ADD.getOperationType(), "会议记录",SopStage.INNER_REVIEW_SCHEDULE.getStageName()), 
+	ADD_MEETING_ONE("/galaxy/projectmeeting/approgress/addIosFileMeetByNoFileTwo/"+UrlNumber.one, OperType.ADD.getOperationType(), "会议记录",SopStage.INNER_REVIEW_SCHEDULE.getStageName()), 
 
 	
 	//CEO评审阶段
 	//添加会议记录的弹出框中点击‘保存’。
 	CEO_REVIEW_SCHEDULE("/galaxy/project/stageChange/"+UrlNumber.three, OperType.ADD.getOperationType(), "会议记录",SopStage.CEO_REVIEW_SCHEDULE.getStageName()), 
 	ADD_MEETING_FILE_TWO("/galaxy/project/progress/addfilemeet/"+UrlNumber.two, OperType.ADD.getOperationType(), "会议记录",SopStage.CEO_REVIEW_SCHEDULE.getStageName()),
-	ADD_MEETING_TWO("/galaxy/project/progress/addmeet/"+UrlNumber.two, OperType.ADD.getOperationType(), "会议记录",SopStage.CEO_REVIEW_SCHEDULE.getStageName()), 
+	ADD_MEETING_TWO("/galaxy/projectmeeting/approgress/addIosFileMeetByNoFileTwo/"+UrlNumber.two, OperType.ADD.getOperationType(), "会议记录",SopStage.CEO_REVIEW_SCHEDULE.getStageName()), 
 
 	//点击申请立项会排期
 	ADD_PROJECT_SCHEDULE("/galaxy/project/ges", OperType.SUBMIT.getOperationType(), "立项会排期",SopStage.CEO_REVIEW_SCHEDULE.getStageName()), 
@@ -37,7 +37,7 @@ public enum OperationLogType {
 	//添加会议记录的弹出框中点击‘保存’。
 	ADD_MEETING_RECORD("/galaxy/project/stageChange/"+UrlNumber.four, OperType.ADD.getOperationType(), "会议记录",SopStage.PROJECT_SCHEDULE.getStageName()), 
 	ADD_MEETING_FILE_THREE("/galaxy/project/progress/addfilemeet/"+UrlNumber.three, OperType.ADD.getOperationType(), "会议记录",SopStage.PROJECT_SCHEDULE.getStageName()),
-	ADD_MEETING_THREE("/galaxy/project/progress/addmeet/"+UrlNumber.three, OperType.ADD.getOperationType(), "会议记录",SopStage.PROJECT_SCHEDULE.getStageName()), 
+	ADD_MEETING_THREE("/galaxy/projectmeeting/approgress/addIosFileMeetByNoFileTwo/"+UrlNumber.three, OperType.ADD.getOperationType(), "会议记录",SopStage.PROJECT_SCHEDULE.getStageName()), 
 
 	//点击申请立项会排期
 	//APPALY_PROJECT_SCHEDULE("", OperType.SUBMIT.getOperationType(), "立项会排期",SopStage.PROJECT_SCHEDULE.getStageName()), 
@@ -64,7 +64,7 @@ public enum OperationLogType {
 	//添加会议纪要的弹出框中点击“保存”
 	ADD_VOTE_DECISION_MEETING_NOTE("/galaxy/project/stageChange/"+UrlNumber.eight, OperType.ADD.getOperationType(), "会议记录",SopStage.VOTE_DECISION_MEETING.getStageName()),
 	ADD_MEETING_FILE_FOUR("/galaxy/project/progress/addfilemeet/"+UrlNumber.four, OperType.ADD.getOperationType(), "会议记录",SopStage.VOTE_DECISION_MEETING.getStageName()),
-	ADD_MEETING_FOUR("/galaxy/project/progress/addmeet/"+UrlNumber.four, OperType.ADD.getOperationType(), "会议记录",SopStage.VOTE_DECISION_MEETING.getStageName()), 
+	ADD_MEETING_FOUR("/galaxy/projectmeeting/approgress/addIosFileMeetByNoFileTwo/"+UrlNumber.four, OperType.ADD.getOperationType(), "会议记录",SopStage.VOTE_DECISION_MEETING.getStageName()), 
 	//APPLY_VOTE_DECISION_MEETING_SCHEDULE("", OperType.SUBMIT.getOperationType(), "投决会排期",SopStage.VOTE_DECISION_MEETING.getStageName()),
 	
 	//投资协议阶段
@@ -97,7 +97,37 @@ public enum OperationLogType {
 	
 	//更新投资意向书 1
 	UPDATE_INVESTMENT_INTENT_FILE("/galaxy/sopFile/commonUploadFile/"+UrlNumber.one, OperType.UPDATE.getOperationType() , "投资意向书",SopStage.INVESTMENT_INTENT.getStageName()),
+	
+	 /**
+     * 人，法，财操作项目日志添加开始
+     * 
+     */	
+	//认领任务-人事完善简历
+	UPLOAD_EQUITY_CLAIMT_SOPTASK_RS_JL("/galaxy/appSoptask/goClaimtcPage/"+UrlNumber.one, OperType.CLAIMT.getOperationType(), Target.DUE_DILIGENCE_PERFECTED_PINFO.getTargetName(),SopStage.TOUCH_INTERVIEW.getStageName()),
+	//认领任务-人事尽职调查
+	UPLOAD_EQUITY_CLAIMT_SOPTASK_RS_JD("/galaxy/appSoptask/goClaimtcPage/"+UrlNumber.two, OperType.CLAIMT.getOperationType(), Target.DUE_DILIGENCE_RS_JD.getTargetName(),SopStage.DUE_DILIGENCE_INVESTIGATION.getStageName()),
+	//认领任务-财务尽职调查
+	UPLOAD_EQUITY_CLAIMT_SOPTASK_CW_JD("/galaxy/appSoptask/goClaimtcPage/"+UrlNumber.three, OperType.CLAIMT.getOperationType(), Target.DUE_DILIGENCE_CW_JD.getTargetName(),SopStage.DUE_DILIGENCE_INVESTIGATION.getStageName()),
+	//认领任务-财务付款凭证
+	UPLOAD_EQUITY_CLAIMT_SOPTASK_CW_FKPZ("/galaxy/appSoptask/goClaimtcPage/"+UrlNumber.four, OperType.CLAIMT.getOperationType(), Target.DUE_DILIGENCE_CW_FKPZ.getTargetName(),SopStage.EQUITY_DELIVERY_STAGE.getStageName()),
+	//认领任务-法务尽职调查
+	UPLOAD_EQUITY_CLAIMT_SOPTASK_FW_JD("/galaxy/appSoptask/goClaimtcPage/"+UrlNumber.five, OperType.CLAIMT.getOperationType(), Target.DUE_DILIGENCE_FW_JD.getTargetName(),SopStage.DUE_DILIGENCE_INVESTIGATION.getStageName()),
+	//认领任务-法务工商变更
+	UPLOAD_EQUITY_CLAIMT_SOPTASK_FW_GSBG("/galaxy/appSoptask/goClaimtcPage/"+UrlNumber.six, OperType.CLAIMT.getOperationType(), Target.DUE_DILIGENCE_FW_GSBG.getTargetName(),SopStage.EQUITY_DELIVERY_STAGE.getStageName()),
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/*项目操作日志的配置------------------------------------结束----------------------------------------------------------*/
+	
+	
+	
 	
 	
 	//------------------------------------------------忧愁的分割线-----------------------------------------------------//
