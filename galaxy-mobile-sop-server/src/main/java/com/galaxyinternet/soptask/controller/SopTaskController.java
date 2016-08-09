@@ -174,12 +174,16 @@ public class SopTaskController extends BaseControllerImpl<SopTask, SopTaskBo> {
 					flag=false;
 			}
 			Project project = projectService.queryById(queryById.getProjectId());
+			
+			User manager = userService.queryById(project.getCreateUid());
+			
 			sopTask.setAssignUid(user.getId());
 			sopTask.setTaskFlag(queryById.getTaskFlag());
 			sopTask.setProjectId(queryById.getProjectId());
 			 sopTaskService.updateById(sopTask);
-			 request.setAttribute("taskid", id);	
-			 ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId(),messageType,urlNum);
+			 request.setAttribute("taskid", id);
+			 ControllerUtils.setRequestParamsForMessageTip(request,manager,project.getProjectName(), project.getId(),messageType,urlNum);
+			 //ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId(),messageType,urlNum);
 		} catch (PlatformException e) {
 			result.addError(e.getMessage());
 		} catch (Exception e) {
