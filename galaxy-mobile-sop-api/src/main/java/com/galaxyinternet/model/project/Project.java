@@ -338,7 +338,7 @@ public class Project extends PagableEntity {
 
     public Double getProjectShareRatio() {
     	if(this.formatShareRatio != null && !"".equals(this.formatShareRatio.trim())){
-			this.projectShareRatio = NumberUtils.toFormatNoSplit(this.formatShareRatio.trim());
+			this.projectShareRatio = NumberUtils.toFormatNoSplitFour(this.formatShareRatio.trim());
 		}
         return projectShareRatio;
     }
@@ -619,7 +619,7 @@ public class Project extends PagableEntity {
 
 	public Double getFinalShareRatio() {
 		if(this.formatFinalShareRatio != null && !"".equals(this.formatFinalShareRatio.trim())){
-			this.finalShareRatio = NumberUtils.toFormatNoSplit(this.formatFinalShareRatio.trim());
+			this.finalShareRatio = NumberUtils.toFormatNoSplitFour(this.formatFinalShareRatio.trim());
 		}
 		
 		return finalShareRatio;
