@@ -408,7 +408,7 @@ public class HomePageSearchController
 		  		userService.updatePwd(user);
 		  		responseBody.setResult(new Result(Status.OK, "SUCCESS", "密码已修改!"));
 		  	}else{
-		  		responseBody.setResult(new Result(Status.ERROR, "INVALIDFORMAT", "新密码必须包含字母数字，可以包含特殊字符，八位以上!"));
+		  		responseBody.setResult(new Result(Status.ERROR, "INVALIDFORMAT", "新密码必须包含字母数字，可以包含特殊字符，8位及以上!"));
 		  	}
 			
 			
