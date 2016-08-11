@@ -159,8 +159,9 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					List<String> fileworkTypeList = new ArrayList<String>();
 					fileworkTypeList.add(DictEnum.fileWorktype.工商转让凭证.getCode());
 					fileworkTypeList.add(DictEnum.fileWorktype.资金拨付凭证.getCode());
-					sopFile.setFileworktypeList(fileworkTypeList);	
-					sopFile.setFileValid(1); //生效文件
+					sopFile.setFileworktypeList(fileworkTypeList);
+					//修改 催办 id没返回 加上id 2016/8/11 /8:43
+					//sopFile.setFileValid(1); //生效文件
 					List<SopFile> listSop = sopFileService.queryList(sopFile);
 					
 					List<AppSopFile> zjbfFileList = new ArrayList<AppSopFile>();
@@ -170,8 +171,9 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						for (SopFile sop : listSop) {
 							asfile9 = new AppSopFile();
 							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.资金拨付凭证.getCode())) {
-								asfile9.setFileYwCode(sop.getFileWorktype()); //→文件（档案）业务分类编码
-								asfile9.setFileWorktype(sop.getfWorktype()); //→文件（档案）业务分类名称
+								if(sop.getFileValid()==1){
+									asfile9.setFileYwCode(sop.getFileWorktype()); //→文件（档案）业务分类编码
+									asfile9.setFileWorktype(sop.getfWorktype()); //→文件（档案）业务分类名称
 									if(sop.getFileName()!=null || sop.getFileSuffix()!=null){
 										String fn = sop.getFileName();
 										String fs = sop.getFileSuffix();
@@ -198,9 +200,19 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 									}
 									asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
 									asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-									zjbfFileList.add(asfile9);
+									
+									}else if(sop.getFileValid()==0){										
+											SopFile so = new SopFile();
+											so.setFileValid(0);
+											so.setFileWorktype(DictEnum.fileWorktype.资金拨付凭证.getCode());
+											so.setProjectId(Long.valueOf(pid));
+											SopFile sso = sopFileService.queryOne(so);
+											asfile9.setId(sso.getId());										
+								}
+								zjbfFileList.add(asfile9);
 							} 
 							else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.工商转让凭证.getCode())) {
+							  if(sop.getFileValid()==1){
 								asfile9.setFileYwCode(sop.getFileWorktype());
 								asfile9.setFileWorktype(sop.getfWorktype());
 									if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
@@ -229,7 +241,16 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 									}
 									asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
 									asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-									gsbgdjFileList.add(asfile9);								
+									
+							  }else if(sop.getFileValid()==0){										
+									SopFile so = new SopFile();
+									so.setFileValid(0);
+									so.setFileWorktype(DictEnum.fileWorktype.工商转让凭证.getCode());
+									so.setProjectId(Long.valueOf(pid));
+									SopFile sso = sopFileService.queryOne(so);
+									asfile9.setId(sso.getId());										
+							  }
+							  gsbgdjFileList.add(asfile9);
 							} 
 						}
 
@@ -487,6 +508,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					}				
 					appProgresslist.add(appProgress);						
 				}
+				//TODO
 				// 尽职调查
 				else 	if (i == 6) {
 					List<AppSopFile> ywFileList = new ArrayList<AppSopFile>();
