@@ -2618,6 +2618,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		try {
 			MeetingScheduling oldMs = meetingSchedulingService.queryById(query
 					.getId());
+			System.out.println("tdj------------- 11");
 			String mestr = "";
 			String messageType = null;
 			if (DictEnum.meetingType.投决会.getCode().equals(
@@ -2645,6 +2646,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				messageInfo = mestr + "排期时间已取消";
 			}
 			Project pj = projectService.queryById(oldMs.getProjectId());
+			System.out.println("tdj------------- 12");
+			
 			List<String> users = new ArrayList<String>();
 			if (DictEnum.meetingType.投决会.getCode().equals(
 					query.getMeetingType())) {
@@ -2663,9 +2666,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}else{
 				users.add(String.valueOf(pj.getCreateUid()));
 			}
+			
+			System.out.println("tdj------------- 13");
 			//获取项目中的user
 			List<User> userlist = userService.queryListById(users);
+			System.out.println("tdj------------- 14");
 			User belongUser = userService.queryById(pj.getCreateUid());
+			System.out.println("tdj------------- 15");
 			// 如果是更新或取消排期时间
 			if (oldMs.getReserveTimeStart() != null
 					&& oldMs.getReserveTimeEnd() != null) {
@@ -2676,6 +2683,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					meetingSchedulingService.updateByIdSelective(query);
 					sendTaskProjectEmail(request,pj,messageInfo,userlist,null,null,0,UrlNumber.three);
 					belongUser.setKeyword("cancle:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+					System.out.println("tdj------------- 16");
 				} else {
 					// 更新会议时间
 					if (oldMs.getReserveTimeStart().getTime() != query
@@ -2685,6 +2693,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						meetingSchedulingService.updateByIdSelective(query);
 						sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.two);
 						belongUser.setKeyword("update:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+						System.out.println("tdj------------- 17");
 					}
 				}
 			} else {
@@ -2694,6 +2703,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					meetingSchedulingService.updateByIdSelective(query);
 					sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.one);
 					belongUser.setKeyword("insert:"+DateUtil.convertDateToStringForChina(query.getReserveTimeStart()));
+					System.out.println("tdj------------- 18");
 				}
 
 			}
