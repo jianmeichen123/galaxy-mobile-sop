@@ -43,13 +43,13 @@ public class FeedbackController {
 	public ResponseData<Feedback> insertFeedback(@RequestBody Feedback feedback,BindingResult result){
 		ResponseData<Feedback> responseBody = new ResponseData<Feedback>();
 		if(null == feedback ||  null == feedback.getCreatedUid()|| StringUtils.isEmpty(feedback.getContent())){
-			responseBody.setResult(new Result(Status.ERROR,"MISS","缺少重要参数或参数长度超出范围"));
+			responseBody.setResult(new Result(Status.ERROR,"MISS","缺少重要参数"));
 			return responseBody;
 		}
-		if(feedback.getContent().length()>200){
+		/*if(feedback.getContent().length()>200){
 			responseBody.setResult(new Result(Status.ERROR,"INVLID_PARAMETER","参数长度超出范围"));
 			return responseBody;
-		}
+		}*/
 		
 		try {
 			  SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
@@ -92,4 +92,8 @@ public class FeedbackController {
 		}
 		return responseBody;
 	}
+	
 }
+
+
+
