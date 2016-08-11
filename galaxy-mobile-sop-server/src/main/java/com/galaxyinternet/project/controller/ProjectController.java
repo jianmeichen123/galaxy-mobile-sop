@@ -2681,7 +2681,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						&& query.getReserveTimeEnd() == null) {
 					query.setScheduleStatus(0);
 					meetingSchedulingService.updateByIdSelective(query);
-					sendTaskProjectEmail(request,pj,messageInfo,userlist,null,null,0,UrlNumber.three);
+					//sendTaskProjectEmail(request,pj,messageInfo,userlist,null,null,0,UrlNumber.three);
 					belongUser.setKeyword("cancle:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
 					System.out.println("tdj------------- 16");
 				} else {
@@ -2691,7 +2691,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 							|| oldMs.getReserveTimeEnd().getTime() != query
 									.getReserveTimeEnd().getTime()) {
 						meetingSchedulingService.updateByIdSelective(query);
-						sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.two);
+						//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.two);
 						belongUser.setKeyword("update:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
 						System.out.println("tdj------------- 17");
 					}
@@ -2701,7 +2701,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				if (query.getReserveTimeStart() != null
 						&& query.getReserveTimeEnd() != null) {
 					meetingSchedulingService.updateByIdSelective(query);
-					sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.one);
+					//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.one);
 					belongUser.setKeyword("insert:"+DateUtil.convertDateToStringForChina(query.getReserveTimeStart()));
 					System.out.println("tdj------------- 18");
 				}
