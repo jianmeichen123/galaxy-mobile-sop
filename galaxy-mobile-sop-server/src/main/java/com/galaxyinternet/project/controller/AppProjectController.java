@@ -590,7 +590,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 					query.setUid(user.getId());					
 				} else if (roleIdList.contains(UserConstant.HHR)) {
 					query.setProjectDepartid(user.getDepartmentId());					
-				} else if (roleIdList.contains(UserConstant.CEOMS)) {
+				} else if (roleIdList.contains(UserConstant.CEOMS)||roleIdList.contains(UserConstant.DMS)) {
 				
 					//需要进新接口  数目未排期的数目
 					Long iu = meetingSchedulingService.selectdpqCount(query);
