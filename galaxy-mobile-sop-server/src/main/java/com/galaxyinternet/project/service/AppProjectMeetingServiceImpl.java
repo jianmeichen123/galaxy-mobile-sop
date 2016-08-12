@@ -113,8 +113,6 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 				querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 				querySchedu.setReserveTimeStart(null);
 				querySchedu.setReserveTimeEnd(null);
-				querySchedu.setReserveTimeEndStr(null);
-				querySchedu.setReserveTimeStartStr(null);
 				querySchedu.setStatus(DictEnum.meetingResult.通过.getCode());
 				
 				querySchedu.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
@@ -179,8 +177,6 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 				queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 				queryScheduling.setReserveTimeStart(null);
 				queryScheduling.setReserveTimeEnd(null);
-				queryScheduling.setReserveTimeEndStr(null);
-				queryScheduling.setReserveTimeStartStr(null);
 				
 				queryScheduling.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
 				queryScheduling.setMeetingCount(queryScheduling.getMeetingCount() + 1);
@@ -280,8 +276,6 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 		    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 		    	queryScheduling.setReserveTimeStart(null);
 		    	queryScheduling.setReserveTimeEnd(null);
-				queryScheduling.setReserveTimeEndStr(null);
-				queryScheduling.setReserveTimeStartStr(null);
 		    	queryScheduling.setStatus(DictEnum.meetingResult.通过.getCode());				
 		    	queryScheduling.setMeetingDate(meetingRecord.getMeetingDate() == null ? new Date() : meetingRecord.getMeetingDate());
 		    	queryScheduling.setMeetingCount(queryScheduling.getMeetingCount() + 1);//过会次数据累加1
