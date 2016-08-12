@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.galaxyinternet.common.annotation.LogType;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.dictEnum.DictEnum;
+import com.galaxyinternet.common.utils.ControllerUtils;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.model.ResponseData;
 import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
+import com.galaxyinternet.model.operationLog.UrlNumber;
 import com.galaxyinternet.model.project.MeetingRecord;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.AppSopFile;
@@ -30,6 +32,7 @@ import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.SopFileService;
+import com.galaxyinternet.service.UserService;
 /**
  * APP端文件上传管理
  * @author LZJ
@@ -49,6 +52,15 @@ public class AppFileUploadController extends BaseControllerImpl<SopFile, AppSopF
 	private SopFileService sopFileService;
 	
 	@Autowired
+	private ProjectService proJectService;
+	
+/*	@Autowired
+	private UserRoleService userRoleService;*/
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private ProjectService projectService;
 
 	@Override
@@ -56,7 +68,7 @@ public class AppFileUploadController extends BaseControllerImpl<SopFile, AppSopF
 		return this.sopFileService;
 	}
 	
-	@com.galaxyinternet.common.annotation.Logger(operationScope = { LogType.LOG, LogType.MESSAGE })
+	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
 	@ResponseBody
 	@RequestMapping(value = "/uploadBizplan", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<MeetingRecord> fileUploadHandle(@RequestBody AppSopFile appSopFile , HttpServletRequest request) {
@@ -93,7 +105,14 @@ public class AppFileUploadController extends BaseControllerImpl<SopFile, AppSopF
 //				entity.setFileWorktype(DictEnum.fileWorktype.商业计划.getCode());
 				entity.setId(sopFileId);
 				entity.setUpdatedTime(System.currentTimeMillis());
-				sopFileService.updateByIdSelective(entity);				
+				sopFileService.updateByIdSelective(entity);	
+				
+				Project tempProject = proJectService.queryById(entity.getProjectId());
+				String projectName = tempProject.getProjectName();
+				User belongUser = userService.queryById(tempProject.getCreateUid());
+				String 	messageType = "5.1";
+				UrlNumber  num = UrlNumber.one;
+				ControllerUtils.setRequestParamsForMessageTip(request,belongUser, projectName, entity.getProjectId(),messageType,num,entity);
 			}
 			//首次上传
 			else{
@@ -120,7 +139,15 @@ public class AppFileUploadController extends BaseControllerImpl<SopFile, AppSopF
 				entity.setFileUid(appSopFile.getBelongUid());//上传所属人
 				entity.setCreatedTime(System.currentTimeMillis());			
 				sopFileService.insert(entity);
+				
+				Project tempProject = proJectService.queryById(entity.getProjectId());
+				String projectName = tempProject.getProjectName();
+				User belongUser = userService.queryById(tempProject.getCreateUid());
+				String 	messageType = "5.1";
+				UrlNumber  num = UrlNumber.one;
+				ControllerUtils.setRequestParamsForMessageTip(request,belongUser, projectName, entity.getProjectId(),messageType,num,entity);
 			}
+			
 		}catch(Exception ex){
 			logger.error("文件上传信息保存失败", ex);
 			responseBody.setResult(new Result(Status.ERROR,null, "文件上传信息保存失败"));
