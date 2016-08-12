@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.galaxyinternet.common.utils.ControllerUtils;
 import com.galaxyinternet.handler.MessageHandler;
 import com.galaxyinternet.model.operationMessage.OperationMessage;
-import com.galaxyinternet.model.sopfile.SopParentFile;
+import com.galaxyinternet.model.sopfile.SopFile;
 
 @Component
 public class SopFileMessageHandler implements MessageHandler {
@@ -49,7 +49,7 @@ public class SopFileMessageHandler implements MessageHandler {
 //				projectName=leung, operator=人工智能-投资经理one,
 //				content=更新, module=null, projectId=5, operatorId=104]
 
-		SopParentFile sopFile = (SopParentFile) message.getUserData();
+		SopFile sopFile = (SopFile) message.getUserData();
 		if(sopFile!=null){
 			if(message.getMessageType().equals("6.1")){
 				
