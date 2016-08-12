@@ -200,9 +200,11 @@ public class AppSopTaskController extends BaseControllerImpl<SopTask, SopTaskBo>
 						messageType="8.2";
 						break;
 					case 8 : //资金拨付凭证
+						messageType="8.5";
 						urlNum=UrlNumber.four;
 						break;
 					case 9 : //工商变更登记凭证
+						messageType="8.4";
 						urlNum=UrlNumber.six;
 						break;
 					default :
