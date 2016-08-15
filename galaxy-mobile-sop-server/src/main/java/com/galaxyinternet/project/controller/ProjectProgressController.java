@@ -1162,11 +1162,11 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			Project project = new Project();
 			project = projectService.queryById(interviewRecord.getProjectId());
 			
-			String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
+			/*String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
 			if(err!=null && err.length()>0){
 				responseBody.setResult(new Result(Status.ERROR,null, err));
 				return responseBody;
-			}
+			}*/
 			interviewRecord.setCreatedId(user.getId());
 			//验证是否附件已上传
 			if(interviewRecord.getFkey()!=null){
