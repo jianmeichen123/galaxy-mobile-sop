@@ -16,7 +16,20 @@ public class MeetingSchedulingBo extends MeetingScheduling {
 	private Integer CountscheduleStatusy;
 	private Integer CountscheduleStatusd;
 	
+	//新增用户uid字段 projectDepartid
+	private Long uid;//2016/7/25
+	 
+	private Long projectDepartid; //2016/7/25
 	
+	private String dayTime; //2016/7/25
+	//当日的事项用
+	private String dateTime; //2016/7/25
+	
+	//获取传入的年
+	private String year; //2016/7/26
+	
+	//获取传入的月
+	private String month;//2016/26
 	public Integer getCountscheduleStatusy() {
 		return CountscheduleStatusy;
 	}
@@ -65,8 +78,56 @@ public class MeetingSchedulingBo extends MeetingScheduling {
 		this.endTime = endTime;
 	}
 
+	public Long getUid() {
+		return uid;
+	}
 
-	
-	
+	public void setUid(Long uid) {
+		this.uid = uid;
+	}
+
+	public Long getProjectDepartid() {
+		return projectDepartid;
+	}
+
+	public void setProjectDepartid(Long projectDepartid) {
+		this.projectDepartid = projectDepartid;
+	}
+
+	public String getDayTime() {
+		return dayTime;
+	}
+
+	public void setDayTime(String dayTime) {
+		this.dayTime = dayTime;
+	}
+
+	public String getDateTime() {
+		return dateTime;
+	}
+
+	public void setDateTime(String dateTime) {
+		this.dateTime = dateTime;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+
+
+
 	
 }

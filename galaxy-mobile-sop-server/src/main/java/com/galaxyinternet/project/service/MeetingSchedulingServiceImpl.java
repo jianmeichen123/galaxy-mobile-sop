@@ -360,5 +360,31 @@ public class MeetingSchedulingServiceImpl
 				return list;
 	}
 
+	/**
+	 * 新增接口2016/7/25
+	 */
+	@Override
+	public List<MeetingSchedulingBo> selectMonthScheduling(MeetingSchedulingBo query) {
+		return meetingSchedulingDao.selectMonthScheduling(query);
+	}
+
+	@Override
+	public Long selectMonthSchedulingCount(MeetingSchedulingBo query) {
+		// TODO Auto-generated method stub
+		return meetingSchedulingDao.selectMonthSchedulingCount(query);
+	}
+
+	@Override
+	public List<MeetingSchedulingBo> selectDayScheduling(MeetingSchedulingBo query) {
+		// TODO Auto-generated method stub
+		return meetingSchedulingDao.selectDayScheduling(query);
+	}
+
+	@Override
+	public Long selectdpqCount(MeetingSchedulingBo query) {
+		// TODO Auto-generated method stub
+		return meetingSchedulingDao.selectdpqCount(query);
+	}
+
 
 }

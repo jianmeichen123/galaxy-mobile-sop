@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,15 +22,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.bo.project.ProjectBo;
-import com.galaxyinternet.common.constants.SopConstant;
+import com.galaxyinternet.common.annotation.LogType;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
+import com.galaxyinternet.common.utils.ControllerUtils;
 import com.galaxyinternet.exception.PlatformException;
 import com.galaxyinternet.framework.core.constants.UserConstant;
 import com.galaxyinternet.framework.core.model.ResponseData;
 import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
+import com.galaxyinternet.model.operationLog.UrlNumber;
 import com.galaxyinternet.model.project.AppCounts;
 import com.galaxyinternet.model.project.AppFileDTO;
 import com.galaxyinternet.model.project.AppProgress;
@@ -42,7 +43,6 @@ import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.AppSopFile;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
-import com.galaxyinternet.model.soptask.SopTask;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
@@ -159,8 +159,9 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					List<String> fileworkTypeList = new ArrayList<String>();
 					fileworkTypeList.add(DictEnum.fileWorktype.工商转让凭证.getCode());
 					fileworkTypeList.add(DictEnum.fileWorktype.资金拨付凭证.getCode());
-					sopFile.setFileworktypeList(fileworkTypeList);	
-					sopFile.setFileValid(1); //生效文件
+					sopFile.setFileworktypeList(fileworkTypeList);
+					//修改 催办 id没返回 加上id 2016/8/11 /8:43
+					//sopFile.setFileValid(1); //生效文件
 					List<SopFile> listSop = sopFileService.queryList(sopFile);
 					
 					List<AppSopFile> zjbfFileList = new ArrayList<AppSopFile>();
@@ -170,8 +171,9 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						for (SopFile sop : listSop) {
 							asfile9 = new AppSopFile();
 							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.资金拨付凭证.getCode())) {
-								asfile9.setFileYwCode(sop.getFileWorktype()); //→文件（档案）业务分类编码
-								asfile9.setFileWorktype(sop.getfWorktype()); //→文件（档案）业务分类名称
+								if(sop.getFileValid()==1){
+									asfile9.setFileYwCode(sop.getFileWorktype()); //→文件（档案）业务分类编码
+									asfile9.setFileWorktype(sop.getfWorktype()); //→文件（档案）业务分类名称
 									if(sop.getFileName()!=null || sop.getFileSuffix()!=null){
 										String fn = sop.getFileName();
 										String fs = sop.getFileSuffix();
@@ -198,9 +200,19 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 									}
 									asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
 									asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-									zjbfFileList.add(asfile9);
+									
+									}else if(sop.getFileValid()==0){										
+											SopFile so = new SopFile();
+											so.setFileValid(0);
+											so.setFileWorktype(DictEnum.fileWorktype.资金拨付凭证.getCode());
+											so.setProjectId(Long.valueOf(pid));
+											SopFile sso = sopFileService.queryOne(so);
+											asfile9.setId(sso.getId());										
+								}
+								zjbfFileList.add(asfile9);
 							} 
 							else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.工商转让凭证.getCode())) {
+							  if(sop.getFileValid()==1){
 								asfile9.setFileYwCode(sop.getFileWorktype());
 								asfile9.setFileWorktype(sop.getfWorktype());
 									if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
@@ -229,7 +241,16 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 									}
 									asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
 									asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-									gsbgdjFileList.add(asfile9);								
+									
+							  }else if(sop.getFileValid()==0){										
+									SopFile so = new SopFile();
+									so.setFileValid(0);
+									so.setFileWorktype(DictEnum.fileWorktype.工商转让凭证.getCode());
+									so.setProjectId(Long.valueOf(pid));
+									SopFile sso = sopFileService.queryOne(so);
+									asfile9.setId(sso.getId());										
+							  }
+							  gsbgdjFileList.add(asfile9);
 							} 
 						}
 
@@ -487,6 +508,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					}				
 					appProgresslist.add(appProgress);						
 				}
+				//TODO
 				// 尽职调查
 				else 	if (i == 6) {
 					List<AppSopFile> ywFileList = new ArrayList<AppSopFile>();
@@ -1130,6 +1152,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 	   	 * @param request
 	   	 * @return
 	   	 */
+	   		@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
 		   	@ResponseBody
 			@RequestMapping(value = "/appPq", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 		   	public ResponseData<MeetingRecord> appPq(@RequestBody MeetingRecordBo meetingRecord,HttpServletRequest request) {
@@ -1162,12 +1185,13 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							querySchedu.setReserveTimeEndStr(null);
 							querySchedu.setReserveTimeStartStr(null);
 							querySchedu.setStatus(DictEnum.meetingResult.待定.getCode());
-							
+							querySchedu.setReserveTimeEndStr(null);
+							querySchedu.setReserveTimeStartStr(null);
 							
 							querySchedu.setApplyTime(new Timestamp(new Date().getTime()));
 							querySchedu.setUpdatedTime((new Date()).getTime()); //变更操作时间
 							meetingSchedulingService.updateBySelective(querySchedu); 
-							
+							ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.1", UrlNumber.one);
 						} else {
 							responseBody.setResult(new Result(Status.ERROR, "cfpq",
 									"项目不能重复申请CEO评审排期!"));
@@ -1189,10 +1213,12 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 							queryScheduling.setReserveTimeStart(null);
 							queryScheduling.setReserveTimeEnd(null);
 							queryScheduling.setReserveTimeEndStr(null);
-							queryScheduling.setReserveTimeStartStr(null);						
+							queryScheduling.setReserveTimeStartStr(null);
+													
 							queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
 							queryScheduling.setUpdatedTime((new Date()).getTime());
 							meetingSchedulingService.updateBySelective(queryScheduling);
+							ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.2", UrlNumber.two);
 						} else {
 							responseBody.setResult(new Result(Status.ERROR, "cfpq",
 									"项目不能重复申请立项会排期!"));
@@ -1216,29 +1242,33 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
 					    	queryScheduling.setReserveTimeStart(null);
 					    	queryScheduling.setReserveTimeEnd(null);
-							queryScheduling.setReserveTimeEndStr(null);
+					    	queryScheduling.setReserveTimeEndStr(null);
 							queryScheduling.setReserveTimeStartStr(null);
 					    	queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());								    					    	
 					    	queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
 					    	queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
 					    	meetingSchedulingService.updateBySelective(queryScheduling); 
+					    	ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.3", UrlNumber.three);
 					    } else {
 							responseBody.setResult(new Result(Status.ERROR, "cfpq",
 									"项目不能重复申请投决会排期!"));
 							return responseBody;
 						}
+						
 					    
 					}
 					else {
 						responseBody.setResult(new Result(Status.OK, "xg", "并不需要申请排期"));
 						return responseBody;
 					}
+					
 				} catch (Exception e) {
 					responseBody.setResult(new Result(Status.ERROR,null, "排期添加失败"));
 					if(logger.isErrorEnabled()){
 						logger.error("addpq 排期添加失败 ",e);
 					}
 				}
+				
 					responseBody.setResult(new Result(Status.OK, "sqpqcg", "申请排期成功"));
 					return responseBody;
 				

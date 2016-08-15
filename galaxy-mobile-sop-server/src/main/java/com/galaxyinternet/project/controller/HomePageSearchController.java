@@ -3,6 +3,8 @@ package com.galaxyinternet.project.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -357,25 +359,28 @@ public class HomePageSearchController
 	 */
 	@RequestMapping(value = "checkPwd")
 	@ResponseBody
-	public Map<String, Object> checkPwd(String password,HttpServletRequest request) {
-		// 当前登录人
-		User user = (User) request.getSession().getAttribute(Constants.SESSION_USER_KEY);
-		if (user != null && user.getId()!= null) {
-			//读取数据库
-			user = userService.queryById(user.getId());
+	public ResponseData<User> checkPwd(@RequestBody User user) {
+		ResponseData<User> responseBody = new ResponseData<User>();
+		String password = user.getPassword();
+		if (user == null || user.getId() == null || password == null) {
+			responseBody.setResult(new Result(Status.ERROR, "MISS", "输入参数不完整!"));
+			return responseBody;
 		}
 		
-		Map<String, Object> map = new HashMap<String, Object>();
-        boolean flag = false;
-		if (password != null && user != null && user.getPassword() != null) {
+		//读取数据库
+		User newuser = userService.queryById(user.getId());
+		 
+		if (newuser != null && newuser.getPassword() != null) {
 			password = PWDUtils.genernateNewPassword(password);
 
-			if (StringUtils.equals(password, user.getPassword())) {
-				flag = true;
+			if (StringUtils.equals(password, newuser.getPassword())) {
+				responseBody.setResult(new Result(Status.OK,"TRUE","原密码输入正确"));
+			}else{
+				responseBody.setResult(new Result(Status.OK,"FALSE","原密码输入错误"));
 			} 
 		}
-		map.put("flag", flag);
-		return map;
+		
+		return responseBody;
 	}
 	
 	/**
@@ -390,15 +395,25 @@ public class HomePageSearchController
 		
 		ResponseData<User> responseBody = new ResponseData<User>();
 		if (user == null || user.getId() == null || user.getPassword() == null) {
-			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
+			responseBody.setResult(new Result(Status.ERROR, "MISS", "输入参数不完整!"));
 			return responseBody;
 		}
 		
 		try {
-			userService.updatePwd(user);
-			responseBody.setResult(new Result(Status.OK, null, "密码已修改!"));
+			//验证新密码是否符合规范
+			String regex = "^(?=.*[0-9])(?=.*[a-z|A-Z])((/D)*).{8,}$";
+			Pattern p = Pattern.compile(regex); 
+		  	Matcher m = p.matcher(user.getPassword());
+		  	if(m.matches()){
+		  		userService.updatePwd(user);
+		  		responseBody.setResult(new Result(Status.OK, "SUCCESS", "密码已修改!"));
+		  	}else{
+		  		responseBody.setResult(new Result(Status.ERROR, "INVALIDFORMAT", "新密码必须包含字母数字，可以包含特殊字符，8位及以上!"));
+		  	}
+			
+			
 		} catch (Exception e) {
-			responseBody.setResult(new Result(Status.ERROR, null,"密码修改失败!"));
+			responseBody.setResult(new Result(Status.ERROR, "FAIL","服务器异常，密码修改失败!"));
 			if (logger.isErrorEnabled()) {
 				logger.error("updatePwd ", e);
 			}

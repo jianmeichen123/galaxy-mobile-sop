@@ -232,7 +232,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			if (id > 0) {
 				responseBody.setResult(new Result(Status.OK, null, "项目添加成功!"));
 				responseBody.setId(id);
-				ControllerUtils.setRequestParamsForMessageTip(request,project.getProjectName(), project.getId(),"1");
+				ControllerUtils.setRequestParamsForMessageTip(request,project.getProjectName(), project.getId(),StageChangeHandler._6_1_);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -303,6 +303,69 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		return responseBody;
 	}
 
+	/**
+	 * 为了消息提醒修改了 编辑项目的接口 2016/7/18修改
+	 * 修改项目信息接口
+	 * 
+	 * @author yangshuhua
+	 * @return
+	 * @throws ParseException
+	 */
+	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
+	@ResponseBody
+	@RequestMapping(value = "/editProject", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Project> editProject(@RequestBody Project project,
+			HttpServletRequest request) throws ParseException {
+		ResponseData<Project> responseBody = new ResponseData<Project>();
+		if (project == null || project.getId() == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
+			return responseBody;
+		}
+
+		// 执行转换
+		project.getProjectContribution();
+		project.getProjectValuations();
+		project.getCurrencyUnit();
+		project.getProjectShareRatio();
+
+		User user = (User) getUserFromSession(request);
+		if (project.getProjectValuations() == null) {
+			if (project.getProjectShareRatio() != null
+					&& project.getProjectShareRatio() > 0
+					&& project.getProjectContribution() != null
+					&& project.getProjectContribution() > 0) {
+				project.setProjectValuations(project.getProjectContribution()
+						* 100 / project.getProjectShareRatio());
+			}
+		}
+		if(null!=project.getIndustryOwn()&&project.getIndustryOwn().longValue()==0){
+			project.setIndustryOwn(null);
+		}
+
+		Project p = projectService.queryById(project.getId());
+		if (p == null) {
+			responseBody
+					.setResult(new Result(Status.ERROR, null, "未找到相应的项目信息!"));
+			return responseBody;
+		}
+		// 项目创建者用户ID与当前登录人ID是否一样
+		if (user.getId().longValue() != p.getCreateUid().longValue()) {
+			responseBody
+					.setResult(new Result(Status.ERROR, null, "没有权限修改该项目!"));
+			return responseBody;
+		}
+		project.setUpdatedTime(System.currentTimeMillis());
+		project.setCreatedTime(DateUtil.convertStringToDate(
+				p.getCreateDate().trim(), "yyyy-MM-dd").getTime());
+
+		int num = projectService.updateById(project);
+		if (num > 0) {
+			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
+			ControllerUtils.setRequestParamsForMessageTip(request,
+					project.getProjectName(), project.getId(),"2");
+		}
+		return responseBody;
+	}
 	/**
 	 * 查询指定的项目信息接口
 	 * @author gxc
@@ -2281,7 +2344,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				uids.add(String.valueOf(pr.getCreateUid()));
 			}
 			// 获取投资经理的过会率
-			PassRateBo borate = new PassRateBo();
+/*			PassRateBo borate = new PassRateBo();
 			borate.setUids(uids);
 			borate.setRateType(type.intValue());
 			List<PassRate> prateList = passRateService.queryListById(borate);
@@ -2291,11 +2354,36 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				for (PassRate pr : prateList) {
 					passRateMap.put(pr.getUid(), pr);
 				}
-			}
+			}*/
 			// 组装数据
 			for (MeetingScheduling ms : schedulingList) {
 				for (Project p : projectList) {
 					if (ms.getProjectId().longValue() == p.getId().longValue()) {
+						PassRateBo borate = new PassRateBo();
+						/*if (passRateMap.get(p.getCreateUid()) != null) {
+							ms.setMeetingRate(passRateMap.get(p.getCreateUid())
+									.getRate());
+						} else {
+							ms.setMeetingRate(new Double(0));
+						}*/
+						if(ms.getMeetingType().equals(DictEnum.meetingType.立项会.getCode())){
+							borate.setRateType(0);							
+						}else if(ms.getMeetingType().equals(DictEnum.meetingType.投决会.getCode())){
+							borate.setRateType(1);
+						}else if(ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							borate.setRateType(2);
+						}												
+						// 获取投资经理的过会率						
+						borate.setUids(uids);						
+						List<PassRate> prateList = passRateService.queryListById(borate);
+						Map<Long, PassRate> passRateMap = new HashMap<Long, PassRate>();
+						
+						if (prateList.size() > 0) {
+							for (PassRate pr : prateList) {
+								passRateMap.put(pr.getUid(), pr);
+							}
+						}
+
 						if (passRateMap.get(p.getCreateUid()) != null) {
 							ms.setMeetingRate(passRateMap.get(p.getCreateUid())
 									.getRate());
@@ -2530,6 +2618,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		try {
 			MeetingScheduling oldMs = meetingSchedulingService.queryById(query
 					.getId());
+			//System.out.println("tdj------------- 11");
 			String mestr = "";
 			String messageType = null;
 			if (DictEnum.meetingType.投决会.getCode().equals(
@@ -2557,6 +2646,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				messageInfo = mestr + "排期时间已取消";
 			}
 			Project pj = projectService.queryById(oldMs.getProjectId());
+			System.out.println("tdj------------- 12");
+			
 			List<String> users = new ArrayList<String>();
 			if (DictEnum.meetingType.投决会.getCode().equals(
 					query.getMeetingType())) {
@@ -2575,9 +2666,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}else{
 				users.add(String.valueOf(pj.getCreateUid()));
 			}
+			
+			//System.out.println("tdj------------- 13");
 			//获取项目中的user
 			List<User> userlist = userService.queryListById(users);
+			//System.out.println("tdj------------- 14");
 			User belongUser = userService.queryById(pj.getCreateUid());
+			//System.out.println("tdj------------- 15");
 			// 如果是更新或取消排期时间
 			if (oldMs.getReserveTimeStart() != null
 					&& oldMs.getReserveTimeEnd() != null) {
@@ -2586,8 +2681,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						&& query.getReserveTimeEnd() == null) {
 					query.setScheduleStatus(0);
 					meetingSchedulingService.updateByIdSelective(query);
-					sendTaskProjectEmail(request,pj,messageInfo,userlist,null,null,0,UrlNumber.three);
+					//sendTaskProjectEmail(request,pj,messageInfo,userlist,null,null,0,UrlNumber.three);
 					belongUser.setKeyword("cancle:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+					//System.out.println("tdj------------- 16");
 				} else {
 					// 更新会议时间
 					if (oldMs.getReserveTimeStart().getTime() != query
@@ -2595,8 +2691,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 							|| oldMs.getReserveTimeEnd().getTime() != query
 									.getReserveTimeEnd().getTime()) {
 						meetingSchedulingService.updateByIdSelective(query);
-						sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.two);
+						//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.two);
 						belongUser.setKeyword("update:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+						//System.out.println("tdj------------- 17");
 					}
 				}
 			} else {
@@ -2604,8 +2701,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				if (query.getReserveTimeStart() != null
 						&& query.getReserveTimeEnd() != null) {
 					meetingSchedulingService.updateByIdSelective(query);
-					sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.one);
+					//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.one);
 					belongUser.setKeyword("insert:"+DateUtil.convertDateToStringForChina(query.getReserveTimeStart()));
+					//System.out.println("tdj------------- 18");
 				}
 
 			}

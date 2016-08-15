@@ -25,6 +25,7 @@ import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.common.annotation.LogType;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
+import com.galaxyinternet.common.utils.ControllerUtils;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.file.OSSHelper;
 import com.galaxyinternet.framework.core.file.UploadFileResult;
@@ -36,6 +37,7 @@ import com.galaxyinternet.framework.core.oss.OSSFactory;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.framework.core.utils.GSONUtil;
 import com.galaxyinternet.framework.core.utils.JSONUtils;
+import com.galaxyinternet.model.operationLog.UrlNumber;
 import com.galaxyinternet.model.project.MeetingRecord;
 import com.galaxyinternet.model.project.MeetingScheduling;
 import com.galaxyinternet.model.project.Project;
@@ -150,19 +152,36 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 			}			
 			try {
 				String prograss = "";
-//				UrlNumber uNum = null;
+				UrlNumber uNum = null;
+				String messageType = null;
 				if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.内评会.getCode())){       
 					prograss = DictEnum.projectProgress.内部评审.getCode();                                 	
-//					uNum = UrlNumber.one;
+  				 uNum = UrlNumber.one;
+					if(meetingRecord.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						messageType = "6.3";
+					}else{
+						messageType = "4.1";
+					}
 				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){ 
 					prograss = DictEnum.projectProgress.CEO评审.getCode(); 								
-//					uNum = UrlNumber.two;
+					uNum = UrlNumber.two;
+					messageType = "4.2";
 				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.立项会.getCode())){	
 					prograss = DictEnum.projectProgress.立项会.getCode(); 										
-//					uNum = UrlNumber.three;
+					uNum = UrlNumber.three;
+					if(meetingRecord.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						messageType = "6.5";
+					}else{
+						messageType = "4.3";
+					}
 				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.投决会.getCode())){
 					prograss = DictEnum.projectProgress.投资决策会.getCode(); 								
-//					uNum = UrlNumber.four;
+					uNum = UrlNumber.four;
+					if(meetingRecord.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						messageType = "6.8";
+					}else{
+						messageType = "4.4";
+					}
 				}				
 				//检查project id 及Project 是否为空
 				Project project = new Project();
@@ -209,7 +228,9 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 					id = appPmService.addingMeeting(meetingRecord, project, file);
 				}
 				responseBody.setId(id);
-				responseBody.setResult(new Result(Status.OK, ""));			
+				responseBody.setResult(new Result(Status.OK, ""));	
+				
+				ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), messageType, uNum);
 			} catch (Exception e) {
 				responseBody.setResult(new Result(Status.ERROR,null, "会议添加失败"));
 				if(logger.isErrorEnabled()){
@@ -222,6 +243,8 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 		
 		
 		/**
+		 * 2016/8/8  为会议添加消息提醒
+		 * 
 		 * App端接口--添加会议(无录音文件)新版本需要
 		 * @param meetingRecord
 		 * @param request
@@ -284,20 +307,37 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 			}			
 			try {
 				String prograss = "";
-//				UrlNumber uNum = null;
+				UrlNumber uNum = null;
+				String messageType = null;
 				if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.内评会.getCode())){       
 					prograss = DictEnum.projectProgress.内部评审.getCode();                                 	
-//					uNum = UrlNumber.one;
+  				 uNum = UrlNumber.one;
+					if(meetingRecord.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						messageType = "6.3";
+					}else{
+						messageType = "4.1";
+					}
 				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){ 
 					prograss = DictEnum.projectProgress.CEO评审.getCode(); 								
-//					uNum = UrlNumber.two;
+					uNum = UrlNumber.two;
+					messageType = "4.2";
 				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.立项会.getCode())){	
 					prograss = DictEnum.projectProgress.立项会.getCode(); 										
-//					uNum = UrlNumber.three;
+					uNum = UrlNumber.three;
+					if(meetingRecord.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						messageType = "6.5";
+					}else{
+						messageType = "4.3";
+					}
 				}else if(meetingRecord.getMeetingType().equals(DictEnum.meetingType.投决会.getCode())){
 					prograss = DictEnum.projectProgress.投资决策会.getCode(); 								
-//					uNum = UrlNumber.four;
-				}				
+					uNum = UrlNumber.four;
+					if(meetingRecord.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						messageType = "6.8";
+					}else{
+						messageType = "4.4";
+					}
+				}			
 				//检查project id 及Project 是否为空
 				Project project = new Project();
 				project = projectService.queryById(meetingRecord.getProjectId());
@@ -343,7 +383,9 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 					id = appPmService.addMeeting(meetingRecord, project, file);
 				}
 				responseBody.setId(id);
-				responseBody.setResult(new Result(Status.OK, ""));			
+				responseBody.setResult(new Result(Status.OK, ""));	
+				
+				ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), messageType, uNum);
 			} catch (Exception e) {
 				responseBody.setResult(new Result(Status.ERROR,null, "会议添加失败"));
 				if(logger.isErrorEnabled()){
@@ -352,7 +394,7 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 			}
 			return responseBody;
 		}	
-		
+		//TODO
 		/**
 		 * App端接口--添加会议（有录音文件）
 		 *  测试调用URL/galaxy/projectmeeting/approgress/addAudioFile

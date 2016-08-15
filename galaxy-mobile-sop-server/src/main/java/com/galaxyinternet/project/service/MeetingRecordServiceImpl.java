@@ -276,7 +276,7 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 	}
 	
 	
-	
+
 	// 项目tab查询     projectId
 	// 列表查询， uid;  project_name\project_code ~ keyword  ||  startTime;  endTime; 
 	@Override
@@ -351,7 +351,8 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 						bo.setFname(file.getFileName());
 						bo.setFkey(file.getFileKey());
 					}
-				}
+					
+				}			
 				meetBoList.add(bo);
 			}
 			meetPage = new Page<MeetingRecordBo>(meetBoList, pageable, total);
@@ -362,7 +363,103 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 		return meetPage;
 	}
 	
+/*	*//**
+	 * 2016/7/28修改 会议返回的sofile表的数据 为接收多条记录返回list集合app2期新增
+	 *//*
+	// 项目tab查询     projectId
+	// 列表查询， uid;  project_name\project_code ~ keyword  ||  startTime;  endTime; 
+	@Override
+	public Page<MeetingRecordBo> queryAppMeetPage(MeetingRecordBo query, Pageable pageable) {
+		Page<MeetingRecordBo> meetPage = null;
+		List<MeetingRecordBo> meetBoList = null;
+		List<MeetingRecord> meetList = null;
+		Long total = null;
+		Map<Long,String> proIdNameMap = new HashMap<Long,String>();
+		Map<Long,Long> proIdUidMap = new HashMap<Long,Long>();
 		
+		if(query.getProjectId()!=null){   // 项目tab查询
+			meetList = meetingRecordDao.selectList(query, pageable);
+			total = meetingRecordDao.selectCount(query);
+			
+			//配合APP端新增获取相关字段
+			Project  proQ = new Project();
+			proQ.setId(query.getProjectId());
+			proQ.setCreateUid(query.getUid());
+			proQ.setKeyword(query.getKeyword());
+			List<Project> proList = projectDao.selectList(proQ);
+			
+			//获取 projectId List
+			if(proList!=null&&!proList.isEmpty()){
+				List<Long> proIdList = new ArrayList<Long>();
+				for(Project apro : proList){
+					proIdList.add(apro.getId());
+					proIdNameMap.put(apro.getId(), apro.getProjectName());
+					proIdUidMap.put(apro.getId(), apro.getCreateUid());
+				}
+			}
+		}else{    //列表查询_个人创建/部门
+			Project  proQ = new Project();
+			proQ.setCreateUid(query.getUid());
+			proQ.setProjectDepartid(query.getDepartId());
+			proQ.setKeyword(query.getKeyword());
+			List<Project> proList = projectDao.selectList(proQ);
+			
+			//获取 projectId List
+			if(proList!=null&&!proList.isEmpty()){
+				List<Long> proIdList = new ArrayList<Long>();
+				for(Project apro : proList){
+					proIdList.add(apro.getId());
+					proIdNameMap.put(apro.getId(), apro.getProjectName());
+					proIdUidMap.put(apro.getId(), apro.getCreateUid());
+				}
+				//查询列表  
+				query.setProIdList(proIdList);
+				meetList = meetingRecordDao.selectList(query, pageable);
+				total = meetingRecordDao.selectCount(query);
+			}
+		}
+		    
+		if(meetList!=null&&!meetList.isEmpty()){
+			meetBoList = new ArrayList<MeetingRecordBo>();
+			for(MeetingRecord ib : meetList){
+				MeetingRecordBo bo = new MeetingRecordBo();
+				bo.setId(ib.getId());
+				bo.setProjectId(ib.getProjectId());
+				bo.setProName(proIdNameMap.get(ib.getProjectId()));
+				bo.setMeetingDateStr(ib.getMeetingDateStr());
+				bo.setMeetingType(ib.getMeetingType());
+				bo.setMeetingTypeStr(ib.getMeetingTypeStr());
+				bo.setMeetingResult(ib.getMeetingResult());
+				bo.setMeetingResultStr(ib.getMeetingResultStr());
+				bo.setMeetingNotes(ib.getMeetingNotes());
+				bo.setUid(proIdUidMap.get(ib.getProjectId()));
+				
+				SopFile file = new SopFile();
+				file.setMeetingId(ib.getId());
+				file.setMeetFlag(1);
+				file.setFileIsdel(1);
+			
+				List<SopFile> sp=sopFileDao.selectList(file);
+				if(sp!=null&&sp.size()>0){
+					bo.setLsf(sp);
+				
+			}		
+
+				meetBoList.add(bo);
+			}
+			meetPage = new Page<MeetingRecordBo>(meetBoList, pageable, total);
+		}else{
+			meetPage = new Page<MeetingRecordBo>(new ArrayList<MeetingRecordBo>(), pageable, 0l);
+		}
+		
+		return meetPage;
+	}
+		*/
+	
+	
+		
+	
+	
 	/**
 	 * 投资意向书阶段，    上传  投资意向书-签署证明；
 	 * 				更新项目阶段；  --》  尽职调查

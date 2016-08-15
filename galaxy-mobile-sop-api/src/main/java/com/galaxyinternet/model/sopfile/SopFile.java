@@ -162,6 +162,18 @@ public class SopFile extends PagableRecordEntity {
   	private MultipartFile multipartFile;
 
   
+  	/**
+  	 * 
+  	 * app2期多文件上传需要的字段 2016/7/27
+  	 * @return
+  	 */
+
+  	
+  	private Long meetingId;//关联的会议id
+  	
+
+  	
+  	
 	public MultipartFile getMultipartFile() {
 		return multipartFile;
 	}
@@ -564,6 +576,13 @@ public class SopFile extends PagableRecordEntity {
 		this.fileworktypeList = fileworktypeList;
 	}
 
-	
+	public Long getMeetingId() {
+		return meetingId;
+	}
+
+	public void setMeetingId(Long meetingId) {
+		this.meetingId = meetingId;
+	}
+
 	
 }

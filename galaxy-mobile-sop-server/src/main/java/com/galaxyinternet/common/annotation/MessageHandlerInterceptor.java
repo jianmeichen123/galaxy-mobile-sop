@@ -113,7 +113,7 @@ public class MessageHandlerInterceptor extends HandlerInterceptorAdapter {
 								for (final LogType ltype : logTypes) {
 									if (ltype == LogType.MESSAGE) {
 										if(map.get(PlatformConst.REQUEST_SCOPE_MESSAGE_TYPE) != null){
-											/*insertMessageTip(populateOperationMessage(type, user, map));*/
+											insertMessageTip(populateOperationMessage(type, user, map));
 										}
 									} else if (ltype == LogType.LOG) {
 										insertOperationLog(populateOperationLog(operLogType, user, map, recordType));

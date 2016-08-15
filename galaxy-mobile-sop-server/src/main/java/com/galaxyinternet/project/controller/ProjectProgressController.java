@@ -205,11 +205,11 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			//project  验证
 			Project project = new Project();
 			project = projectService.queryById(interviewRecord.getProjectId());
-			String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
+/*			String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
 			if(err!=null && err.length()>0){
 				responseBody.setResult(new Result(Status.ERROR,null, err));
 				return responseBody;
-			}
+			}*/
 			
 			//保存
 			Long id = null;
@@ -238,6 +238,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 				sopFile.setFileSource(DictEnum.fileSource.内部.getCode());  //档案来源
 				//sopFile.setFileWorktype(fileWorkType);    //业务分类
 				sopFile.setFileStatus(DictEnum.fileStatus.已上传.getCode());  //档案状态
+				
 				id = interviewRecordService.insertInterview(interviewRecord,sopFile);
 			}else if(!ServletFileUpload.isMultipartContent(request)){
 				id = interviewRecordService.insert(interviewRecord);
@@ -298,7 +299,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
-	
+	//TODO
 	/**
 	 * OSS访谈录音追加
 	 * @param   interviewRecord 
@@ -344,6 +345,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			//sopFile.setFileWorktype(fileWorkType);    //业务分类
 			sopFile.setFileStatus(DictEnum.fileStatus.已上传.getCode());  //档案状态
 			
+
 			//调用接口 修改view 新增 sopfile，返回fileid
 			Long fileid = interviewRecordService.updateViewForFile(sopFile,view);
 			if(fileid == null){
@@ -385,7 +387,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
-	
+	//TODO
 	
 	/**
 	 * 访谈查询,
@@ -457,6 +459,76 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
+	//TODO
+	/**
+	 * app2期修改的新接口 访谈查询
+	 * 访谈查询,
+	 * 			投资经理： 查询个人项目下		的访谈记录  
+	 * 			合伙人：	    查询个人事业线下	的访谈记录  
+	 * 			高管： 	    查询所有			的访谈记录  
+	 * @param   interviewRecord 
+	 * @return
+	 *//*
+	@ResponseBody
+	@RequestMapping(value = "/queryAppInterview", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<InterviewRecordBo> queryAppInterview(HttpServletRequest request,@RequestBody InterviewRecordBo query ) {
+		ResponseData<InterviewRecordBo> responseBody = new ResponseData<InterviewRecordBo>();
+		
+		try {
+			User user = (User) request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			
+			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+			if(roleIdList.contains(UserConstant.CEO) || roleIdList.contains(UserConstant.DSZ)){  //无限制，根据传参查询
+				//query.setUid(null);
+			}else if(roleIdList.contains(UserConstant.HHR)){   //固定为其部门
+				query.setDepartId(user.getDepartmentId());
+			}else if(roleIdList.contains(UserConstant.TZJL)){  //固定为其创建
+				query.setUid(user.getId());
+			}else{
+				responseBody.setResult(new Result(Status.ERROR, null, "没有权限查看!"));
+				return responseBody;
+			}
+
+			if(query.getProjectId()!=null){
+				List<Project> proList = null;
+				boolean checked = false;
+				if(roleIdList.contains(UserConstant.HHR)){   //部门下项目校验
+					Project  proQ = new Project();
+					proQ.setId(query.getProjectId());
+					proQ.setProjectDepartid(user.getDepartmentId());
+					proList = projectService.queryList(proQ);
+					checked = true;
+				}else if(roleIdList.contains(UserConstant.TZJL)){  //个人下项目校验
+					Project  proQ = new Project();
+					proQ.setCreateUid(user.getId());
+					proQ.setId(query.getProjectId());
+					proList = projectService.queryList(proQ);
+					checked = true;
+				}
+				if(checked){
+					if(proList==null || proList.isEmpty()){
+						responseBody.setResult(new Result(Status.ERROR, null, "没有权限查看!"));
+						return responseBody;
+					}
+				}
+			}
+			
+			Page<InterviewRecordBo> pageList = interviewRecordService.queryAppInterviewPage(query,  new PageRequest(query.getPageNum()==null?0:query.getPageNum(), query.getPageSize()==null?10:query.getPageSize()) );
+			responseBody.setPageList(pageList);
+			responseBody.setResult(new Result(Status.OK, ""));
+			
+			return responseBody;
+			
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"查询失败"));
+			
+			if(logger.isErrorEnabled()){
+				logger.error("queryInterview 查询失败",e);
+			}
+		}
+		
+		return responseBody;
+	}*/
 	
 	
 	/**
@@ -687,7 +759,7 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 		}
 		return responseBody;
 	}
-	
+	//TODO
 	/**
 	 * 内部评审、 CEO评审 、 立项会、投决会  阶段
 	 * 			查询个人项目下的会议记录
@@ -757,6 +829,74 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 	}
 	
 	
+/*	*//**
+	 * app2期新的会议查询列表返回的是多个录音文件
+	 * @param request
+	 * @param query
+	 * @return    
+	 * 2016/7/29
+	 *//*
+	@ResponseBody
+	@RequestMapping(value = "/queryAppMeet", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<MeetingRecordBo> queryAppMeet(HttpServletRequest request,@RequestBody MeetingRecordBo query ) {
+		
+		ResponseData<MeetingRecordBo> responseBody = new ResponseData<MeetingRecordBo>();
+		
+		try {
+			User user = (User) request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			
+			//角色校验
+			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+			if(roleIdList.contains(UserConstant.CEO) || roleIdList.contains(UserConstant.DSZ)){  //无限制，根据传参查询
+				//query.setUid(null);
+			}else if(roleIdList.contains(UserConstant.HHR)){   //固定为其部门
+				query.setDepartId(user.getDepartmentId());
+			}else if(roleIdList.contains(UserConstant.TZJL)){  //固定为其创建
+				query.setUid(user.getId());
+			}else{
+				responseBody.setResult(new Result(Status.ERROR, null, "没有权限查看!"));
+				return responseBody;
+			}
+			
+			if(query.getProjectId()!=null){
+				List<Project> proList = null;
+				boolean checked = false;
+				if(roleIdList.contains(UserConstant.HHR)){   //部门下项目校验
+					Project  proQ = new Project();
+					proQ.setId(query.getProjectId());
+					proQ.setProjectDepartid(user.getDepartmentId());
+					proList = projectService.queryList(proQ);
+					checked = true;
+				}else if(roleIdList.contains(UserConstant.TZJL)){  //个人下项目校验
+					Project  proQ = new Project();
+					proQ.setCreateUid(user.getId());
+					proQ.setId(query.getProjectId());
+					proList = projectService.queryList(proQ);
+					checked = true;
+				}
+				if(checked){
+					if(proList==null || proList.isEmpty()){
+						responseBody.setResult(new Result(Status.ERROR, null, "没有权限查看!"));
+						return responseBody;
+					}
+				}
+			}
+			
+			Page<MeetingRecordBo> pageList = meetingRecordService.queryAppMeetPage(query, new PageRequest(query.getPageNum()==null?0:query.getPageNum(), query.getPageSize()==null?10:query.getPageSize()));
+			responseBody.setPageList(pageList);
+			responseBody.setResult(new Result(Status.OK, ""));
+			return responseBody;
+			
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"查询失败"));
+			
+			if(logger.isErrorEnabled()){
+				logger.error("queryInterviewPageList ",e);
+			}
+		}
+		
+		return responseBody;
+	}*/
 	/**
 	 * 会议详情;  
 	 * @param  mid 会议id
@@ -1022,11 +1162,11 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			Project project = new Project();
 			project = projectService.queryById(interviewRecord.getProjectId());
 			
-			String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
+			/*String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
 			if(err!=null && err.length()>0){
 				responseBody.setResult(new Result(Status.ERROR,null, err));
 				return responseBody;
-			}
+			}*/
 			interviewRecord.setCreatedId(user.getId());
 			//验证是否附件已上传
 			if(interviewRecord.getFkey()!=null){

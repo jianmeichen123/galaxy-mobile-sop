@@ -174,12 +174,16 @@ public class SopTaskController extends BaseControllerImpl<SopTask, SopTaskBo> {
 					flag=false;
 			}
 			Project project = projectService.queryById(queryById.getProjectId());
+			
+			User manager = userService.queryById(project.getCreateUid());
+			
 			sopTask.setAssignUid(user.getId());
 			sopTask.setTaskFlag(queryById.getTaskFlag());
 			sopTask.setProjectId(queryById.getProjectId());
 			 sopTaskService.updateById(sopTask);
-			 request.setAttribute("taskid", id);	
-			 ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId(),messageType,urlNum);
+			 request.setAttribute("taskid", id);
+			 ControllerUtils.setRequestParamsForMessageTip(request,manager,project.getProjectName(), project.getId(),messageType,urlNum);
+			 //ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId(),messageType,urlNum);
 		} catch (PlatformException e) {
 			result.addError(e.getMessage());
 		} catch (Exception e) {
@@ -241,6 +245,14 @@ public class SopTaskController extends BaseControllerImpl<SopTask, SopTaskBo> {
 				list.setTotal((long)0);
 				list.setContent(SopTaskBoList);
 			}
+			sopTaskBo.setTaskStatus(DictEnum.taskStatus.待认领.getCode());
+			Long p = sopTaskService.queryCount(sopTaskBo);
+			sopTaskBo.setTaskStatus(DictEnum.taskStatus.待完工.getCode());
+			Long q = sopTaskService.queryCount(sopTaskBo);
+			SopTaskBo soBo=new SopTaskBo();
+			soBo.setRwdCount(p);
+			soBo.setRwyCount(q);
+			responseBody.setEntity(soBo);
 			responseBody.setPageList(list);	
 			result.setStatus(Status.OK);
 		} catch (PlatformException e) {
