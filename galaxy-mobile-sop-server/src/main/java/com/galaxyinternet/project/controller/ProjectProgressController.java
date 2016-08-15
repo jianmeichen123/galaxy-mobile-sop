@@ -205,11 +205,11 @@ public class ProjectProgressController extends BaseControllerImpl<Project, Proje
 			//project  验证
 			Project project = new Project();
 			project = projectService.queryById(interviewRecord.getProjectId());
-			String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
+/*			String err = errMessage(project,user,DictEnum.projectProgress.接触访谈.getCode());   //字典  项目进度  接触访谈 
 			if(err!=null && err.length()>0){
 				responseBody.setResult(new Result(Status.ERROR,null, err));
 				return responseBody;
-			}
+			}*/
 			
 			//保存
 			Long id = null;
