@@ -161,7 +161,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	 * @author yangshuhua
 	 * @return 2016/6/13 修改过
 	 */
-	@Token
+	//@Token
 	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
 	@ResponseBody
 	@RequestMapping(value = "/ap", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2821,7 +2821,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return data;
 	}
-
+//TODO
 	/**
 	 * 根据枚举获取
 	 * 获取枚举里的融资状态列表

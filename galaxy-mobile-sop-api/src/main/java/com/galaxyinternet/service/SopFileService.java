@@ -90,4 +90,12 @@ public interface SopFileService extends BaseService<SopFile> {
 	 */
 	public Page<SopFile> queryFileList(SopFile query, Pageable pageable);
 	
+	
+	
+	/**
+	 * 2016/8/17
+	 * 项目详情里的项目文档查询
+	 */
+	public Page<SopFile> queryappFileList(SopFile query, Pageable pageable);
+	
 }
