@@ -120,7 +120,98 @@
 				<!-- 新加内容 -->
 				<if test="meetingId != null" >and meeting_id = #{meetingId,jdbcType=BIGINT} </if>
 			</trim>
+		</where>		
+	</sql>
+	<!--2016/8/17新写的为了app端项目详情查询项目文档  -->
+	<sql id="Base_Where_Clausee">
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and id =#{id,jdbcType=BIGINT}</if>
+				<if test="projectId != null" >and project_id = #{projectId,jdbcType=BIGINT} </if>
+				<if test="belongUid != null" >and belong_uid = #{belongUid,jdbcType=BIGINT} </if>
+				<if test="fileValid != null" >and file_valid = #{fileValid,jdbcType=INTEGER} </if>
+				<if test="projectProgress != null" >and project_progress = #{projectProgress,jdbcType=VARCHAR} </if>				
+				<choose>
+					<when test="fileWorktype != null" >
+						and file_worktype = #{fileWorktype,jdbcType=VARCHAR}
+					</when>
+					<otherwise>
+						<if test="fileWorktypeNullFilter != null" >
+							and file_worktype is not null and file_worktype != 'fileWorktype:12'
+						</if>
+					</otherwise>
+				</choose>  				
+				<if test="careerLine != null" > and career_line = #{careerLine,jdbcType=VARCHAR} </if>
+				<if test="fileSource != null" > and file_source = #{fileSource,jdbcType=VARCHAR} </if>
+				<if test="fileType != null" > and file_type = #{fileType,jdbcType=VARCHAR} </if>
+				<if test="remark != null" > and remark = #{remark,jdbcType=VARCHAR} </if>
+				<if test="voucherId != null" > and voucher_id = #{voucherId,jdbcType=BIGINT} </if>
+				<if test="fileStatus != null" > and file_status = #{fileStatus,jdbcType=VARCHAR} </if>
+				<if test="fileUid != null" > and file_uid = #{fileUid,jdbcType=BIGINT} </if>
+				<if test="filUri != null" > and fil_uri = #{filUri,jdbcType=BIGINT} </if>
+				<if test="updatedTime != null" > and updated_time = #{updatedTime,jdbcType=BIGINT} </if>
+				<if test="startTime!=null"><![CDATA[  and updated_time >= #{startTime,jdbcType=BIGINT} ]]></if>
+				<if test="endTime!=null"><![CDATA[  and updated_time <= #{endTime,jdbcType=BIGINT} ]]></if>
+				<if test="createdTime != null" > and created_time = #{createdTime,jdbcType=BIGINT} </if>
+				<if test="fileLength != null" > and file_length = #{fileLength,jdbcType=BIGINT} </if>
+				<if test="fileKey != null" > and file_key = #{fileKey,jdbcType=VARCHAR} </if>
+				<if test="bucketName != null" > and bucket_name = #{bucketName,jdbcType=VARCHAR} </if>
+				<if test="fileName != null" > and file_name = #{fileName,jdbcType=VARCHAR} </if>
+				<if test="fileSuffix != null" > and file_suffix = #{fileSuffix,jdbcType=VARCHAR} </if>
+				<if test="fileStatusList != null">
+					and file_status in 
+					<foreach collection="fileStatusList" item="fs" index="index" open="(" close=")" separator=",">
+			            #{fs}
+			        </foreach>
+				</if>
+				<if test="fileworktypeList != null"> 
+					and file_worktype in
+					<foreach collection="fileworktypeList" item="fileworktypeList" index="index" open="(" close=")" separator=",">
+			            #{fileworktypeList}
+			        </foreach>
+				</if>
+				<if test="projectIdList != null"> 
+					and project_id in
+					<foreach collection="projectIdList" item="id" index="index" open="(" close=")" separator=",">
+			            #{id}
+			        </foreach>
+				</if>
+				
+				<if test="projectLikeIdList!=null or fileULikeidList!=null"> 
+					and (
+					<trim prefixOverrides="or">
+						<if test="projectLikeIdList!=null">
+							or project_id in
+							<foreach collection="projectLikeIdList" item="id" index="index" open="(" close=")" separator=",">
+			           	 		#{id}
+			        		</foreach>
+						</if>
+						<if test="fileULikeidList!=null">
+							or file_uid in
+							<foreach collection="fileULikeidList" item="id" index="index" open="(" close=")" separator=",">
+			           	 		#{id}
+			        		</foreach>
+						</if>
+					</trim> 
+					)
+				</if>
+				<if test="ids != null"> 
+					and id in
+					<foreach collection="ids" item="idItem" index="index" open="(" close=")" separator=",">
+			            #{idItem}
+			        </foreach>
+				</if>
+				<if test="recordType != null"> and record_type = #{recordType,jdbcType=TINYINT} </if>			
+				<!-- 模糊查询 -->
+				<!-- <if test="nameLike != null">and name like CONCAT("%",#{nameLike},"%")</if> -->
+				<!-- 新加内容 -->
+				<if test="meetingId != null" >and meeting_id = #{meetingId,jdbcType=BIGINT} </if>
+			</trim>
 		</where>
+		<if test="sorting != null">order by ${sorting}</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
 		
 	</sql>
 	<!-- 根据ID查询-->
@@ -142,6 +233,17 @@
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
+	</select>
+	
+	
+	
+	
+		<!-- 查询 -->
+	<select id="selectt" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from sop_file
+		<include refid="Base_Where_Clausee" />
 	</select>
 	
 	<!-- 查询 -->

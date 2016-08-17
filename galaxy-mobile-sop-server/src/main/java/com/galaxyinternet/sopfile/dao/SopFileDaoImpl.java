@@ -3,12 +3,15 @@ package com.galaxyinternet.sopfile.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.galaxyinternet.bo.sopfile.SopFileBo;
 import com.galaxyinternet.dao.sopfile.SopFileDao;
+import com.galaxyinternet.framework.core.constants.SqlId;
 import com.galaxyinternet.framework.core.dao.impl.BaseDaoImpl;
 import com.galaxyinternet.framework.core.exception.DaoException;
+import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.utils.GSONUtil;
 import com.galaxyinternet.model.sopfile.SopFile;
 
@@ -49,6 +52,21 @@ public class SopFileDaoImpl extends BaseDaoImpl<SopFile, Long> implements SopFil
 	public List<Map<String, String>> queryProjectName(Map<String, Object> map) {
 		// TODO Auto-generated method stub
 		return sqlSessionTemplate.selectList(getSqlName("queryProjectName"), map);
+	}
+	/**
+	 * app端2016/8/17 为新需求查询项目详情中的项目文档
+	 */
+
+	@Override
+	public Page<SopFile> queryappFileList(SopFile query, Pageable pageable) {
+		
+			try {
+				List<SopFile> contentList = sqlSessionTemplate.selectList(("selectt"),
+						getParams(query, pageable));
+				return new  Page<SopFile>(contentList, pageable, this.selectCount(query));
+			} catch (Exception e) {
+				throw new DaoException(String.format("根据分页对象查询列表出错！语句:%s", getSqlName("selectt")), e);
+			}
 	}
 	
 

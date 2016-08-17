@@ -127,8 +127,11 @@ public class Project extends PagableEntity {
         
     private String projectStatusName;  //项目状态名称;
     
+    //2016/8/16  app端9月12号上线新需求   faFlag fa标识    faName  有fa的话fa的名称
     
-    
+	private Integer faFlag;//项目是否来自中介
+	
+	private String faName;//中介名称
     
     
     
@@ -730,6 +733,22 @@ public class Project extends PagableEntity {
 
 	public void setShareszw(Integer shareszw) {
 		this.shareszw = shareszw;
+	}
+
+	public Integer getFaFlag() {
+		return faFlag;
+	}
+
+	public void setFaFlag(Integer faFlag) {
+		this.faFlag = faFlag;
+	}
+
+	public String getFaName() {
+		return faName;
+	}
+
+	public void setFaName(String faName) {
+		this.faName = faName;
 	}
 
 	

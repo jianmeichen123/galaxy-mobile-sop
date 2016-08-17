@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.galaxyinternet.bo.SopTaskBo;
-import com.galaxyinternet.bo.project.InterviewRecordBo;
 import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.bo.sopfile.SopFileBo;
 import com.galaxyinternet.bo.sopfile.SopVoucherFileBo;
@@ -52,7 +51,6 @@ import com.galaxyinternet.framework.core.oss.OSSConstant;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
 import com.galaxyinternet.framework.core.utils.GSONUtil;
 import com.galaxyinternet.model.department.Department;
-import com.galaxyinternet.model.project.InterviewRecord;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.SopDownLoad;
 import com.galaxyinternet.model.sopfile.SopFile;
@@ -60,12 +58,10 @@ import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.soptask.SopTask;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.DepartmentService;
-import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.SopFileService;
 import com.galaxyinternet.service.UserService;
 import com.galaxyinternet.sopfile.controller.SopFileController;
 import com.galaxyinternet.utils.FileUtils;
-import com.galaxyinternet.utils.WorktypeTask;
 @Service("com.galaxyinternet.service.SopFileService")
 public class SopFileServiceImpl extends BaseServiceImpl<SopFile> implements
 		SopFileService {
@@ -780,6 +776,7 @@ public class SopFileServiceImpl extends BaseServiceImpl<SopFile> implements
 		}
 		return fileName;
 	}
+	//TODO
 	public Map<String,SopVoucherFile> getVoucherId(List<SopFile> sopFile){
 		Map<String,SopVoucherFile> map=new HashMap<String,SopVoucherFile>();
 		List<Long> ids=new ArrayList<Long>();
@@ -862,6 +859,41 @@ public class SopFileServiceImpl extends BaseServiceImpl<SopFile> implements
 		}
 		
 		return filePage;
+	}
+
+	/**
+	 * 2016/8/17 项目详情里的  项目文档
+	 */
+	@Override
+	public Page<SopFile> queryappFileList(SopFile query, Pageable pageable) {
+		// TODO Auto-generated method stub
+		Page<SopFile> sp = sopFileDao.queryappFileList(query, pageable);		
+		
+		List<SopFile> ss = sp.getContent();
+		
+		List<SopFile> s2= new ArrayList<SopFile>() ;
+		
+		if(ss!=null&&ss.size()>0){
+			for(SopFile s:ss){
+				if(null!=s.getVoucherId()&&!"".equals(s.getVoucherId())){					
+					SopVoucherFile sg = voucherFileDao.selectById(s.getVoucherId());					
+					SopFile sf = new SopFile();
+					
+					sf.setFileKey(sg.getFileKey());    //文件的key
+					sf.setFileName(sg.getFileName());  //文件的前缀
+					sf.setFileSuffix(sg.getFileSuffix()); //文件的后缀
+					sf.setFileWorktype(sg.getFileWorktype()); //文件的业务分类				
+					//还没有加时间		
+					
+					s2.add(sf);
+					
+				}
+				s2.add(s);
+				
+			}
+			sp.setContent(s2);
+		}		
+		return sp;
 	}
 	
 	

@@ -942,7 +942,51 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						if(mslist!=null && mslist.size()>0){
 							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
 						}
-					}	
+					}
+					//2016/8/16 新增立项会报告查询
+					SopFile so = new SopFile();
+					so.setProjectId(Long.parseLong(pid));
+					so.setFileWorktype(DictEnum.fileWorktype.立项报告.getCode());
+					so.setProjectProgress(DictEnum.projectProgress.立项会.getCode());
+					List<SopFile> s = sopFileService.queryList(so);
+					
+					if(s!=null&&s.size()>0){						
+						AppSopFile asfile = new AppSopFile();
+						List<AppSopFile> FileList = new ArrayList<AppSopFile>();
+						
+						SopFile b = s.get(0);
+						if(b!=null){
+							asfile.setBucketName(b.getBucketName());
+							asfile.setFileYwCode(b.getFileWorktype());
+							asfile.setFileWorktype(DictEnum.fileWorktype.getNameByCode(b.getFileWorktype()));
+								if(b.getFileName()!=null||b.getFileSuffix()!=null){
+									String fn = b.getFileName();
+									String fs = b.getFileSuffix();
+									String fileName = fn + "." + fs;
+									asfile.setFileName(fileName);
+								}
+								Long ti = null;
+								if (b.getUpdatedTime() != null) {
+									ti = b.getUpdatedTime();
+								} else {
+									ti = b.getCreatedTime();
+								}
+								if (ti != null) {									
+									asfile.setFileTime(ti.toString());
+								}
+								asfile.setFileKey(b.getFileKey());
+								FileList.add(asfile);
+						}
+						
+						List<AppFileDTO> list = new ArrayList<AppFileDTO>();		
+						AppFileDTO appfileDto = new AppFileDTO();
+						appfileDto.setFileTypeCode(DictEnum.fileWorktype.立项报告.getCode());
+						appfileDto.setFileTypeName(DictEnum.fileWorktype.立项报告.getName());
+						appfileDto.setAppSopFile(FileList);		
+						list.add(appfileDto);
+						appProgress.setAppFileDtoList(list);						
+					}
+					
 					appProgresslist.add(appProgress);			
 				}
 				// CEO评审
