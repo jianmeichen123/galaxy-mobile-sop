@@ -883,10 +883,12 @@ public class SopFileServiceImpl extends BaseServiceImpl<SopFile> implements
 					sf.setFileName(sg.getFileName());  //文件的前缀
 					sf.setFileSuffix(sg.getFileSuffix()); //文件的后缀
 					sf.setFileWorktype(sg.getFileWorktype()); //文件的业务分类				
-					//还没有加时间		
+					//还没有加时间	
 					
+					//标识 是签署证明
+					sf.setIsEdit("0");
 					s2.add(sf);
-					
+				
 				}
 				s2.add(s);
 				
