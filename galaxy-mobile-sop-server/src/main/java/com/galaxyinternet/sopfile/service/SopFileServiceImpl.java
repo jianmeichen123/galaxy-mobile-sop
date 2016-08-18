@@ -884,7 +884,13 @@ public class SopFileServiceImpl extends BaseServiceImpl<SopFile> implements
 					sf.setFileSuffix(sg.getFileSuffix()); //文件的后缀
 					sf.setFileWorktype(sg.getFileWorktype()); //文件的业务分类				
 					//还没有加时间	
+					if(sg.getCreatedTime()!=null){
+						sf.setCreatedTime(sg.getCreatedTime());
+					}
 					
+					if(sg.getUpdatedTime()!=null){
+						sf.setUpdatedTime(sg.getUpdatedTime());
+					}
 					//标识 是签署证明
 					sf.setIsEdit("0");
 					s2.add(sf);
