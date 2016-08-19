@@ -85,6 +85,22 @@ public class PostOperatationController extends BaseControllerImpl<MeetingRecord,
 			meetingRecord.setMeetingTypeList(meetingTypeList);
 			Page<MeetingRecord> pageList = meetingService.queryPageList(meetingRecord, pageRequest);
 			responseBody.setPageList(pageList);
+			
+			//运营状态-默认为正常(2)
+			Byte healthState = (byte)2;
+			ProjectHealthBo healthQuery = new ProjectHealthBo();
+			healthQuery.setProjectId(meetingRecord.getProjectId());
+			PageRequest healthPageable = new PageRequest(0,1, new Sort(Direction.DESC,"created_time"));
+			List<ProjectHealth> healthList = projectHealthService.queryList(healthQuery, healthPageable);
+			if(healthList != null && healthList.size() >0)
+			{
+				ProjectHealth health = healthList.iterator().next();
+				if(health != null && health.getHealthState() != null)
+				{
+					healthState = health.getHealthState();
+				}
+			}
+			responseBody.putAttachmentItem("healthState", healthState);
 		} catch (DaoException e) {
 			responseBody.setResult(new Result(Status.ERROR, ERROR_DAO_EXCEPTION));
 		}
@@ -102,22 +118,7 @@ public class PostOperatationController extends BaseControllerImpl<MeetingRecord,
 			data.setResult(new Result(Status.ERROR,"缺少重要参数！"));
 			return data;
 		}
-		//运营状态-默认为正常(2)
-		Byte healthState = (byte)2;
-		ProjectHealthBo healthQuery = new ProjectHealthBo();
-		healthQuery.setProjectId(meetingRecord.getProjectId());
-		PageRequest healthPageable = new PageRequest(0,1, new Sort(Direction.DESC,"created_time"));
-		List<ProjectHealth> healthList = projectHealthService.queryList(healthQuery, healthPageable);
-		if(healthList != null && healthList.size() >0)
-		{
-			ProjectHealth health = healthList.iterator().next();
-			if(health != null && health.getHealthState() != null)
-			{
-				healthState = health.getHealthState();
-			}
-		}
 		
-		data.putAttachmentItem("healthState", healthState);
 		//查询会议相关
 		meetingRecord.setRecordType(RecordType.OPERATION_MEETING.getType());
 		MeetingRecord record= meetingService.queryOne(meetingRecord);
@@ -127,8 +128,6 @@ public class PostOperatationController extends BaseControllerImpl<MeetingRecord,
 		}
 		//重新组装设置会议名称 
 		record.setMeetingNameStr(record.getMeetingTypeStr()+"纪要"+record.getMeetingName());
-		
-		
 		//查询附件
 		SopFile sopfile = new SopFile();
 	    sopfile.setMeetingId(meetingRecord.getId());
