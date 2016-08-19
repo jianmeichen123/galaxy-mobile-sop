@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.galaxyinternet.bo.IdeaBo;
 import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.common.constants.SopConstant;
 import com.galaxyinternet.common.enums.DictEnum;
@@ -24,15 +23,15 @@ import com.galaxyinternet.dao.soptask.SopTaskDao;
 import com.galaxyinternet.framework.core.dao.BaseDao;
 import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
-import com.galaxyinternet.model.idea.Idea;
 import com.galaxyinternet.model.project.MeetingRecord;
 import com.galaxyinternet.model.project.MeetingScheduling;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.soptask.SopTask;
-import com.galaxyinternet.service.DepartmentService;
+import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.IdeaService;
 import com.galaxyinternet.service.MeetingRecordService;
+import com.galaxyinternet.service.UserService;
 
 
 @Service("com.galaxyinternet.service.MeetingRecordService")
@@ -49,6 +48,8 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 	private SopFileDao sopFileDao;
 	@Autowired
 	private MeetingSchedulingDao meetingSchedulingDao;
+	@Autowired
+	private UserService userService;
 	
 	
 	@Autowired
@@ -547,4 +548,51 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 		return id;
 	}
 	
+	
+	@Override
+	public Page<MeetingRecord> queryPageList(MeetingRecord query,
+			Pageable pageable) {
+		// TODO Auto-generated method stub
+		Page<MeetingRecord> pageEntity = super.queryPageList(query, pageable);
+		List<User> userList = getUser(pageEntity.getContent());
+		
+		for(MeetingRecord meetingRecord : pageEntity.getContent()){
+			//设置头后运营会议是否存在文件
+			SopFile tempQuery = new SopFile();
+			tempQuery.setMeetingId(meetingRecord.getId());
+		    List<SopFile> sopFileList = sopFileDao.selectList(tempQuery);
+			if(sopFileList!=null && sopFileList.size() > 0){
+				meetingRecord.setHasFile("true");
+			}else{
+				meetingRecord.setHasFile("false");
+			}
+			
+			
+			//设置用户名称
+			if(null != userList && userList.size()>0){
+				for(User user : userList){
+					if(user.getId().equals(meetingRecord.getCreateUid())){
+						meetingRecord.setCreateUName(user.getRealName());
+					}
+				}	
+			}
+			
+		}
+		
+		return pageEntity;
+	}
+	private List<User> getUser(List<MeetingRecord> meetingRecordList){
+		User user = new User();
+		List<Long> ids = new ArrayList<Long>();	
+		for(MeetingRecord meetingRecord : meetingRecordList){
+			if(meetingRecord.getCreateUid()!=null && !ids.contains(meetingRecord.getCreateUid())){
+				ids.add(meetingRecord.getCreateUid());
+			}	
+		}
+		user.setIds(ids);
+		if(ids.size() > 0){
+			return userService.queryList(user);
+		}
+		return null;
+	}
 }
