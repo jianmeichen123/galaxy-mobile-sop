@@ -114,7 +114,7 @@ public class PostOperatationController extends BaseControllerImpl<MeetingRecord,
 	@RequestMapping(value="postMeetingDetail", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<MeetingRecord> postMeetingDetail(@RequestBody MeetingRecord meetingRecord){
 		ResponseData<MeetingRecord> data = new ResponseData<MeetingRecord>();
-		if(null == meetingRecord.getId() || null == meetingRecord.getProjectId()){
+		if(null == meetingRecord.getId()){
 			data.setResult(new Result(Status.ERROR,"缺少重要参数！"));
 			return data;
 		}
