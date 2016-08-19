@@ -508,5 +508,12 @@
 			<version>0.1</version>
 		</dependency>
 		<!-- dubbo 服务注册方式 end -->
+		<!-- 信鸽推送 -->
+		<dependency>
+	  		<groupId>com.galaxyinternet</groupId>
+	      	<artifactId>xingePush</artifactId>
+	      	<version>1.0.0</version>
+		</dependency>
 	</dependencies>
+	
 </project>
