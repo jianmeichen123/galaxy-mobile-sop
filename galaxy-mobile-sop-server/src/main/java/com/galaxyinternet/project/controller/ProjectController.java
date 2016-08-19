@@ -28,11 +28,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.bo.PassRateBo;
 import com.galaxyinternet.bo.SopTaskBo;
+import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.bo.project.MeetingSchedulingBo;
 import com.galaxyinternet.bo.project.PersonPoolBo;
 import com.galaxyinternet.bo.project.ProjectBo;
+import com.galaxyinternet.bo.touhou.DeliveryBo;
 import com.galaxyinternet.common.SopResult;
 import com.galaxyinternet.common.annotation.LogType;
+import com.galaxyinternet.common.annotation.RecordType;
 import com.galaxyinternet.common.constants.SopConstant;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
@@ -45,7 +48,6 @@ import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.constants.UserConstant;
 import com.galaxyinternet.framework.core.file.OSSHelper;
 import com.galaxyinternet.framework.core.file.UploadFileResult;
-import com.galaxyinternet.framework.core.form.Token;
 import com.galaxyinternet.framework.core.id.IdGenerator;
 import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.model.PageRequest;
@@ -80,7 +82,9 @@ import com.galaxyinternet.operationMessage.handler.StageChangeHandler;
 import com.galaxyinternet.project.service.HandlerManager;
 import com.galaxyinternet.project.service.handler.Handler;
 import com.galaxyinternet.service.ConfigService;
+import com.galaxyinternet.service.DeliveryService;
 import com.galaxyinternet.service.DepartmentService;
+import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
@@ -101,6 +105,12 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
+	@Autowired
+	private MeetingRecordService meetingService;
+	@Autowired
+	private DictService dictService;
+	@Autowired
+	private DeliveryService deliveryService;
 	@Autowired
 	private ProjectSharesService projectSharesService;
 	@Autowired
@@ -451,6 +461,75 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				}else{
 					project.setShareszw(1);
 				}
+			/**
+			 * 2016/8/18 增加暂无标识 
+			 */
+				//交割前事项的暂无
+				
+				DeliveryBo de = new DeliveryBo();
+				de.setProjectId(Long.parseLong(pid));
+				Integer pageNum = de.getPageNum() != null ? de.getPageNum() : 0;
+				Integer pageSize = de.getPageSize() != null ? de.getPageSize() : 10;
+				
+				Page<DeliveryBo> deliverypage =  deliveryService.queryDeliveryPageList(de, new PageRequest(pageNum,pageSize));
+				if(deliverypage==null){
+					project.setJgqsxzw(0);
+				}else if(deliverypage!=null&&deliverypage.getContent().size()==0){
+					project.setJgqsxzw(0);
+				}else{
+					project.setJgqsxzw(1);
+				}
+				//项目 文档的暂无 
+				
+				SopFile sopFile = new SopFile();
+				List<String> fileStatusList = new ArrayList<String>();
+				fileStatusList.add(DictEnum.fileStatus.已上传.getCode());
+				fileStatusList.add(DictEnum.fileStatus.已签署.getCode());
+				sopFile.setFileStatusList(fileStatusList);
+			  //	sopFile.setFileValid(1);
+				sopFile.setFileWorktypeNullFilter("true");
+				sopFile.setProjectId(Long.parseLong(pid));
+				Integer pageNumm = sopFile.getPageNum() != null ? sopFile.getPageNum() : 0;
+				Integer pageSizee = sopFile.getPageSize() != null ? sopFile.getPageSize() : 10;
+		
+				Page<SopFile> pageSopFile = sopFileService.queryappFileList(sopFile, new PageRequest(pageNumm,pageSizee));
+				
+				if(pageSopFile==null){
+					project.setXmwdzw(0);
+				}else if(pageSopFile!=null && pageSopFile.getContent().size()==0){
+					project.setXmwdzw(0);
+				}else{
+					project.setXmwdzw(1);
+				}
+			//TODO
+				
+				//运营分析暂无
+				MeetingRecordBo mes = new MeetingRecordBo();
+				mes.setProjectId(Long.parseLong(pid));
+				Integer pageNummm = mes.getPageNum() != null ? mes.getPageNum() : 0;
+				Integer pageSizeee = mes.getPageSize() != null ? mes.getPageSize() : 10;
+				//运营分析 类型投后运营会议
+				mes.setRecordType(RecordType.OPERATION_MEETING.getType());
+				List<String> meetingTypeList = new ArrayList<String>();
+				List<Dict> dictList = dictService.selectByParentCode("postMeetingType");
+				for(Dict dict : dictList){
+					meetingTypeList.add(dict.getCode());
+				}
+				mes.setMeetingTypeList(meetingTypeList);
+				Page<MeetingRecord> mrpageList = meetingService.queryPageList(mes,new PageRequest(pageNummm,pageSizeee));
+				
+				if(mrpageList==null){
+					project.setYyfxzw(0);
+				}else if(mrpageList!=null && mrpageList.getContent().size()==0){
+					project.setYyfxzw(0);
+				}else{
+					project.setYyfxzw(1);
+				}
+				
+				
+				
+				
+				
 			//1.添加项目描述的暂无标识
 			if(project.getProjectDescribe()!=null){
 				project.setProjectDescribezw(1);
@@ -467,6 +546,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			if(project.getUserPortrait()!=null){
 				project.setUserPortraitzw(1);
 			}else{
+				
 				project.setUserPortraitzw(0);
 			}
 			//4.产品服务的暂无标识
