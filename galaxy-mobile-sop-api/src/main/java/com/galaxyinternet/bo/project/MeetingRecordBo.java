@@ -30,6 +30,7 @@ public class MeetingRecordBo  extends MeetingRecord{
 	 * 为实现多个录音的上传新增的list集合
 	 */
 	private List<SopFile> lsf; //2016/7/28 为app端2期需求新建的list集合记录多条
+	private List<String> meetingTypeList;
 	public String getProName() {
 		return proName;
 	}
@@ -155,6 +156,12 @@ public class MeetingRecordBo  extends MeetingRecord{
 	}
 	public void setLsf(List<SopFile> lsf) {
 		this.lsf = lsf;
+	}
+	public List<String> getMeetingTypeList() {
+		return meetingTypeList;
+	}
+	public void setMeetingTypeList(List<String> meetingTypeList) {
+		this.meetingTypeList = meetingTypeList;
 	}
 	
 	
