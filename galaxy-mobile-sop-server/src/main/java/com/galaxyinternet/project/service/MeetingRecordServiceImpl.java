@@ -567,8 +567,6 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 				meetingRecord.setHasFile("false");
 			}
 			
-			//重新组装设置会议名称 
-			meetingRecord.setMeetingNameStr(meetingRecord.getMeetingTypeStr()+"纪要"+meetingRecord.getMeetingName());
 			
 			//设置用户名称
 			if(null != userList && userList.size()>0){

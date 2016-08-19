@@ -125,6 +125,9 @@ public class PostOperatationController extends BaseControllerImpl<MeetingRecord,
 			data.setResult(new Result(Status.ERROR,"输入参数不正确！未查到结果"));
 			return data;
 		}
+		//重新组装设置会议名称 
+		record.setMeetingNameStr(record.getMeetingTypeStr()+"纪要"+record.getMeetingName());
+		
 		
 		//查询附件
 		SopFile sopfile = new SopFile();
