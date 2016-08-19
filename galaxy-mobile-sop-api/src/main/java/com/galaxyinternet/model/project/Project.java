@@ -107,6 +107,13 @@ public class Project extends PagableEntity {
 	private Integer shareszw;
 	
 	
+	//2016/8/18 为了9月12号上线新加的3个暂无
+	private Integer jgqsxzw;
+	
+	private Integer yyfxzw;
+	
+	private Integer xmwdzw;
+	
 	
   	//数据转换app端修改实际的融资额度
     private String formatFinalValuations;
@@ -749,6 +756,30 @@ public class Project extends PagableEntity {
 
 	public void setFaName(String faName) {
 		this.faName = faName;
+	}
+
+	public Integer getJgqsxzw() {
+		return jgqsxzw;
+	}
+
+	public void setJgqsxzw(Integer jgqsxzw) {
+		this.jgqsxzw = jgqsxzw;
+	}
+
+	public Integer getYyfxzw() {
+		return yyfxzw;
+	}
+
+	public void setYyfxzw(Integer yyfxzw) {
+		this.yyfxzw = yyfxzw;
+	}
+
+	public Integer getXmwdzw() {
+		return xmwdzw;
+	}
+
+	public void setXmwdzw(Integer xmwdzw) {
+		this.xmwdzw = xmwdzw;
 	}
 
 	
