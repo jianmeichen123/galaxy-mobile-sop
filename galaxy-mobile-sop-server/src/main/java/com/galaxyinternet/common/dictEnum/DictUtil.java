@@ -37,5 +37,37 @@ public class DictUtil {
 		}
 		return name;
 	}
+	
+	public static String getMeetingType(String code){
+		String name="";
+		if(code.equals(DictEnum.meetingType.内评会.getCode()))	{ 
+			name=DictEnum.meetingType.内评会.getName();
+		}
+		if(code.equals(DictEnum.meetingType.投决会.getCode()))	{
+			name=DictEnum.meetingType.投决会.getName();
+		}
+		if(code.equals(DictEnum.meetingType.立项会.getCode()))	{
+			name=DictEnum.meetingType.立项会.getName();
+		}
+		if(code.equals(DictEnum.meetingType.CEO评审.getCode()))	{
+			name=DictEnum.meetingType.CEO评审.getName();
+		}
+		
+		return name;
+	}
+	
+	
+	public static String getMeetingResult(Integer code){
+		String name="";
+		if(code == 0)	{ 
+			name=DictEnum.scheduleStatus.daipaiqi.getName();
+		}else if(code == 1)	{
+			name=DictEnum.scheduleStatus.yipaiqi.getName();
+		}else if(code == 2)	{
+			name=DictEnum.scheduleStatus.yitongguo.getName();
+		}
+		return name;
+	}
+
 
 }
