@@ -891,6 +891,9 @@ public class SopFileServiceImpl extends BaseServiceImpl<SopFile> implements
 					if(sg.getUpdatedTime()!=null){
 						sf.setUpdatedTime(sg.getUpdatedTime());
 					}
+					if(sg.getFileType()!=null){
+						sf.setFileType(sg.getFileType());
+					}
 					//标识 是签署证明
 					sf.setIsEdit("0");
 					s2.add(sf);
