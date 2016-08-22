@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -90,10 +91,16 @@ public class UserController extends BaseControllerImpl<User, UserBo> {
 		ResponseData<UserLogonHis> responseBody = new ResponseData<UserLogonHis>();
 		Result result = new Result();
 		try {
-			
-			
-			
-			Page<UserLogonHis> userLogonHisList = userLogonHisService.queryPageListapp(userLogonHis,new PageRequest(userLogonHis.getPageNum(), userLogonHis.getPageSize()));
+			Page<UserLogonHis> userLogonHisList = null;
+			if(userLogonHis.getProperty()!=null && userLogonHis.getProperty().equals("inTime")){
+				userLogonHis.setProperty("init_logon_time");
+			}			
+			if(userLogonHis.getProperty()!=null && userLogonHis.getDirection()!=null){
+				userLogonHisList = userLogonHisService.queryPageListapp(userLogonHis,new PageRequest(userLogonHis.getPageNum(), userLogonHis.getPageSize(),Direction.fromString(userLogonHis.getDirection()), 
+						userLogonHis.getProperty()));
+			}else{
+				userLogonHisList = userLogonHisService.queryPageListapp(userLogonHis,new PageRequest(userLogonHis.getPageNum(), userLogonHis.getPageSize()));
+			}
 			responseBody.setPageList(userLogonHisList);
 			responseBody.setResult(new Result(Status.OK, ""));
 			return responseBody;	

@@ -1,6 +1,7 @@
 package com.galaxyinternet.common.utils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -108,6 +109,14 @@ public class ControllerUtils {
 		params.put(PlatformConst.REQUEST_SCOPE_IDEA_ID, ideaId);
 		params.put(PlatformConst.REQUEST_SCOPE_URL_NUMBER, number.name());
 		params.put(PlatformConst.REQUEST_SCOPE_IDEA_CONTENT, content);
+		request.setAttribute(PlatformConst.REQUEST_SCOPE_MESSAGE_TIP, params);
+	}
+	
+	
+	//新增
+	public static void setRequestBatchParamsForMessageTip(HttpServletRequest request,List<Map<String, Object>> mapList){
+		Map<String,List<Map<String, Object>>> params = new HashMap<String,List<Map<String, Object>>>();
+		params.put(PlatformConst.REQUEST_SCOPE_MESSAGE_BATCH, mapList);
 		request.setAttribute(PlatformConst.REQUEST_SCOPE_MESSAGE_TIP, params);
 	}
 }
