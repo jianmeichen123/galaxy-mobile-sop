@@ -2684,7 +2684,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	/**
 	 * 更新排期池时间/updateReserveTime-客户端用
 	 */
-	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
+	@com.galaxyinternet.common.annotation.Logger(operationScope = {LogType.MESSAGE,LogType.IOSPUSHMESS})
 	@ResponseBody
 	@RequestMapping(value = "/updateReserveTimeByApp", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<MeetingScheduling> updateReserveTimeByApp(
@@ -2726,7 +2726,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				messageInfo = mestr + "排期时间已取消";
 			}
 			Project pj = projectService.queryById(oldMs.getProjectId());
-			System.out.println("tdj------------- 12");
+//			System.out.println("tdj------------- 12");
 			
 			List<String> users = new ArrayList<String>();
 			if (DictEnum.meetingType.投决会.getCode().equals(
