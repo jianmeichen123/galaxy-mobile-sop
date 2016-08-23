@@ -2680,7 +2680,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 	}
 	
-
+//TODO
 	/**
 	 * 更新排期池时间/updateReserveTime-客户端用
 	 */
@@ -2698,6 +2698,12 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		try {
 			MeetingScheduling oldMs = meetingSchedulingService.queryById(query
 					.getId());
+			
+			MeetingScheduling  redisPush = new MeetingScheduling();
+			redisPush.setId(oldMs.getId());
+			redisPush.setProjectId(oldMs.getProjectId());
+			redisPush.setMeetingType(oldMs.getMeetingType());
+			
 			//System.out.println("tdj------------- 11");
 			String mestr = "";
 			String messageType = null;
@@ -2727,6 +2733,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 			Project pj = projectService.queryById(oldMs.getProjectId());
 //			System.out.println("tdj------------- 12");
+			
+			redisPush.setProjectName(pj.getProjectName());
+			redisPush.setCreateId(pj.getCreateUid().toString());
 			
 			List<String> users = new ArrayList<String>();
 			if (DictEnum.meetingType.投决会.getCode().equals(
@@ -2763,6 +2772,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					meetingSchedulingService.updateByIdSelective(query);
 					//sendTaskProjectEmail(request,pj,messageInfo,userlist,null,null,0,UrlNumber.three);
 					belongUser.setKeyword("cancle:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+					//新增往内存中写入 
+					redisPush.setReserveTimeStart(query.getReserveTimeStart());
+					cache.removeRedisSetOBJ(Constants.PUSH_MESSAGE_LIST, redisPush);
 					//System.out.println("tdj------------- 16");
 				} else {
 					// 更新会议时间
@@ -2772,8 +2784,15 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 									.getReserveTimeEnd().getTime()) {
 						meetingSchedulingService.updateByIdSelective(query);
 						//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.two);
-						belongUser.setKeyword("update:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+						belongUser.setKeyword("update:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart())+","+DateUtil.convertDateToStringForChina(query.getReserveTimeStart()));	
 						//System.out.println("tdj------------- 17");
+						
+						redisPush.setReserveTimeStart(oldMs.getReserveTimeStart());
+						cache.removeRedisSetOBJ(Constants.PUSH_MESSAGE_LIST, redisPush);
+						
+						redisPush.setReserveTimeStart(query.getReserveTimeStart());
+						cache.setRedisSetOBJ(Constants.PUSH_MESSAGE_LIST,redisPush);
+						
 					}
 				}
 			} else {
@@ -2784,6 +2803,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.one);
 					belongUser.setKeyword("insert:"+DateUtil.convertDateToStringForChina(query.getReserveTimeStart()));
 					//System.out.println("tdj------------- 18");
+					//新增的方法 2016/8/22
+					redisPush.setReserveTimeStart(query.getReserveTimeStart());
+					cache.setRedisSetOBJ(Constants.PUSH_MESSAGE_LIST,redisPush);
 				}
 
 			}
