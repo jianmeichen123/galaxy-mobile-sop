@@ -19,7 +19,7 @@ public class InitMethodCall extends HttpServlet {
 		MeetingPassStageTask meetingPassStageTask = SpringContextManager.getBean("meetingPassStageTask",MeetingPassStageTask.class);
 		meetingPassStageTask.execute();
 		
-		//初始化内存-角色
+/*		//初始化内存-角色
 				UserInfoCache userInfoTask = SpringContextManager.getBean("userInfoTask",UserInfoCache.class);
 				userInfoTask.execute();
 				
@@ -29,7 +29,8 @@ public class InitMethodCall extends HttpServlet {
 				
 				//推送排期时间
 				PushMessageTask pushMessageTask = SpringContextManager.getBean("pushMessageTask",PushMessageTask.class);
-				pushMessageTask.execute();
+				pushMessageTask.exec
+				ute();*/
 	}
 
 }
