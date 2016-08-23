@@ -10,7 +10,7 @@ import com.galaxyinternet.platform.constant.PlatformConst;
 public enum IosMeaageOperation {
 	
 	//认领任务
-	//CLAIM_TASK				("/galaxy/soptask/goClaimtcPage", 						PlatformConst.IOS_TITLE_TASK, "，请您关注"),
+	CLAIM_TASK				("/galaxy/appSoptask/goClaimtcPage", 						PlatformConst.IOS_TITLE_TASK, "，请您关注"),
 	//完成任务
 	//COMPLETE_TASK			("/galaxy/soptask/updateTaskStatus", 					PlatformConst.IOS_TITLE_TASK, "，请您关注"),
 	//完成任务
