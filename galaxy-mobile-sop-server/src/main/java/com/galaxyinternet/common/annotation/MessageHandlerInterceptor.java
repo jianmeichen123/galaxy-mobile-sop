@@ -373,7 +373,7 @@ public class MessageHandlerInterceptor extends HandlerInterceptorAdapter {
 			System.err.println(entity);
 			XGPush xinge = XGPush.getInstance();
 			org.json.JSONObject result = xinge.pushAccountList(entity.getUidList(),entity.getTitle(), entity.getContent());
-			
+			System.out.println(result);
 		} catch (Exception e) {
 			loger.error("ios 消息推送失败" +e);
 		}
