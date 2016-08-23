@@ -98,7 +98,7 @@
 				<galaxy.project.platform.endpoint>http://zijian.local.com/mobilePlatform/</galaxy.project.platform.endpoint>
 				<galaxy.project.report.endpoint>http://zijian.local.com/mobileReport/</galaxy.project.report.endpoint>
 				<galaxy.project.sop.endpoint>http://zijian.local.com/mobileSop/</galaxy.project.sop.endpoint>
-
+				<xinge.enviroment>2</xinge.enviroment>
 			</properties>
 		</profile>
 		
@@ -176,7 +176,7 @@
 					<redis.master>galaxymaster</redis.master> -->
 
 				<!-- <redis.url>101.200.78.14</redis.url> <redis.port>6379</redis.port> -->
-                
+                <xinge.enviroment>2</xinge.enviroment>
 			</properties>
 		</profile>
 			
@@ -208,6 +208,7 @@
 				<galaxy.project.platform.endpoint>http://fxmob.qa.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
 				<galaxy.project.report.endpoint>http://fxmob.qa.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
 				<galaxy.project.sop.endpoint>http://fxmob.qa.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
+				<xinge.enviroment>2</xinge.enviroment>
 			</properties>
 		</profile>
 		<profile>
@@ -510,9 +511,9 @@
 		<!-- dubbo 服务注册方式 end -->
 		<!-- 信鸽推送 -->
 		<dependency>
-	  		<groupId>com.galaxyinternet</groupId>
-	      	<artifactId>xingePush</artifactId>
-	      	<version>1.0.2</version>
+			<groupId>com.galaxyinternet</groupId>
+			<artifactId>xingePush</artifactId>
+			<version>[1.1.0,)</version>
 		</dependency>
 	</dependencies>
 	
