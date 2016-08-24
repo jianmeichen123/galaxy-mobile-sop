@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,10 +95,19 @@ public class UserController extends BaseControllerImpl<User, UserBo> {
 			Page<UserLogonHis> userLogonHisList = null;
 			if(userLogonHis.getProperty()!=null && userLogonHis.getProperty().equals("inTime")){
 				userLogonHis.setProperty("init_logon_time");
-			}			
+			}
+			Direction direction = Direction.DESC;
+			String property = "init_logon_time";
+			if(!StringUtils.isEmpty(userLogonHis.getProperty())){
+				if("desc".equals(userLogonHis.getDirection())){
+					direction = Direction.DESC;
+				}else{
+					direction = Direction.ASC;
+				}
+				property = "init_logon_time";
+			}
 			if(userLogonHis.getProperty()!=null && userLogonHis.getDirection()!=null){
-				userLogonHisList = userLogonHisService.queryPageListapp(userLogonHis,new PageRequest(userLogonHis.getPageNum(), userLogonHis.getPageSize(),Direction.fromString(userLogonHis.getDirection()), 
-						userLogonHis.getProperty()));
+				userLogonHisList = userLogonHisService.queryPageListapp(userLogonHis,new PageRequest(userLogonHis.getPageNum(), userLogonHis.getPageSize(),direction,property));
 			}else{
 				userLogonHisList = userLogonHisService.queryPageListapp(userLogonHis,new PageRequest(userLogonHis.getPageNum(), userLogonHis.getPageSize()));
 			}
