@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxyinternet.model.user.appUserList">
+    <sql id="BASE_QUERY_RESULT" >
+    	       id as id ,
+			   access_client as accessClient ,
+			   user_id as userId,
+			   nick_name  as nickName,
+			   login_date  as  loginDate ,
+			   init_logon_time as initLogonTime ,
+			   last_logon_time  as  lastLogonTime ,
+			   logon_times   as logonTimes,
+			   app_version as appVersion
+    </sql>
+    
+    <sql id="Base_Where_Condition">
+	    <where>
+					<trim prefixOverrides="and">
+						  <if test="id != null">  and id =#{id} </if>
+						  <if test="userId != null">  and user_id =#{userId} </if>
+						  <if test="accessClient != null" > and access_client = #{accessClient,jdbcType=VARCHAR} </if>
+				          <if test="nickName != null" > and nick_name = #{nickName,jdbcType=VARCHAR} </if>
+				          <if test="loginDate != null" > and login_date = #{loginDate,jdbcType=DATE} </if>
+				          <if test="initLogonTime !=null">  and  init_logon_time = #{initLogonTime , jdbcType=DATETIME }</if>
+				          <if test="lastLogonTime !=null">  and  last_logon_time = #{lastLogonTime , jdbcType=DATETIME }</if>
+				          <if test="logonTimes !=null">  and  logon_times = #{logonTimes , jdbcType=SMALLINT }</if>
+				          <if test="appVersion !=null">  and  app_version = #{appVersion , jdbcType=VARCHAR }</if>
+					</trim>
+		</where>
+   </sql>
+     	
+    <sql id="BASE_COUNT_RESULT" >
+    	      SELECT COUNT(1) FROM app_user_login_his
+    </sql>
+    
+
+   
+   <select id="selectbiao"  resultType="com.galaxyinternet.model.user.appUserList" parameterType="java.util.Map" >
+    <![CDATA[         
+				SELECT a.user_id AS userId,
+				a.nick_name AS nickName,
+				DATE_FORMAT( a.init_logon_time, '%Y-%m-%d %H:%i:%s') AS inTime, 
+				a.app_version AS appVersion,
+				COUNT(id) AS strCount
+			    FROM (SELECT * FROM app_user_login_his s  ORDER BY (s.init_logon_time) DESC ) a GROUP BY a.user_id
+
+            ]]>	
+        <if test="sorting != null">order by ${sorting}</if>
+        <if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if> 
+		
+    </select>
+      
+    	<!-- 查询总数 -->
+<!-- 	<select id="selectCountc" resultType="java.lang.Long" parameterType="java.util.Map">
+		select count(id) from app_user_login_his
+	</select>  -->
+   
+   	<select id="selectCountc" resultType="java.lang.Long" parameterType="java.util.Map">
+		SELECT COUNT(id) FROM ( SELECT  * FROM app_user_login_his s GROUP BY s.user_id) a
+	</select> 
+</mapper>
