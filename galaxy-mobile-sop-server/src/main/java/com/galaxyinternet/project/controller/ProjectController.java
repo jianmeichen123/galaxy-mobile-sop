@@ -254,12 +254,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	/**
 	 * 新建项目接口
 	 * @version 2016-06-21
+	 * 2016/8/30 考过了的
 	 * @author yangshuhua
-	 *//*
+	 */
 	@Token
 	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
 	@ResponseBody
-	@RequestMapping(value = "/cjxiangMu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/cjxiangmu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<Project> cjxiangMu(@RequestBody Project project,
 			HttpServletRequest request) {
 		ResponseData<Project> responseBody = new ResponseData<Project>();
@@ -271,12 +272,6 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				|| "".equals(project.getCreateDate().trim())
 				|| project.getIndustryOwn() == null) {
 			responseBody.setResult(new Result(Status.ERROR,"csds" , "必要的参数丢失!"));
-			return responseBody;
-		}
-		//验证商业计划书是否上传成功
-		SopFile file = (SopFile) request.getSession().getAttribute("businessPlan");
-		if(file != null && file.getFileLength().longValue() <= 0){
-			responseBody.setResult(new Result(Status.ERROR, "file error", "商业计划书上传失败!"));
 			return responseBody;
 		}
 		try {
@@ -325,23 +320,19 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				project.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
 				project.setUpdatedTime(new Date().getTime());
 				project.setCreatedTime(DateUtil.convertStringToDate(project.getCreateDate().trim(), "yyyy-MM-dd").getTime());
-				long id = projectService.newProject(project, file);
+				long id = projectService.newProject(project);
 				if (id > 0) {
 					responseBody.setResult(new Result(Status.OK, "success", "项目添加成功!"));
-					responseBody.setId(id);
-					if(file!=null){
-						file.setMultipartFile(null);
-					}
-					_common_logger_.info("添加项目["+"项目名称:"+project.getProjectName()+" 创建人:"+project.getCreateUname()+" 部门："+user.getDepartmentName()+"]");
-					ControllerUtils.setRequestParamsForMessageTip(request,project.getProjectName(), project.getId(),StageChangeHandler._6_1_,file);
+					responseBody.setId(id);										
+					ControllerUtils.setRequestParamsForMessageTip(request,project.getProjectName(), project.getId(),StageChangeHandler._6_1_);
 				}
 			}
 		} catch (Exception e) {
-			_common_logger_.error("异常信息:",e.getMessage());
+			e.printStackTrace();
 		}
 		return responseBody;
 	}
-	*/
+	
 	/**
 	 * 修改项目信息接口
 	 * 
