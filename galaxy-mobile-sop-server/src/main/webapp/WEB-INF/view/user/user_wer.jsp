@@ -38,7 +38,9 @@
 		    	<th data-field="userId" data-align="center" class="data-input">用户id</th>
 		        <th data-field="nickName" data-align="center" class="data-input">真实姓名</th>
 		        <th data-field="strCount" data-align="center"  class="data-input">登录的次数</th>
-		        <th data-field="inTime" data-align="center"  class="data-input ">最后登录日期</th>
+		        <th data-field="inTime" data-align="center"  class="data-input sort"  data-sortable="true" >最后登录日期<span class="caret1"></span></th> 
+			 	<!--  <th data-field="inTime" data-align="center"  class="data-input">最后登录日期</th> -->
+			 	<th data-field="appVersion" data-align="center"  class="data-input">登录的版本号</th>
 			 </tr>
 			</thead>
 		</table>
