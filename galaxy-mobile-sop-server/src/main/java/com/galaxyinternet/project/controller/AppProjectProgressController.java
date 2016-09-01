@@ -83,7 +83,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 	private SopVoucherFileService sopVoucherFileService;
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
-	
+
 	@Autowired
 	private MeetingSchedulingService meetingSchedulingService;
 
@@ -118,17 +118,17 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 			responseBody.setResult(new Result(Status.ERROR, null, "该项目没有进行项目流程"));
 			return responseBody;
 		}
-	   String projectType = p.getProjectType();
-	   if(null==projectType || projectType.trim().equals("")){
+		String projectType = p.getProjectType();
+		if (null == projectType || projectType.trim().equals("")) {
 			responseBody.setResult(new Result(Status.ERROR, null, "该项目缺少项目类型数据项值"));
 			return responseBody;
-	   }
+		}
 		// 截取projectProgress取到:后的值
 		String a[] = projectProgress.split(":");
 		String num = a[1];
 		try {
-			int n = Integer.parseInt(num);		
-			List<AppProgress> appProgresslist =  new ArrayList<AppProgress>();
+			int n = Integer.parseInt(num);
+			List<AppProgress> appProgresslist = new ArrayList<AppProgress>();
 			// 获取上传的签署证明 5.投资意向书 6.投资协议 7.股权转让协议
 			SopVoucherFile sopVoucherFile = null;
 			// sopfile
@@ -140,19 +140,19 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 			// 会议记录的类
 			MeetingRecord meetingRecord = null;
 			AppProgress appProgress = null;
-			for (int i = n; i > 0; i--) {				
+			for (int i = n; i > 0; i--) {
 				meetingRecord = new MeetingRecord();
 				appSopFile = new AppSopFile();
 				interviewRecord = new InterviewRecord();
 				sopFile = new SopFile();
 				sopVoucherFile = new SopVoucherFile();
 				appProgress = new AppProgress();
-				
+
 				// 股权交割
 				if (i == 9) {
 					// 项目阶段
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:9"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:9");//→项目流程阶段编码
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:9"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:9");// →项目流程阶段编码
 					// 据流程阶段编码、项目ID查询文件信息SopFile
 					sopFile.setProjectProgress("projectProgress:9");
 					sopFile.setProjectId(Long.parseLong(pid));
@@ -160,10 +160,10 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					fileworkTypeList.add(DictEnum.fileWorktype.工商转让凭证.getCode());
 					fileworkTypeList.add(DictEnum.fileWorktype.资金拨付凭证.getCode());
 					sopFile.setFileworktypeList(fileworkTypeList);
-					//修改 催办 id没返回 加上id 2016/8/11 /8:43
-					//sopFile.setFileValid(1); //生效文件
+					// 修改 催办 id没返回 加上id 2016/8/11 /8:43
+					// sopFile.setFileValid(1); //生效文件
 					List<SopFile> listSop = sopFileService.queryList(sopFile);
-					
+
 					List<AppSopFile> zjbfFileList = new ArrayList<AppSopFile>();
 					List<AppSopFile> gsbgdjFileList = new ArrayList<AppSopFile>();
 					AppSopFile asfile9 = null;
@@ -171,17 +171,17 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 						for (SopFile sop : listSop) {
 							asfile9 = new AppSopFile();
 							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.资金拨付凭证.getCode())) {
-								if(sop.getFileValid()==1){
-									asfile9.setFileYwCode(sop.getFileWorktype()); //→文件（档案）业务分类编码
-									asfile9.setFileWorktype(sop.getfWorktype()); //→文件（档案）业务分类名称
-									if(sop.getFileName()!=null || sop.getFileSuffix()!=null){
+								if (sop.getFileValid() == 1) {
+									asfile9.setFileYwCode(sop.getFileWorktype()); // →文件（档案）业务分类编码
+									asfile9.setFileWorktype(sop.getfWorktype()); // →文件（档案）业务分类名称
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 										String fn = sop.getFileName();
 										String fs = sop.getFileSuffix();
 										String fileName = fn + "." + fs;
-										asfile9.setFileName(fileName);//→文件名称（含后缀）
+										asfile9.setFileName(fileName);// →文件名称（含后缀）
 									}
-									asfile9.setFileDsCode(sop.getFileStatus());	//→文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态								
-									asfile9.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));//→文件(档案)状态名称		
+									asfile9.setFileDsCode(sop.getFileStatus()); // →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
+									asfile9.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));// →文件(档案)状态名称
 									Long ti = null;
 									if (sop.getUpdatedTime() != null) {
 										ti = sop.getUpdatedTime();
@@ -189,365 +189,396 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 										ti = sop.getCreatedTime();
 									}
 									if (ti != null) {
-										//asfile9.setFileTime(DateUtil.longString(ti));
-										asfile9.setFileTime(ti.toString()); //→文件(档案)最后更新时间（数据格式：时间戳）
+										// asfile9.setFileTime(DateUtil.longString(ti));
+										asfile9.setFileTime(ti.toString()); // →文件(档案)最后更新时间（数据格式：时间戳）
 									}
-									asfile9.setFileKey(sop.getFileKey()); //→文件(档案)上传阿里云返回的KEY
-									Long uid = sop.getFileUid(); //→文件(档案)上传人的ID
-									if(uid!=null){
+									asfile9.setFileKey(sop.getFileKey()); // →文件(档案)上传阿里云返回的KEY
+									Long uid = sop.getFileUid(); // →文件(档案)上传人的ID
+									if (uid != null) {
 										User user = userService.queryById(uid);
-										asfile9.setName(user.getRealName());  //→文件(档案)上传人的真实姓名
+										asfile9.setName(user.getRealName()); // →文件(档案)上传人的真实姓名
 									}
-									asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-									asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-									
-									}else if(sop.getFileValid()==0){										
-											SopFile so = new SopFile();
-											so.setFileValid(0);
-											so.setFileWorktype(DictEnum.fileWorktype.资金拨付凭证.getCode());
-											so.setProjectId(Long.valueOf(pid));
-											SopFile sso = sopFileService.queryOne(so);
-											asfile9.setId(sso.getId());										
+									asfile9.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									asfile9.setId(sop.getId()); // →文件(档案)表的ID主键
+
+								} else if (sop.getFileValid() == 0) {
+									SopFile so = new SopFile();
+									so.setFileValid(0);
+									so.setFileWorktype(DictEnum.fileWorktype.资金拨付凭证.getCode());
+									so.setProjectId(Long.valueOf(pid));
+									SopFile sso = sopFileService.queryOne(so);
+									asfile9.setId(sso.getId());
 								}
 								zjbfFileList.add(asfile9);
-							} 
-							else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.工商转让凭证.getCode())) {
-							  if(sop.getFileValid()==1){
-								asfile9.setFileYwCode(sop.getFileWorktype());
-								asfile9.setFileWorktype(sop.getfWorktype());
-									if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
+							} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.工商转让凭证.getCode())) {
+								if (sop.getFileValid() == 1) {
+									asfile9.setFileYwCode(sop.getFileWorktype());
+									asfile9.setFileWorktype(sop.getfWorktype());
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 										String fn = sop.getFileName();
 										String fs = sop.getFileSuffix();
 										String fileName = fn + "." + fs;
 										asfile9.setFileName(fileName);
 									}
-									asfile9.setFileDsCode(sop.getFileStatus());									
+									asfile9.setFileDsCode(sop.getFileStatus());
 									asfile9.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-									
+
 									Long ti = null;
 									if (sop.getUpdatedTime() != null) {
 										ti = sop.getUpdatedTime();
 									} else {
 										ti = sop.getCreatedTime();
 									}
-									if (ti != null) {										
+									if (ti != null) {
 										asfile9.setFileTime(ti.toString());
 									}
 									asfile9.setFileKey(sop.getFileKey());
 									Long uid = sop.getFileUid();
-									if(uid!=null){
+									if (uid != null) {
 										User user = userService.queryById(uid);
 										asfile9.setName(user.getRealName());
 									}
-									asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-									asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-									
-							  }else if(sop.getFileValid()==0){										
+									asfile9.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									asfile9.setId(sop.getId()); // →文件(档案)表的ID主键
+
+								} else if (sop.getFileValid() == 0) {
 									SopFile so = new SopFile();
 									so.setFileValid(0);
 									so.setFileWorktype(DictEnum.fileWorktype.工商转让凭证.getCode());
 									so.setProjectId(Long.valueOf(pid));
 									SopFile sso = sopFileService.queryOne(so);
-									asfile9.setId(sso.getId());										
-							  }
-							  gsbgdjFileList.add(asfile9);
-							} 
+									asfile9.setId(sso.getId());
+								}
+								gsbgdjFileList.add(asfile9);
+							}
 						}
 
-					}				
+					}
 					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
 					AppFileDTO appfileDto = new AppFileDTO();
 					appfileDto.setFileTypeCode(DictEnum.fileWorktype.资金拨付凭证.getCode());
 					appfileDto.setFileTypeName(DictEnum.fileWorktype.资金拨付凭证.getName());
-					appfileDto.setAppSopFile(zjbfFileList);		
+					appfileDto.setAppSopFile(zjbfFileList);
 					list.add(appfileDto);
-					
+
 					AppFileDTO gqzr_appfileDto = new AppFileDTO();
 					gqzr_appfileDto.setFileTypeCode(DictEnum.fileWorktype.工商转让凭证.getCode());
 					gqzr_appfileDto.setFileTypeName(DictEnum.fileWorktype.工商转让凭证.getName());
-					gqzr_appfileDto.setAppSopFile(gsbgdjFileList);		
+					gqzr_appfileDto.setAppSopFile(gsbgdjFileList);
 					list.add(gqzr_appfileDto);
-					
-					appProgress.setAppFileDtoList(list);					
-					appProgresslist.add(appProgress);					
+
+					appProgress.setAppFileDtoList(list);
+					appProgresslist.add(appProgress);
 				}
 				// 投资协议
 				else if (i == 8) {
-					List<AppSopFile> tzxyAppSopFileList = new ArrayList<AppSopFile>();//投资协议的档案list
-					List<AppSopFile> gqzrxyAppSopFileList = new ArrayList<AppSopFile>();//股权转让协议的档案list
+					List<AppSopFile> tzxyAppSopFileList = new ArrayList<AppSopFile>();// 投资协议的档案list
+					List<AppSopFile> gqzrxyAppSopFileList = new ArrayList<AppSopFile>();// 股权转让协议的档案list
 					// 项目阶段
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:8"));
-					appProgress.setProjectProgress("projectProgress:8");//→项目流程阶段编码
-					
+					appProgress.setProjectProgress("projectProgress:8");// →项目流程阶段编码
+
 					// 据流程阶段编码、项目ID查询档案文件信息SopFile
-					SopFile query_sopfile  = new SopFile();
+					SopFile query_sopfile = new SopFile();
 					query_sopfile.setProjectProgress("projectProgress:8");
 					query_sopfile.setProjectId(Long.parseLong(pid));
-					
+
 					List<String> fileworkTypeList = new ArrayList<String>();
 					fileworkTypeList.add(DictEnum.fileWorktype.投资协议.getCode());
 					fileworkTypeList.add(DictEnum.fileWorktype.股权转让协议.getCode());
 					query_sopfile.setFileworktypeList(fileworkTypeList);
-					query_sopfile.setFileValid(1); //生效文件
-					
+					query_sopfile.setFileValid(1); // 生效文件
+
 					AppSopFile $asfile = null;
 					List<SopFile> sfList = sopFileService.queryList(query_sopfile);
-					if(sfList!=null && sfList.size()>0){
-					    for(SopFile sfile : sfList){
-					    	$asfile = new AppSopFile();
-					    	
-					    	if(sfile.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())){
-					    		$asfile.setFileYwCode(sfile.getFileWorktype()); //fileworktype档案业务分类Code	--  fileWorktype:6				    		
-					    		$asfile.setFileWorktype(sfile.getfWorktype()); //fileworktype档案业务分类Code对应的名称	投资协议
-								
-								if(sfile.getFileName()!=null||sfile.getFileSuffix()!=null){
+					if (sfList != null && sfList.size() > 0) {
+						for (SopFile sfile : sfList) {
+							$asfile = new AppSopFile();
+
+							if (sfile.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())) {
+								$asfile.setFileYwCode(sfile.getFileWorktype()); // fileworktype档案业务分类Code
+																				// --
+																				// fileWorktype:6
+								$asfile.setFileWorktype(sfile.getfWorktype()); // fileworktype档案业务分类Code对应的名称
+																				// 投资协议
+
+								if (sfile.getFileName() != null || sfile.getFileSuffix() != null) {
 									String fn = sfile.getFileName();
 									String fs = sfile.getFileSuffix();
 									String fileName = fn + "." + fs;
-									$asfile.setFileName(fileName); //上传文件的名称
+									$asfile.setFileName(fileName); // 上传文件的名称
 								}
-								$asfile.setFileDsCode(sfile.getFileStatus());  //上传的文件状态的code	; fileStatus:1缺失 ; fileStatus:2:已上传	; fileStatus:3	已签署				
-								$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus())); //上传的文件状态的名称
+								$asfile.setFileDsCode(sfile.getFileStatus()); // 上传的文件状态的code
+																				// ;
+																				// fileStatus:1缺失
+																				// ;
+																				// fileStatus:2:已上传
+																				// ;
+																				// fileStatus:3
+																				// 已签署
+								$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus())); // 上传的文件状态的名称
 								Long ti = null;
 								if (sfile.getUpdatedTime() != null) {
 									ti = sfile.getUpdatedTime();
 								} else {
 									ti = sfile.getCreatedTime();
 								}
-								if (ti != null) {								
-									$asfile.setFileTime(ti.toString());  //文件创建或最新更的时间
+								if (ti != null) {
+									$asfile.setFileTime(ti.toString()); // 文件创建或最新更的时间
 								}
-								$asfile.setFileKey(sfile.getFileKey()); //档案阿里云存储Key
+								$asfile.setFileKey(sfile.getFileKey()); // 档案阿里云存储Key
 								Long uid = sfile.getFileUid();
-								if(uid!=null){
+								if (uid != null) {
 									User user = userService.queryById(uid);
-									$asfile.setName(user.getRealName()); //上传人/起草者 的姓名
+									$asfile.setName(user.getRealName()); // 上传人/起草者
+																			// 的姓名
 								}
 								$asfile.setFileValid(sfile.getFileValid());
-								$asfile.setId(sfile.getId()); //文件ID
-								$asfile.setSignFlag(0); //档案文件
-								tzxyAppSopFileList.add($asfile);					
-					    	}
-					    	
+								$asfile.setId(sfile.getId()); // 文件ID
+								$asfile.setSignFlag(0); // 档案文件
+								tzxyAppSopFileList.add($asfile);
+							}
+
 							else if (sfile.getFileWorktype().equals(DictEnum.fileWorktype.股权转让协议.getCode())) {
-								$asfile.setFileYwCode(sfile.getFileWorktype()); //fileworktype档案业务分类Code	fileWorktype:7
-								$asfile.setFileWorktype(sfile.getfWorktype()); //fileworktype档案业务分类Code对应的名称	  股权转让协议
-									if(sfile.getFileName()!=null||sfile.getFileSuffix()!=null){
-										String fn = sfile.getFileName();
-										String fs = sfile.getFileSuffix();
-										String fileName = fn + "." + fs;
-										$asfile.setFileName(fileName);  //上传文件的名称
-									}
-									$asfile.setFileDsCode(sfile.getFileStatus());		 //上传的文件状态的code	; fileStatus:1缺失 ; fileStatus:2:已上传	; fileStatus:3	已签署									
-									$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus()));  //上传的文件状态的名称
-									Long ti = null;
-									if (sfile.getUpdatedTime() != null) {
-										ti = sfile.getUpdatedTime();
-									} else {
-										ti = sfile.getCreatedTime();
-									}
-									if (ti != null) {									
-										$asfile.setFileTime(ti.toString());  //文件创建或最新更的时间
-									}
-									$asfile.setFileKey(sfile.getFileKey());
-									Long uid = sfile.getFileUid();
-									if(uid!=null){
-										User user = userService.queryById(uid);
-										$asfile.setName(user.getRealName()); //档案阿里云存储Key
-									}
-									$asfile.setFileValid(sfile.getFileValid());
-									$asfile.setId(sfile.getId());  //文件ID
-									$asfile.setSignFlag(0); //档案文件
-									gqzrxyAppSopFileList.add($asfile);
-							} 					    	
-					    }	
-					}					
-					//据流程阶段编码、项目ID查询签署文件信息SopVouchFile
+								$asfile.setFileYwCode(sfile.getFileWorktype()); // fileworktype档案业务分类Code
+																				// fileWorktype:7
+								$asfile.setFileWorktype(sfile.getfWorktype()); // fileworktype档案业务分类Code对应的名称
+																				// 股权转让协议
+								if (sfile.getFileName() != null || sfile.getFileSuffix() != null) {
+									String fn = sfile.getFileName();
+									String fs = sfile.getFileSuffix();
+									String fileName = fn + "." + fs;
+									$asfile.setFileName(fileName); // 上传文件的名称
+								}
+								$asfile.setFileDsCode(sfile.getFileStatus()); // 上传的文件状态的code
+																				// ;
+																				// fileStatus:1缺失
+																				// ;
+																				// fileStatus:2:已上传
+																				// ;
+																				// fileStatus:3
+																				// 已签署
+								$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus())); // 上传的文件状态的名称
+								Long ti = null;
+								if (sfile.getUpdatedTime() != null) {
+									ti = sfile.getUpdatedTime();
+								} else {
+									ti = sfile.getCreatedTime();
+								}
+								if (ti != null) {
+									$asfile.setFileTime(ti.toString()); // 文件创建或最新更的时间
+								}
+								$asfile.setFileKey(sfile.getFileKey());
+								Long uid = sfile.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									$asfile.setName(user.getRealName()); // 档案阿里云存储Key
+								}
+								$asfile.setFileValid(sfile.getFileValid());
+								$asfile.setId(sfile.getId()); // 文件ID
+								$asfile.setSignFlag(0); // 档案文件
+								gqzrxyAppSopFileList.add($asfile);
+							}
+						}
+					}
+					// 据流程阶段编码、项目ID查询签署文件信息SopVouchFile
 					sopVoucherFile.setProjectProgress("projectProgress:8");
 					sopVoucherFile.setProjectId(Long.parseLong(pid));
-					List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile); //查询出2种签署文件				
+					List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile); // 查询出2种签署文件
 					AppSopFile asfile8 = null;
-					if (listSop!=null && listSop.size()>0) {
+					if (listSop != null && listSop.size() > 0) {
 						for (SopVoucherFile sop : listSop) {
 							asfile8 = new AppSopFile();
-							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())) {	
-								asfile8.setFileYwCode(sop.getFileWorktype()); // //fileworktype档案业务分类Code	fileWorktype:6
+							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())) {
+								asfile8.setFileYwCode(sop.getFileWorktype()); // //fileworktype档案业务分类Code
+																				// fileWorktype:6
 								asfile8.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
-									
-									if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-										String fn = sop.getFileName();
-										String fs = sop.getFileSuffix();
-										String fileName = fn + "." + fs;
-										asfile8.setFileName(fileName);
-									}
-									asfile8.setFileDsCode(sop.getFileStatus());									
-									asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-									Long ti = null;
-									if (sop.getUpdatedTime() != null) {
-										ti = sop.getUpdatedTime();
-									} else {
-										ti = sop.getCreatedTime();
-									}
-									if (ti != null) {
-										asfile8.setFileTime(ti.toString());
-									}
-									asfile8.setFileKey(sop.getFileKey());
-									Long uid = sop.getFileUid();
-									if(uid!=null){
-										User user = userService.queryById(uid);
-										asfile8.setName(user.getRealName());
-									}									
-									asfile8.setId(sop.getId()); //→签署档案表的ID主键	
-									asfile8.setSignFlag(1); //档案文件
-									tzxyAppSopFileList.add(asfile8);
-							}							
-							else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.股权转让协议.getCode())) {
+
+								if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+									String fn = sop.getFileName();
+									String fs = sop.getFileSuffix();
+									String fileName = fn + "." + fs;
+									asfile8.setFileName(fileName);
+								}
+								asfile8.setFileDsCode(sop.getFileStatus());
+								asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+								Long ti = null;
+								if (sop.getUpdatedTime() != null) {
+									ti = sop.getUpdatedTime();
+								} else {
+									ti = sop.getCreatedTime();
+								}
+								if (ti != null) {
+									asfile8.setFileTime(ti.toString());
+								}
+								asfile8.setFileKey(sop.getFileKey());
+								Long uid = sop.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									asfile8.setName(user.getRealName());
+								}
+								asfile8.setId(sop.getId()); // →签署档案表的ID主键
+								asfile8.setSignFlag(1); // 档案文件
+								tzxyAppSopFileList.add(asfile8);
+							} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.股权转让协议.getCode())) {
 								asfile8.setFileYwCode(sop.getFileWorktype());
 								asfile8.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
-									if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-										String fn = sop.getFileName();
-										String fs = sop.getFileSuffix();
-										String fileName = fn + "." + fs;
-										asfile8.setFileName(fileName);
-									}
-									asfile8.setFileDsCode(sop.getFileStatus());									
-									asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-									Long ti = null;
-									if (sop.getUpdatedTime() != null) {
-										ti = sop.getUpdatedTime();
-									} else {
-										ti = sop.getCreatedTime();
-									}
-									if (ti != null) {
-										asfile8.setFileTime(ti.toString());
-									}
-									asfile8.setFileKey(sop.getFileKey());
-									Long uid = sop.getFileUid();
-									if(uid!=null){
-										User user = userService.queryById(uid);
-										asfile8.setName(user.getRealName());
-									}
-									asfile8.setId(sop.getId()); //→签署档案表的ID主键
-									asfile8.setSignFlag(1); //档案文件
-									gqzrxyAppSopFileList.add(asfile8);						
-							} 
+								if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+									String fn = sop.getFileName();
+									String fs = sop.getFileSuffix();
+									String fileName = fn + "." + fs;
+									asfile8.setFileName(fileName);
+								}
+								asfile8.setFileDsCode(sop.getFileStatus());
+								asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+								Long ti = null;
+								if (sop.getUpdatedTime() != null) {
+									ti = sop.getUpdatedTime();
+								} else {
+									ti = sop.getCreatedTime();
+								}
+								if (ti != null) {
+									asfile8.setFileTime(ti.toString());
+								}
+								asfile8.setFileKey(sop.getFileKey());
+								Long uid = sop.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									asfile8.setName(user.getRealName());
+								}
+								asfile8.setId(sop.getId()); // →签署档案表的ID主键
+								asfile8.setSignFlag(1); // 档案文件
+								gqzrxyAppSopFileList.add(asfile8);
+							}
 						}
 					}
 					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
-					
-					if(tzxyAppSopFileList.size()>0){
+
+					if (tzxyAppSopFileList.size() > 0) {
 						AppFileDTO appfiledto = new AppFileDTO();
 						appfiledto.setFileTypeCode(DictEnum.fileWorktype.投资协议.getCode());
 						appfiledto.setFileTypeName(DictEnum.fileWorktype.投资协议.getName());
-						appfiledto.setAppSopFile(tzxyAppSopFileList);			
+						appfiledto.setAppSopFile(tzxyAppSopFileList);
 						list.add(appfiledto);
 					}
-					
-					if(gqzrxyAppSopFileList.size()>0){
+
+					if (gqzrxyAppSopFileList.size() > 0) {
 						AppFileDTO gq_appfileDto = new AppFileDTO();
 						gq_appfileDto.setFileTypeCode(DictEnum.fileWorktype.股权转让协议.getCode());
 						gq_appfileDto.setFileTypeName(DictEnum.fileWorktype.股权转让协议.getName());
-						gq_appfileDto.setAppSopFile(gqzrxyAppSopFileList);					
+						gq_appfileDto.setAppSopFile(gqzrxyAppSopFileList);
 						list.add(gq_appfileDto);
-					}															
+					}
 					appProgress.setAppFileDtoList(list);
 					appProgresslist.add(appProgress);
-					
+
 				}
 				// 投资决策会
 				else if (i == 7) {
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:7"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:7");//→项目流程阶段编码
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:7"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:7");// →项目流程阶段编码
 
 					meetingRecord.setMeetingType("meetingType:4");
 					meetingRecord.setProjectId(Long.parseLong(pid));
 					// 默认的是倒序排新添加的在最上面
 					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-					
-					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();			
-					for(MeetingRecord mr : listSop){
-						if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
+
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-							filterList.add(mr);	
-						}					
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
 					}
-					if( filterList.size()>0 ){										
+					if (filterList.size() > 0) {
 						MeetingRecord me = filterList.get(0);
 						appProgress.setMeetTime(me.getMeetingDateStr());
 						appProgress.setMeetNotes(me.getMeetingNotes());
 						appProgress.setMeetResult(me.getMeetingResult());
 						appProgress.setMeetingResultStr(me.getMeetingResultStr());
 						appProgress.setMeetCode(me.getMeetingType());
-						appProgress.setId(me.getId()); //会议ID
-						
-						//添加排情结果标识
-						if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						appProgress.setId(me.getId()); // 会议ID
+
+						// 添加排情结果标识
+						if (!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
 							MeetingScheduling query = new MeetingScheduling();
 							query.setProjectId(me.getProjectId());
 							query.setMeetingType(DictEnum.meetingType.投决会.getCode());
 							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-							if(mslist!=null && mslist.size()>0){
-								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+							if (mslist != null && mslist.size() > 0) {
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																									// 2
+																									// 的
+																									// 时候app端显示申请排期
+																									// 2016/7/5修改
 							}
 						}
-					}else{
+					} else {
 						MeetingScheduling query = new MeetingScheduling();
 						query.setProjectId(Long.parseLong(pid));
 						query.setMeetingType(DictEnum.meetingType.投决会.getCode());
 						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-						if(mslist!=null && mslist.size()>0){
-							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+						if (mslist != null && mslist.size() > 0) {
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																								// 2
+																								// 的
+																								// 时候app端显示申请排期
+																								// 2016/7/5修改
 						}
-					}				
-					appProgresslist.add(appProgress);						
+					}
+					appProgresslist.add(appProgress);
 				}
-				//TODO
+				// TODO
 				// 尽职调查
-				else 	if (i == 6) {
+				else if (i == 6) {
 					List<AppSopFile> ywFileList = new ArrayList<AppSopFile>();
 					List<AppSopFile> fwjFileList = new ArrayList<AppSopFile>();
 					List<AppSopFile> cwFileList = new ArrayList<AppSopFile>();
 					List<AppSopFile> rsFileList = new ArrayList<AppSopFile>();
 					// 项目阶段
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:6"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:6");//→项目流程阶段编码				
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:6"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:6");// →项目流程阶段编码
 					// 据流程阶段编码、项目ID查询文件信息SopFile
 					sopFile.setProjectProgress("projectProgress:6");
 					sopFile.setProjectId(Long.parseLong(pid));
-					
+
 					List<String> fileworkTypeList = new ArrayList<String>();
 					fileworkTypeList.add(DictEnum.fileWorktype.业务尽职调查报告.getCode());
 					fileworkTypeList.add(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
 					fileworkTypeList.add(DictEnum.fileWorktype.法务尽职调查报告.getCode());
 					fileworkTypeList.add(DictEnum.fileWorktype.财务尽职调查报告.getCode());
 					sopFile.setFileworktypeList(fileworkTypeList);
-					/*sopFile.setFileValid(1); //生效文件
-*/     				List<SopFile> listSop = sopFileService.queryList(sopFile);
-					
+					/*
+					 * sopFile.setFileValid(1); //生效文件
+					 */ List<SopFile> listSop = sopFileService.queryList(sopFile);
+
 					AppSopFile _tsopFile = null;
-					if (listSop!=null && listSop.size()>0) {
-						for (SopFile sop : listSop) {					
+					if (listSop != null && listSop.size() > 0) {
+						for (SopFile sop : listSop) {
 							_tsopFile = new AppSopFile();
-							//如果项目是外部投资
-							if(projectType.equals(DictEnum.projectType.外部投资.getCode())){
+							// 如果项目是外部投资
+							if (projectType.equals(DictEnum.projectType.外部投资.getCode())) {
 								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.业务尽职调查报告.getCode())) {
-									if(sop.getFileValid()==1){
-									_tsopFile.setFileYwCode(sop.getFileWorktype());
-									_tsopFile.setFileWorktype(sop.getfWorktype());
-										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 											String fn = sop.getFileName();
 											String fs = sop.getFileSuffix();
 											String fileName = fn + "." + fs;
 											_tsopFile.setFileName(fileName);
 										}
-										_tsopFile.setFileDsCode(sop.getFileStatus());									
+										_tsopFile.setFileDsCode(sop.getFileStatus());
 										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
 										Long ti = null;
 										if (sop.getUpdatedTime() != null) {
@@ -555,19 +586,19 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 										} else {
 											ti = sop.getCreatedTime();
 										}
-										if (ti != null) {									
+										if (ti != null) {
 											_tsopFile.setFileTime(ti.toString());
 										}
 										_tsopFile.setFileKey(sop.getFileKey());
 										Long uid = sop.getFileUid();
-										if(uid!=null){
+										if (uid != null) {
 											User user = userService.queryById(uid);
 											_tsopFile.setName(user.getRealName());
 										}
-										_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-										_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-									}else if(sop.getFileValid()==0){
-										if(sop.getId()==null){
+										_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+										if (sop.getId() == null) {
 											SopFile so = new SopFile();
 											so.setFileValid(0);
 											so.setFileWorktype(DictEnum.fileWorktype.业务尽职调查报告.getCode());
@@ -576,61 +607,60 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 											_tsopFile.setId(sso.getId());
 										}
 									}
-										ywFileList.add(_tsopFile);
-								}												
-								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.法务尽职调查报告.getCode())) {
-									if(sop.getFileValid()==1){
-									_tsopFile.setFileYwCode(sop.getFileWorktype());
-									_tsopFile.setFileWorktype(sop.getfWorktype());
-										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
+									ywFileList.add(_tsopFile);
+								} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.法务尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 											String fn = sop.getFileName();
 											String fs = sop.getFileSuffix();
 											String fileName = fn + "." + fs;
 											_tsopFile.setFileName(fileName);
 										}
-										_tsopFile.setFileDsCode(sop.getFileStatus());//→文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态					
-										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));  //→文件(档案)状态名称
+										_tsopFile.setFileDsCode(sop.getFileStatus());// →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
+										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus())); // →文件(档案)状态名称
 										Long ti = null;
 										if (sop.getUpdatedTime() != null) {
 											ti = sop.getUpdatedTime();
 										} else {
 											ti = sop.getCreatedTime();
 										}
-										if (ti != null) {									
+										if (ti != null) {
 											_tsopFile.setFileTime(ti.toString());
 										}
 										_tsopFile.setFileKey(sop.getFileKey());
 										Long uid = sop.getFileUid();
-										if(uid!=null){
+										if (uid != null) {
 											User user = userService.queryById(uid);
 											_tsopFile.setName(user.getRealName());
 										}
-										_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-										_tsopFile.setId(sop.getId());//→文件(档案)表的ID主键
-									}else if(sop.getFileValid()==0){
-										
-											SopFile so = new SopFile();
-											so.setFileValid(0);
-											so.setFileWorktype(DictEnum.fileWorktype.法务尽职调查报告.getCode());
-											so.setProjectId(Long.valueOf(pid));
-											SopFile sso = sopFileService.queryOne(so);
-											_tsopFile.setId(sso.getId());
-										
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
+										SopFile so = new SopFile();
+										so.setFileValid(0);
+										so.setFileWorktype(DictEnum.fileWorktype.法务尽职调查报告.getCode());
+										so.setProjectId(Long.valueOf(pid));
+										SopFile sso = sopFileService.queryOne(so);
+										_tsopFile.setId(sso.getId());
+
 									}
- 									    fwjFileList.add(_tsopFile);
-								} 
-						
+									fwjFileList.add(_tsopFile);
+								}
+
 								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.财务尽职调查报告.getCode())) {
-									if(sop.getFileValid()==1){
-									_tsopFile.setFileYwCode(sop.getFileWorktype());
-									_tsopFile.setFileWorktype(sop.getfWorktype());
-										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 											String fn = sop.getFileName();
 											String fs = sop.getFileSuffix();
 											String fileName = fn + "." + fs;
 											_tsopFile.setFileName(fileName);
 										}
-										appSopFile.setFileDsCode(sop.getFileStatus());									
+										appSopFile.setFileDsCode(sop.getFileStatus());
 										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
 										Long ti = null;
 										if (sop.getUpdatedTime() != null) {
@@ -638,40 +668,39 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 										} else {
 											ti = sop.getCreatedTime();
 										}
-										if (ti != null) {										
+										if (ti != null) {
 											_tsopFile.setFileTime(ti.toString());
 										}
 										_tsopFile.setFileKey(sop.getFileKey());
 										Long uid = sop.getFileUid();
-										if(uid!=null){
+										if (uid != null) {
 											User user = userService.queryById(uid);
 											_tsopFile.setName(user.getRealName());
 										}
-										_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-										_tsopFile.setId(sop.getId()); //→文件(档案)表的ID主键
-									}else if(sop.getFileValid()==0){
-										
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId()); // →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
 										SopFile so = new SopFile();
 										so.setFileValid(0);
 										so.setFileWorktype(DictEnum.fileWorktype.财务尽职调查报告.getCode());
 										so.setProjectId(Long.valueOf(pid));
 										SopFile sso = sopFileService.queryOne(so);
 										_tsopFile.setId(sso.getId());
-									
-								}
-										cwFileList.add(_tsopFile);
-								}
-								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
-									if(sop.getFileValid()==1){
-									_tsopFile.setFileYwCode(sop.getFileWorktype());
-									_tsopFile.setFileWorktype(sop.getfWorktype());
-										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
+
+									}
+									cwFileList.add(_tsopFile);
+								} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 											String fn = sop.getFileName();
 											String fs = sop.getFileSuffix();
 											String fileName = fn + "." + fs;
 											_tsopFile.setFileName(fileName);
 										}
-										_tsopFile.setFileDsCode(sop.getFileStatus());									
+										_tsopFile.setFileDsCode(sop.getFileStatus());
 										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
 										Long ti = null;
 										if (sop.getUpdatedTime() != null) {
@@ -679,43 +708,43 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 										} else {
 											ti = sop.getCreatedTime();
 										}
-										if (ti != null) {										
+										if (ti != null) {
 											_tsopFile.setFileTime(ti.toString());
 										}
 										_tsopFile.setFileKey(sop.getFileKey());
 										Long uid = sop.getFileUid();
-										if(uid!=null){
+										if (uid != null) {
 											User user = userService.queryById(uid);
 											_tsopFile.setName(user.getRealName());
 										}
-										_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-										_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-									}else if(sop.getFileValid()==0){
-										
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
 										SopFile so = new SopFile();
 										so.setFileValid(0);
 										so.setFileWorktype(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
 										so.setProjectId(Long.valueOf(pid));
 										SopFile sso = sopFileService.queryOne(so);
 										_tsopFile.setId(sso.getId());
-									
+
+									}
+									rsFileList.add(_tsopFile);
 								}
-										rsFileList.add(_tsopFile);
-								}							
 							}
-							//如果项目是内部投资
-							else if(projectType.equals(DictEnum.projectType.内部创建.getCode())){
+							// 如果项目是内部投资
+							else if (projectType.equals(DictEnum.projectType.内部创建.getCode())) {
 								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.业务尽职调查报告.getCode())) {
-									if(sop.getFileValid()==1){
-									_tsopFile.setFileYwCode(sop.getFileWorktype());
-									_tsopFile.setFileWorktype(sop.getfWorktype());
-										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 											String fn = sop.getFileName();
 											String fs = sop.getFileSuffix();
 											String fileName = fn + "." + fs;
 											_tsopFile.setFileName(fileName);
 										}
-										_tsopFile.setFileDsCode(sop.getFileStatus());									
+										_tsopFile.setFileDsCode(sop.getFileStatus());
 										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
 										Long ti = null;
 										if (sop.getUpdatedTime() != null) {
@@ -723,40 +752,39 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 										} else {
 											ti = sop.getCreatedTime();
 										}
-										if (ti != null) {									
+										if (ti != null) {
 											_tsopFile.setFileTime(ti.toString());
 										}
 										_tsopFile.setFileKey(sop.getFileKey());
 										Long uid = sop.getFileUid();
-										if(uid!=null){
+										if (uid != null) {
 											User user = userService.queryById(uid);
 											_tsopFile.setName(user.getRealName());
 										}
-										_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-										_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-									}else if(sop.getFileValid()==0){
-										
+										_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
 										SopFile so = new SopFile();
 										so.setFileValid(0);
 										so.setFileWorktype(DictEnum.fileWorktype.业务尽职调查报告.getCode());
 										so.setProjectId(Long.valueOf(pid));
 										SopFile sso = sopFileService.queryOne(so);
 										_tsopFile.setId(sso.getId());
-									
-								}
-										ywFileList.add(_tsopFile);
-								}							
-								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
-									if(sop.getFileValid()==1){
-									_tsopFile.setFileYwCode(sop.getFileWorktype());
-									_tsopFile.setFileWorktype(sop.getfWorktype());
-										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
+
+									}
+									ywFileList.add(_tsopFile);
+								} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
 											String fn = sop.getFileName();
 											String fs = sop.getFileSuffix();
 											String fileName = fn + "." + fs;
 											_tsopFile.setFileName(fileName);
 										}
-										_tsopFile.setFileDsCode(sop.getFileStatus());									
+										_tsopFile.setFileDsCode(sop.getFileStatus());
 										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
 										Long ti = null;
 										if (sop.getUpdatedTime() != null) {
@@ -764,129 +792,129 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 										} else {
 											ti = sop.getCreatedTime();
 										}
-										if (ti != null) {											
+										if (ti != null) {
 											_tsopFile.setFileTime(ti.toString());
 										}
 										_tsopFile.setFileKey(sop.getFileKey());
 										Long uid = sop.getFileUid();
-										if(uid!=null){
+										if (uid != null) {
 											User user = userService.queryById(uid);
 											_tsopFile.setName(user.getRealName());
 										}
-										_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-										_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键	
-									}else if(sop.getFileValid()==0){
-										
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
 										SopFile so = new SopFile();
 										so.setFileValid(0);
 										so.setFileWorktype(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
 										so.setProjectId(Long.valueOf(pid));
 										SopFile sso = sopFileService.queryOne(so);
 										_tsopFile.setId(sso.getId());
-									
+
+									}
+									rsFileList.add(_tsopFile);
 								}
-										rsFileList.add(_tsopFile);
-								}
-							}	
+							}
 						}
 					}
-					
+
 					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
-					if(projectType.equals(DictEnum.projectType.外部投资.getCode())){
+					if (projectType.equals(DictEnum.projectType.外部投资.getCode())) {
 						AppFileDTO appfileDto = new AppFileDTO();
 						appfileDto.setFileTypeCode(DictEnum.fileWorktype.业务尽职调查报告.getCode());
 						appfileDto.setFileTypeName("业务尽调");
-						appfileDto.setAppSopFile(ywFileList);		
+						appfileDto.setAppSopFile(ywFileList);
 						list.add(appfileDto);
-						
+
 						AppFileDTO fwappfileDto = new AppFileDTO();
 						fwappfileDto.setFileTypeCode(DictEnum.fileWorktype.法务尽职调查报告.getCode());
 						fwappfileDto.setFileTypeName("法务尽调");
-						fwappfileDto.setAppSopFile(fwjFileList);		
+						fwappfileDto.setAppSopFile(fwjFileList);
 						list.add(fwappfileDto);
-						
+
 						AppFileDTO cwappfileDto = new AppFileDTO();
 						cwappfileDto.setFileTypeCode(DictEnum.fileWorktype.财务尽职调查报告.getCode());
 						cwappfileDto.setFileTypeName("财务尽调");
-						cwappfileDto.setAppSopFile(cwFileList);	
+						cwappfileDto.setAppSopFile(cwFileList);
 						list.add(cwappfileDto);
-						
+
 						AppFileDTO rsappfileDto = new AppFileDTO();
 						rsappfileDto.setFileTypeCode(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
 						rsappfileDto.setFileTypeName("人事尽调");
-						rsappfileDto.setAppSopFile(rsFileList);	
+						rsappfileDto.setAppSopFile(rsFileList);
 						list.add(rsappfileDto);
-						
+
 						appProgress.setAppFileDtoList(list);
-						appProgresslist.add(appProgress);	
-					}else if(projectType.equals(DictEnum.projectType.内部创建.getCode())){
+						appProgresslist.add(appProgress);
+					} else if (projectType.equals(DictEnum.projectType.内部创建.getCode())) {
 						AppFileDTO appfileDto = new AppFileDTO();
 						appfileDto.setFileTypeCode(DictEnum.fileWorktype.业务尽职调查报告.getCode());
 						appfileDto.setFileTypeName("业务尽调");
-						appfileDto.setAppSopFile(ywFileList);		
+						appfileDto.setAppSopFile(ywFileList);
 						list.add(appfileDto);
-						
+
 						AppFileDTO rsappfileDto = new AppFileDTO();
 						rsappfileDto.setFileTypeCode(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
 						rsappfileDto.setFileTypeName("人事尽调");
-						rsappfileDto.setAppSopFile(rsFileList);	
+						rsappfileDto.setAppSopFile(rsFileList);
 						list.add(rsappfileDto);
-						
+
 						appProgress.setAppFileDtoList(list);
-						appProgresslist.add(appProgress);	
-					}	
+						appProgresslist.add(appProgress);
+					}
 				}
 				// 投资意向书
 				else if (i == 5) {
-					// 项目阶段					
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:5"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:5");//→项目流程阶段编码
+					// 项目阶段
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:5"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:5");// →项目流程阶段编码
 					// 业务类型
 					sopVoucherFile.setProjectProgress("projectProgress:5");
 					sopVoucherFile.setProjectId(Long.parseLong(pid));
 					List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile);
-					AppSopFile asfile5 = null; 
+					AppSopFile asfile5 = null;
 					List<AppSopFile> tzyxsFileList = new ArrayList<AppSopFile>();
 					if (!listSop.isEmpty()) {
 						for (SopVoucherFile sop : listSop) {
 							asfile5 = new AppSopFile();
-							
+
 							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资意向书.getCode())) {
 								asfile5.setFileYwCode(sop.getFileWorktype());
 								asfile5.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
-									if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-										String fn = sop.getFileName();
-										String fs = sop.getFileSuffix();
-										String fileName = fn + "." + fs;
-										asfile5.setFileName(fileName);
-									}
-									asfile5.setFileDsCode(sop.getFileStatus());	//→文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态								
-									asfile5.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));//→文件(档案)状态名称
-									Long ti = null;
-									if (sop.getUpdatedTime() != null) {
-										ti = sop.getUpdatedTime();
-									} else {
-										ti = sop.getCreatedTime();
-									}
-									if (ti != null) {									
-										asfile5.setFileTime(ti.toString());
-									}
-									asfile5.setFileKey(sop.getFileKey());
-									Long uid = sop.getFileUid();
-									if(uid!=null){
-										User user = userService.queryById(uid);
-										asfile5.setName(user.getRealName());
-									}								
-									asfile5.setId(sop.getId()); //→文件(档案)表的ID主键
-									tzyxsFileList.add(asfile5);
+								if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+									String fn = sop.getFileName();
+									String fs = sop.getFileSuffix();
+									String fileName = fn + "." + fs;
+									asfile5.setFileName(fileName);
+								}
+								asfile5.setFileDsCode(sop.getFileStatus()); // →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
+								asfile5.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));// →文件(档案)状态名称
+								Long ti = null;
+								if (sop.getUpdatedTime() != null) {
+									ti = sop.getUpdatedTime();
+								} else {
+									ti = sop.getCreatedTime();
+								}
+								if (ti != null) {
+									asfile5.setFileTime(ti.toString());
+								}
+								asfile5.setFileKey(sop.getFileKey());
+								Long uid = sop.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									asfile5.setName(user.getRealName());
+								}
+								asfile5.setId(sop.getId()); // →文件(档案)表的ID主键
+								tzyxsFileList.add(asfile5);
 							}
 						}
 					}
-					List<AppFileDTO> list = new ArrayList<AppFileDTO>();		
+					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
 					AppFileDTO appfileDto = new AppFileDTO();
 					appfileDto.setFileTypeCode(DictEnum.fileWorktype.投资意向书.getCode());
 					appfileDto.setFileTypeName(DictEnum.fileWorktype.投资意向书.getName());
-					appfileDto.setAppSopFile(tzyxsFileList);		
+					appfileDto.setAppSopFile(tzyxsFileList);
 					list.add(appfileDto);
 
 					appProgress.setAppFileDtoList(list);
@@ -894,163 +922,188 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 立项会
 				else if (i == 4) {
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:4"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:4");//→项目流程阶段编码
-					//据会议类型、项目ID查询会议信息
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:4"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:4");// →项目流程阶段编码
+					// 据会议类型、项目ID查询会议信息
 					meetingRecord.setMeetingType("meetingType:3");
 					meetingRecord.setProjectId(Long.parseLong(pid));
 					// 默认的是倒序排添加的最上面
 					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-					
-					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();				
-					for(MeetingRecord mr : listSop){
-						if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
+
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-							filterList.add(mr);	
-						}					
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
 					}
-					if( filterList.size()>0 ){ //处理待定 、通过或否决
-						MeetingRecord me = filterList.get(0);				
+					if (filterList.size() > 0) { // 处理待定 、通过或否决
+						MeetingRecord me = filterList.get(0);
 						appProgress.setMeetTime(me.getMeetingDateStr());
 						appProgress.setMeetNotes(me.getMeetingNotes());
 						appProgress.setMeetResult(me.getMeetingResult());
 						appProgress.setMeetingResultStr(me.getMeetingResultStr());
 						appProgress.setMeetCode(me.getMeetingType());
-						
-						//添加排情结果标识
-						if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+
+						// 添加排情结果标识
+						if (!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
 							MeetingScheduling query = new MeetingScheduling();
 							query.setProjectId(me.getProjectId());
 							query.setMeetingType(DictEnum.meetingType.立项会.getCode());
 							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-							if(mslist!=null && mslist.size()>0){
-								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//  0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+							if (mslist != null && mslist.size() > 0) {
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																									// 2
+																									// 的
+																									// 时候app端显示申请排期
+																									// 2016/7/5修改
 							}
 						}
-					}else{
+					} else {
 						MeetingScheduling query = new MeetingScheduling();
 						query.setProjectId(Long.parseLong(pid));
 						query.setMeetingType(DictEnum.meetingType.立项会.getCode());
 						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-						if(mslist!=null && mslist.size()>0){
-							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+						if (mslist != null && mslist.size() > 0) {
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																								// 2
+																								// 的
+																								// 时候app端显示申请排期
+																								// 2016/7/5修改
 						}
-					}	
-					appProgresslist.add(appProgress);			
+					}
+					appProgresslist.add(appProgress);
 				}
 				// CEO评审
 				else if (i == 3) {
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:3"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:3");//→项目流程阶段编码
-					//据会议类型、项目ID查询会议信息
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:3"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:3");// →项目流程阶段编码
+					// 据会议类型、项目ID查询会议信息
 					meetingRecord.setMeetingType("meetingType:2");
 					meetingRecord.setProjectId(Long.parseLong(pid));
 					// 默认的是倒序排新添加的在最上面
 					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-					
-					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();				
-					for(MeetingRecord mr : listSop){
-						if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
+
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-							filterList.add(mr);	
-						}					
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
 					}
-					if( filterList.size()>0 ){					
-						MeetingRecord me = filterList.get(0);						
+					if (filterList.size() > 0) {
+						MeetingRecord me = filterList.get(0);
 						appProgress.setMeetTime(me.getMeetingDateStr());
 						appProgress.setMeetNotes(me.getMeetingNotes());
 						appProgress.setMeetResult(me.getMeetingResult());
 						appProgress.setMeetingResultStr(me.getMeetingResultStr());
 						appProgress.setMeetCode(me.getMeetingType());
-						
-						//添加排情结果标识
-						if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+
+						// 添加排情结果标识
+						if (!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
 							MeetingScheduling query = new MeetingScheduling();
 							query.setProjectId(me.getProjectId());
 							query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
 							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-							if(mslist!=null && mslist.size()>0){
-								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+							if (mslist != null && mslist.size() > 0) {
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																									// 2
+																									// 的
+																									// 时候app端显示申请排期
+																									// 2016/7/5修改
 							}
 						}
-					}else{
+					} else {
 						MeetingScheduling query = new MeetingScheduling();
 						query.setProjectId(Long.parseLong(pid));
 						query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
 						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-						if(mslist!=null && mslist.size()>0){
-							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
+						if (mslist != null && mslist.size() > 0) {
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																								// 2
+																								// 的
+																								// 时候app端显示申请排期
+																								// 2016/7/5修改
 						}
-					}				
+					}
 					appProgresslist.add(appProgress);
 				}
 				// 内部评审
-				else if (i == 2) {			
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:2"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:2");//→项目流程阶段编码
-					//据会议类型、项目ID查询会议信息
+				else if (i == 2) {
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:2"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:2");// →项目流程阶段编码
+					// 据会议类型、项目ID查询会议信息
 					meetingRecord.setMeetingType("meetingType:1");
 					meetingRecord.setProjectId(Long.parseLong(pid));
 					// 默认的是倒序排新添加的在最上面
 					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-					
-					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();				
-					for(MeetingRecord mr : listSop){
-						if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
+
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
 							filterList.clear();
 							filterList.add(mr);
 							break;
-						}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-							filterList.add(mr);	
-						}					
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
 					}
-					if( filterList.size()>0 ){									
-						MeetingRecord me = filterList.get(0);					
+					if (filterList.size() > 0) {
+						MeetingRecord me = filterList.get(0);
 						appProgress.setMeetTime(me.getMeetingDateStr());
 						appProgress.setMeetNotes(me.getMeetingNotes());
 						appProgress.setMeetResult(me.getMeetingResult());
 						appProgress.setMeetingResultStr(me.getMeetingResultStr());
 						appProgress.setMeetCode(me.getMeetingType());
-					}				
-					appProgresslist.add(appProgress);				
+					}
+					appProgresslist.add(appProgress);
 				}
 				// 访谈记录
-				else if (i == 1) {			
-					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:1"));//→项目流程阶段名称
-					appProgress.setProjectProgress("projectProgress:1");//→项目流程阶段编码
-					
+				else if (i == 1) {
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:1"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:1");// →项目流程阶段编码
+
 					interviewRecord.setProjectId(Long.parseLong(pid));
 					List<InterviewRecord> listSop = interviewRecordService.queryList(interviewRecord);
-					if(listSop!=null){
+					if (listSop != null) {
 						appProgress.setInterviewCount(listSop.size());
-					}else{
+					} else {
 						appProgress.setInterviewCount(0);
 					}
-					if (listSop!=null && listSop.size()>0) {
-						InterviewRecord me = listSop.get(0);						
-						appProgress.setInterviewTime(me.getViewDateStr());//访谈时间
-						appProgress.setInterviewNotes(me.getViewNotes());//访谈日志
-						appProgress.setInterviewTarget(me.getViewTarget());//访谈对象
+					if (listSop != null && listSop.size() > 0) {
+						InterviewRecord me = listSop.get(0);
+						appProgress.setInterviewTime(me.getViewDateStr());// 访谈时间
+						appProgress.setInterviewNotes(me.getViewNotes());// 访谈日志
+						appProgress.setInterviewTarget(me.getViewTarget());// 访谈对象
 					}
-					appProgresslist.add(appProgress);		
+					appProgresslist.add(appProgress);
 				}
 			}
 			responseBody.setEntityList(appProgresslist);
@@ -1060,1428 +1113,1493 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 		}
 		return responseBody;
 	}
-	/**
-	   * 供app端查询数据快览
-	   * 
-	   */
-	   	@ResponseBody
-		@RequestMapping(value = "/appCounts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	   	public ResponseData<AppCounts> searchAppProjectList(HttpServletRequest request) {
-			ResponseData<AppCounts> responseBody = new ResponseData<AppCounts>();
-			User user = (User) getUserFromSession(request);
-			// 判断当前用户是否为投资经理
-			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user
-					.getId());
-			if (!roleIdList.contains(UserConstant.HHR)
-					&& !roleIdList.contains(UserConstant.CEO)
-					&&!roleIdList.contains(UserConstant.DSZ)) {
-				responseBody.setResult(new Result(Status.ERROR, null, "没有权限查询!"));
-				return responseBody;
-			}
-			try {
-				
-				if(roleIdList.contains(UserConstant.HHR)){
-					AppCounts appCounts=new AppCounts();
-					
-					if(user.getDepartmentId()!=null){	
-						Project project = new Project();
-						project.setProjectDepartid(user.getDepartmentId());
-						Long it=projectService.queryCount(project);
-						appCounts.setProjectCounts(it.intValue());
-						List<Project> listp=projectService.queryList(project);
-						String st="0.00";
-						double d=(Double.parseDouble(st));
-						for(Project pro :listp){
-							if(pro.getProjectValuations()!=null){
-								d=d+pro.getProjectValuations();
-							}
-						}	
-						DecimalFormat df = new DecimalFormat("#.00");					
-						appCounts.setProjectValuations(df.format(d));					
-					}
-					Project project1 = new Project();
-					project1.setProjectDepartid(user.getDepartmentId());
-					project1.setProjectProgress(DictEnum.projectProgress.尽职调查.getCode());
-					Long it=projectService.queryCount(project1);
-					appCounts.setJzproject(it.intValue());
-					
-					Project project2 = new Project();
-					project2.setProjectDepartid(user.getDepartmentId());
-					project2.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
-					Long it1=projectService.queryCount(project2);
-					appCounts.setThproject(it1.intValue());					
-					responseBody.setResult(new Result(Status.OK, ""));
-					responseBody.setEntity(appCounts);
-					return responseBody;		
-				}else{		
-						AppCounts appCounts=new AppCounts();
-						Long it=projectService.queryCount();
-						appCounts.setProjectCounts(it.intValue());
-						List<Project> listp=projectService.queryAll();
-						String st="0.00";
-						double d=(Double.parseDouble(st));
-						for(Project pro :listp){
-							if(pro.getProjectValuations()!=null){
-								d=d+pro.getProjectValuations();
-							}
-						}	
-						DecimalFormat df = new DecimalFormat("#.00");					
-						appCounts.setProjectValuations(df.format(d));					
-						Project project1 = new Project();					
-						project1.setProjectProgress(DictEnum.projectProgress.尽职调查.getCode());
-						Long it1=projectService.queryCount(project1);
-						appCounts.setJzproject(it1.intValue());					
-						Project project2 = new Project();					
-						project2.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
-						Long it2=projectService.queryCount(project2);
-						appCounts.setThproject(it2.intValue());					
-						responseBody.setResult(new Result(Status.OK, ""));
-						responseBody.setEntity(appCounts);
-						return responseBody;					
-				}	
-			} catch (PlatformException e) {
-				
-				return responseBody;
-			}
-	   	}
 
-	   	/**
-	   	 * app端进行申请排期的按钮
-	   	 * @param meetingRecord
-	   	 * @param request
-	   	 * @return
-	   	 */
-	   		@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
-		   	@ResponseBody
-			@RequestMapping(value = "/appPq", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-		   	public ResponseData<MeetingRecord> appPq(@RequestBody MeetingRecordBo meetingRecord,HttpServletRequest request) {
-				ResponseData<MeetingRecord> responseBody = new ResponseData<MeetingRecord>();
-				try {
+	/**
+	 * 供app端查询数据快览
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/appCounts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<AppCounts> searchAppProjectList(HttpServletRequest request) {
+		ResponseData<AppCounts> responseBody = new ResponseData<AppCounts>();
+		User user = (User) getUserFromSession(request);
+		// 判断当前用户是否为投资经理
+		List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+		if (!roleIdList.contains(UserConstant.HHR) && !roleIdList.contains(UserConstant.CEO)
+				&& !roleIdList.contains(UserConstant.DSZ)) {
+			responseBody.setResult(new Result(Status.ERROR, null, "没有权限查询!"));
+			return responseBody;
+		}
+		try {
+
+			if (roleIdList.contains(UserConstant.HHR)) {
+				AppCounts appCounts = new AppCounts();
+
+				if (user.getDepartmentId() != null) {
 					Project project = new Project();
-					if(meetingRecord.getProjectId()!=null){					
-						project = projectService.queryById(meetingRecord.getProjectId());				
-					}else{
-						responseBody.setResult(new Result(Status.ERROR, null, "项目ID缺失"));
-						return responseBody;
-					}
-	
-					String currProjectProgress = project.getProjectProgress().trim(); //当前项目阶段
-					String currMeetingType = meetingRecord.getMeetingType().trim(); //当前会议类型
-					String currMeetingResult = meetingRecord.getMeetingResult().trim(); //当前会议结果
-									
-					if (currProjectProgress.equals(DictEnum.projectProgress.CEO评审.getCode())
-							&& currMeetingType.equals(DictEnum.meetingType.CEO评审.getCode())){
-						
-						MeetingScheduling scheduEntity = new MeetingScheduling();
-						scheduEntity.setProjectId(project.getId());
-						scheduEntity.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
-						MeetingScheduling querySchedu = meetingSchedulingService.queryOne(scheduEntity);
-						
-						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode()) && !querySchedu.getStatus().equals(DictEnum.meetingResult.待定.getCode())){
-							querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
-							querySchedu.setReserveTimeStart(null);
-							querySchedu.setReserveTimeEnd(null);
-							querySchedu.setStatus(DictEnum.meetingResult.待定.getCode());
-							querySchedu.setReserveTimeEndStr(null);
-							querySchedu.setReserveTimeStartStr(null);
-							
-							querySchedu.setApplyTime(new Timestamp(new Date().getTime()));
-							querySchedu.setUpdatedTime((new Date()).getTime()); //变更操作时间
-							meetingSchedulingService.updateBySelective(querySchedu); 
-							ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.1", UrlNumber.one);
-						} else {
-							responseBody.setResult(new Result(Status.ERROR, "cfpq",
-									"项目不能重复申请CEO评审排期!"));
-							return responseBody;
+					project.setProjectDepartid(user.getDepartmentId());
+					Long it = projectService.queryCount(project);
+					appCounts.setProjectCounts(it.intValue());
+					List<Project> listp = projectService.queryList(project);
+					String st = "0.00";
+					double d = (Double.parseDouble(st));
+					for (Project pro : listp) {
+						if (pro.getProjectValuations() != null) {
+							d = d + pro.getProjectValuations();
 						}
 					}
-					else if (currProjectProgress.equals(DictEnum.projectProgress.立项会.getCode())
-							&& currMeetingType.equals(DictEnum.meetingType.立项会.getCode())){
-						
-						MeetingScheduling scheduling = new MeetingScheduling();			
-						List<Long> idList = new ArrayList<Long>();
-						idList.add(project.getId());
-						scheduling.setProjectIdList(idList);
-						scheduling.setMeetingType(DictEnum.meetingType.立项会.getCode());
-						MeetingScheduling queryScheduling = meetingSchedulingService.queryOne(scheduling);	
-						if(currMeetingResult.equals(DictEnum.meetingResult.待定.getCode()) && !queryScheduling.getStatus().equals(DictEnum.meetingResult.待定.getCode())){
-							queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());
-							queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
-							queryScheduling.setReserveTimeStart(null);
-							queryScheduling.setReserveTimeEnd(null);
-							queryScheduling.setReserveTimeEndStr(null);
-							queryScheduling.setReserveTimeStartStr(null);						
-							queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
-							queryScheduling.setUpdatedTime((new Date()).getTime());
-							meetingSchedulingService.updateBySelective(queryScheduling);
-							ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.2", UrlNumber.two);
-						} else {
-							responseBody.setResult(new Result(Status.ERROR, "cfpq",
-									"项目不能重复申请立项会排期!"));
-							return responseBody;
-						}	
-					}
-					else if (currProjectProgress.equals(DictEnum.projectProgress.投资决策会.getCode())
-							&& currMeetingType.equals(DictEnum.meetingType.投决会.getCode())){					
-						MeetingScheduling scheduling = new MeetingScheduling();			
-						List<Long> idList = new ArrayList<Long>();
-						idList.add(project.getId());
-						scheduling.setProjectIdList(idList);
-						scheduling.setMeetingType(DictEnum.meetingType.投决会.getCode());
-						MeetingScheduling queryScheduling = meetingSchedulingService.queryOne(scheduling);		
-						
-						Project proEntity = new Project();
-						proEntity.setId(project.getId());			
-						if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode()) && !queryScheduling.getStatus().equals(DictEnum.meetingResult.待定.getCode())){
-					    	/* 1.更新项目的当前阶段的排期结果为“待排期”,排期起始和结束时间置空，待秘书重新选择
-					    	 * 2.更新过会次数、变更操作时间   */	    	
-					    	queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
-					    	queryScheduling.setReserveTimeStart(null);
-					    	queryScheduling.setReserveTimeEnd(null);
-							queryScheduling.setReserveTimeEndStr(null);
-							queryScheduling.setReserveTimeStartStr(null);
-					    	queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());								    					    	
-					    	queryScheduling.setUpdatedTime((new Date()).getTime()); //变更操作时间
-					    	queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
-					    	meetingSchedulingService.updateBySelective(queryScheduling); 
-					    	ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "10.3", UrlNumber.three);
-					    } else {
-							responseBody.setResult(new Result(Status.ERROR, "cfpq",
-									"项目不能重复申请投决会排期!"));
-							return responseBody;
-						}
-						
-					    
-					}
-					else {
-						responseBody.setResult(new Result(Status.OK, "xg", "并不需要申请排期"));
-						return responseBody;
-					}
-					
-				} catch (Exception e) {
-					responseBody.setResult(new Result(Status.ERROR,null, "排期添加失败"));
-					if(logger.isErrorEnabled()){
-						logger.error("addpq 排期添加失败 ",e);
+					DecimalFormat df = new DecimalFormat("#.00");
+					appCounts.setProjectValuations(df.format(d));
+				}
+				Project project1 = new Project();
+				project1.setProjectDepartid(user.getDepartmentId());
+				project1.setProjectProgress(DictEnum.projectProgress.尽职调查.getCode());
+				Long it = projectService.queryCount(project1);
+				appCounts.setJzproject(it.intValue());
+
+				Project project2 = new Project();
+				project2.setProjectDepartid(user.getDepartmentId());
+				project2.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
+				Long it1 = projectService.queryCount(project2);
+				appCounts.setThproject(it1.intValue());
+				responseBody.setResult(new Result(Status.OK, ""));
+				responseBody.setEntity(appCounts);
+				return responseBody;
+			} else {
+				AppCounts appCounts = new AppCounts();
+				Long it = projectService.queryCount();
+				appCounts.setProjectCounts(it.intValue());
+				List<Project> listp = projectService.queryAll();
+				String st = "0.00";
+				double d = (Double.parseDouble(st));
+				for (Project pro : listp) {
+					if (pro.getProjectValuations() != null) {
+						d = d + pro.getProjectValuations();
 					}
 				}
-				
-					responseBody.setResult(new Result(Status.OK, "sqpqcg", "申请排期成功"));
+				DecimalFormat df = new DecimalFormat("#.00");
+				appCounts.setProjectValuations(df.format(d));
+				Project project1 = new Project();
+				project1.setProjectProgress(DictEnum.projectProgress.尽职调查.getCode());
+				Long it1 = projectService.queryCount(project1);
+				appCounts.setJzproject(it1.intValue());
+				Project project2 = new Project();
+				project2.setProjectProgress(DictEnum.projectProgress.投后运营.getCode());
+				Long it2 = projectService.queryCount(project2);
+				appCounts.setThproject(it2.intValue());
+				responseBody.setResult(new Result(Status.OK, ""));
+				responseBody.setEntity(appCounts);
+				return responseBody;
+			}
+		} catch (PlatformException e) {
+
+			return responseBody;
+		}
+	}
+
+	/**
+	 * app端进行申请排期的按钮
+	 * 
+	 * @param meetingRecord
+	 * @param request
+	 * @return
+	 */
+	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
+	@ResponseBody
+	@RequestMapping(value = "/appPq", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<MeetingRecord> appPq(@RequestBody MeetingRecordBo meetingRecord, HttpServletRequest request) {
+		ResponseData<MeetingRecord> responseBody = new ResponseData<MeetingRecord>();
+		try {
+			Project project = new Project();
+			if (meetingRecord.getProjectId() != null) {
+				project = projectService.queryById(meetingRecord.getProjectId());
+			} else {
+				responseBody.setResult(new Result(Status.ERROR, null, "项目ID缺失"));
+				return responseBody;
+			}
+
+			String currProjectProgress = project.getProjectProgress().trim(); // 当前项目阶段
+			String currMeetingType = meetingRecord.getMeetingType().trim(); // 当前会议类型
+			String currMeetingResult = meetingRecord.getMeetingResult().trim(); // 当前会议结果
+
+			if (currProjectProgress.equals(DictEnum.projectProgress.CEO评审.getCode())
+					&& currMeetingType.equals(DictEnum.meetingType.CEO评审.getCode())) {
+
+				MeetingScheduling scheduEntity = new MeetingScheduling();
+				scheduEntity.setProjectId(project.getId());
+				scheduEntity.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
+				MeetingScheduling querySchedu = meetingSchedulingService.queryOne(scheduEntity);
+
+				if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())
+						&& !querySchedu.getStatus().equals(DictEnum.meetingResult.待定.getCode())) {
+					querySchedu.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+					querySchedu.setReserveTimeStart(null);
+					querySchedu.setReserveTimeEnd(null);
+					querySchedu.setStatus(DictEnum.meetingResult.待定.getCode());
+					querySchedu.setReserveTimeEndStr(null);
+					querySchedu.setReserveTimeStartStr(null);
+
+					querySchedu.setApplyTime(new Timestamp(new Date().getTime()));
+					querySchedu.setUpdatedTime((new Date()).getTime()); // 变更操作时间
+					meetingSchedulingService.updateBySelective(querySchedu);
+					ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(),
+							project.getId(), "10.1", UrlNumber.one);
+				} else {
+					responseBody.setResult(new Result(Status.ERROR, "cfpq", "项目不能重复申请CEO评审排期!"));
 					return responseBody;
+				}
+			} else if (currProjectProgress.equals(DictEnum.projectProgress.立项会.getCode())
+					&& currMeetingType.equals(DictEnum.meetingType.立项会.getCode())) {
+
+				MeetingScheduling scheduling = new MeetingScheduling();
+				List<Long> idList = new ArrayList<Long>();
+				idList.add(project.getId());
+				scheduling.setProjectIdList(idList);
+				scheduling.setMeetingType(DictEnum.meetingType.立项会.getCode());
+				MeetingScheduling queryScheduling = meetingSchedulingService.queryOne(scheduling);
+				if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())
+						&& !queryScheduling.getStatus().equals(DictEnum.meetingResult.待定.getCode())) {
+					queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());
+					queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+					queryScheduling.setReserveTimeStart(null);
+					queryScheduling.setReserveTimeEnd(null);
+					queryScheduling.setReserveTimeEndStr(null);
+					queryScheduling.setReserveTimeStartStr(null);
+					queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
+					queryScheduling.setUpdatedTime((new Date()).getTime());
+					meetingSchedulingService.updateBySelective(queryScheduling);
+					ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(),
+							project.getId(), "10.2", UrlNumber.two);
+				} else {
+					responseBody.setResult(new Result(Status.ERROR, "cfpq", "项目不能重复申请立项会排期!"));
+					return responseBody;
+				}
+			} else if (currProjectProgress.equals(DictEnum.projectProgress.投资决策会.getCode())
+					&& currMeetingType.equals(DictEnum.meetingType.投决会.getCode())) {
+				MeetingScheduling scheduling = new MeetingScheduling();
+				List<Long> idList = new ArrayList<Long>();
+				idList.add(project.getId());
+				scheduling.setProjectIdList(idList);
+				scheduling.setMeetingType(DictEnum.meetingType.投决会.getCode());
+				MeetingScheduling queryScheduling = meetingSchedulingService.queryOne(scheduling);
+
+				Project proEntity = new Project();
+				proEntity.setId(project.getId());
+				if (currMeetingResult.equals(DictEnum.meetingResult.待定.getCode())
+						&& !queryScheduling.getStatus().equals(DictEnum.meetingResult.待定.getCode())) {
+					/*
+					 * 1.更新项目的当前阶段的排期结果为“待排期”,排期起始和结束时间置空，待秘书重新选择
+					 * 2.更新过会次数、变更操作时间
+					 */
+					queryScheduling.setScheduleStatus(DictEnum.meetingSheduleResult.待排期.getCode());
+					queryScheduling.setReserveTimeStart(null);
+					queryScheduling.setReserveTimeEnd(null);
+					queryScheduling.setReserveTimeEndStr(null);
+					queryScheduling.setReserveTimeStartStr(null);
+					queryScheduling.setStatus(DictEnum.meetingResult.待定.getCode());
+					queryScheduling.setUpdatedTime((new Date()).getTime()); // 变更操作时间
+					queryScheduling.setApplyTime(new Timestamp(new Date().getTime()));
+					meetingSchedulingService.updateBySelective(queryScheduling);
+					ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(),
+							project.getId(), "10.3", UrlNumber.three);
+				} else {
+					responseBody.setResult(new Result(Status.ERROR, "cfpq", "项目不能重复申请投决会排期!"));
+					return responseBody;
+				}
+
+			} else {
+				responseBody.setResult(new Result(Status.OK, "xg", "并不需要申请排期"));
+				return responseBody;
+			}
+
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null, "排期添加失败"));
+			if (logger.isErrorEnabled()) {
+				logger.error("addpq 排期添加失败 ", e);
+			}
+		}
+
+		responseBody.setResult(new Result(Status.OK, "sqpqcg", "申请排期成功"));
+		return responseBody;
+
+	}
+
+	// TODO
+	// 为了app2.1.9期新提出的项目流程接口
+	/**
+	 * 供app端项目流程
+	 * 
+	 * @param pid
+	 * @param request
+	 * @param project
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/aprojetProgress/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<AppProgress> aprojetProgress(@PathVariable("pid") String pid, HttpServletRequest request) {
+		ResponseData<AppProgress> responseBody = new ResponseData<AppProgress>();
+		if (pid == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
+			return responseBody;
+		}
+		Project p = projectService.queryById(Long.parseLong(pid));
+		if (p == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
+			return responseBody;
+		}
+		String projectProgress = p.getProjectProgress();
+		if (projectProgress == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "该项目没有进行项目流程"));
+			return responseBody;
+		}
+		String projectType = p.getProjectType();
+		if (null == projectType || projectType.trim().equals("")) {
+			responseBody.setResult(new Result(Status.ERROR, null, "该项目缺少项目类型数据项值"));
+			return responseBody;
+		}
+		// 截取projectProgress取到:后的值
+		String a[] = projectProgress.split(":");
+		String num = a[1];
+		try {
+			int n = Integer.parseInt(num);
+			List<AppProgress> appProgresslist = new ArrayList<AppProgress>();
+			// 获取上传的签署证明 5.投资意向书 6.投资协议 7.股权转让协议
+			SopVoucherFile sopVoucherFile = null;
+			// sopfile
+			SopFile sopFile = null;
+			// 访谈记录的类
+			InterviewRecord interviewRecord = null;
+			// 业务类型的类
+			AppSopFile appSopFile = null;
+			// 会议记录的类
+			MeetingRecord meetingRecord = null;
+			AppProgress appProgress = null;
+			for (int i = n; i > 0; i--) {
+				meetingRecord = new MeetingRecord();
+				appSopFile = new AppSopFile();
+				interviewRecord = new InterviewRecord();
+				sopFile = new SopFile();
+				sopVoucherFile = new SopVoucherFile();
+				appProgress = new AppProgress();
+
+				// 股权交割
+				if (i == 9) {
+					// 项目阶段
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:9"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:9");// →项目流程阶段编码
+					// 据流程阶段编码、项目ID查询文件信息SopFile
+					sopFile.setProjectProgress("projectProgress:9");
+					sopFile.setProjectId(Long.parseLong(pid));
+					List<String> fileworkTypeList = new ArrayList<String>();
+					fileworkTypeList.add(DictEnum.fileWorktype.工商转让凭证.getCode());
+					fileworkTypeList.add(DictEnum.fileWorktype.资金拨付凭证.getCode());
+					sopFile.setFileworktypeList(fileworkTypeList);
+					// 修改 催办 id没返回 加上id 2016/8/11 /8:43
+					// sopFile.setFileValid(1); //生效文件
+					List<SopFile> listSop = sopFileService.queryList(sopFile);
+
+					List<AppSopFile> zjbfFileList = new ArrayList<AppSopFile>();
+					List<AppSopFile> gsbgdjFileList = new ArrayList<AppSopFile>();
+					AppSopFile asfile9 = null;
+					if (!listSop.isEmpty()) {
+						for (SopFile sop : listSop) {
+							asfile9 = new AppSopFile();
+							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.资金拨付凭证.getCode())) {
+								if (sop.getFileValid() == 1) {
+									asfile9.setFileYwCode(sop.getFileWorktype()); // →文件（档案）业务分类编码
+									asfile9.setFileWorktype(sop.getfWorktype()); // →文件（档案）业务分类名称
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+										String fn = sop.getFileName();
+										String fs = sop.getFileSuffix();
+										String fileName = fn + "." + fs;
+										asfile9.setFileName(fileName);// →文件名称（含后缀）
+									}
+									asfile9.setFileDsCode(sop.getFileStatus()); // →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
+									asfile9.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));// →文件(档案)状态名称
+									Long ti = null;
+									if (sop.getUpdatedTime() != null) {
+										ti = sop.getUpdatedTime();
+									} else {
+										ti = sop.getCreatedTime();
+									}
+									if (ti != null) {
+										// asfile9.setFileTime(DateUtil.longString(ti));
+										asfile9.setFileTime(ti.toString()); // →文件(档案)最后更新时间（数据格式：时间戳）
+									}
+									asfile9.setFileKey(sop.getFileKey()); // →文件(档案)上传阿里云返回的KEY
+									Long uid = sop.getFileUid(); // →文件(档案)上传人的ID
+									if (uid != null) {
+										User user = userService.queryById(uid);
+										asfile9.setName(user.getRealName()); // →文件(档案)上传人的真实姓名
+									}
+									asfile9.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									asfile9.setId(sop.getId()); // →文件(档案)表的ID主键
+
+								} else if (sop.getFileValid() == 0) {
+									SopFile so = new SopFile();
+									so.setFileValid(0);
+									so.setFileWorktype(DictEnum.fileWorktype.资金拨付凭证.getCode());
+									so.setProjectId(Long.valueOf(pid));
+									SopFile sso = sopFileService.queryOne(so);
+									asfile9.setId(sso.getId());
+								}
+								zjbfFileList.add(asfile9);
+							} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.工商转让凭证.getCode())) {
+								if (sop.getFileValid() == 1) {
+									asfile9.setFileYwCode(sop.getFileWorktype());
+									asfile9.setFileWorktype(sop.getfWorktype());
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+										String fn = sop.getFileName();
+										String fs = sop.getFileSuffix();
+										String fileName = fn + "." + fs;
+										asfile9.setFileName(fileName);
+									}
+									asfile9.setFileDsCode(sop.getFileStatus());
+									asfile9.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+
+									Long ti = null;
+									if (sop.getUpdatedTime() != null) {
+										ti = sop.getUpdatedTime();
+									} else {
+										ti = sop.getCreatedTime();
+									}
+									if (ti != null) {
+										asfile9.setFileTime(ti.toString());
+									}
+									asfile9.setFileKey(sop.getFileKey());
+									Long uid = sop.getFileUid();
+									if (uid != null) {
+										User user = userService.queryById(uid);
+										asfile9.setName(user.getRealName());
+									}
+									asfile9.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									asfile9.setId(sop.getId()); // →文件(档案)表的ID主键
+
+								} else if (sop.getFileValid() == 0) {
+									SopFile so = new SopFile();
+									so.setFileValid(0);
+									so.setFileWorktype(DictEnum.fileWorktype.工商转让凭证.getCode());
+									so.setProjectId(Long.valueOf(pid));
+									SopFile sso = sopFileService.queryOne(so);
+									asfile9.setId(sso.getId());
+								}
+								gsbgdjFileList.add(asfile9);
+							}
+						}
+
+					}
+					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
+					AppFileDTO appfileDto = new AppFileDTO();
+					appfileDto.setFileTypeCode(DictEnum.fileWorktype.资金拨付凭证.getCode());
+					appfileDto.setFileTypeName(DictEnum.fileWorktype.资金拨付凭证.getName());
+					appfileDto.setAppSopFile(zjbfFileList);
+					list.add(appfileDto);
+
+					AppFileDTO gqzr_appfileDto = new AppFileDTO();
+					gqzr_appfileDto.setFileTypeCode(DictEnum.fileWorktype.工商转让凭证.getCode());
+					gqzr_appfileDto.setFileTypeName(DictEnum.fileWorktype.工商转让凭证.getName());
+					gqzr_appfileDto.setAppSopFile(gsbgdjFileList);
+					list.add(gqzr_appfileDto);
+
+					appProgress.setAppFileDtoList(list);
+					appProgresslist.add(appProgress);
+				}
+				// 投资协议
+				else if (i == 8) {
+					List<AppSopFile> tzxyAppSopFileList = new ArrayList<AppSopFile>();// 投资协议的档案list
+					List<AppSopFile> gqzrxyAppSopFileList = new ArrayList<AppSopFile>();// 股权转让协议的档案list
+					// 项目阶段
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:8"));
+					appProgress.setProjectProgress("projectProgress:8");// →项目流程阶段编码
+
+					// 据流程阶段编码、项目ID查询档案文件信息SopFile
+					SopFile query_sopfile = new SopFile();
+					query_sopfile.setProjectProgress("projectProgress:8");
+					query_sopfile.setProjectId(Long.parseLong(pid));
+
+					List<String> fileworkTypeList = new ArrayList<String>();
+					fileworkTypeList.add(DictEnum.fileWorktype.投资协议.getCode());
+					fileworkTypeList.add(DictEnum.fileWorktype.股权转让协议.getCode());
+					query_sopfile.setFileworktypeList(fileworkTypeList);
+					query_sopfile.setFileValid(1); // 生效文件
+
+					AppSopFile $asfile = null;
+					List<SopFile> sfList = sopFileService.queryList(query_sopfile);
+					if (sfList != null && sfList.size() > 0) {
+						for (SopFile sfile : sfList) {
+							$asfile = new AppSopFile();
+
+							if (sfile.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())) {
+								$asfile.setFileYwCode(sfile.getFileWorktype()); // fileworktype档案业务分类Code
+																				// --
+																				// fileWorktype:6
+								$asfile.setFileWorktype(sfile.getfWorktype()); // fileworktype档案业务分类Code对应的名称
+																				// 投资协议
+
+								if (sfile.getFileName() != null || sfile.getFileSuffix() != null) {
+									String fn = sfile.getFileName();
+									String fs = sfile.getFileSuffix();
+									String fileName = fn + "." + fs;
+									$asfile.setFileName(fileName); // 上传文件的名称
+								}
+								$asfile.setFileDsCode(sfile.getFileStatus()); // 上传的文件状态的code
+																				// ;
+																				// fileStatus:1缺失
+																				// ;
+																				// fileStatus:2:已上传
+																				// ;
+																				// fileStatus:3
+																				// 已签署
+								$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus())); // 上传的文件状态的名称
+								Long ti = null;
+								if (sfile.getUpdatedTime() != null) {
+									ti = sfile.getUpdatedTime();
+								} else {
+									ti = sfile.getCreatedTime();
+								}
+								if (ti != null) {
+									$asfile.setFileTime(ti.toString()); // 文件创建或最新更的时间
+								}
+								$asfile.setFileKey(sfile.getFileKey()); // 档案阿里云存储Key
+								Long uid = sfile.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									$asfile.setName(user.getRealName()); // 上传人/起草者
+																			// 的姓名
+								}
+								$asfile.setFileValid(sfile.getFileValid());
+								$asfile.setId(sfile.getId()); // 文件ID
+								$asfile.setSignFlag(0); // 档案文件
+								tzxyAppSopFileList.add($asfile);
+							}
+
+							else if (sfile.getFileWorktype().equals(DictEnum.fileWorktype.股权转让协议.getCode())) {
+								$asfile.setFileYwCode(sfile.getFileWorktype()); // fileworktype档案业务分类Code
+																				// fileWorktype:7
+								$asfile.setFileWorktype(sfile.getfWorktype()); // fileworktype档案业务分类Code对应的名称
+																				// 股权转让协议
+								if (sfile.getFileName() != null || sfile.getFileSuffix() != null) {
+									String fn = sfile.getFileName();
+									String fs = sfile.getFileSuffix();
+									String fileName = fn + "." + fs;
+									$asfile.setFileName(fileName); // 上传文件的名称
+								}
+								$asfile.setFileDsCode(sfile.getFileStatus()); // 上传的文件状态的code
+																				// ;
+																				// fileStatus:1缺失
+																				// ;
+																				// fileStatus:2:已上传
+																				// ;
+																				// fileStatus:3
+																				// 已签署
+								$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus())); // 上传的文件状态的名称
+								Long ti = null;
+								if (sfile.getUpdatedTime() != null) {
+									ti = sfile.getUpdatedTime();
+								} else {
+									ti = sfile.getCreatedTime();
+								}
+								if (ti != null) {
+									$asfile.setFileTime(ti.toString()); // 文件创建或最新更的时间
+								}
+								$asfile.setFileKey(sfile.getFileKey());
+								Long uid = sfile.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									$asfile.setName(user.getRealName()); // 档案阿里云存储Key
+								}
+								$asfile.setFileValid(sfile.getFileValid());
+								$asfile.setId(sfile.getId()); // 文件ID
+								$asfile.setSignFlag(0); // 档案文件
+								gqzrxyAppSopFileList.add($asfile);
+							}
+						}
+					}
+					// 据流程阶段编码、项目ID查询签署文件信息SopVouchFile
+					sopVoucherFile.setProjectProgress("projectProgress:8");
+					sopVoucherFile.setProjectId(Long.parseLong(pid));
+					List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile); // 查询出2种签署文件
+					AppSopFile asfile8 = null;
+					if (listSop != null && listSop.size() > 0) {
+						for (SopVoucherFile sop : listSop) {
+							asfile8 = new AppSopFile();
+							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())) {
+								asfile8.setFileYwCode(sop.getFileWorktype()); // //fileworktype档案业务分类Code
+																				// fileWorktype:6
+								asfile8.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
+
+								if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+									String fn = sop.getFileName();
+									String fs = sop.getFileSuffix();
+									String fileName = fn + "." + fs;
+									asfile8.setFileName(fileName);
+								}
+								asfile8.setFileDsCode(sop.getFileStatus());
+								asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+								Long ti = null;
+								if (sop.getUpdatedTime() != null) {
+									ti = sop.getUpdatedTime();
+								} else {
+									ti = sop.getCreatedTime();
+								}
+								if (ti != null) {
+									asfile8.setFileTime(ti.toString());
+								}
+								asfile8.setFileKey(sop.getFileKey());
+								Long uid = sop.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									asfile8.setName(user.getRealName());
+								}
+								asfile8.setId(sop.getId()); // →签署档案表的ID主键
+								asfile8.setSignFlag(1); // 档案文件
+								tzxyAppSopFileList.add(asfile8);
+							} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.股权转让协议.getCode())) {
+								asfile8.setFileYwCode(sop.getFileWorktype());
+								asfile8.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
+								if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+									String fn = sop.getFileName();
+									String fs = sop.getFileSuffix();
+									String fileName = fn + "." + fs;
+									asfile8.setFileName(fileName);
+								}
+								asfile8.setFileDsCode(sop.getFileStatus());
+								asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+								Long ti = null;
+								if (sop.getUpdatedTime() != null) {
+									ti = sop.getUpdatedTime();
+								} else {
+									ti = sop.getCreatedTime();
+								}
+								if (ti != null) {
+									asfile8.setFileTime(ti.toString());
+								}
+								asfile8.setFileKey(sop.getFileKey());
+								Long uid = sop.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									asfile8.setName(user.getRealName());
+								}
+								asfile8.setId(sop.getId()); // →签署档案表的ID主键
+								asfile8.setSignFlag(1); // 档案文件
+								gqzrxyAppSopFileList.add(asfile8);
+							}
+						}
+					}
+					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
+
+					if (tzxyAppSopFileList.size() > 0) {
+						AppFileDTO appfiledto = new AppFileDTO();
+						appfiledto.setFileTypeCode(DictEnum.fileWorktype.投资协议.getCode());
+						appfiledto.setFileTypeName(DictEnum.fileWorktype.投资协议.getName());
+						appfiledto.setAppSopFile(tzxyAppSopFileList);
+						list.add(appfiledto);
+					}
+
+					if (gqzrxyAppSopFileList.size() > 0) {
+						AppFileDTO gq_appfileDto = new AppFileDTO();
+						gq_appfileDto.setFileTypeCode(DictEnum.fileWorktype.股权转让协议.getCode());
+						gq_appfileDto.setFileTypeName(DictEnum.fileWorktype.股权转让协议.getName());
+						gq_appfileDto.setAppSopFile(gqzrxyAppSopFileList);
+						list.add(gq_appfileDto);
+					}
+					appProgress.setAppFileDtoList(list);
+					appProgresslist.add(appProgress);
+
+				}
+				// 投资决策会
+				else if (i == 7) {
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:7"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:7");// →项目流程阶段编码
+
+					meetingRecord.setMeetingType("meetingType:4");
+					meetingRecord.setProjectId(Long.parseLong(pid));
+					// 默认的是倒序排新添加的在最上面
+					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
+
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
+					}
+					if (filterList.size() > 0) {
+						MeetingRecord me = filterList.get(0);
+						appProgress.setMeetTime(me.getMeetingDateStr());
+						appProgress.setMeetNotes(me.getMeetingNotes());
+						appProgress.setMeetResult(me.getMeetingResult());
+						appProgress.setMeetingResultStr(me.getMeetingResultStr());
+						appProgress.setMeetCode(me.getMeetingType());
+						appProgress.setId(me.getId()); // 会议ID
+
+						// 添加排情结果标识
+						if (!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
+							MeetingScheduling query = new MeetingScheduling();
+							query.setProjectId(me.getProjectId());
+							query.setMeetingType(DictEnum.meetingType.投决会.getCode());
+							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+							if (mslist != null && mslist.size() > 0) {
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																									// 2
+																									// 的
+																									// 时候app端显示申请排期
+																									// 2016/7/5修改
+							}
+						}
+					} else {
+						MeetingScheduling query = new MeetingScheduling();
+						query.setProjectId(Long.parseLong(pid));
+						query.setMeetingType(DictEnum.meetingType.投决会.getCode());
+						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+						if (mslist != null && mslist.size() > 0) {
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																								// 2
+																								// 的
+																								// 时候app端显示申请排期
+																								// 2016/7/5修改
+						}
+					}
+					appProgresslist.add(appProgress);
+				}
+				// TODO
+				// 尽职调查
+				else if (i == 6) {
+					List<AppSopFile> ywFileList = new ArrayList<AppSopFile>();
+					List<AppSopFile> fwjFileList = new ArrayList<AppSopFile>();
+					List<AppSopFile> cwFileList = new ArrayList<AppSopFile>();
+					List<AppSopFile> rsFileList = new ArrayList<AppSopFile>();
+					// 新功能添加
+					List<AppSopFile> jdqdFileList = new ArrayList<AppSopFile>();
+					List<AppSopFile> jdzjFileList = new ArrayList<AppSopFile>();
+					// 项目阶段
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:6"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:6");// →项目流程阶段编码
+					// 据流程阶段编码、项目ID查询文件信息SopFile
+					sopFile.setProjectProgress("projectProgress:6");
+					sopFile.setProjectId(Long.parseLong(pid));
+
+					List<String> fileworkTypeList = new ArrayList<String>();
+					fileworkTypeList.add(DictEnum.fileWorktype.业务尽职调查报告.getCode());
+					fileworkTypeList.add(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
+					fileworkTypeList.add(DictEnum.fileWorktype.法务尽职调查报告.getCode());
+					fileworkTypeList.add(DictEnum.fileWorktype.财务尽职调查报告.getCode());
+					// 新功能添加
+					fileworkTypeList.add(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
+					fileworkTypeList.add(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
+					sopFile.setFileworktypeList(fileworkTypeList);
+					/*
+					 * sopFile.setFileValid(1); //生效文件
+					 */ List<SopFile> listSop = sopFileService.queryList(sopFile);
+
+					AppSopFile _tsopFile = null;
+					if (listSop != null && listSop.size() > 0) {
+						for (SopFile sop : listSop) {
+							_tsopFile = new AppSopFile();
+							// 如果项目是外部投资
+							if (projectType.equals(DictEnum.projectType.外部投资.getCode())) {
+								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.业务尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+											String fn = sop.getFileName();
+											String fs = sop.getFileSuffix();
+											String fileName = fn + "." + fs;
+											_tsopFile.setFileName(fileName);
+										}
+										_tsopFile.setFileDsCode(sop.getFileStatus());
+										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+										Long ti = null;
+										if (sop.getUpdatedTime() != null) {
+											ti = sop.getUpdatedTime();
+										} else {
+											ti = sop.getCreatedTime();
+										}
+										if (ti != null) {
+											_tsopFile.setFileTime(ti.toString());
+										}
+										_tsopFile.setFileKey(sop.getFileKey());
+										Long uid = sop.getFileUid();
+										if (uid != null) {
+											User user = userService.queryById(uid);
+											_tsopFile.setName(user.getRealName());
+										}
+										_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+										if (sop.getId() == null) {
+											SopFile so = new SopFile();
+											so.setFileValid(0);
+											so.setFileWorktype(DictEnum.fileWorktype.业务尽职调查报告.getCode());
+											so.setProjectId(Long.valueOf(pid));
+											SopFile sso = sopFileService.queryOne(so);
+											_tsopFile.setId(sso.getId());
+										}
+									}
+									ywFileList.add(_tsopFile);
+								}
+
+								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.法务尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+											String fn = sop.getFileName();
+											String fs = sop.getFileSuffix();
+											String fileName = fn + "." + fs;
+											_tsopFile.setFileName(fileName);
+										}
+										_tsopFile.setFileDsCode(sop.getFileStatus());// →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
+										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus())); // →文件(档案)状态名称
+										Long ti = null;
+										if (sop.getUpdatedTime() != null) {
+											ti = sop.getUpdatedTime();
+										} else {
+											ti = sop.getCreatedTime();
+										}
+										if (ti != null) {
+											_tsopFile.setFileTime(ti.toString());
+										}
+										_tsopFile.setFileKey(sop.getFileKey());
+										Long uid = sop.getFileUid();
+										if (uid != null) {
+											User user = userService.queryById(uid);
+											_tsopFile.setName(user.getRealName());
+										}
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
+										SopFile so = new SopFile();
+										so.setFileValid(0);
+										so.setFileWorktype(DictEnum.fileWorktype.法务尽职调查报告.getCode());
+										so.setProjectId(Long.valueOf(pid));
+										SopFile sso = sopFileService.queryOne(so);
+										_tsopFile.setId(sso.getId());
+
+									}
+									fwjFileList.add(_tsopFile);
+								}
+
+								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.财务尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+											String fn = sop.getFileName();
+											String fs = sop.getFileSuffix();
+											String fileName = fn + "." + fs;
+											_tsopFile.setFileName(fileName);
+										}
+										appSopFile.setFileDsCode(sop.getFileStatus());
+										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+										Long ti = null;
+										if (sop.getUpdatedTime() != null) {
+											ti = sop.getUpdatedTime();
+										} else {
+											ti = sop.getCreatedTime();
+										}
+										if (ti != null) {
+											_tsopFile.setFileTime(ti.toString());
+										}
+										_tsopFile.setFileKey(sop.getFileKey());
+										Long uid = sop.getFileUid();
+										if (uid != null) {
+											User user = userService.queryById(uid);
+											_tsopFile.setName(user.getRealName());
+										}
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId()); // →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
+										SopFile so = new SopFile();
+										so.setFileValid(0);
+										so.setFileWorktype(DictEnum.fileWorktype.财务尽职调查报告.getCode());
+										so.setProjectId(Long.valueOf(pid));
+										SopFile sso = sopFileService.queryOne(so);
+										_tsopFile.setId(sso.getId());
+
+									}
+									cwFileList.add(_tsopFile);
+								} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+											String fn = sop.getFileName();
+											String fs = sop.getFileSuffix();
+											String fileName = fn + "." + fs;
+											_tsopFile.setFileName(fileName);
+										}
+										_tsopFile.setFileDsCode(sop.getFileStatus());
+										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+										Long ti = null;
+										if (sop.getUpdatedTime() != null) {
+											ti = sop.getUpdatedTime();
+										} else {
+											ti = sop.getCreatedTime();
+										}
+										if (ti != null) {
+											_tsopFile.setFileTime(ti.toString());
+										}
+										_tsopFile.setFileKey(sop.getFileKey());
+										Long uid = sop.getFileUid();
+										if (uid != null) {
+											User user = userService.queryById(uid);
+											_tsopFile.setName(user.getRealName());
+										}
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
+										SopFile so = new SopFile();
+										so.setFileValid(0);
+										so.setFileWorktype(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
+										so.setProjectId(Long.valueOf(pid));
+										SopFile sso = sopFileService.queryOne(so);
+										_tsopFile.setId(sso.getId());
+
+									}
+									rsFileList.add(_tsopFile);
+								} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查启动会报告.getCode())) {
+									/* if(sop.getFileValid()==1){ */
+									_tsopFile.setFileYwCode(sop.getFileWorktype());
+									_tsopFile.setFileWorktype(sop.getfWorktype());
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+										String fn = sop.getFileName();
+										String fs = sop.getFileSuffix();
+										String fileName = fn + "." + fs;
+										_tsopFile.setFileName(fileName);
+									}
+									_tsopFile.setFileDsCode(sop.getFileStatus());
+									_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+									Long ti = null;
+									if (sop.getUpdatedTime() != null) {
+										ti = sop.getUpdatedTime();
+									} else {
+										ti = sop.getCreatedTime();
+									}
+									if (ti != null) {
+										_tsopFile.setFileTime(ti.toString());
+									}
+									_tsopFile.setFileKey(sop.getFileKey());
+									Long uid = sop.getFileUid();
+									if (uid != null) {
+										User user = userService.queryById(uid);
+										_tsopFile.setName(user.getRealName());
+									}
+									_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									/*
+									 * }else if(sop.getFileValid()==0){
+									 * if(sop.getId()==null){ SopFile so = new
+									 * SopFile(); so.setFileValid(0);
+									 * so.setFileWorktype(DictEnum.fileWorktype.
+									 * 尽职调查启动会报告.getCode());
+									 * so.setProjectId(Long.valueOf(pid));
+									 * SopFile sso =
+									 * sopFileService.queryOne(so);
+									 * _tsopFile.setId(sso.getId()); } }
+									 */
+									jdqdFileList.add(_tsopFile);
+								}
+
+								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查总结会报告.getCode())) {
+
+									_tsopFile.setFileYwCode(sop.getFileWorktype());
+									_tsopFile.setFileWorktype(sop.getfWorktype());
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+										String fn = sop.getFileName();
+										String fs = sop.getFileSuffix();
+										String fileName = fn + "." + fs;
+										_tsopFile.setFileName(fileName);
+									}
+									_tsopFile.setFileDsCode(sop.getFileStatus());
+									_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+									Long ti = null;
+									if (sop.getUpdatedTime() != null) {
+										ti = sop.getUpdatedTime();
+									} else {
+										ti = sop.getCreatedTime();
+									}
+									if (ti != null) {
+										_tsopFile.setFileTime(ti.toString());
+									}
+									_tsopFile.setFileKey(sop.getFileKey());
+									Long uid = sop.getFileUid();
+									if (uid != null) {
+										User user = userService.queryById(uid);
+										_tsopFile.setName(user.getRealName());
+									}
+									_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									/*
+									 * }else if(sop.getFileValid()==0){
+									 * if(sop.getId()==null){ SopFile so = new
+									 * SopFile(); so.setFileValid(0);
+									 * so.setFileWorktype(DictEnum.fileWorktype.
+									 * 尽职调查总结会报告.getCode());
+									 * so.setProjectId(Long.valueOf(pid));
+									 * SopFile sso =
+									 * sopFileService.queryOne(so);
+									 * _tsopFile.setId(sso.getId()); } }
+									 */
+									jdzjFileList.add(_tsopFile);
+								}
+							}
+							// 如果项目是内部投资
+							else if (projectType.equals(DictEnum.projectType.内部创建.getCode())) {
+								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.业务尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+											String fn = sop.getFileName();
+											String fs = sop.getFileSuffix();
+											String fileName = fn + "." + fs;
+											_tsopFile.setFileName(fileName);
+										}
+										_tsopFile.setFileDsCode(sop.getFileStatus());
+										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+										Long ti = null;
+										if (sop.getUpdatedTime() != null) {
+											ti = sop.getUpdatedTime();
+										} else {
+											ti = sop.getCreatedTime();
+										}
+										if (ti != null) {
+											_tsopFile.setFileTime(ti.toString());
+										}
+										_tsopFile.setFileKey(sop.getFileKey());
+										Long uid = sop.getFileUid();
+										if (uid != null) {
+											User user = userService.queryById(uid);
+											_tsopFile.setName(user.getRealName());
+										}
+										_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
+										SopFile so = new SopFile();
+										so.setFileValid(0);
+										so.setFileWorktype(DictEnum.fileWorktype.业务尽职调查报告.getCode());
+										so.setProjectId(Long.valueOf(pid));
+										SopFile sso = sopFileService.queryOne(so);
+										_tsopFile.setId(sso.getId());
+
+									}
+									ywFileList.add(_tsopFile);
+								}
+
+								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
+									if (sop.getFileValid() == 1) {
+										_tsopFile.setFileYwCode(sop.getFileWorktype());
+										_tsopFile.setFileWorktype(sop.getfWorktype());
+										if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+											String fn = sop.getFileName();
+											String fs = sop.getFileSuffix();
+											String fileName = fn + "." + fs;
+											_tsopFile.setFileName(fileName);
+										}
+										_tsopFile.setFileDsCode(sop.getFileStatus());
+										_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+										Long ti = null;
+										if (sop.getUpdatedTime() != null) {
+											ti = sop.getUpdatedTime();
+										} else {
+											ti = sop.getCreatedTime();
+										}
+										if (ti != null) {
+											_tsopFile.setFileTime(ti.toString());
+										}
+										_tsopFile.setFileKey(sop.getFileKey());
+										Long uid = sop.getFileUid();
+										if (uid != null) {
+											User user = userService.queryById(uid);
+											_tsopFile.setName(user.getRealName());
+										}
+										_tsopFile.setFileValid(sop.getFileValid());// →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+										_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									} else if (sop.getFileValid() == 0) {
+
+										SopFile so = new SopFile();
+										so.setFileValid(0);
+										so.setFileWorktype(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
+										so.setProjectId(Long.valueOf(pid));
+										SopFile sso = sopFileService.queryOne(so);
+										_tsopFile.setId(sso.getId());
+
+									}
+									rsFileList.add(_tsopFile);
+								} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查启动会报告.getCode())) {
+
+									_tsopFile.setFileYwCode(sop.getFileWorktype());
+									_tsopFile.setFileWorktype(sop.getfWorktype());
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+										String fn = sop.getFileName();
+										String fs = sop.getFileSuffix();
+										String fileName = fn + "." + fs;
+										_tsopFile.setFileName(fileName);
+									}
+									_tsopFile.setFileDsCode(sop.getFileStatus());
+									_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+									Long ti = null;
+									if (sop.getUpdatedTime() != null) {
+										ti = sop.getUpdatedTime();
+									} else {
+										ti = sop.getCreatedTime();
+									}
+									if (ti != null) {
+										_tsopFile.setFileTime(ti.toString());
+									}
+									_tsopFile.setFileKey(sop.getFileKey());
+									Long uid = sop.getFileUid();
+									if (uid != null) {
+										User user = userService.queryById(uid);
+										_tsopFile.setName(user.getRealName());
+									}
+									_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									/*
+									 * }else if(sop.getFileValid()==0){
+									 * if(sop.getId()==null){ SopFile so = new
+									 * SopFile(); so.setFileValid(0);
+									 * so.setFileWorktype(DictEnum.fileWorktype.
+									 * 尽职调查启动会报告.getCode());
+									 * so.setProjectId(Long.valueOf(pid));
+									 * SopFile sso =
+									 * sopFileService.queryOne(so);
+									 * _tsopFile.setId(sso.getId()); } }
+									 */
+									jdqdFileList.add(_tsopFile);
+								} else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查总结会报告.getCode())) {
+
+									_tsopFile.setFileYwCode(sop.getFileWorktype());
+									_tsopFile.setFileWorktype(sop.getfWorktype());
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+										String fn = sop.getFileName();
+										String fs = sop.getFileSuffix();
+										String fileName = fn + "." + fs;
+										_tsopFile.setFileName(fileName);
+									}
+									_tsopFile.setFileDsCode(sop.getFileStatus());
+									_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
+									Long ti = null;
+									if (sop.getUpdatedTime() != null) {
+										ti = sop.getUpdatedTime();
+									} else {
+										ti = sop.getCreatedTime();
+									}
+									if (ti != null) {
+										_tsopFile.setFileTime(ti.toString());
+									}
+									_tsopFile.setFileKey(sop.getFileKey());
+									Long uid = sop.getFileUid();
+									if (uid != null) {
+										User user = userService.queryById(uid);
+										_tsopFile.setName(user.getRealName());
+									}
+									_tsopFile.setFileValid(sop.getFileValid()); // →文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
+									_tsopFile.setId(sop.getId());//// →文件(档案)表的ID主键
+									/*
+									 * }else if(sop.getFileValid()==0){
+									 * if(sop.getId()==null){ SopFile so = new
+									 * SopFile(); so.setFileValid(0);
+									 * so.setFileWorktype(DictEnum.fileWorktype.
+									 * 尽职调查总结会报告.getCode());
+									 * so.setProjectId(Long.valueOf(pid));
+									 * SopFile sso =
+									 * sopFileService.queryOne(so);
+									 * _tsopFile.setId(sso.getId()); } }
+									 */
+									jdzjFileList.add(_tsopFile);
+								}
+							}
+						}
+					}
+
+					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
+					if (projectType.equals(DictEnum.projectType.外部投资.getCode())) {
+						AppFileDTO appfileDto = new AppFileDTO();
+						appfileDto.setFileTypeCode(DictEnum.fileWorktype.业务尽职调查报告.getCode());
+						appfileDto.setFileTypeName("业务尽调");
+						appfileDto.setAppSopFile(ywFileList);
+						list.add(appfileDto);
+
+						AppFileDTO fwappfileDto = new AppFileDTO();
+						fwappfileDto.setFileTypeCode(DictEnum.fileWorktype.法务尽职调查报告.getCode());
+						fwappfileDto.setFileTypeName("法务尽调");
+						fwappfileDto.setAppSopFile(fwjFileList);
+						list.add(fwappfileDto);
+
+						AppFileDTO cwappfileDto = new AppFileDTO();
+						cwappfileDto.setFileTypeCode(DictEnum.fileWorktype.财务尽职调查报告.getCode());
+						cwappfileDto.setFileTypeName("财务尽调");
+						cwappfileDto.setAppSopFile(cwFileList);
+						list.add(cwappfileDto);
+
+						AppFileDTO rsappfileDto = new AppFileDTO();
+						rsappfileDto.setFileTypeCode(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
+						rsappfileDto.setFileTypeName("人事尽调");
+						rsappfileDto.setAppSopFile(rsFileList);
+						list.add(rsappfileDto);
+						//有值返回无值的话不返回
+						if(jdqdFileList!=null && jdqdFileList.size()>0){
+							AppFileDTO jdqdappfileDto = new AppFileDTO();
+							jdqdappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
+							jdqdappfileDto.setFileTypeName("尽职调查启动会报告");
+							jdqdappfileDto.setAppSopFile(jdqdFileList);
+							list.add(jdqdappfileDto);
+						}
+						//有值返回无值的话不返回
+						if(jdzjFileList!=null && jdzjFileList.size()>0){
+							AppFileDTO jdzjappfileDto = new AppFileDTO();
+							jdzjappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
+							jdzjappfileDto.setFileTypeName("尽职调查总结会报告");
+							jdzjappfileDto.setAppSopFile(jdzjFileList);
+							list.add(jdzjappfileDto);
+						}
+						appProgress.setAppFileDtoList(list);
+						appProgresslist.add(appProgress);
+					} else if (projectType.equals(DictEnum.projectType.内部创建.getCode())) {
+						AppFileDTO appfileDto = new AppFileDTO();
+						appfileDto.setFileTypeCode(DictEnum.fileWorktype.业务尽职调查报告.getCode());
+						appfileDto.setFileTypeName("业务尽调");
+						appfileDto.setAppSopFile(ywFileList);
+						list.add(appfileDto);
+
+						AppFileDTO rsappfileDto = new AppFileDTO();
+						rsappfileDto.setFileTypeCode(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
+						rsappfileDto.setFileTypeName("人事尽调");
+						rsappfileDto.setAppSopFile(rsFileList);
+						list.add(rsappfileDto);
+						
+						//有值返回无值的话不返回
+						if(jdqdFileList!=null && jdqdFileList.size()>0){
+							AppFileDTO jdqdappfileDto = new AppFileDTO();
+							jdqdappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
+							jdqdappfileDto.setFileTypeName("尽职调查启动会报告");
+							jdqdappfileDto.setAppSopFile(jdqdFileList);
+							list.add(jdqdappfileDto);
+						}
+						
+						//有值返回无值的话不返回
+						if(jdzjFileList!=null && jdzjFileList.size()>0){
+							AppFileDTO jdzjappfileDto = new AppFileDTO();
+							jdzjappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
+							jdzjappfileDto.setFileTypeName("尽职调查总结会报告");
+							jdzjappfileDto.setAppSopFile(jdzjFileList);
+							list.add(jdzjappfileDto);
+						}
+						
+						appProgress.setAppFileDtoList(list);
+						appProgresslist.add(appProgress);
+					}
+				}
+				// 投资意向书
+				else if (i == 5) {
+					// 项目阶段
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:5"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:5");// →项目流程阶段编码
+					// 业务类型
+					sopVoucherFile.setProjectProgress("projectProgress:5");
+					sopVoucherFile.setProjectId(Long.parseLong(pid));
+					List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile);
+					AppSopFile asfile5 = null;
+					List<AppSopFile> tzyxsFileList = new ArrayList<AppSopFile>();
+					if (!listSop.isEmpty()) {
+						for (SopVoucherFile sop : listSop) {
+							asfile5 = new AppSopFile();
+
+							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资意向书.getCode())) {
+								asfile5.setFileYwCode(sop.getFileWorktype());
+								asfile5.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
+								if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+									String fn = sop.getFileName();
+									String fs = sop.getFileSuffix();
+									String fileName = fn + "." + fs;
+									asfile5.setFileName(fileName);
+								}
+								asfile5.setFileDsCode(sop.getFileStatus()); // →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
+								asfile5.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));// →文件(档案)状态名称
+								Long ti = null;
+								if (sop.getUpdatedTime() != null) {
+									ti = sop.getUpdatedTime();
+								} else {
+									ti = sop.getCreatedTime();
+								}
+								if (ti != null) {
+									asfile5.setFileTime(ti.toString());
+								}
+								asfile5.setFileKey(sop.getFileKey());
+								Long uid = sop.getFileUid();
+								if (uid != null) {
+									User user = userService.queryById(uid);
+									asfile5.setName(user.getRealName());
+								}
+								asfile5.setId(sop.getId()); // →文件(档案)表的ID主键
+								tzyxsFileList.add(asfile5);
+							}
+						}
+					}
+					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
+					AppFileDTO appfileDto = new AppFileDTO();
+					appfileDto.setFileTypeCode(DictEnum.fileWorktype.投资意向书.getCode());
+					appfileDto.setFileTypeName(DictEnum.fileWorktype.投资意向书.getName());
+					appfileDto.setAppSopFile(tzyxsFileList);
+					list.add(appfileDto);
+
+					appProgress.setAppFileDtoList(list);
+					appProgresslist.add(appProgress);
+				}
+				// 立项会
+				else if (i == 4) {
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:4"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:4");// →项目流程阶段编码
+					// 据会议类型、项目ID查询会议信息
+					meetingRecord.setMeetingType("meetingType:3");
+					meetingRecord.setProjectId(Long.parseLong(pid));
+					// 默认的是倒序排添加的最上面
+					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
+
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
+					}
+					if (filterList.size() > 0) { // 处理待定 、通过或否决
+						MeetingRecord me = filterList.get(0);
+						appProgress.setMeetTime(me.getMeetingDateStr());
+						appProgress.setMeetNotes(me.getMeetingNotes());
+						appProgress.setMeetResult(me.getMeetingResult());
+						appProgress.setMeetingResultStr(me.getMeetingResultStr());
+						appProgress.setMeetCode(me.getMeetingType());
+
+						// 添加排情结果标识
+						if (!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
+							MeetingScheduling query = new MeetingScheduling();
+							query.setProjectId(me.getProjectId());
+							query.setMeetingType(DictEnum.meetingType.立项会.getCode());
+							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+							if (mslist != null && mslist.size() > 0) {
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																									// 2
+																									// 的
+																									// 时候app端显示申请排期
+																									// 2016/7/5修改
+							}
+						}
+					} else {
+						MeetingScheduling query = new MeetingScheduling();
+						query.setProjectId(Long.parseLong(pid));
+						query.setMeetingType(DictEnum.meetingType.立项会.getCode());
+						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+						if (mslist != null && mslist.size() > 0) {
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																								// 2
+																								// 的
+																								// 时候app端显示申请排期
+																								// 2016/7/5修改
+						}
+					}
+					// 2016/8/16 新增立项会报告查询
+					SopFile so = new SopFile();
+					so.setProjectId(Long.parseLong(pid));
+					so.setFileWorktype(DictEnum.fileWorktype.立项报告.getCode());
+					so.setProjectProgress(DictEnum.projectProgress.立项会.getCode());
+					List<SopFile> s = sopFileService.queryList(so);
+					List<AppSopFile> FileList = null;
+					if (s != null && s.size() > 0) {
+						AppSopFile asfile = new AppSopFile();
+						FileList = new ArrayList<AppSopFile>();
+
+						SopFile b = s.get(0);
+						if (b != null) {
+							asfile.setBucketName(b.getBucketName());
+							asfile.setFileYwCode(b.getFileWorktype());
+							asfile.setFileWorktype(DictEnum.fileWorktype.getNameByCode(b.getFileWorktype()));
+							if (b.getFileName() != null || b.getFileSuffix() != null) {
+								String fn = b.getFileName();
+								String fs = b.getFileSuffix();
+								String fileName = fn + "." + fs;
+								asfile.setFileName(fileName);
+							}
+							Long ti = null;
+							if (b.getUpdatedTime() != null) {
+								ti = b.getUpdatedTime();
+							} else {
+								ti = b.getCreatedTime();
+							}
+							if (ti != null) {
+								asfile.setFileTime(ti.toString());
+							}
+							asfile.setFileKey(b.getFileKey());
+							FileList.add(asfile);
+						}
+
+						List<AppFileDTO> list = new ArrayList<AppFileDTO>();
+						AppFileDTO appfileDto = new AppFileDTO();
+						appfileDto.setFileTypeCode(DictEnum.fileWorktype.立项报告.getCode());
+						appfileDto.setFileTypeName(DictEnum.fileWorktype.立项报告.getName());
+						appfileDto.setAppSopFile(FileList);
+						list.add(appfileDto);
+						appProgress.setAppFileDtoList(list);
+					}
 				
-		   	}
-	   		
-	   		
-	   		//TODO 
-	   		//为了app2.1.9期新提出的项目流程接口	   	
-	   		/**
-	   		 * 供app端项目流程
-	   		 * 
-	   		 * @param pid
-	   		 * @param request
-	   		 * @param project
-	   		 * @return
-	   		 */
-	   		@ResponseBody
-	   		@RequestMapping(value = "/aprojetProgress/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	   		public ResponseData<AppProgress> aprojetProgress(@PathVariable("pid") String pid, HttpServletRequest request) {
-	   			ResponseData<AppProgress> responseBody = new ResponseData<AppProgress>();
-	   			if (pid == null) {
-	   				responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
-	   				return responseBody;
-	   			}
-	   			Project p = projectService.queryById(Long.parseLong(pid));
-	   			if (p == null) {
-	   				responseBody.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
-	   				return responseBody;
-	   			}
-	   			String projectProgress = p.getProjectProgress();
-	   			if (projectProgress == null) {
-	   				responseBody.setResult(new Result(Status.ERROR, null, "该项目没有进行项目流程"));
-	   				return responseBody;
-	   			}
-	   		   String projectType = p.getProjectType();
-	   		   if(null==projectType || projectType.trim().equals("")){
-	   				responseBody.setResult(new Result(Status.ERROR, null, "该项目缺少项目类型数据项值"));
-	   				return responseBody;
-	   		   }
-	   			// 截取projectProgress取到:后的值
-	   			String a[] = projectProgress.split(":");
-	   			String num = a[1];
-	   			try {
-	   				int n = Integer.parseInt(num);		
-	   				List<AppProgress> appProgresslist =  new ArrayList<AppProgress>();
-	   				// 获取上传的签署证明 5.投资意向书 6.投资协议 7.股权转让协议
-	   				SopVoucherFile sopVoucherFile = null;
-	   				// sopfile
-	   				SopFile sopFile = null;
-	   				// 访谈记录的类
-	   				InterviewRecord interviewRecord = null;
-	   				// 业务类型的类
-	   				AppSopFile appSopFile = null;
-	   				// 会议记录的类
-	   				MeetingRecord meetingRecord = null;
-	   				AppProgress appProgress = null;
-	   				for (int i = n; i > 0; i--) {				
-	   					meetingRecord = new MeetingRecord();
-	   					appSopFile = new AppSopFile();
-	   					interviewRecord = new InterviewRecord();
-	   					sopFile = new SopFile();
-	   					sopVoucherFile = new SopVoucherFile();
-	   					appProgress = new AppProgress();
-	   					
-	   					// 股权交割
-	   					if (i == 9) {
-	   						// 项目阶段
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:9"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:9");//→项目流程阶段编码
-	   						// 据流程阶段编码、项目ID查询文件信息SopFile
-	   						sopFile.setProjectProgress("projectProgress:9");
-	   						sopFile.setProjectId(Long.parseLong(pid));
-	   						List<String> fileworkTypeList = new ArrayList<String>();
-	   						fileworkTypeList.add(DictEnum.fileWorktype.工商转让凭证.getCode());
-	   						fileworkTypeList.add(DictEnum.fileWorktype.资金拨付凭证.getCode());
-	   						sopFile.setFileworktypeList(fileworkTypeList);
-	   						//修改 催办 id没返回 加上id 2016/8/11 /8:43
-	   						//sopFile.setFileValid(1); //生效文件
-	   						List<SopFile> listSop = sopFileService.queryList(sopFile);
-	   						
-	   						List<AppSopFile> zjbfFileList = new ArrayList<AppSopFile>();
-	   						List<AppSopFile> gsbgdjFileList = new ArrayList<AppSopFile>();
-	   						AppSopFile asfile9 = null;
-	   						if (!listSop.isEmpty()) {
-	   							for (SopFile sop : listSop) {
-	   								asfile9 = new AppSopFile();
-	   								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.资金拨付凭证.getCode())) {
-	   									if(sop.getFileValid()==1){
-	   										asfile9.setFileYwCode(sop.getFileWorktype()); //→文件（档案）业务分类编码
-	   										asfile9.setFileWorktype(sop.getfWorktype()); //→文件（档案）业务分类名称
-	   										if(sop.getFileName()!=null || sop.getFileSuffix()!=null){
-	   											String fn = sop.getFileName();
-	   											String fs = sop.getFileSuffix();
-	   											String fileName = fn + "." + fs;
-	   											asfile9.setFileName(fileName);//→文件名称（含后缀）
-	   										}
-	   										asfile9.setFileDsCode(sop.getFileStatus());	//→文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态								
-	   										asfile9.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));//→文件(档案)状态名称		
-	   										Long ti = null;
-	   										if (sop.getUpdatedTime() != null) {
-	   											ti = sop.getUpdatedTime();
-	   										} else {
-	   											ti = sop.getCreatedTime();
-	   										}
-	   										if (ti != null) {
-	   											//asfile9.setFileTime(DateUtil.longString(ti));
-	   											asfile9.setFileTime(ti.toString()); //→文件(档案)最后更新时间（数据格式：时间戳）
-	   										}
-	   										asfile9.setFileKey(sop.getFileKey()); //→文件(档案)上传阿里云返回的KEY
-	   										Long uid = sop.getFileUid(); //→文件(档案)上传人的ID
-	   										if(uid!=null){
-	   											User user = userService.queryById(uid);
-	   											asfile9.setName(user.getRealName());  //→文件(档案)上传人的真实姓名
-	   										}
-	   										asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   										asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-	   										
-	   										}else if(sop.getFileValid()==0){										
-	   												SopFile so = new SopFile();
-	   												so.setFileValid(0);
-	   												so.setFileWorktype(DictEnum.fileWorktype.资金拨付凭证.getCode());
-	   												so.setProjectId(Long.valueOf(pid));
-	   												SopFile sso = sopFileService.queryOne(so);
-	   												asfile9.setId(sso.getId());										
-	   									}
-	   									zjbfFileList.add(asfile9);
-	   								} 
-	   								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.工商转让凭证.getCode())) {
-	   								  if(sop.getFileValid()==1){
-	   									asfile9.setFileYwCode(sop.getFileWorktype());
-	   									asfile9.setFileWorktype(sop.getfWorktype());
-	   										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   											String fn = sop.getFileName();
-	   											String fs = sop.getFileSuffix();
-	   											String fileName = fn + "." + fs;
-	   											asfile9.setFileName(fileName);
-	   										}
-	   										asfile9.setFileDsCode(sop.getFileStatus());									
-	   										asfile9.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   										
-	   										Long ti = null;
-	   										if (sop.getUpdatedTime() != null) {
-	   											ti = sop.getUpdatedTime();
-	   										} else {
-	   											ti = sop.getCreatedTime();
-	   										}
-	   										if (ti != null) {										
-	   											asfile9.setFileTime(ti.toString());
-	   										}
-	   										asfile9.setFileKey(sop.getFileKey());
-	   										Long uid = sop.getFileUid();
-	   										if(uid!=null){
-	   											User user = userService.queryById(uid);
-	   											asfile9.setName(user.getRealName());
-	   										}
-	   										asfile9.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   										asfile9.setId(sop.getId()); //→文件(档案)表的ID主键
-	   										
-	   								  }else if(sop.getFileValid()==0){										
-	   										SopFile so = new SopFile();
-	   										so.setFileValid(0);
-	   										so.setFileWorktype(DictEnum.fileWorktype.工商转让凭证.getCode());
-	   										so.setProjectId(Long.valueOf(pid));
-	   										SopFile sso = sopFileService.queryOne(so);
-	   										asfile9.setId(sso.getId());										
-	   								  }
-	   								  gsbgdjFileList.add(asfile9);
-	   								} 
-	   							}
+					
+					appProgresslist.add(appProgress);
+				}
+				// CEO评审
+				else if (i == 3) {
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:3"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:3");// →项目流程阶段编码
+					// 据会议类型、项目ID查询会议信息
+					meetingRecord.setMeetingType("meetingType:2");
+					meetingRecord.setProjectId(Long.parseLong(pid));
+					// 默认的是倒序排新添加的在最上面
+					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
 
-	   						}				
-	   						List<AppFileDTO> list = new ArrayList<AppFileDTO>();
-	   						AppFileDTO appfileDto = new AppFileDTO();
-	   						appfileDto.setFileTypeCode(DictEnum.fileWorktype.资金拨付凭证.getCode());
-	   						appfileDto.setFileTypeName(DictEnum.fileWorktype.资金拨付凭证.getName());
-	   						appfileDto.setAppSopFile(zjbfFileList);		
-	   						list.add(appfileDto);
-	   						
-	   						AppFileDTO gqzr_appfileDto = new AppFileDTO();
-	   						gqzr_appfileDto.setFileTypeCode(DictEnum.fileWorktype.工商转让凭证.getCode());
-	   						gqzr_appfileDto.setFileTypeName(DictEnum.fileWorktype.工商转让凭证.getName());
-	   						gqzr_appfileDto.setAppSopFile(gsbgdjFileList);		
-	   						list.add(gqzr_appfileDto);
-	   						
-	   						appProgress.setAppFileDtoList(list);					
-	   						appProgresslist.add(appProgress);					
-	   					}
-	   					// 投资协议
-	   					else if (i == 8) {
-	   						List<AppSopFile> tzxyAppSopFileList = new ArrayList<AppSopFile>();//投资协议的档案list
-	   						List<AppSopFile> gqzrxyAppSopFileList = new ArrayList<AppSopFile>();//股权转让协议的档案list
-	   						// 项目阶段
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:8"));
-	   						appProgress.setProjectProgress("projectProgress:8");//→项目流程阶段编码
-	   						
-	   						// 据流程阶段编码、项目ID查询档案文件信息SopFile
-	   						SopFile query_sopfile  = new SopFile();
-	   						query_sopfile.setProjectProgress("projectProgress:8");
-	   						query_sopfile.setProjectId(Long.parseLong(pid));
-	   						
-	   						List<String> fileworkTypeList = new ArrayList<String>();
-	   						fileworkTypeList.add(DictEnum.fileWorktype.投资协议.getCode());
-	   						fileworkTypeList.add(DictEnum.fileWorktype.股权转让协议.getCode());
-	   						query_sopfile.setFileworktypeList(fileworkTypeList);
-	   						query_sopfile.setFileValid(1); //生效文件
-	   						
-	   						AppSopFile $asfile = null;
-	   						List<SopFile> sfList = sopFileService.queryList(query_sopfile);
-	   						if(sfList!=null && sfList.size()>0){
-	   						    for(SopFile sfile : sfList){
-	   						    	$asfile = new AppSopFile();
-	   						    	
-	   						    	if(sfile.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())){
-	   						    		$asfile.setFileYwCode(sfile.getFileWorktype()); //fileworktype档案业务分类Code	--  fileWorktype:6				    		
-	   						    		$asfile.setFileWorktype(sfile.getfWorktype()); //fileworktype档案业务分类Code对应的名称	投资协议
-	   									
-	   									if(sfile.getFileName()!=null||sfile.getFileSuffix()!=null){
-	   										String fn = sfile.getFileName();
-	   										String fs = sfile.getFileSuffix();
-	   										String fileName = fn + "." + fs;
-	   										$asfile.setFileName(fileName); //上传文件的名称
-	   									}
-	   									$asfile.setFileDsCode(sfile.getFileStatus());  //上传的文件状态的code	; fileStatus:1缺失 ; fileStatus:2:已上传	; fileStatus:3	已签署				
-	   									$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus())); //上传的文件状态的名称
-	   									Long ti = null;
-	   									if (sfile.getUpdatedTime() != null) {
-	   										ti = sfile.getUpdatedTime();
-	   									} else {
-	   										ti = sfile.getCreatedTime();
-	   									}
-	   									if (ti != null) {								
-	   										$asfile.setFileTime(ti.toString());  //文件创建或最新更的时间
-	   									}
-	   									$asfile.setFileKey(sfile.getFileKey()); //档案阿里云存储Key
-	   									Long uid = sfile.getFileUid();
-	   									if(uid!=null){
-	   										User user = userService.queryById(uid);
-	   										$asfile.setName(user.getRealName()); //上传人/起草者 的姓名
-	   									}
-	   									$asfile.setFileValid(sfile.getFileValid());
-	   									$asfile.setId(sfile.getId()); //文件ID
-	   									$asfile.setSignFlag(0); //档案文件
-	   									tzxyAppSopFileList.add($asfile);					
-	   						    	}
-	   						    	
-	   								else if (sfile.getFileWorktype().equals(DictEnum.fileWorktype.股权转让协议.getCode())) {
-	   									$asfile.setFileYwCode(sfile.getFileWorktype()); //fileworktype档案业务分类Code	fileWorktype:7
-	   									$asfile.setFileWorktype(sfile.getfWorktype()); //fileworktype档案业务分类Code对应的名称	  股权转让协议
-	   										if(sfile.getFileName()!=null||sfile.getFileSuffix()!=null){
-	   											String fn = sfile.getFileName();
-	   											String fs = sfile.getFileSuffix();
-	   											String fileName = fn + "." + fs;
-	   											$asfile.setFileName(fileName);  //上传文件的名称
-	   										}
-	   										$asfile.setFileDsCode(sfile.getFileStatus());		 //上传的文件状态的code	; fileStatus:1缺失 ; fileStatus:2:已上传	; fileStatus:3	已签署									
-	   										$asfile.setFileDs(DictEnum.fileStatus.getNameByCode(sfile.getFileStatus()));  //上传的文件状态的名称
-	   										Long ti = null;
-	   										if (sfile.getUpdatedTime() != null) {
-	   											ti = sfile.getUpdatedTime();
-	   										} else {
-	   											ti = sfile.getCreatedTime();
-	   										}
-	   										if (ti != null) {									
-	   											$asfile.setFileTime(ti.toString());  //文件创建或最新更的时间
-	   										}
-	   										$asfile.setFileKey(sfile.getFileKey());
-	   										Long uid = sfile.getFileUid();
-	   										if(uid!=null){
-	   											User user = userService.queryById(uid);
-	   											$asfile.setName(user.getRealName()); //档案阿里云存储Key
-	   										}
-	   										$asfile.setFileValid(sfile.getFileValid());
-	   										$asfile.setId(sfile.getId());  //文件ID
-	   										$asfile.setSignFlag(0); //档案文件
-	   										gqzrxyAppSopFileList.add($asfile);
-	   								} 					    	
-	   						    }	
-	   						}					
-	   						//据流程阶段编码、项目ID查询签署文件信息SopVouchFile
-	   						sopVoucherFile.setProjectProgress("projectProgress:8");
-	   						sopVoucherFile.setProjectId(Long.parseLong(pid));
-	   						List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile); //查询出2种签署文件				
-	   						AppSopFile asfile8 = null;
-	   						if (listSop!=null && listSop.size()>0) {
-	   							for (SopVoucherFile sop : listSop) {
-	   								asfile8 = new AppSopFile();
-	   								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资协议.getCode())) {	
-	   									asfile8.setFileYwCode(sop.getFileWorktype()); // //fileworktype档案业务分类Code	fileWorktype:6
-	   									asfile8.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
-	   										
-	   										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   											String fn = sop.getFileName();
-	   											String fs = sop.getFileSuffix();
-	   											String fileName = fn + "." + fs;
-	   											asfile8.setFileName(fileName);
-	   										}
-	   										asfile8.setFileDsCode(sop.getFileStatus());									
-	   										asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   										Long ti = null;
-	   										if (sop.getUpdatedTime() != null) {
-	   											ti = sop.getUpdatedTime();
-	   										} else {
-	   											ti = sop.getCreatedTime();
-	   										}
-	   										if (ti != null) {
-	   											asfile8.setFileTime(ti.toString());
-	   										}
-	   										asfile8.setFileKey(sop.getFileKey());
-	   										Long uid = sop.getFileUid();
-	   										if(uid!=null){
-	   											User user = userService.queryById(uid);
-	   											asfile8.setName(user.getRealName());
-	   										}									
-	   										asfile8.setId(sop.getId()); //→签署档案表的ID主键	
-	   										asfile8.setSignFlag(1); //档案文件
-	   										tzxyAppSopFileList.add(asfile8);
-	   								}							
-	   								else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.股权转让协议.getCode())) {
-	   									asfile8.setFileYwCode(sop.getFileWorktype());
-	   									asfile8.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
-	   										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   											String fn = sop.getFileName();
-	   											String fs = sop.getFileSuffix();
-	   											String fileName = fn + "." + fs;
-	   											asfile8.setFileName(fileName);
-	   										}
-	   										asfile8.setFileDsCode(sop.getFileStatus());									
-	   										asfile8.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   										Long ti = null;
-	   										if (sop.getUpdatedTime() != null) {
-	   											ti = sop.getUpdatedTime();
-	   										} else {
-	   											ti = sop.getCreatedTime();
-	   										}
-	   										if (ti != null) {
-	   											asfile8.setFileTime(ti.toString());
-	   										}
-	   										asfile8.setFileKey(sop.getFileKey());
-	   										Long uid = sop.getFileUid();
-	   										if(uid!=null){
-	   											User user = userService.queryById(uid);
-	   											asfile8.setName(user.getRealName());
-	   										}
-	   										asfile8.setId(sop.getId()); //→签署档案表的ID主键
-	   										asfile8.setSignFlag(1); //档案文件
-	   										gqzrxyAppSopFileList.add(asfile8);						
-	   								} 
-	   							}
-	   						}
-	   						List<AppFileDTO> list = new ArrayList<AppFileDTO>();
-	   						
-	   						if(tzxyAppSopFileList.size()>0){
-	   							AppFileDTO appfiledto = new AppFileDTO();
-	   							appfiledto.setFileTypeCode(DictEnum.fileWorktype.投资协议.getCode());
-	   							appfiledto.setFileTypeName(DictEnum.fileWorktype.投资协议.getName());
-	   							appfiledto.setAppSopFile(tzxyAppSopFileList);			
-	   							list.add(appfiledto);
-	   						}
-	   						
-	   						if(gqzrxyAppSopFileList.size()>0){
-	   							AppFileDTO gq_appfileDto = new AppFileDTO();
-	   							gq_appfileDto.setFileTypeCode(DictEnum.fileWorktype.股权转让协议.getCode());
-	   							gq_appfileDto.setFileTypeName(DictEnum.fileWorktype.股权转让协议.getName());
-	   							gq_appfileDto.setAppSopFile(gqzrxyAppSopFileList);					
-	   							list.add(gq_appfileDto);
-	   						}															
-	   						appProgress.setAppFileDtoList(list);
-	   						appProgresslist.add(appProgress);
-	   						
-	   					}
-	   					// 投资决策会
-	   					else if (i == 7) {
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:7"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:7");//→项目流程阶段编码
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
+					}
+					if (filterList.size() > 0) {
+						MeetingRecord me = filterList.get(0);
+						appProgress.setMeetTime(me.getMeetingDateStr());
+						appProgress.setMeetNotes(me.getMeetingNotes());
+						appProgress.setMeetResult(me.getMeetingResult());
+						appProgress.setMeetingResultStr(me.getMeetingResultStr());
+						appProgress.setMeetCode(me.getMeetingType());
 
-	   						meetingRecord.setMeetingType("meetingType:4");
-	   						meetingRecord.setProjectId(Long.parseLong(pid));
-	   						// 默认的是倒序排新添加的在最上面
-	   						List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-	   						
-	   						List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();			
-	   						for(MeetingRecord mr : listSop){
-	   							if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-	   								filterList.add(mr);	
-	   							}					
-	   						}
-	   						if( filterList.size()>0 ){										
-	   							MeetingRecord me = filterList.get(0);
-	   							appProgress.setMeetTime(me.getMeetingDateStr());
-	   							appProgress.setMeetNotes(me.getMeetingNotes());
-	   							appProgress.setMeetResult(me.getMeetingResult());
-	   							appProgress.setMeetingResultStr(me.getMeetingResultStr());
-	   							appProgress.setMeetCode(me.getMeetingType());
-	   							appProgress.setId(me.getId()); //会议ID
-	   							
-	   							//添加排情结果标识
-	   							if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
-	   								MeetingScheduling query = new MeetingScheduling();
-	   								query.setProjectId(me.getProjectId());
-	   								query.setMeetingType(DictEnum.meetingType.投决会.getCode());
-	   								List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-	   								if(mslist!=null && mslist.size()>0){
-	   									appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
-	   								}
-	   							}
-	   						}else{
-	   							MeetingScheduling query = new MeetingScheduling();
-	   							query.setProjectId(Long.parseLong(pid));
-	   							query.setMeetingType(DictEnum.meetingType.投决会.getCode());
-	   							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-	   							if(mslist!=null && mslist.size()>0){
-	   								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
-	   							}
-	   						}				
-	   						appProgresslist.add(appProgress);						
-	   					}
-	   					//TODO
-	   					// 尽职调查
-	   					else 	if (i == 6) {
-	   						List<AppSopFile> ywFileList = new ArrayList<AppSopFile>();
-	   						List<AppSopFile> fwjFileList = new ArrayList<AppSopFile>();
-	   						List<AppSopFile> cwFileList = new ArrayList<AppSopFile>();
-	   						List<AppSopFile> rsFileList = new ArrayList<AppSopFile>();
-	   						//新功能添加
-	   						List<AppSopFile> jdqdFileList = new ArrayList<AppSopFile>();
-	   						List<AppSopFile> jdzjFileList = new ArrayList<AppSopFile>();
-	   						// 项目阶段
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:6"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:6");//→项目流程阶段编码				
-	   						// 据流程阶段编码、项目ID查询文件信息SopFile
-	   						sopFile.setProjectProgress("projectProgress:6");
-	   						sopFile.setProjectId(Long.parseLong(pid));
-	   						
-	   						List<String> fileworkTypeList = new ArrayList<String>();
-	   						fileworkTypeList.add(DictEnum.fileWorktype.业务尽职调查报告.getCode());
-	   						fileworkTypeList.add(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
-	   						fileworkTypeList.add(DictEnum.fileWorktype.法务尽职调查报告.getCode());
-	   						fileworkTypeList.add(DictEnum.fileWorktype.财务尽职调查报告.getCode());
-	   						//新功能添加
-	   						fileworkTypeList.add(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
-	   						fileworkTypeList.add(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
-	   						sopFile.setFileworktypeList(fileworkTypeList);
-	   						/*sopFile.setFileValid(1); //生效文件
-	   	*/     				List<SopFile> listSop = sopFileService.queryList(sopFile);
-	   						
-	   						AppSopFile _tsopFile = null;
-	   						if (listSop!=null && listSop.size()>0) {
-	   							for (SopFile sop : listSop) {					
-	   								_tsopFile = new AppSopFile();
-	   								//如果项目是外部投资
-	   								if(projectType.equals(DictEnum.projectType.外部投资.getCode())){
-	   									if (sop.getFileWorktype().equals(DictEnum.fileWorktype.业务尽职调查报告.getCode())) {
-	   										if(sop.getFileValid()==1){
-	   										_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   										_tsopFile.setFileWorktype(sop.getfWorktype());
-	   											if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   												String fn = sop.getFileName();
-	   												String fs = sop.getFileSuffix();
-	   												String fileName = fn + "." + fs;
-	   												_tsopFile.setFileName(fileName);
-	   											}
-	   											_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   											_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   											Long ti = null;
-	   											if (sop.getUpdatedTime() != null) {
-	   												ti = sop.getUpdatedTime();
-	   											} else {
-	   												ti = sop.getCreatedTime();
-	   											}
-	   											if (ti != null) {									
-	   												_tsopFile.setFileTime(ti.toString());
-	   											}
-	   											_tsopFile.setFileKey(sop.getFileKey());
-	   											Long uid = sop.getFileUid();
-	   											if(uid!=null){
-	   												User user = userService.queryById(uid);
-	   												_tsopFile.setName(user.getRealName());
-	   											}
-	   											_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   											_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-	   										}else if(sop.getFileValid()==0){
-	   											if(sop.getId()==null){
-	   												SopFile so = new SopFile();
-	   												so.setFileValid(0);
-	   												so.setFileWorktype(DictEnum.fileWorktype.业务尽职调查报告.getCode());
-	   												so.setProjectId(Long.valueOf(pid));
-	   												SopFile sso = sopFileService.queryOne(so);
-	   												_tsopFile.setId(sso.getId());
-	   											}
-	   										}
-	   											ywFileList.add(_tsopFile);
-	   									}	
-	   									
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查启动会报告.getCode())) {
-	   										/*	if(sop.getFileValid()==1){*/
-	   											_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   											_tsopFile.setFileWorktype(sop.getfWorktype());
-	   												if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   													String fn = sop.getFileName();
-	   													String fs = sop.getFileSuffix();
-	   													String fileName = fn + "." + fs;
-	   													_tsopFile.setFileName(fileName);
-	   												}
-	   												_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   												_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   												Long ti = null;
-	   												if (sop.getUpdatedTime() != null) {
-	   													ti = sop.getUpdatedTime();
-	   												} else {
-	   													ti = sop.getCreatedTime();
-	   												}
-	   												if (ti != null) {									
-	   													_tsopFile.setFileTime(ti.toString());
-	   												}
-	   												_tsopFile.setFileKey(sop.getFileKey());
-	   												Long uid = sop.getFileUid();
-	   												if(uid!=null){
-	   													User user = userService.queryById(uid);
-	   													_tsopFile.setName(user.getRealName());
-	   												}
-	   												_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   												_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-	   											/*}else if(sop.getFileValid()==0){
-	   												if(sop.getId()==null){
-	   													SopFile so = new SopFile();
-	   													so.setFileValid(0);
-	   													so.setFileWorktype(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
-	   													so.setProjectId(Long.valueOf(pid));
-	   													SopFile sso = sopFileService.queryOne(so);
-	   													_tsopFile.setId(sso.getId());
-	   												}
-	   											}*/
-	   											jdqdFileList.add(_tsopFile);
-	   										}
-	   									
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查总结会报告.getCode())) {
-	   												
-	   												_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   												_tsopFile.setFileWorktype(sop.getfWorktype());
-	   													if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   														String fn = sop.getFileName();
-	   														String fs = sop.getFileSuffix();
-	   														String fileName = fn + "." + fs;
-	   														_tsopFile.setFileName(fileName);
-	   													}
-	   													_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   													_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   													Long ti = null;
-	   													if (sop.getUpdatedTime() != null) {
-	   														ti = sop.getUpdatedTime();
-	   													} else {
-	   														ti = sop.getCreatedTime();
-	   													}
-	   													if (ti != null) {									
-	   														_tsopFile.setFileTime(ti.toString());
-	   													}
-	   													_tsopFile.setFileKey(sop.getFileKey());
-	   													Long uid = sop.getFileUid();
-	   													if(uid!=null){
-	   														User user = userService.queryById(uid);
-	   														_tsopFile.setName(user.getRealName());
-	   													}
-	   													_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   													_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-	   												/*}else if(sop.getFileValid()==0){
-	   													if(sop.getId()==null){
-	   														SopFile so = new SopFile();
-	   														so.setFileValid(0);
-	   														so.setFileWorktype(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
-	   														so.setProjectId(Long.valueOf(pid));
-	   														SopFile sso = sopFileService.queryOne(so);
-	   														_tsopFile.setId(sso.getId());
-	   													}
-	   												}*/
-	   												jdzjFileList.add(_tsopFile);
-	   											}
-	   										
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.法务尽职调查报告.getCode())) {
-	   										if(sop.getFileValid()==1){
-	   										_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   										_tsopFile.setFileWorktype(sop.getfWorktype());
-	   											if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   												String fn = sop.getFileName();
-	   												String fs = sop.getFileSuffix();
-	   												String fileName = fn + "." + fs;
-	   												_tsopFile.setFileName(fileName);
-	   											}
-	   											_tsopFile.setFileDsCode(sop.getFileStatus());//→文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态					
-	   											_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));  //→文件(档案)状态名称
-	   											Long ti = null;
-	   											if (sop.getUpdatedTime() != null) {
-	   												ti = sop.getUpdatedTime();
-	   											} else {
-	   												ti = sop.getCreatedTime();
-	   											}
-	   											if (ti != null) {									
-	   												_tsopFile.setFileTime(ti.toString());
-	   											}
-	   											_tsopFile.setFileKey(sop.getFileKey());
-	   											Long uid = sop.getFileUid();
-	   											if(uid!=null){
-	   												User user = userService.queryById(uid);
-	   												_tsopFile.setName(user.getRealName());
-	   											}
-	   											_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   											_tsopFile.setId(sop.getId());//→文件(档案)表的ID主键
-	   										}else if(sop.getFileValid()==0){
-	   											
-	   												SopFile so = new SopFile();
-	   												so.setFileValid(0);
-	   												so.setFileWorktype(DictEnum.fileWorktype.法务尽职调查报告.getCode());
-	   												so.setProjectId(Long.valueOf(pid));
-	   												SopFile sso = sopFileService.queryOne(so);
-	   												_tsopFile.setId(sso.getId());
-	   											
-	   										}
-	   	 									    fwjFileList.add(_tsopFile);
-	   									} 
-	   							
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.财务尽职调查报告.getCode())) {
-	   										if(sop.getFileValid()==1){
-	   										_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   										_tsopFile.setFileWorktype(sop.getfWorktype());
-	   											if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   												String fn = sop.getFileName();
-	   												String fs = sop.getFileSuffix();
-	   												String fileName = fn + "." + fs;
-	   												_tsopFile.setFileName(fileName);
-	   											}
-	   											appSopFile.setFileDsCode(sop.getFileStatus());									
-	   											_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   											Long ti = null;
-	   											if (sop.getUpdatedTime() != null) {
-	   												ti = sop.getUpdatedTime();
-	   											} else {
-	   												ti = sop.getCreatedTime();
-	   											}
-	   											if (ti != null) {										
-	   												_tsopFile.setFileTime(ti.toString());
-	   											}
-	   											_tsopFile.setFileKey(sop.getFileKey());
-	   											Long uid = sop.getFileUid();
-	   											if(uid!=null){
-	   												User user = userService.queryById(uid);
-	   												_tsopFile.setName(user.getRealName());
-	   											}
-	   											_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   											_tsopFile.setId(sop.getId()); //→文件(档案)表的ID主键
-	   										}else if(sop.getFileValid()==0){
-	   											
-	   											SopFile so = new SopFile();
-	   											so.setFileValid(0);
-	   											so.setFileWorktype(DictEnum.fileWorktype.财务尽职调查报告.getCode());
-	   											so.setProjectId(Long.valueOf(pid));
-	   											SopFile sso = sopFileService.queryOne(so);
-	   											_tsopFile.setId(sso.getId());
-	   										
-	   									}
-	   											cwFileList.add(_tsopFile);
-	   									}
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
-	   										if(sop.getFileValid()==1){
-	   										_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   										_tsopFile.setFileWorktype(sop.getfWorktype());
-	   											if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   												String fn = sop.getFileName();
-	   												String fs = sop.getFileSuffix();
-	   												String fileName = fn + "." + fs;
-	   												_tsopFile.setFileName(fileName);
-	   											}
-	   											_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   											_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   											Long ti = null;
-	   											if (sop.getUpdatedTime() != null) {
-	   												ti = sop.getUpdatedTime();
-	   											} else {
-	   												ti = sop.getCreatedTime();
-	   											}
-	   											if (ti != null) {										
-	   												_tsopFile.setFileTime(ti.toString());
-	   											}
-	   											_tsopFile.setFileKey(sop.getFileKey());
-	   											Long uid = sop.getFileUid();
-	   											if(uid!=null){
-	   												User user = userService.queryById(uid);
-	   												_tsopFile.setName(user.getRealName());
-	   											}
-	   											_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   											_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-	   										}else if(sop.getFileValid()==0){
-	   											
-	   											SopFile so = new SopFile();
-	   											so.setFileValid(0);
-	   											so.setFileWorktype(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
-	   											so.setProjectId(Long.valueOf(pid));
-	   											SopFile sso = sopFileService.queryOne(so);
-	   											_tsopFile.setId(sso.getId());
-	   										
-	   									}
-	   											rsFileList.add(_tsopFile);
-	   									}							
-	   								}
-	   								//如果项目是内部投资
-	   								else if(projectType.equals(DictEnum.projectType.内部创建.getCode())){
-	   									if (sop.getFileWorktype().equals(DictEnum.fileWorktype.业务尽职调查报告.getCode())) {
-	   										if(sop.getFileValid()==1){
-	   										_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   										_tsopFile.setFileWorktype(sop.getfWorktype());
-	   											if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   												String fn = sop.getFileName();
-	   												String fs = sop.getFileSuffix();
-	   												String fileName = fn + "." + fs;
-	   												_tsopFile.setFileName(fileName);
-	   											}
-	   											_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   											_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   											Long ti = null;
-	   											if (sop.getUpdatedTime() != null) {
-	   												ti = sop.getUpdatedTime();
-	   											} else {
-	   												ti = sop.getCreatedTime();
-	   											}
-	   											if (ti != null) {									
-	   												_tsopFile.setFileTime(ti.toString());
-	   											}
-	   											_tsopFile.setFileKey(sop.getFileKey());
-	   											Long uid = sop.getFileUid();
-	   											if(uid!=null){
-	   												User user = userService.queryById(uid);
-	   												_tsopFile.setName(user.getRealName());
-	   											}
-	   											_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   											_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-	   										}else if(sop.getFileValid()==0){
-	   											
-	   											SopFile so = new SopFile();
-	   											so.setFileValid(0);
-	   											so.setFileWorktype(DictEnum.fileWorktype.业务尽职调查报告.getCode());
-	   											so.setProjectId(Long.valueOf(pid));
-	   											SopFile sso = sopFileService.queryOne(so);
-	   											_tsopFile.setId(sso.getId());
-	   										
-	   									}
-	   											ywFileList.add(_tsopFile);
-	   									}	
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查启动会报告.getCode())) {
-	   										
-	   										_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   										_tsopFile.setFileWorktype(sop.getfWorktype());
-	   											if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   												String fn = sop.getFileName();
-	   												String fs = sop.getFileSuffix();
-	   												String fileName = fn + "." + fs;
-	   												_tsopFile.setFileName(fileName);
-	   											}
-	   											_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   											_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   											Long ti = null;
-	   											if (sop.getUpdatedTime() != null) {
-	   												ti = sop.getUpdatedTime();
-	   											} else {
-	   												ti = sop.getCreatedTime();
-	   											}
-	   											if (ti != null) {									
-	   												_tsopFile.setFileTime(ti.toString());
-	   											}
-	   											_tsopFile.setFileKey(sop.getFileKey());
-	   											Long uid = sop.getFileUid();
-	   											if(uid!=null){
-	   												User user = userService.queryById(uid);
-	   												_tsopFile.setName(user.getRealName());
-	   											}
-	   											_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   											_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-	   									/*	}else if(sop.getFileValid()==0){
-	   											if(sop.getId()==null){
-	   												SopFile so = new SopFile();
-	   												so.setFileValid(0);
-	   												so.setFileWorktype(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
-	   												so.setProjectId(Long.valueOf(pid));
-	   												SopFile sso = sopFileService.queryOne(so);
-	   												_tsopFile.setId(sso.getId());
-	   											}
-	   										}*/
-	   										jdqdFileList.add(_tsopFile);
-	   									}							
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.尽职调查总结会报告.getCode())) {
-	   											
-	   											_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   											_tsopFile.setFileWorktype(sop.getfWorktype());
-	   												if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   													String fn = sop.getFileName();
-	   													String fs = sop.getFileSuffix();
-	   													String fileName = fn + "." + fs;
-	   													_tsopFile.setFileName(fileName);
-	   												}
-	   												_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   												_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   												Long ti = null;
-	   												if (sop.getUpdatedTime() != null) {
-	   													ti = sop.getUpdatedTime();
-	   												} else {
-	   													ti = sop.getCreatedTime();
-	   												}
-	   												if (ti != null) {									
-	   													_tsopFile.setFileTime(ti.toString());
-	   												}
-	   												_tsopFile.setFileKey(sop.getFileKey());
-	   												Long uid = sop.getFileUid();
-	   												if(uid!=null){
-	   													User user = userService.queryById(uid);
-	   													_tsopFile.setName(user.getRealName());
-	   												}
-	   												_tsopFile.setFileValid(sop.getFileValid()); //→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   												_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键
-	   											/*}else if(sop.getFileValid()==0){
-	   												if(sop.getId()==null){
-	   													SopFile so = new SopFile();
-	   													so.setFileValid(0);
-	   													so.setFileWorktype(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
-	   													so.setProjectId(Long.valueOf(pid));
-	   													SopFile sso = sopFileService.queryOne(so);
-	   													_tsopFile.setId(sso.getId());
-	   												}
-	   											}*/
-	   											jdzjFileList.add(_tsopFile);
-	   										}
-	   									else if (sop.getFileWorktype().equals(DictEnum.fileWorktype.人力资源尽职调查报告.getCode())) {
-	   										if(sop.getFileValid()==1){
-	   										_tsopFile.setFileYwCode(sop.getFileWorktype());
-	   										_tsopFile.setFileWorktype(sop.getfWorktype());
-	   											if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   												String fn = sop.getFileName();
-	   												String fs = sop.getFileSuffix();
-	   												String fileName = fn + "." + fs;
-	   												_tsopFile.setFileName(fileName);
-	   											}
-	   											_tsopFile.setFileDsCode(sop.getFileStatus());									
-	   											_tsopFile.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));
-	   											Long ti = null;
-	   											if (sop.getUpdatedTime() != null) {
-	   												ti = sop.getUpdatedTime();
-	   											} else {
-	   												ti = sop.getCreatedTime();
-	   											}
-	   											if (ti != null) {											
-	   												_tsopFile.setFileTime(ti.toString());
-	   											}
-	   											_tsopFile.setFileKey(sop.getFileKey());
-	   											Long uid = sop.getFileUid();
-	   											if(uid!=null){
-	   												User user = userService.queryById(uid);
-	   												_tsopFile.setName(user.getRealName());
-	   											}
-	   											_tsopFile.setFileValid(sop.getFileValid());//→文件(档案)待办任务提交，档案生效（是否显示催办）1是生效，0是
-	   											_tsopFile.setId(sop.getId());////→文件(档案)表的ID主键	
-	   										}else if(sop.getFileValid()==0){
-	   											
-	   											SopFile so = new SopFile();
-	   											so.setFileValid(0);
-	   											so.setFileWorktype(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
-	   											so.setProjectId(Long.valueOf(pid));
-	   											SopFile sso = sopFileService.queryOne(so);
-	   											_tsopFile.setId(sso.getId());
-	   										
-	   									}
-	   											rsFileList.add(_tsopFile);
-	   									}
-	   								}	
-	   							}
-	   						}
-	   						
-	   						List<AppFileDTO> list = new ArrayList<AppFileDTO>();
-	   						if(projectType.equals(DictEnum.projectType.外部投资.getCode())){
-	   							AppFileDTO appfileDto = new AppFileDTO();
-	   							appfileDto.setFileTypeCode(DictEnum.fileWorktype.业务尽职调查报告.getCode());
-	   							appfileDto.setFileTypeName("业务尽调");
-	   							appfileDto.setAppSopFile(ywFileList);		
-	   							list.add(appfileDto);
-	   							
-	   							AppFileDTO jdqdappfileDto = new AppFileDTO();
-	   							jdqdappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
-	   							jdqdappfileDto.setFileTypeName("尽职调查启动会报告");
-	   							jdqdappfileDto.setAppSopFile(jdqdFileList);		
-	   							list.add(jdqdappfileDto);
-	   							
-	   							AppFileDTO jdzjappfileDto = new AppFileDTO();
-	   							jdzjappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
-	   							jdzjappfileDto.setFileTypeName("尽职调查总结会报告");
-	   							jdzjappfileDto.setAppSopFile(jdzjFileList);		
-	   							list.add(jdzjappfileDto);
-	   							
-	   							AppFileDTO fwappfileDto = new AppFileDTO();
-	   							fwappfileDto.setFileTypeCode(DictEnum.fileWorktype.法务尽职调查报告.getCode());
-	   							fwappfileDto.setFileTypeName("法务尽调");
-	   							fwappfileDto.setAppSopFile(fwjFileList);		
-	   							list.add(fwappfileDto);
-	   							
-	   							AppFileDTO cwappfileDto = new AppFileDTO();
-	   							cwappfileDto.setFileTypeCode(DictEnum.fileWorktype.财务尽职调查报告.getCode());
-	   							cwappfileDto.setFileTypeName("财务尽调");
-	   							cwappfileDto.setAppSopFile(cwFileList);	
-	   							list.add(cwappfileDto);
-	   							
-	   							AppFileDTO rsappfileDto = new AppFileDTO();
-	   							rsappfileDto.setFileTypeCode(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
-	   							rsappfileDto.setFileTypeName("人事尽调");
-	   							rsappfileDto.setAppSopFile(rsFileList);	
-	   							list.add(rsappfileDto);
-	   							
-	   							appProgress.setAppFileDtoList(list);
-	   							appProgresslist.add(appProgress);	
-	   						}else if(projectType.equals(DictEnum.projectType.内部创建.getCode())){
-	   							AppFileDTO appfileDto = new AppFileDTO();
-	   							appfileDto.setFileTypeCode(DictEnum.fileWorktype.业务尽职调查报告.getCode());
-	   							appfileDto.setFileTypeName("业务尽调");
-	   							appfileDto.setAppSopFile(ywFileList);		
-	   							list.add(appfileDto);
-	   							
-	   							AppFileDTO jdqdappfileDto = new AppFileDTO();
-	   							jdqdappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查启动会报告.getCode());
-	   							jdqdappfileDto.setFileTypeName("尽职调查启动会报告");
-	   							jdqdappfileDto.setAppSopFile(jdqdFileList);		
-	   							list.add(jdqdappfileDto);
-	   							
-	   							AppFileDTO jdzjappfileDto = new AppFileDTO();
-	   							jdzjappfileDto.setFileTypeCode(DictEnum.fileWorktype.尽职调查总结会报告.getCode());
-	   							jdzjappfileDto.setFileTypeName("尽职调查总结会报告");
-	   							jdzjappfileDto.setAppSopFile(jdzjFileList);		
-	   							list.add(jdzjappfileDto);
-	   							
-	   							
-	   							AppFileDTO rsappfileDto = new AppFileDTO();
-	   							rsappfileDto.setFileTypeCode(DictEnum.fileWorktype.人力资源尽职调查报告.getCode());
-	   							rsappfileDto.setFileTypeName("人事尽调");
-	   							rsappfileDto.setAppSopFile(rsFileList);	
-	   							list.add(rsappfileDto);
-	   							
-	   							appProgress.setAppFileDtoList(list);
-	   							appProgresslist.add(appProgress);	
-	   						}	
-	   					}
-	   					// 投资意向书
-	   					else if (i == 5) {
-	   						// 项目阶段					
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:5"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:5");//→项目流程阶段编码
-	   						// 业务类型
-	   						sopVoucherFile.setProjectProgress("projectProgress:5");
-	   						sopVoucherFile.setProjectId(Long.parseLong(pid));
-	   						List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile);
-	   						AppSopFile asfile5 = null; 
-	   						List<AppSopFile> tzyxsFileList = new ArrayList<AppSopFile>();
-	   						if (!listSop.isEmpty()) {
-	   							for (SopVoucherFile sop : listSop) {
-	   								asfile5 = new AppSopFile();
-	   								
-	   								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资意向书.getCode())) {
-	   									asfile5.setFileYwCode(sop.getFileWorktype());
-	   									asfile5.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
-	   										if(sop.getFileName()!=null||sop.getFileSuffix()!=null){
-	   											String fn = sop.getFileName();
-	   											String fs = sop.getFileSuffix();
-	   											String fileName = fn + "." + fs;
-	   											asfile5.setFileName(fileName);
-	   										}
-	   										asfile5.setFileDsCode(sop.getFileStatus());	//→文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态								
-	   										asfile5.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));//→文件(档案)状态名称
-	   										Long ti = null;
-	   										if (sop.getUpdatedTime() != null) {
-	   											ti = sop.getUpdatedTime();
-	   										} else {
-	   											ti = sop.getCreatedTime();
-	   										}
-	   										if (ti != null) {									
-	   											asfile5.setFileTime(ti.toString());
-	   										}
-	   										asfile5.setFileKey(sop.getFileKey());
-	   										Long uid = sop.getFileUid();
-	   										if(uid!=null){
-	   											User user = userService.queryById(uid);
-	   											asfile5.setName(user.getRealName());
-	   										}								
-	   										asfile5.setId(sop.getId()); //→文件(档案)表的ID主键
-	   										tzyxsFileList.add(asfile5);
-	   								}
-	   							}
-	   						}
-	   						List<AppFileDTO> list = new ArrayList<AppFileDTO>();		
-	   						AppFileDTO appfileDto = new AppFileDTO();
-	   						appfileDto.setFileTypeCode(DictEnum.fileWorktype.投资意向书.getCode());
-	   						appfileDto.setFileTypeName(DictEnum.fileWorktype.投资意向书.getName());
-	   						appfileDto.setAppSopFile(tzyxsFileList);		
-	   						list.add(appfileDto);
+						// 添加排情结果标识
+						if (!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
+							MeetingScheduling query = new MeetingScheduling();
+							query.setProjectId(me.getProjectId());
+							query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
+							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+							if (mslist != null && mslist.size() > 0) {
+								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																									// 2
+																									// 的
+																									// 时候app端显示申请排期
+																									// 2016/7/5修改
+							}
+						}
+					} else {
+						MeetingScheduling query = new MeetingScheduling();
+						query.setProjectId(Long.parseLong(pid));
+						query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
+						List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
+						if (mslist != null && mslist.size() > 0) {
+							appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());// 0的时候app端显示添加会议
+																								// 2
+																								// 的
+																								// 时候app端显示申请排期
+																								// 2016/7/5修改
+						}
+					}
+					appProgresslist.add(appProgress);
+				}
+				// 内部评审
+				else if (i == 2) {
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:2"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:2");// →项目流程阶段编码
+					// 据会议类型、项目ID查询会议信息
+					meetingRecord.setMeetingType("meetingType:1");
+					meetingRecord.setProjectId(Long.parseLong(pid));
+					// 默认的是倒序排新添加的在最上面
+					List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
 
-	   						appProgress.setAppFileDtoList(list);
-	   						appProgresslist.add(appProgress);
-	   					}
-	   					// 立项会
-	   					else if (i == 4) {
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:4"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:4");//→项目流程阶段编码
-	   						//据会议类型、项目ID查询会议信息
-	   						meetingRecord.setMeetingType("meetingType:3");
-	   						meetingRecord.setProjectId(Long.parseLong(pid));
-	   						// 默认的是倒序排添加的最上面
-	   						List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-	   						
-	   						List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();				
-	   						for(MeetingRecord mr : listSop){
-	   							if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-	   								filterList.add(mr);	
-	   							}					
-	   						}
-	   						if( filterList.size()>0 ){ //处理待定 、通过或否决
-	   							MeetingRecord me = filterList.get(0);				
-	   							appProgress.setMeetTime(me.getMeetingDateStr());
-	   							appProgress.setMeetNotes(me.getMeetingNotes());
-	   							appProgress.setMeetResult(me.getMeetingResult());
-	   							appProgress.setMeetingResultStr(me.getMeetingResultStr());
-	   							appProgress.setMeetCode(me.getMeetingType());
-	   							
-	   							//添加排情结果标识
-	   							if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
-	   								MeetingScheduling query = new MeetingScheduling();
-	   								query.setProjectId(me.getProjectId());
-	   								query.setMeetingType(DictEnum.meetingType.立项会.getCode());
-	   								List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-	   								if(mslist!=null && mslist.size()>0){
-	   									appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//  0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
-	   								}
-	   							}
-	   						}else{
-	   							MeetingScheduling query = new MeetingScheduling();
-	   							query.setProjectId(Long.parseLong(pid));
-	   							query.setMeetingType(DictEnum.meetingType.立项会.getCode());
-	   							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-	   							if(mslist!=null && mslist.size()>0){
-	   								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
-	   							}
-	   						}
-	   						//2016/8/16 新增立项会报告查询
-	   						SopFile so = new SopFile();
-	   						so.setProjectId(Long.parseLong(pid));
-	   						so.setFileWorktype(DictEnum.fileWorktype.立项报告.getCode());
-	   						so.setProjectProgress(DictEnum.projectProgress.立项会.getCode());
-	   						List<SopFile> s = sopFileService.queryList(so);
-	   						List<AppSopFile> FileList =null;
-	   						if(s!=null&&s.size()>0){						
-	   							AppSopFile asfile = new AppSopFile();
-	   							FileList = new ArrayList<AppSopFile>();
-	   							
-	   							SopFile b = s.get(0);
-	   							if(b!=null){
-	   								asfile.setBucketName(b.getBucketName());
-	   								asfile.setFileYwCode(b.getFileWorktype());
-	   								asfile.setFileWorktype(DictEnum.fileWorktype.getNameByCode(b.getFileWorktype()));
-	   									if(b.getFileName()!=null||b.getFileSuffix()!=null){
-	   										String fn = b.getFileName();
-	   										String fs = b.getFileSuffix();
-	   										String fileName = fn + "." + fs;
-	   										asfile.setFileName(fileName);
-	   									}
-	   									Long ti = null;
-	   									if (b.getUpdatedTime() != null) {
-	   										ti = b.getUpdatedTime();
-	   									} else {
-	   										ti = b.getCreatedTime();
-	   									}
-	   									if (ti != null) {									
-	   										asfile.setFileTime(ti.toString());
-	   									}
-	   									asfile.setFileKey(b.getFileKey());
-	   									FileList.add(asfile);
-	   							}
-	   							
-	   												
-	   						}
-	   						List<AppFileDTO> list = new ArrayList<AppFileDTO>();		
-	   						AppFileDTO appfileDto = new AppFileDTO();
-	   						appfileDto.setFileTypeCode(DictEnum.fileWorktype.立项报告.getCode());
-	   						appfileDto.setFileTypeName(DictEnum.fileWorktype.立项报告.getName());
-	   						appfileDto.setAppSopFile(FileList);		
-	   						list.add(appfileDto);
-	   						appProgress.setAppFileDtoList(list);	
-	   						appProgresslist.add(appProgress);			
-	   					}
-	   					// CEO评审
-	   					else if (i == 3) {
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:3"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:3");//→项目流程阶段编码
-	   						//据会议类型、项目ID查询会议信息
-	   						meetingRecord.setMeetingType("meetingType:2");
-	   						meetingRecord.setProjectId(Long.parseLong(pid));
-	   						// 默认的是倒序排新添加的在最上面
-	   						List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-	   						
-	   						List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();				
-	   						for(MeetingRecord mr : listSop){
-	   							if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-	   								filterList.add(mr);	
-	   							}					
-	   						}
-	   						if( filterList.size()>0 ){					
-	   							MeetingRecord me = filterList.get(0);						
-	   							appProgress.setMeetTime(me.getMeetingDateStr());
-	   							appProgress.setMeetNotes(me.getMeetingNotes());
-	   							appProgress.setMeetResult(me.getMeetingResult());
-	   							appProgress.setMeetingResultStr(me.getMeetingResultStr());
-	   							appProgress.setMeetCode(me.getMeetingType());
-	   							
-	   							//添加排情结果标识
-	   							if(!me.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
-	   								MeetingScheduling query = new MeetingScheduling();
-	   								query.setProjectId(me.getProjectId());
-	   								query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
-	   								List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-	   								if(mslist!=null && mslist.size()>0){
-	   									appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
-	   								}
-	   							}
-	   						}else{
-	   							MeetingScheduling query = new MeetingScheduling();
-	   							query.setProjectId(Long.parseLong(pid));
-	   							query.setMeetingType(DictEnum.meetingType.CEO评审.getCode());
-	   							List<MeetingScheduling> mslist = meetingSchedulingService.queryList(query);
-	   							if(mslist!=null && mslist.size()>0){
-	   								appProgress.setSchedulingFlag(mslist.get(0).getScheduleStatus());//0的时候app端显示添加会议  2 的 时候app端显示申请排期 2016/7/5修改
-	   							}
-	   						}				
-	   						appProgresslist.add(appProgress);
-	   					}
-	   					// 内部评审
-	   					else if (i == 2) {			
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:2"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:2");//→项目流程阶段编码
-	   						//据会议类型、项目ID查询会议信息
-	   						meetingRecord.setMeetingType("meetingType:1");
-	   						meetingRecord.setProjectId(Long.parseLong(pid));
-	   						// 默认的是倒序排新添加的在最上面
-	   						List<MeetingRecord> listSop = meetingRecordService.queryList(meetingRecord);
-	   						
-	   						List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();				
-	   						for(MeetingRecord mr : listSop){
-	   							if(StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())){
-	   								filterList.clear();
-	   								filterList.add(mr);
-	   								break;
-	   							}else if (StringUtils.isNotBlank(mr.getMeetingResult()) && mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())){
-	   								filterList.add(mr);	
-	   							}					
-	   						}
-	   						if( filterList.size()>0 ){									
-	   							MeetingRecord me = filterList.get(0);					
-	   							appProgress.setMeetTime(me.getMeetingDateStr());
-	   							appProgress.setMeetNotes(me.getMeetingNotes());
-	   							appProgress.setMeetResult(me.getMeetingResult());
-	   							appProgress.setMeetingResultStr(me.getMeetingResultStr());
-	   							appProgress.setMeetCode(me.getMeetingType());
-	   						}				
-	   						appProgresslist.add(appProgress);				
-	   					}
-	   					// 访谈记录
-	   					else if (i == 1) {			
-	   						appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:1"));//→项目流程阶段名称
-	   						appProgress.setProjectProgress("projectProgress:1");//→项目流程阶段编码
-	   						
-	   						interviewRecord.setProjectId(Long.parseLong(pid));
-	   						List<InterviewRecord> listSop = interviewRecordService.queryList(interviewRecord);
-	   						if(listSop!=null){
-	   							appProgress.setInterviewCount(listSop.size());
-	   						}else{
-	   							appProgress.setInterviewCount(0);
-	   						}
-	   						if (listSop!=null && listSop.size()>0) {
-	   							InterviewRecord me = listSop.get(0);						
-	   							appProgress.setInterviewTime(me.getViewDateStr());//访谈时间
-	   							appProgress.setInterviewNotes(me.getViewNotes());//访谈日志
-	   							appProgress.setInterviewTarget(me.getViewTarget());//访谈对象
-	   						}
-	   						appProgresslist.add(appProgress);		
-	   					}
-	   				}
-	   				responseBody.setEntityList(appProgresslist);
-	   			} catch (Exception e) {
-	   				logger.error("appProgreess faild", e);
-	   				responseBody.setResult(new Result(Status.ERROR, null, "appProgreess faild"));
-	   			}
-	   			return responseBody;
-	   		}
- 	
+					List<MeetingRecord> filterList = new ArrayList<MeetingRecord>();
+					for (MeetingRecord mr : listSop) {
+						if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.否决.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.通过.getCode())) {
+							filterList.clear();
+							filterList.add(mr);
+							break;
+						} else if (StringUtils.isNotBlank(mr.getMeetingResult())
+								&& mr.getMeetingResult().equals(DictEnum.meetingResult.待定.getCode())) {
+							filterList.add(mr);
+						}
+					}
+					if (filterList.size() > 0) {
+						MeetingRecord me = filterList.get(0);
+						appProgress.setMeetTime(me.getMeetingDateStr());
+						appProgress.setMeetNotes(me.getMeetingNotes());
+						appProgress.setMeetResult(me.getMeetingResult());
+						appProgress.setMeetingResultStr(me.getMeetingResultStr());
+						appProgress.setMeetCode(me.getMeetingType());
+					}
+					appProgresslist.add(appProgress);
+				}
+				// 访谈记录
+				else if (i == 1) {
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:1"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:1");// →项目流程阶段编码
+
+					interviewRecord.setProjectId(Long.parseLong(pid));
+					List<InterviewRecord> listSop = interviewRecordService.queryList(interviewRecord);
+					if (listSop != null) {
+						appProgress.setInterviewCount(listSop.size());
+					} else {
+						appProgress.setInterviewCount(0);
+					}
+					if (listSop != null && listSop.size() > 0) {
+						InterviewRecord me = listSop.get(0);
+						appProgress.setInterviewTime(me.getViewDateStr());// 访谈时间
+						appProgress.setInterviewNotes(me.getViewNotes());// 访谈日志
+						appProgress.setInterviewTarget(me.getViewTarget());// 访谈对象
+					}
+					appProgresslist.add(appProgress);
+				}
+			}
+			responseBody.setEntityList(appProgresslist);
+		} catch (Exception e) {
+			logger.error("appProgreess faild", e);
+			responseBody.setResult(new Result(Status.ERROR, null, "appProgreess faild"));
+		}
+		return responseBody;
+	}
+
 }
