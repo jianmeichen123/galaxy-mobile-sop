@@ -1029,4 +1029,47 @@ public class SopFileController extends BaseControllerImpl<SopFile, SopFileBo> {
 		
 	}
 	*/
+	
+	/**
+	 * app2.19期项目详情之项目文档
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/searchappFileList", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<SopFile> searchappFileList(HttpServletRequest request, @RequestBody SopFile sopFile) {
+		
+	
+		ResponseData<SopFile> responseBody = new ResponseData<SopFile>();
+		try {
+				List<String> fileStatusList = new ArrayList<String>();
+				fileStatusList.add(DictEnum.fileStatus.已上传.getCode());
+				fileStatusList.add(DictEnum.fileStatus.已签署.getCode());
+				sopFile.setFileStatusList(fileStatusList);
+			  //	sopFile.setFileValid(1);
+				sopFile.setFileWorktypeNullFilter("true");
+				PageRequest pageRequest = new PageRequest(sopFile.getPageNum(),sopFile.getPageSize());
+		
+				Page<SopFile> pageSopFile = sopFileService.queryappFileList(sopFile, pageRequest);
+			
+				
+				responseBody.setPageList(pageSopFile);
+				responseBody.setResult(new Result(Status.OK, ""));
+				return responseBody;
+			} catch (DaoException e) {
+				responseBody.setResult(new Result(Status.ERROR, "queryUserList faild"));
+				if (logger.isErrorEnabled()) {
+					logger.error("queryUserList ", e);
+				}
+			} catch (RuntimeException e){
+				responseBody.setResult(new Result(Status.ERROR, "queryUserList faild"));
+				if (logger.isErrorEnabled()) {
+					logger.error("queryUserList ", e);
+				}
+			}
+			return responseBody;
+	}
+
+	
+	
+	
 }

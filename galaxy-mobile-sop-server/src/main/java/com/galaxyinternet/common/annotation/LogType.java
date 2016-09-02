@@ -8,5 +8,9 @@ public enum LogType {
 	// 创意动态
 	IDEANEWS(),
 	// 项目动态
-	PROJECTNEWS()
+	PROJECTNEWS(),
+	// IOS 消息推送
+	IOSPUSHMESS(),
+	//排期批量发送消息
+	BATCHMESSAGE()
 }
