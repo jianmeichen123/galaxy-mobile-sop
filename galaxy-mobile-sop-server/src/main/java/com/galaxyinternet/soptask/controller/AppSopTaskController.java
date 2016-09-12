@@ -160,7 +160,7 @@ public class AppSopTaskController extends BaseControllerImpl<SopTask, SopTaskBo>
 	  * @param request
 	  * @return
 	  */
-	    @com.galaxyinternet.common.annotation.Logger(operationScope = { LogType.LOG,LogType.MESSAGE})
+	    @com.galaxyinternet.common.annotation.Logger(operationScope = { LogType.LOG,LogType.MESSAGE,LogType.IOSPUSHMESS})
 	    @ResponseBody
 	    @RequestMapping(value = "/goClaimtcPage",method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
 		public ResponseData<SopTask> goClaimtcPage(@RequestBody SopTask query,HttpServletRequest request) {

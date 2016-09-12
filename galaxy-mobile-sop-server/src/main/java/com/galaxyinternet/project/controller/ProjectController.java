@@ -28,11 +28,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.bo.PassRateBo;
 import com.galaxyinternet.bo.SopTaskBo;
+import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.bo.project.MeetingSchedulingBo;
 import com.galaxyinternet.bo.project.PersonPoolBo;
 import com.galaxyinternet.bo.project.ProjectBo;
+import com.galaxyinternet.bo.touhou.DeliveryBo;
 import com.galaxyinternet.common.SopResult;
 import com.galaxyinternet.common.annotation.LogType;
+import com.galaxyinternet.common.annotation.RecordType;
 import com.galaxyinternet.common.constants.SopConstant;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
@@ -80,7 +83,9 @@ import com.galaxyinternet.operationMessage.handler.StageChangeHandler;
 import com.galaxyinternet.project.service.HandlerManager;
 import com.galaxyinternet.project.service.handler.Handler;
 import com.galaxyinternet.service.ConfigService;
+import com.galaxyinternet.service.DeliveryService;
 import com.galaxyinternet.service.DepartmentService;
+import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
@@ -101,6 +106,12 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 	final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
+	@Autowired
+	private MeetingRecordService meetingService;
+	@Autowired
+	private DictService dictService;
+	@Autowired
+	private DeliveryService deliveryService;
 	@Autowired
 	private ProjectSharesService projectSharesService;
 	@Autowired
@@ -240,6 +251,88 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		return responseBody;
 	}
 
+	/**
+	 * 新建项目接口
+	 * @version 2016-06-21
+	 * 2016/8/30 考过了的
+	 * @author yangshuhua
+	 */
+	@Token
+	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
+	@ResponseBody
+	@RequestMapping(value = "/cjxiangmu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Project> cjxiangMu(@RequestBody Project project,
+			HttpServletRequest request) {
+		ResponseData<Project> responseBody = new ResponseData<Project>();
+		if (project == null || project.getProjectName() == null
+				|| "".equals(project.getProjectName().trim())
+				|| project.getProjectType() == null
+				|| "".equals(project.getProjectType().trim())
+				|| project.getCreateDate() == null
+				|| "".equals(project.getCreateDate().trim())
+				|| project.getIndustryOwn() == null) {
+			responseBody.setResult(new Result(Status.ERROR,"csds" , "必要的参数丢失!"));
+			return responseBody;
+		}
+		try {
+			User user = (User) getUserFromSession(request);
+			// 判断当前用户是否为投资经理
+			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+			if (!roleIdList.contains(UserConstant.TZJL)) {
+				responseBody.setResult(new Result(Status.ERROR, "myqx", "没有权限添加项目!"));
+				return responseBody;
+			}
+			//验证项目名是否重复
+			Project obj = new Project();
+			obj.setProjectName(project.getProjectName());
+			List<Project> projectList = projectService.queryList(obj);
+			if (null != projectList && projectList.size() > 0) {
+				responseBody.setResult(new Result(Status.ERROR, "mccf", "项目名重复!"));
+				return responseBody;
+			}
+			//创建项目编码
+			Config config = configService.createCode();
+			NumberFormat nf = NumberFormat.getInstance();
+			nf.setGroupingUsed(false);
+			nf.setMaximumIntegerDigits(6);
+			nf.setMinimumIntegerDigits(6);
+			Long did = user.getDepartmentId();
+			if (did != null) {
+				int code = EnumUtil.getCodeByCareerline(did.longValue());
+				String projectCode = String.valueOf(code) + nf.format(Integer.parseInt(config.getValue()));
+				project.setProjectCode(String.valueOf(projectCode));
+				
+				if (project.getProjectValuations() == null) {
+					if (project.getProjectShareRatio() != null
+							&& project.getProjectShareRatio() > 0
+							&& project.getProjectContribution() != null
+							&& project.getProjectContribution() > 0) {
+						project.setProjectValuations(project.getProjectContribution() * 100 / project.getProjectShareRatio());
+					}
+				}
+				project.setCurrencyUnit(0);
+				//默认不涉及股权转让
+				project.setStockTransfer(0);
+				project.setCreateUid(user.getId());
+				project.setCreateUname(user.getRealName());
+				project.setProjectDepartid(did);
+				project.setProjectProgress(DictEnum.projectProgress.接触访谈.getCode());
+				project.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+				project.setUpdatedTime(new Date().getTime());
+				project.setCreatedTime(DateUtil.convertStringToDate(project.getCreateDate().trim(), "yyyy-MM-dd").getTime());
+				long id = projectService.newProject(project);
+				if (id > 0) {
+					responseBody.setResult(new Result(Status.OK, "success", "项目添加成功!"));
+					responseBody.setId(id);										
+					ControllerUtils.setRequestParamsForMessageTip(request,project.getProjectName(), project.getId(),StageChangeHandler._6_1_);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return responseBody;
+	}
+	
 	/**
 	 * 修改项目信息接口
 	 * 
@@ -451,6 +544,75 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				}else{
 					project.setShareszw(1);
 				}
+			/**
+			 * 2016/8/18 增加暂无标识 
+			 */
+				//交割前事项的暂无
+				
+				DeliveryBo de = new DeliveryBo();
+				de.setProjectId(Long.parseLong(pid));
+				Integer pageNum = de.getPageNum() != null ? de.getPageNum() : 0;
+				Integer pageSize = de.getPageSize() != null ? de.getPageSize() : 10;
+				
+				Page<DeliveryBo> deliverypage =  deliveryService.queryDeliveryPageList(de, new PageRequest(pageNum,pageSize));
+				if(deliverypage==null){
+					project.setJgqsxzw(0);
+				}else if(deliverypage!=null&&deliverypage.getContent().size()==0){
+					project.setJgqsxzw(0);
+				}else{
+					project.setJgqsxzw(1);
+				}
+				//项目 文档的暂无 
+				
+				SopFile sopFile = new SopFile();
+				List<String> fileStatusList = new ArrayList<String>();
+				fileStatusList.add(DictEnum.fileStatus.已上传.getCode());
+				fileStatusList.add(DictEnum.fileStatus.已签署.getCode());
+				sopFile.setFileStatusList(fileStatusList);
+			  //	sopFile.setFileValid(1);
+				sopFile.setFileWorktypeNullFilter("true");
+				sopFile.setProjectId(Long.parseLong(pid));
+				Integer pageNumm = sopFile.getPageNum() != null ? sopFile.getPageNum() : 0;
+				Integer pageSizee = sopFile.getPageSize() != null ? sopFile.getPageSize() : 10;
+		
+				Page<SopFile> pageSopFile = sopFileService.queryappFileList(sopFile, new PageRequest(pageNumm,pageSizee));
+				
+				if(pageSopFile==null){
+					project.setXmwdzw(0);
+				}else if(pageSopFile!=null && pageSopFile.getContent().size()==0){
+					project.setXmwdzw(0);
+				}else{
+					project.setXmwdzw(1);
+				}
+			//TODO
+				
+				//运营分析暂无
+				MeetingRecordBo mes = new MeetingRecordBo();
+				mes.setProjectId(Long.parseLong(pid));
+				Integer pageNummm = mes.getPageNum() != null ? mes.getPageNum() : 0;
+				Integer pageSizeee = mes.getPageSize() != null ? mes.getPageSize() : 10;
+				//运营分析 类型投后运营会议
+				mes.setRecordType(RecordType.OPERATION_MEETING.getType());
+				List<String> meetingTypeList = new ArrayList<String>();
+				List<Dict> dictList = dictService.selectByParentCode("postMeetingType");
+				for(Dict dict : dictList){
+					meetingTypeList.add(dict.getCode());
+				}
+				mes.setMeetingTypeList(meetingTypeList);
+				Page<MeetingRecord> mrpageList = meetingService.queryPageList(mes,new PageRequest(pageNummm,pageSizeee));
+				
+				if(mrpageList==null){
+					project.setYyfxzw(0);
+				}else if(mrpageList!=null && mrpageList.getContent().size()==0){
+					project.setYyfxzw(0);
+				}else{
+					project.setYyfxzw(1);
+				}
+				
+				
+				
+				
+				
 			//1.添加项目描述的暂无标识
 			if(project.getProjectDescribe()!=null){
 				project.setProjectDescribezw(1);
@@ -467,6 +629,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			if(project.getUserPortrait()!=null){
 				project.setUserPortraitzw(1);
 			}else{
+				
 				project.setUserPortraitzw(0);
 			}
 			//4.产品服务的暂无标识
@@ -2600,11 +2763,11 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 	}
 	
-
+//TODO
 	/**
 	 * 更新排期池时间/updateReserveTime-客户端用
 	 */
-	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.MESSAGE)
+	@com.galaxyinternet.common.annotation.Logger(operationScope = {LogType.MESSAGE,LogType.IOSPUSHMESS})
 	@ResponseBody
 	@RequestMapping(value = "/updateReserveTimeByApp", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<MeetingScheduling> updateReserveTimeByApp(
@@ -2618,6 +2781,12 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		try {
 			MeetingScheduling oldMs = meetingSchedulingService.queryById(query
 					.getId());
+			
+			MeetingScheduling  redisPush = new MeetingScheduling();
+			redisPush.setId(oldMs.getId());
+			redisPush.setProjectId(oldMs.getProjectId());
+			redisPush.setMeetingType(oldMs.getMeetingType());
+			
 			//System.out.println("tdj------------- 11");
 			String mestr = "";
 			String messageType = null;
@@ -2646,7 +2815,10 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				messageInfo = mestr + "排期时间已取消";
 			}
 			Project pj = projectService.queryById(oldMs.getProjectId());
-			System.out.println("tdj------------- 12");
+//			System.out.println("tdj------------- 12");
+			
+			redisPush.setProjectName(pj.getProjectName());
+			redisPush.setCreateId(pj.getCreateUid().toString());
 			
 			List<String> users = new ArrayList<String>();
 			if (DictEnum.meetingType.投决会.getCode().equals(
@@ -2683,6 +2855,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					meetingSchedulingService.updateByIdSelective(query);
 					//sendTaskProjectEmail(request,pj,messageInfo,userlist,null,null,0,UrlNumber.three);
 					belongUser.setKeyword("cancle:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+					//新增往内存中写入 
+					redisPush.setReserveTimeStart(query.getReserveTimeStart());
+					cache.removeRedisSetOBJ(Constants.PUSH_MESSAGE_LIST, redisPush);
 					//System.out.println("tdj------------- 16");
 				} else {
 					// 更新会议时间
@@ -2692,8 +2867,15 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 									.getReserveTimeEnd().getTime()) {
 						meetingSchedulingService.updateByIdSelective(query);
 						//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.two);
-						belongUser.setKeyword("update:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart()));
+						belongUser.setKeyword("update:"+DateUtil.convertDateToStringForChina(oldMs.getReserveTimeStart())+","+DateUtil.convertDateToStringForChina(query.getReserveTimeStart()));	
 						//System.out.println("tdj------------- 17");
+						
+						redisPush.setReserveTimeStart(oldMs.getReserveTimeStart());
+						cache.removeRedisSetOBJ(Constants.PUSH_MESSAGE_LIST, redisPush);
+						
+						redisPush.setReserveTimeStart(query.getReserveTimeStart());
+						cache.setRedisSetOBJ(Constants.PUSH_MESSAGE_LIST,redisPush);
+						
 					}
 				}
 			} else {
@@ -2704,6 +2886,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					//sendTaskProjectEmail(request,pj,messageInfo,userlist,query.getReserveTimeStart(),query.getReserveTimeEnd(),1,UrlNumber.one);
 					belongUser.setKeyword("insert:"+DateUtil.convertDateToStringForChina(query.getReserveTimeStart()));
 					//System.out.println("tdj------------- 18");
+					//新增的方法 2016/8/22
+					redisPush.setReserveTimeStart(query.getReserveTimeStart());
+					cache.setRedisSetOBJ(Constants.PUSH_MESSAGE_LIST,redisPush);
 				}
 
 			}
@@ -2821,7 +3006,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		return data;
 	}
-
+//TODO
 	/**
 	 * 根据枚举获取
 	 * 获取枚举里的融资状态列表

@@ -30,7 +30,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.3</version>
+				<version>3.0.0</version>
 				<configuration>
 					<warName>${project.artifactId}</warName>
 				</configuration>
@@ -98,7 +98,7 @@
 				<galaxy.project.platform.endpoint>http://zijian.local.com/mobilePlatform/</galaxy.project.platform.endpoint>
 				<galaxy.project.report.endpoint>http://zijian.local.com/mobileReport/</galaxy.project.report.endpoint>
 				<galaxy.project.sop.endpoint>http://zijian.local.com/mobileSop/</galaxy.project.sop.endpoint>
-
+				<xinge.enviroment>2</xinge.enviroment>
 			</properties>
 		</profile>
 		
@@ -176,7 +176,7 @@
 					<redis.master>galaxymaster</redis.master> -->
 
 				<!-- <redis.url>101.200.78.14</redis.url> <redis.port>6379</redis.port> -->
-                
+                <xinge.enviroment>2</xinge.enviroment>
 			</properties>
 		</profile>
 			
@@ -187,14 +187,14 @@
 			</activation>
 			<properties>
 
-			    <!-- 仿真数据库 -->
+
+<!-- 			    仿真数据库 -->
 				<jdbc.url>
 					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
 				</jdbc.url>
 			    <jdbc.username>fxuser</jdbc.username>
  				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password>
-			    <!-- 仿真数据库 -->
-						
+
 				<!-- 数据库连接地址和数据库名 -->
 
 <!-- 				<jdbc.url> -->
@@ -217,6 +217,7 @@
 				<galaxy.project.platform.endpoint>http://fxmob.qa.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
 				<galaxy.project.report.endpoint>http://fxmob.qa.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
 				<galaxy.project.sop.endpoint>http://fxmob.qa.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
+				<xinge.enviroment>2</xinge.enviroment>
 			</properties>
 		</profile>
 
@@ -518,5 +519,12 @@
 			<version>0.1</version>
 		</dependency>
 		<!-- dubbo 服务注册方式 end -->
+		<!-- 信鸽推送 -->
+		<dependency>
+			<groupId>com.galaxyinternet</groupId>
+			<artifactId>xingePush</artifactId>
+			<version>[1.0.0,)</version>
+		</dependency>
 	</dependencies>
+	
 </project>

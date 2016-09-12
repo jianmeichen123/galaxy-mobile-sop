@@ -49,6 +49,8 @@ public class MeetingScheduling extends PagableEntity {
 	private String createUname;
 	private String meetingDateStr;
 	private String applyTimeStr;
+	//新增2016/8/22
+	private String createId;
 
 	private String reserveTimeStartStr;
 	private String reserveTimeEndStr;
@@ -352,5 +354,15 @@ public class MeetingScheduling extends PagableEntity {
 	public String getMeetingTypeStr() {
 		return meetingTypeStr;
 	}
+
+	public String getCreateId() {
+		return createId;
+	}
+
+	public void setCreateId(String createId) {
+		this.createId = createId;
+	}
+	
+	
 
 }

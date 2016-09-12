@@ -3,8 +3,11 @@ package com.galaxyinternet.dao.sopfile;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
+
 import com.galaxyinternet.bo.sopfile.SopFileBo;
 import com.galaxyinternet.framework.core.dao.BaseDao;
+import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.model.sopfile.SopFile;
 
 public interface SopFileDao extends BaseDao<SopFile, Long> {
@@ -24,5 +27,16 @@ public interface SopFileDao extends BaseDao<SopFile, Long> {
 	 * @return
 	 */
 	public List<Map<String,String>> queryProjectName(Map<String,Object> map);
+	
+	
+	
+	
+	/**
+	 * 2016/8/17
+	 * 文件查询
+	 */
+	public Page<SopFile> queryappFileList(SopFile query, Pageable pageable);
+	
+	
 	
 }
