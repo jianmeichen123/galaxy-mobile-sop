@@ -876,31 +876,30 @@ public class SopFileServiceImpl extends BaseServiceImpl<SopFile> implements
 		if(ss!=null&&ss.size()>0){
 			for(SopFile s:ss){
 				if(null!=s.getVoucherId()&&!"".equals(s.getVoucherId())){					
-					SopVoucherFile sg = voucherFileDao.selectById(s.getVoucherId());					
-					SopFile sf = new SopFile();
-					
-					sf.setFileKey(sg.getFileKey());    //文件的key
-					sf.setFileName(sg.getFileName());  //文件的前缀
-					sf.setFileSuffix(sg.getFileSuffix()); //文件的后缀
-					sf.setFileWorktype(sg.getFileWorktype()); //文件的业务分类				
-					//还没有加时间	
-					if(sg.getCreatedTime()!=null){
-						sf.setCreatedTime(sg.getCreatedTime());
+					SopVoucherFile sg = voucherFileDao.selectById(s.getVoucherId());	
+					if(sg.getFileStatus().equals(DictEnum.fileStatus.已签署.getCode())){
+						SopFile sf = new SopFile();						
+						sf.setFileKey(sg.getFileKey());    //文件的key
+						sf.setFileName(sg.getFileName());  //文件的前缀
+						sf.setFileSuffix(sg.getFileSuffix()); //文件的后缀
+						sf.setFileWorktype(sg.getFileWorktype()); //文件的业务分类				
+						//还没有加时间	
+						if(sg.getCreatedTime()!=null){
+							sf.setCreatedTime(sg.getCreatedTime());
+						}
+						
+						if(sg.getUpdatedTime()!=null){
+							sf.setUpdatedTime(sg.getUpdatedTime());
+						}
+						if(sg.getFileType()!=null){
+							sf.setFileType(sg.getFileType());
+						}
+						//标识 是签署证明
+						sf.setIsEdit("0");
+						s2.add(sf);							
 					}
-					
-					if(sg.getUpdatedTime()!=null){
-						sf.setUpdatedTime(sg.getUpdatedTime());
-					}
-					if(sg.getFileType()!=null){
-						sf.setFileType(sg.getFileType());
-					}
-					//标识 是签署证明
-					sf.setIsEdit("0");
-					s2.add(sf);
-				
 				}
 				s2.add(s);
-				
 			}
 			sp.setContent(s2);
 		}		
