@@ -2575,6 +2575,10 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 访谈记录
 				else if (i == 1) {
+					if (n > 1){
+						//标识当前阶段过了访谈进入内部评审及以后的阶段
+						appProgress.setInterviewSign(1);
+					}
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:1"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:1");// →项目流程阶段编码
 

@@ -98,6 +98,11 @@ public class AppProgress extends PagableRecordEntity {
   	private Integer schedulingFlag  ;
   	
   	
+  	
+  	//2016/9/21  为app端展示访谈里的申请内部评审按钮做操作(隐藏)
+  	private Integer interviewSign;
+  	
+  	
     public String getMeetCode() {
 		return meetCode;
 	}
@@ -417,6 +422,14 @@ public class AppProgress extends PagableRecordEntity {
 
 	public void setInterviewCount(Integer interviewCount) {
 		this.interviewCount = interviewCount;
+	}
+
+	public Integer getInterviewSign() {
+		return interviewSign;
+	}
+
+	public void setInterviewSign(Integer interviewSign) {
+		this.interviewSign = interviewSign;
 	}
 	
 	
