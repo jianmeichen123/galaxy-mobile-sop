@@ -68,6 +68,13 @@ public class Project extends PagableEntity {
     private List<Long> deptIdList;
 	private Long startTime; 
 	private Long endTime;
+	
+	//查询出星河的项目(全部)
+	private String xhquanbu;
+	//查询的是融快的项目(全部)
+	private String rkquanbu;
+	//查询的是创保连的项目(全部)
+	private String cblquanbu;
 	/**
 	 * app端新增判断暂无的字段
 	 * 		1.项目概述:projectDescribe
@@ -780,6 +787,30 @@ public class Project extends PagableEntity {
 
 	public void setXmwdzw(Integer xmwdzw) {
 		this.xmwdzw = xmwdzw;
+	}
+
+	public String getXhquanbu() {
+		return xhquanbu;
+	}
+
+	public void setXhquanbu(String xhquanbu) {
+		this.xhquanbu = xhquanbu;
+	}
+
+	public String getRkquanbu() {
+		return rkquanbu;
+	}
+
+	public void setRkquanbu(String rkquanbu) {
+		this.rkquanbu = rkquanbu;
+	}
+
+	public String getCblquanbu() {
+		return cblquanbu;
+	}
+
+	public void setCblquanbu(String cblquanbu) {
+		this.cblquanbu = cblquanbu;
 	}
 
 	
