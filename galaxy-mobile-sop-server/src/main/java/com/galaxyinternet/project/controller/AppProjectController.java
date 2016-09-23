@@ -755,11 +755,18 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
 								projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
 							}	*/	
-							if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getCreateUid()==null)){//投资经理
+							if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getProjectDepartid()==null)&&(projectBo.getCreateUid()==null)&&(projectBo.getQuanbu()==null)){//投资经理
 								projectBo.setCreateUid(user.getId()); //项目创建者
 							}else if (roleIdList.contains(UserConstant.HHR)&&(projectBo.getProjectDepartid()==null)){// 合伙人 新增加条件 合伙人可查询别的事业线的项目
 								projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
-							}
+							}/*else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getCreateUid()!=null)){//投资经理  我的项目的时候
+								
+							}else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getQuanbu()!=null)){//投资经理  全部的时候
+								
+							}else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getProjectDepartid()!=null)){//投资经理  本事业部的时候
+								
+							}*/
+							
 							List<Order> orderList = new ArrayList<Order>();
 							orderList.add(new Order(Direction.DESC, "updated_time"));
 							orderList.add(new Order(Direction.DESC, "created_time"));			
