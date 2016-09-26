@@ -624,6 +624,13 @@
 	    <if test="createUid != null" > and create_uid = #{createUid} </if>
 		<if test="projectCareerline != null" > and project_careerline = #{projectCareerline} </if>
 		<if test="projectDepartid != null" > and project_departId = #{projectDepartid} </if>
+		<if test="deptIdList != null">
+					AND project_departId IN
+					<foreach collection="deptIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+			  </if>
 		<if test="financeStatus != null" > and finance_status = #{financeStatus} </if>	
 		<if test="faFlag != null"> and fa_flag = #{faFlag} </if>			
 	</select>
@@ -637,6 +644,13 @@
 	    <if test="createUid != null" > and create_uid = #{createUid} </if>
 		<if test="projectCareerline != null" > and project_careerline = #{projectCareerline} </if>
 		<if test="projectDepartid != null" > and project_departId = #{projectDepartid} </if>
+		<if test="deptIdList != null">
+					AND project_departId IN
+					<foreach collection="deptIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+			  </if>
 		<if test="financeStatus != null" > and finance_status = #{financeStatus} </if>	
 		<if test="faFlag != null"> and fa_flag = #{faFlag} </if>			
 	</select>
@@ -648,6 +662,13 @@
 	    <if test="createUid != null" > and create_uid = #{createUid} </if>
 		<if test="projectCareerline != null" > and project_careerline = #{projectCareerline} </if>
 		<if test="projectDepartid != null" > and project_departId = #{projectDepartid} </if>
+		<if test="deptIdList != null">
+					AND project_departId IN
+					<foreach collection="deptIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+			  </if>
 		<if test="projectType != null" > and project_type = #{projectType} </if>	
 		<if test="projectProgress != null" > and project_progress = #{projectProgress} </if>
 		<if test="financeStatus != null" > and finance_status = #{financeStatus} </if>	
@@ -664,6 +685,13 @@
 		<if test="createUid != null" > and create_uid = #{createUid} </if>
 		<if test="projectCareerline != null" > and project_careerline = #{projectCareerline} </if>
 		<if test="projectDepartid != null" > and project_departId = #{projectDepartid} </if>
+		<if test="deptIdList != null">
+					AND project_departId IN
+					<foreach collection="deptIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+			  </if>
 		<if test="projectProgress != null" > and project_progress = #{projectProgress} </if>
 		<if test="financeStatus != null" > and finance_status = #{financeStatus} </if>
 		<if test="faFlag != null"> and fa_flag = #{faFlag} </if>
@@ -682,6 +710,13 @@
 	    <if test="createUid != null" > and create_uid = #{createUid} </if>
 		<if test="projectCareerline != null" > and project_careerline = #{projectCareerline} </if>
 		<if test="projectDepartid != null" > and project_departId = #{projectDepartid} </if>
+		<if test="deptIdList != null">
+					AND project_departId IN
+					<foreach collection="deptIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+			  </if>
 		<if test="financeStatus != null" > and finance_status = #{financeStatus} </if>	
 		<if test="faFlag != null"> and fa_flag = #{faFlag} </if>
 		<if test="sorting != null">order by ${sorting}</if>
@@ -700,6 +735,13 @@
 	    <if test="createUid != null" > and create_uid = #{createUid} </if>
 		<if test="projectCareerline != null" > and project_careerline = #{projectCareerline} </if>
 		<if test="projectDepartid != null" > and project_departId = #{projectDepartid} </if>
+		<if test="deptIdList != null">
+					AND project_departId IN
+					<foreach collection="deptIdList" index="item" item="item" open="("
+						separator="," close=")">
+						#{item}
+					</foreach>
+			  </if>
 		<if test="faFlag != null"> and fa_flag = #{faFlag} </if>
 		<if test="sorting != null">order by ${sorting}</if>
 		<if test="offset != null and limit != null">
