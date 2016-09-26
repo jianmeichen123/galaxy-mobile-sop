@@ -755,7 +755,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
 								projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
 							}	*/	
-							if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getProjectDepartid()==null)&&(projectBo.getCreateUid()==null)&&(projectBo.getQuanbu()==null)){//投资经理
+							if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getProjectDepartid()==null)&&(projectBo.getCreateUid()==null)&&(projectBo.getQuanbu()==null)&&(projectBo.getDeptIdList()==null)){//投资经理
 								projectBo.setCreateUid(user.getId()); //项目创建者
 							}else if (roleIdList.contains(UserConstant.HHR)&&(projectBo.getProjectDepartid()==null)){// 合伙人 新增加条件 合伙人可查询别的事业线的项目
 								projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
