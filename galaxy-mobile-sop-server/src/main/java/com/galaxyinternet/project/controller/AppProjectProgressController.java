@@ -1382,8 +1382,15 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				sopVoucherFile = new SopVoucherFile();
 				appProgress = new AppProgress();
 
+				if (i == 10) {
+				//投后运营阶段新增	
+					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:10"));// →项目流程阶段名称
+					appProgress.setProjectProgress("projectProgress:10");// →项目流程阶段编码
+					
+					appProgresslist.add(appProgress);
+				}
 				// 股权交割
-				if (i == 9) {
+				else if (i == 9) {
 					// 项目阶段
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:9"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:9");// →项目流程阶段编码
