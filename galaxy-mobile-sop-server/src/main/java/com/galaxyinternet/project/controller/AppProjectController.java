@@ -757,9 +757,9 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 							}	*/	
 							if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getProjectDepartid()==null)&&(projectBo.getCreateUid()==null)&&(projectBo.getQuanbu()==null)&&(projectBo.getDeptIdList()==null)){//投资经理
 								projectBo.setCreateUid(user.getId()); //项目创建者
-							}else if (roleIdList.contains(UserConstant.HHR)&&(projectBo.getProjectDepartid()==null)){// 合伙人 新增加条件 合伙人可查询别的事业线的项目
+							}/*else if (roleIdList.contains(UserConstant.HHR)&&(projectBo.getProjectDepartid()==null)){// 合伙人 新增加条件 合伙人可查询别的事业线的项目
 								projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
-							}/*else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getCreateUid()!=null)){//投资经理  我的项目的时候
+							}*//*else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getCreateUid()!=null)){//投资经理  我的项目的时候
 								
 							}else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getQuanbu()!=null)){//投资经理  全部的时候
 								
