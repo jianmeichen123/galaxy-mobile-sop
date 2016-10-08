@@ -46,6 +46,12 @@ public class ProjectBo extends Project {
 	private Integer sflag;
 	
 	/**
+	 * 新增投资经理查询全部项目
+	 */
+	private String quanbu;
+	
+	
+	/**
 	 * 模糊查询关键字
 	 */
 	protected String ceeword;
@@ -211,6 +217,14 @@ public class ProjectBo extends Project {
 
 	public void setSflag(Integer sflag) {
 		this.sflag = sflag;
+	}
+
+	public String getQuanbu() {
+		return quanbu;
+	}
+
+	public void setQuanbu(String quanbu) {
+		this.quanbu = quanbu;
 	}
 	
 	
