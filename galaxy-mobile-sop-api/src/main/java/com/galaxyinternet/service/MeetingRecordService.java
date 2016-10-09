@@ -26,6 +26,7 @@ public interface MeetingRecordService extends BaseService<MeetingRecord> {
 /*	//app2期新增的查询会议时查询出多个录音文件
 	public Page<MeetingRecordBo> queryAppMeetPage(MeetingRecordBo query, Pageable pageable);*/
 	
-	
+	//新增的 app端项目流程查询出投后运营的会议数目(周 ,月 ,季度)
+	Long selectappMeetCount(MeetingRecordBo query);
 
 }

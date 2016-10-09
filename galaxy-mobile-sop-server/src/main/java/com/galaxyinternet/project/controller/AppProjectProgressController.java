@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.common.annotation.LogType;
+import com.galaxyinternet.common.annotation.RecordType;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.common.enums.DictEnum;
 import com.galaxyinternet.common.utils.ControllerUtils;
@@ -32,6 +33,7 @@ import com.galaxyinternet.framework.core.model.ResponseData;
 import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
+import com.galaxyinternet.model.dict.Dict;
 import com.galaxyinternet.model.operationLog.UrlNumber;
 import com.galaxyinternet.model.project.AppCounts;
 import com.galaxyinternet.model.project.AppFileDTO;
@@ -44,6 +46,7 @@ import com.galaxyinternet.model.sopfile.AppSopFile;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.user.User;
+import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
@@ -87,6 +90,9 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 	@Autowired
 	private MeetingSchedulingService meetingSchedulingService;
 
+	@Autowired
+	private DictService dictService;
+	
 	@Override
 	protected BaseService<Project> getBaseService() {
 		return this.projectService;
@@ -1382,8 +1388,22 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				sopVoucherFile = new SopVoucherFile();
 				appProgress = new AppProgress();
 
+				// TODO
 				if (i == 10) {
 				//投后运营阶段新增	
+					MeetingRecordBo meetingRecordd = new MeetingRecordBo();
+					meetingRecordd.setRecordType(RecordType.OPERATION_MEETING.getType());
+/*					List<String> meetingTypeList = new ArrayList<String>();
+					List<Dict> dictList = dictService.selectByParentCode("postMeetingType");
+					for(Dict dict : dictList){
+						meetingTypeList.add(dict.getCode());
+					}
+					meetingRecordd.setMeetingTypeList(meetingTypeList);*/
+					meetingRecordd.setProjectId(Long.parseLong(pid));
+					
+					Long s = meetingRecordService.selectappMeetCount(meetingRecordd);
+					appProgress.setThCounts(s);
+										
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:10"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:10");// →项目流程阶段编码
 					
@@ -1779,7 +1799,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					}
 					appProgresslist.add(appProgress);
 				}
-				// TODO
+				
 				// 尽职调查
 				else if (i == 6) {
 					List<AppSopFile> ywFileList = new ArrayList<AppSopFile>();

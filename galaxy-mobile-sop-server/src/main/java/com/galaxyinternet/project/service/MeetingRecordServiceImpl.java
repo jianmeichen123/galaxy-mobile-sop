@@ -597,4 +597,11 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 		}
 		return null;
 	}
+
+
+	@Override
+	public Long selectappMeetCount(MeetingRecordBo query) {
+		
+		return meetingRecordDao.selectappMeetCount(query);
+	}
 }
