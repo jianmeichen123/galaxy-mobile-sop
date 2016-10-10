@@ -2335,49 +2335,52 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					}
 				}
 				// 投资意向书
-				else if (i == 5) {
+				else if (i == 5) {//修改app端显示项目文件不显示签署证明后的文件 2016/10/09 号修改
 					// 项目阶段
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:5"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:5");// →项目流程阶段编码
 					// 业务类型
-					sopVoucherFile.setProjectProgress("projectProgress:5");
-					sopVoucherFile.setProjectId(Long.parseLong(pid));
-					List<SopVoucherFile> listSop = sopVoucherFileService.queryList(sopVoucherFile);
+					SopFile sspfile = new SopFile();
+					sspfile.setProjectProgress("projectProgress:5");
+					sspfile.setProjectId(Long.parseLong(pid));
+					List<SopFile> listSop = sopFileService.queryList(sspfile);
 					AppSopFile asfile5 = null;
 					List<AppSopFile> tzyxsFileList = new ArrayList<AppSopFile>();
 					if (!listSop.isEmpty()) {
-						for (SopVoucherFile sop : listSop) {
+						for (SopFile sop : listSop) {
 							asfile5 = new AppSopFile();
 
-							if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资意向书.getCode())) {
-								asfile5.setFileYwCode(sop.getFileWorktype());
-								asfile5.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
-								if (sop.getFileName() != null || sop.getFileSuffix() != null) {
-									String fn = sop.getFileName();
-									String fs = sop.getFileSuffix();
-									String fileName = fn + "." + fs;
-									asfile5.setFileName(fileName);
+							if(sop.getFileKey()!=null){
+								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资意向书.getCode())) {
+									asfile5.setFileYwCode(sop.getFileWorktype());
+									asfile5.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
+									if (sop.getFileName() != null || sop.getFileSuffix() != null) {
+										String fn = sop.getFileName();
+										String fs = sop.getFileSuffix();
+										String fileName = fn + "." + fs;
+										asfile5.setFileName(fileName);
+									}
+									asfile5.setFileDsCode(sop.getFileStatus()); // →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
+									asfile5.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));// →文件(档案)状态名称
+									Long ti = null;
+									if (sop.getUpdatedTime() != null) {
+										ti = sop.getUpdatedTime();
+									} else {
+										ti = sop.getCreatedTime();
+									}
+									if (ti != null) {
+										asfile5.setFileTime(ti.toString());
+									}
+									asfile5.setFileKey(sop.getFileKey());
+									Long uid = sop.getFileUid();
+									if (uid != null) {
+										User user = userService.queryById(uid);
+										asfile5.setName(user.getRealName());
+									}
+									asfile5.setId(sop.getId()); // →文件(档案)表的ID主键
+									tzyxsFileList.add(asfile5);
 								}
-								asfile5.setFileDsCode(sop.getFileStatus()); // →文件(档案)状态编码；当fileStatus:1时，该档案是缺失状态
-								asfile5.setFileDs(DictEnum.fileStatus.getNameByCode(sop.getFileStatus()));// →文件(档案)状态名称
-								Long ti = null;
-								if (sop.getUpdatedTime() != null) {
-									ti = sop.getUpdatedTime();
-								} else {
-									ti = sop.getCreatedTime();
-								}
-								if (ti != null) {
-									asfile5.setFileTime(ti.toString());
-								}
-								asfile5.setFileKey(sop.getFileKey());
-								Long uid = sop.getFileUid();
-								if (uid != null) {
-									User user = userService.queryById(uid);
-									asfile5.setName(user.getRealName());
-								}
-								asfile5.setId(sop.getId()); // →文件(档案)表的ID主键
-								tzyxsFileList.add(asfile5);
-							}
+						    }
 						}
 					}
 					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
