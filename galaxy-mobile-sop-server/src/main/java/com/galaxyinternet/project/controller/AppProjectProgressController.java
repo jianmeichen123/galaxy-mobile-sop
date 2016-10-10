@@ -1516,17 +1516,19 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 
 					}
 					List<AppFileDTO> list = new ArrayList<AppFileDTO>();
-					AppFileDTO appfileDto = new AppFileDTO();
-					appfileDto.setFileTypeCode(DictEnum.fileWorktype.资金拨付凭证.getCode());
-					appfileDto.setFileTypeName(DictEnum.fileWorktype.资金拨付凭证.getName());
-					appfileDto.setAppSopFile(zjbfFileList);
-					list.add(appfileDto);
 
 					AppFileDTO gqzr_appfileDto = new AppFileDTO();
 					gqzr_appfileDto.setFileTypeCode(DictEnum.fileWorktype.工商转让凭证.getCode());
 					gqzr_appfileDto.setFileTypeName(DictEnum.fileWorktype.工商转让凭证.getName());
 					gqzr_appfileDto.setAppSopFile(gsbgdjFileList);
 					list.add(gqzr_appfileDto);
+
+					
+					AppFileDTO appfileDto = new AppFileDTO();
+					appfileDto.setFileTypeCode(DictEnum.fileWorktype.资金拨付凭证.getCode());
+					appfileDto.setFileTypeName(DictEnum.fileWorktype.资金拨付凭证.getName());
+					appfileDto.setAppSopFile(zjbfFileList);
+					list.add(appfileDto);
 
 					appProgress.setAppFileDtoList(list);
 					appProgresslist.add(appProgress);
@@ -1813,6 +1815,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:6"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:6");// →项目流程阶段编码
 					// 据流程阶段编码、项目ID查询文件信息SopFile
+					
+					appProgress.setProjectNewProgress(projectProgress);
 					sopFile.setProjectProgress("projectProgress:6");
 					sopFile.setProjectId(Long.parseLong(pid));
 
