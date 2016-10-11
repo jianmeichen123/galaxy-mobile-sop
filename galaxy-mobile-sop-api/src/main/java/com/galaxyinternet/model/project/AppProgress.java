@@ -97,11 +97,17 @@ public class AppProgress extends PagableRecordEntity {
   	/** 排期结果  */
   	private Integer schedulingFlag  ;
   	
+  	/** 2016/10/09 修改项目流程阶段添加投后运营会议的数目  */
+  	
+  	private Long thCounts;
   	
   	
   	//2016/9/21  为app端展示访谈里的申请内部评审按钮做操作(隐藏)
   	private Integer interviewSign;
   	
+  	
+  	//2016/10/10 修改项目流程返回项目当前所处阶段
+  	private String projectNewProgress;
   	
     public String getMeetCode() {
 		return meetCode;
@@ -180,6 +186,14 @@ public class AppProgress extends PagableRecordEntity {
 	
   	
   
+
+	public Long getThCounts() {
+		return thCounts;
+	}
+
+	public void setThCounts(Long thCounts) {
+		this.thCounts = thCounts;
+	}
 
 	public List<AppSopFile> getAppSopFile() {
 		return appSopFile;
@@ -430,6 +444,14 @@ public class AppProgress extends PagableRecordEntity {
 
 	public void setInterviewSign(Integer interviewSign) {
 		this.interviewSign = interviewSign;
+	}
+
+	public String getProjectNewProgress() {
+		return projectNewProgress;
+	}
+
+	public void setProjectNewProgress(String projectNewProgress) {
+		this.projectNewProgress = projectNewProgress;
 	}
 	
 	

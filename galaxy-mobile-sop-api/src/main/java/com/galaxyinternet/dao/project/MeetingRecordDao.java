@@ -10,5 +10,7 @@ import com.galaxyinternet.model.project.MeetingRecord;
 public interface MeetingRecordDao extends BaseDao<MeetingRecord, Long> {
 	
 	public Page<MeetingRecordBo> selectMeetPageList(MeetingRecordBo query, Pageable pageable);
+	
+	Long selectappMeetCount(MeetingRecordBo query);
 
 }
