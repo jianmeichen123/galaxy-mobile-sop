@@ -614,50 +614,50 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				
 				
 			//1.添加项目描述的暂无标识
-			if(project.getProjectDescribe()!=null){
+			if(project.getProjectDescribe()!=null&& !project.getProjectDescribe().equals("")){
 				project.setProjectDescribezw(1);
 			}else{
 				project.setProjectDescribezw(0);
 			}
 			//2.添加公司定位的暂无标识
-			if(project.getCompanyLocation()!=null){
+			if(project.getCompanyLocation()!=null&& !project.getCompanyLocation().equals("")){
 				project.setCompanyLocationzw(1);
 			}else{
 				project.setCompanyLocationzw(0);
 			}
 			//3.用户画像的暂无标识
-			if(project.getUserPortrait()!=null){
+			if(project.getUserPortrait()!=null && !project.getUserPortrait().equals("")){
 				project.setUserPortraitzw(1);
 			}else{
 				
 				project.setUserPortraitzw(0);
 			}
 			//4.产品服务的暂无标识
-			if(project.getProjectBusinessModel()!=null){
+			if(project.getProjectBusinessModel()!=null && !project.getProjectBusinessModel().equals("")){
 				project.setProjectBusinessModelzw(1);
 			}else{
 				project.setProjectBusinessModelzw(0);
 			}
 			//5.竟情分析的暂无标识
-			if(project.getProspectAnalysis()!=null){
+			if(project.getProspectAnalysis()!=null && !project.getProspectAnalysis().equals("")){
 				project.setProspectAnalysiszw(1);
 			}else{
 				project.setProspectAnalysiszw(0);
 			}
 			//6.运营数据的暂无标识
-			if(project.getOperationalData()!=null){
+			if(project.getOperationalData()!=null && !project.getOperationalData().equals("")){
 				project.setOperationalDatazw(1);
 			}else{
 				project.setOperationalDatazw(0);
 			}
 			//7.行业分析的暂无标识
-			if(project.getIndustryAnalysis()!=null){
+			if(project.getIndustryAnalysis()!=null && !project.getIndustryAnalysis().equals("")){
 				project.setIndustryAnalysiszw(1);
 			}else{
 				project.setIndustryAnalysiszw(0);
 			}
 			//8.下一轮融资路径的暂无标识
-			if(project.getNextFinancingSource()!=null){
+			if(project.getNextFinancingSource()!=null && !project.getNextFinancingSource().equals("")){
 				project.setNextFinancingSourcezw(1);
 			}else{
 				project.setNextFinancingSourcezw(0);
