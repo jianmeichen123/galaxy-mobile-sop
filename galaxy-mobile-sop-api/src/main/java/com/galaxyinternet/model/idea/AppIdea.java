@@ -26,8 +26,9 @@ public class AppIdea extends PagableEntity
 	private String fileTime;//文件上传时间
 	private String fileKey;//文件key
 	private String projectId;//项目id
-	
-	
+	//修改 创意流程添加创建人id 和项目 事业线id
+	private Long createUid;
+	private Long projectDepartid;
 	
 	public String getIdeaProgresss() {
 		return ideaProgresss;
@@ -138,6 +139,18 @@ public class AppIdea extends PagableEntity
 	}
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
+	}
+	public Long getCreateUid() {
+		return createUid;
+	}
+	public void setCreateUid(Long createUid) {
+		this.createUid = createUid;
+	}
+	public Long getProjectDepartid() {
+		return projectDepartid;
+	}
+	public void setProjectDepartid(Long projectDepartid) {
+		this.projectDepartid = projectDepartid;
 	}
 	
 	
