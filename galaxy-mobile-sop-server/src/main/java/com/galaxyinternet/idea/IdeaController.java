@@ -1401,4 +1401,32 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 		
 		
 		
+		//判断当前创意是否创建成项目
+		@ResponseBody
+		@RequestMapping(value="/ideaProject/{pid}",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseData<Idea> getIdeaProject(@PathVariable("pid") Long pid,HttpServletRequest request,HttpServletResponse response){
+			ResponseData<Idea> responseBody = new ResponseData<Idea>();
+			try {
+				
+				 Idea idea = ideaService.queryById(pid);
+				 
+				if(idea.getProjectId()!=null ){
+					
+					idea.setIdeaProject(0);
+					
+				}else{
+					
+					idea.setIdeaProject(1);
+				}
+
+				responseBody.setEntity(idea);
+				responseBody.setResult(new Result(Status.OK,""));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				responseBody.setResult(new Result(Status.ERROR,"添加创意失败"));
+			}
+			return responseBody;
+		}
+		
+		
 }
