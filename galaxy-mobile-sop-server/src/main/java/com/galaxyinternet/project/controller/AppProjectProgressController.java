@@ -1363,6 +1363,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 			responseBody.setResult(new Result(Status.ERROR, null, "该项目缺少项目类型数据项值"));
 			return responseBody;
 		}
+		//获取当前项目的状态
+		String ps= p.getProjectStatus();
 		// 截取projectProgress取到:后的值
 		String a[] = projectProgress.split(":");
 		String num = a[1];
@@ -1401,6 +1403,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					meetingRecordd.setMeetingTypeList(meetingTypeList);*/
 					meetingRecordd.setProjectId(Long.parseLong(pid));
 					
+					appProgress.setProjectStatusApp(ps);
+					
 					Long s = meetingRecordService.selectappMeetCount(meetingRecordd);
 					appProgress.setThCounts(s);
 										
@@ -1411,6 +1415,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 股权交割
 				else if (i == 9) {
+					appProgress.setProjectStatusApp(ps);
 					// 项目阶段
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:9"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:9");// →项目流程阶段编码
@@ -1535,6 +1540,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 投资协议
 				else if (i == 8) {
+					appProgress.setProjectStatusApp(ps);
 					List<AppSopFile> tzxyAppSopFileList = new ArrayList<AppSopFile>();// 投资协议的档案list
 					List<AppSopFile> gqzrxyAppSopFileList = new ArrayList<AppSopFile>();// 股权转让协议的档案list
 					// 项目阶段
@@ -1738,6 +1744,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 投资决策会
 				else if (i == 7) {
+					appProgress.setProjectStatusApp(ps);
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:7"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:7");// →项目流程阶段编码
 
@@ -1804,6 +1811,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				
 				// 尽职调查
 				else if (i == 6) {
+					appProgress.setProjectStatusApp(ps);
 					List<AppSopFile> ywFileList = new ArrayList<AppSopFile>();
 					List<AppSopFile> fwjFileList = new ArrayList<AppSopFile>();
 					List<AppSopFile> cwFileList = new ArrayList<AppSopFile>();
@@ -2341,6 +2349,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				// 投资意向书
 				else if (i == 5) {//修改app端显示项目文件不显示签署证明后的文件 2016/10/09 号修改
 					// 项目阶段
+					appProgress.setProjectStatusApp(ps);
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:5"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:5");// →项目流程阶段编码
 					// 业务类型
@@ -2399,6 +2408,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 立项会
 				else if (i == 4) {
+					
+					appProgress.setProjectStatusApp(ps);
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:4"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:4");// →项目流程阶段编码
 					// 据会议类型、项目ID查询会议信息
@@ -2508,6 +2519,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// CEO评审
 				else if (i == 3) {
+					
+					appProgress.setProjectStatusApp(ps);
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:3"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:3");// →项目流程阶段编码
 					// 据会议类型、项目ID查询会议信息
@@ -2572,6 +2585,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 内部评审
 				else if (i == 2) {
+					appProgress.setProjectStatusApp(ps);
 					appProgress.setProjectProgressName(DictEnum.projectProgress.getNameByCode("projectProgress:2"));// →项目流程阶段名称
 					appProgress.setProjectProgress("projectProgress:2");// →项目流程阶段编码
 					// 据会议类型、项目ID查询会议信息
@@ -2609,6 +2623,7 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 				}
 				// 访谈记录
 				else if (i == 1) {
+					appProgress.setProjectStatusApp(ps);
 					if (n > 1){
 						//标识当前阶段过了访谈进入内部评审及以后的阶段
 						appProgress.setInterviewSign(1);

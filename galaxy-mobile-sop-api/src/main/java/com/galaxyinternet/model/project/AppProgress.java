@@ -109,6 +109,8 @@ public class AppProgress extends PagableRecordEntity {
   	//2016/10/10 修改项目流程返回项目当前所处阶段
   	private String projectNewProgress;
   	
+  	//2016/10/13
+  	private String projectStatusApp;
     public String getMeetCode() {
 		return meetCode;
 	}
@@ -452,6 +454,14 @@ public class AppProgress extends PagableRecordEntity {
 
 	public void setProjectNewProgress(String projectNewProgress) {
 		this.projectNewProgress = projectNewProgress;
+	}
+
+	public String getProjectStatusApp() {
+		return projectStatusApp;
+	}
+
+	public void setProjectStatusApp(String projectStatusApp) {
+		this.projectStatusApp = projectStatusApp;
 	}
 	
 	
