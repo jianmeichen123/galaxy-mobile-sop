@@ -126,6 +126,8 @@ public class AppIdeaProgressController extends BaseControllerImpl<Idea, Idea> {
 						appIdea.setProjectProgress(p.getProgress());//项目阶段
 						appIdea.setProjectCode(p.getProjectProgress());//项目阶段的code
 						appIdea.setProjectId(idea.getProjectId().toString());
+						appIdea.setCreateUid(p.getCreateUid());
+						appIdea.setProjectDepartid(p.getProjectDepartid());
 						progressLog.setRecordType(DictEnum.RecordType.IDEAS.getType());
 						progressLog.setRelatedId(id);
 						List<ProgressLog> listSop = progressLogService.queryList(progressLog);
