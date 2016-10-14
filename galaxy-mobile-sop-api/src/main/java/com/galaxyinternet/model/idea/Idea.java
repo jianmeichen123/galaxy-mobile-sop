@@ -39,8 +39,8 @@ public class Idea extends PagableEntity
 	private String projectProgressDesc;
 	private String createBySelf;
 
-	
-	
+	//2016/10/13 修改创意创建项目是判断是否已经生成项目了
+	private Integer ideaProject;
 	
 	
 	private String isforindex;
@@ -259,8 +259,13 @@ public class Idea extends PagableEntity
 	public void setRelatedUid(Long relatedUid) {
 		this.relatedUid = relatedUid;
 	}
+	public Integer getIdeaProject() {
+		return ideaProject;
+	}
+	public void setIdeaProject(Integer ideaProject) {
+		this.ideaProject = ideaProject;
+	}
 
-	
 	
 	
 }

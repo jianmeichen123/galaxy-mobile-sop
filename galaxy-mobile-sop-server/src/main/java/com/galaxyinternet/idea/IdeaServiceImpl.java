@@ -226,6 +226,7 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 		{
 			String projectCode = generateProjectCode(project.getProjectDepartid());
 			project.setProjectCode(projectCode);
+			project.setFaFlag(0);
 			projectService.newProject(project);
 			idea.setProjectId(project.getId());
 			idea.setIdeaProgress(SopConstant.IDEA_PROGRESS_CJXM);

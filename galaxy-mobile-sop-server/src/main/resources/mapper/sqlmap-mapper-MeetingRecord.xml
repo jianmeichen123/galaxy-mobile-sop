@@ -226,5 +226,19 @@
 			<if test="recordType != null"> and sm.record_type = #{recordType,jdbcType=TINYINT} </if>	
 		) a
 	</select>
+	
+	<!-- 查询 2016/10/09 新增的查询的运营分析会议数目 -->
+	<select id="selectappMeetCount" resultType="java.lang.Long" parameterType="java.util.Map">
+		  
+	  SELECT COUNT(*) FROM sop_meeting_record  
+	  <where>
+			<trim prefixOverrides="and">
+			 <if test="projectId != null" > and project_id = #{projectId,jdbcType=BIGINT} </if> 		 
+		  	<if test="recordType != null"> and record_type = #{recordType,jdbcType=TINYINT} </if>
+		  </trim>
+		</where>
+	</select>
+	
+	
   
 </mapper>

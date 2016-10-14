@@ -723,6 +723,150 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 
 			
 			
+			 
+			 
+			 //为2016/10/14版本做准备
+			 /**
+				 * 测试项目列表
+				 * @param request
+				 * @param projectBo
+				 * @return
+				 */
+					@ResponseBody
+					@RequestMapping(value = "/selectProjectList",  method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+					public ResponseData<GeneralProjecttVO> selectProjectList(HttpServletRequest request, @RequestBody ProjectBo projectBo) {		
+						User user = (User) getUserFromSession(request);			
+						ResponseData<GeneralProjecttVO> responseBody = new ResponseData<GeneralProjecttVO>();
+						GeneralProjecttVO genProjectBean = new GeneralProjecttVO();
+						
+						try{
+							if(user==null){
+								responseBody.setResult(new Result(Status.ERROR, "User用户信息在Session中不存在，无法执行项目列表查询！"));
+								return responseBody;
+							}
+							List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+							if(roleIdList==null || roleIdList.size()==0){
+								responseBody.setResult(new Result(Status.ERROR, "当前用户未配置任何角色，将不执行项目列表查询功能！"));
+								return responseBody;
+							}
+							//根据登录人的角色，设置不同的待查询项（备注：董事长和CEO全查，获取全部）
+/*							if(roleIdList.contains(UserConstant.TZJL)){//投资经理
+								projectBo.setCreateUid(user.getId()); //项目创建者
+							}else if (roleIdList.contains(UserConstant.HHR)){//合伙人
+								projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
+							}	*/	
+							if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getProjectDepartid()==null)&&(projectBo.getCreateUid()==null)&&(projectBo.getQuanbu()==null)&&(projectBo.getDeptIdList()==null)){//投资经理
+								projectBo.setCreateUid(user.getId()); //项目创建者
+							}/*else if (roleIdList.contains(UserConstant.HHR)&&(projectBo.getProjectDepartid()==null)){// 合伙人 新增加条件 合伙人可查询别的事业线的项目
+								projectBo.setProjectDepartid(user.getDepartmentId());//所属部门（事业线）ID
+							}*//*else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getCreateUid()!=null)){//投资经理  我的项目的时候
+								
+							}else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getQuanbu()!=null)){//投资经理  全部的时候
+								
+							}else if(roleIdList.contains(UserConstant.TZJL)&&(projectBo.getProjectDepartid()!=null)){//投资经理  本事业部的时候
+								
+							}*/
+							
+							List<Order> orderList = new ArrayList<Order>();
+							orderList.add(new Order(Direction.DESC, "updated_time"));
+							orderList.add(new Order(Direction.DESC, "created_time"));			
+				
+							Sort sort = new Sort(orderList);
+							if(projectBo.getSflag()==1){
+								//跟进中
+								genProjectBean = appProjecttService.querygjzProjectList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
+							}
+							if(projectBo.getSflag()==2){
+								//投后运营
+								genProjectBean = appProjecttService.querythyyList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
+							}
+							if(projectBo.getSflag()==3){
+								//否决
+								genProjectBean = appProjecttService.queryfjList(projectBo, new PageRequest(projectBo.getPageNum(), projectBo.getPageSize() , sort));
+							}
+							if(projectBo.getSflag()==4){
+								if(projectBo.getKeyword()!=null){
+									projectBo.setCeeword(projectBo.getKeyword().toUpperCase());
+								
+								}
+								genProjectBean = appProjecttService.queryPageList(projectBo,  new PageRequest(projectBo.getPageNum(), projectBo.getPageSize(),sort));
+							}
+							if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
+								genProjectBean.getPvPage().setContent(new ArrayList<Project>());
+								genProjectBean.getPvPage().setTotal(0L);
+							}else{
+								Page<Project> page = genProjectBean.getPvPage();
+								List<Project> filterList = page.getContent();
+			                    
+							 
+								 for(int i=0;i<filterList.size();i++){
+									 Project probean = filterList.get(i);				    			
+										Department Department=new Department();
+										if(StringUtils.isNotBlank(probean.getProjectDepartid().toString())){
+											Department.setId(probean.getProjectDepartid());
+											Department queryOne = departmentService.queryOne(Department);
+											if(queryOne!=null){
+												probean.setProjectCareerline(queryOne.getName());
+											}else{
+												probean.setProjectCareerline("");
+											}
+										}
+										
+										//financeStatus
+										Department dt=new Department();
+										if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+											dt.setId(probean.getIndustryOwn());
+											Department queryDep = departmentService.queryOne(dt);
+											if(queryDep!=null){
+												probean.setIndustry(queryDep.getName());//行业归属名称
+											}else{
+												probean.setIndustry("");
+											}
+										}
+										
+									    /*
+									     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
+									     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比
+									     * 新项目保存时，上述字段值数字（未有公式运算或转换处理），全是直接存储
+									     */
+										if(StringUtils.isNotBlank(probean.getProjectType())){
+											probean.setProjectTypeName(DictEnum.projectType.getNameByCode(probean.getProjectType()));//项目类型名称
+										}
+										if(StringUtils.isNotBlank(probean.getProjectProgress())){
+											probean.setProjectProgressName(DictEnum.projectProgress.getNameByCode(probean.getProjectProgress()));//项目进度名称
+										}	
+										if(StringUtils.isNotBlank(probean.getFinanceStatus())){
+											probean.setFinanceStatusName(DictEnum.financeStatus.getNameByCode(probean.getFinanceStatus()));//融资状态名称
+										}
+										if(StringUtils.isNotBlank(probean.getProjectStatus())){
+											probean.setProjectStatusName(DictEnum.projectStatus.getNameByCode(probean.getProjectStatus()));//项目状态编码
+										}
+								 }	
+								 
+								 page.setContent(filterList);
+								 genProjectBean.setPvPage(page);
+							}
+							Long gjzNum = appProjecttService.queryProjectgjzCount(projectBo);
+							
+							Long thyyNum = appProjecttService.queryProjectthyyCount(projectBo);
+							
+							Long yfjNum = appProjecttService.queryProjectfjCount(projectBo);
+							
+							genProjectBean.setGjzCount(gjzNum);
+							genProjectBean.setThyyCount(thyyNum);
+							genProjectBean.setYfjCount(yfjNum);
+							
+						}catch(Exception ex){
+							logger.error("移动端后台查询项目列表异常", ex);
+							responseBody.setResult(new Result(Status.ERROR, "","移动端-查询项目列表后台异常"));
+							return responseBody;
+						}
+						
+						responseBody.setEntity(genProjectBean);
+						responseBody.setResult(new Result(Status.OK, ""));
+						return responseBody;
+					
+					}
 			
 			
 }

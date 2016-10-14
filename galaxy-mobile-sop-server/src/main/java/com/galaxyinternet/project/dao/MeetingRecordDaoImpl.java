@@ -43,4 +43,15 @@ public class MeetingRecordDaoImpl extends BaseDaoImpl<MeetingRecord, Long> imple
 		}
 	}
 
+
+	@Override
+	public Long selectappMeetCount(MeetingRecordBo query) {
+		try {
+			Map<String, Object> params = BeanUtils.toMap(query);
+			return sqlSessionTemplate.selectOne(getSqlName("selectappMeetCount"), params);
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询投后运营会议总数出错！语句：%s", getSqlName("selectappMeetCount")), e);
+		}
+	}
+
 }
