@@ -17,11 +17,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.bo.OperationMessageBo;
+import com.galaxyinternet.common.constants.SopConstant;
 import com.galaxyinternet.common.controller.BaseControllerImpl;
+import com.galaxyinternet.common.query.ProjectQuery;
 import com.galaxyinternet.common.utils.StaticParamService;
 import com.galaxyinternet.exception.PlatformException;
 import com.galaxyinternet.framework.cache.Cache;
 import com.galaxyinternet.framework.core.constants.UserConstant;
+import com.galaxyinternet.framework.core.file.OSSHelper;
+import com.galaxyinternet.framework.core.file.UploadFileResult;
+import com.galaxyinternet.framework.core.id.IdGenerator;
 import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.model.PageRequest;
 import com.galaxyinternet.framework.core.model.ResponseData;
@@ -30,6 +35,7 @@ import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.model.operationMessage.OperationMessage;
+import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.platform.constant.PlatformConst;
 import com.galaxyinternet.service.OperationMessageService;
@@ -94,6 +100,8 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 				operationMessageBo.setBelongUid(user.getId());
 			}*/
 			initquery(operationMessageBo,user,roleIdList);
+			//读未删除的消息 2016/10/17
+			operationMessageBo.setAppDelete(0);
 			
 			Page<OperationMessage> operationMessage = operationMessageService.queryPageList(operationMessageBo,new PageRequest(operationMessageBo.getPageNum(), operationMessageBo.getPageSize()));
 			responseBody.setPageList(operationMessage);
@@ -178,7 +186,102 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 //		}
 		
 	}
+	//修改  删除 及 修改已读未读
+	@ResponseBody
+	@RequestMapping(value = "/updateMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<OperationMessage> updateMessage(@RequestBody OperationMessageBo p,
+			HttpServletRequest request) {
+		ResponseData<OperationMessage> responseBody = new ResponseData<OperationMessage>();
+		// 参数校验
+		if (p.getId() == null) 
+		{
+			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
+			return responseBody;
+		}
+		try {	
+
+			operationMessageService.updateById(p);			
+			responseBody.setResult(new Result(Status.OK, null, "更新数据库成功!"));
+		} catch (Exception e) {
+			responseBody.getResult().addError("更新失败");
+			logger.error("更新失败", e);
+		}
+
+		return responseBody;
+	}
 	
+	//2016/10/17
+	//清空所有
+	@ResponseBody
+	@RequestMapping(value = "/allDelete", method = RequestMethod.GET)
+	public ResponseData<OperationMessage> allDelete(HttpServletRequest request) {
+		
+		ResponseData<OperationMessage> responseBody = new ResponseData<OperationMessage>();
+
+		try {
+			User user = (User) getUserFromSession(request);
+			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+			
+			/*if(operationMessageBo.getModule()!=null&&operationMessageBo.getModule() != PlatformConst.MODULE_BROADCAST_MESSAGE.intValue()){
+				operationMessageBo.setBelongUid(user.getId());
+			}*/
+			OperationMessageBo operationMessageBo = new OperationMessageBo();
+			initquery(operationMessageBo,user,roleIdList);
+			//读未删除的消息 2016/10/17
+			operationMessageBo.setAppDelete(0);
+			
+			List<OperationMessage> lis = operationMessageService.queryList(operationMessageBo);
+			
+			for(OperationMessage li:lis){
+				li.setAppDelete(1);
+				operationMessageService.updateById(li);	
+			}			
+		
+			responseBody.setResult(new Result(Status.OK, "批量更新成功"));
+			return responseBody;	
+		} catch (PlatformException e) {
+			responseBody.getResult().addError("批量更新失败");
+			logger.error("updateById ", e);
+		}
+		return responseBody;
+	}
+	
+	
+	//2016/10/17
+		//清空所有
+		@ResponseBody
+		@RequestMapping(value = "/ydwd", method = RequestMethod.GET)
+		public ResponseData<OperationMessage> allydwd(HttpServletRequest request) {
+			
+			ResponseData<OperationMessage> responseBody = new ResponseData<OperationMessage>();
+
+			try {
+				User user = (User) getUserFromSession(request);
+				List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
+				
+				/*if(operationMessageBo.getModule()!=null&&operationMessageBo.getModule() != PlatformConst.MODULE_BROADCAST_MESSAGE.intValue()){
+					operationMessageBo.setBelongUid(user.getId());
+				}*/
+				OperationMessageBo operationMessageBo = new OperationMessageBo();
+				initquery(operationMessageBo,user,roleIdList);
+				//读未删除的消息 2016/10/17
+				operationMessageBo.setAppDelete(0);
+				
+				List<OperationMessage> lis = operationMessageService.queryList(operationMessageBo);
+				
+				for(OperationMessage li:lis){
+					li.setAppSign(1); //标记为 已读
+					operationMessageService.updateById(li);	
+				}			
+			
+				responseBody.setResult(new Result(Status.OK, "批量更新成功"));
+				return responseBody;	
+			} catch (PlatformException e) {
+				responseBody.getResult().addError("批量更新失败");
+				logger.error("updateById ", e);
+			}
+			return responseBody;
+		}
 	
 	
 }
