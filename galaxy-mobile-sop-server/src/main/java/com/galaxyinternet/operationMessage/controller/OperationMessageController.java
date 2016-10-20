@@ -101,7 +101,7 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 			}*/
 			initquery(operationMessageBo,user,roleIdList);
 			//读未删除的消息 2016/10/17
-			operationMessageBo.setAppDelete(0);
+			//operationMessageBo.setAppDelete(0);
 			
 			Page<OperationMessage> operationMessage = operationMessageService.queryPageList(operationMessageBo,new PageRequest(operationMessageBo.getPageNum(), operationMessageBo.getPageSize()));
 			responseBody.setPageList(operationMessage);
