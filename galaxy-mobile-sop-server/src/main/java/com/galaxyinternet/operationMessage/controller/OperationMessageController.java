@@ -186,7 +186,7 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 //		}
 		
 	}
-	//修改  删除 及 修改已读未读
+/*	//修改  删除 及 修改已读未读
 	@ResponseBody
 	@RequestMapping(value = "/updateMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<OperationMessage> updateMessage(@RequestBody OperationMessageBo p,
@@ -209,8 +209,8 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 
 		return responseBody;
 	}
-	
-	//2016/10/17
+	*/
+	/*//2016/10/17
 	//清空所有
 	@ResponseBody
 	@RequestMapping(value = "/allDelete", method = RequestMethod.GET)
@@ -222,9 +222,9 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 			User user = (User) getUserFromSession(request);
 			List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
 			
-			/*if(operationMessageBo.getModule()!=null&&operationMessageBo.getModule() != PlatformConst.MODULE_BROADCAST_MESSAGE.intValue()){
+			if(operationMessageBo.getModule()!=null&&operationMessageBo.getModule() != PlatformConst.MODULE_BROADCAST_MESSAGE.intValue()){
 				operationMessageBo.setBelongUid(user.getId());
-			}*/
+			}
 			OperationMessageBo operationMessageBo = new OperationMessageBo();
 			initquery(operationMessageBo,user,roleIdList);
 			//读未删除的消息 2016/10/17
@@ -259,9 +259,9 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 				User user = (User) getUserFromSession(request);
 				List<Long> roleIdList = userRoleService.selectRoleIdByUserId(user.getId());
 				
-				/*if(operationMessageBo.getModule()!=null&&operationMessageBo.getModule() != PlatformConst.MODULE_BROADCAST_MESSAGE.intValue()){
+				if(operationMessageBo.getModule()!=null&&operationMessageBo.getModule() != PlatformConst.MODULE_BROADCAST_MESSAGE.intValue()){
 					operationMessageBo.setBelongUid(user.getId());
-				}*/
+				}
 				OperationMessageBo operationMessageBo = new OperationMessageBo();
 				initquery(operationMessageBo,user,roleIdList);
 				//读未删除的消息 2016/10/17
@@ -282,6 +282,6 @@ public class OperationMessageController extends BaseControllerImpl<OperationMess
 			}
 			return responseBody;
 		}
-	
+	*/
 	
 }
