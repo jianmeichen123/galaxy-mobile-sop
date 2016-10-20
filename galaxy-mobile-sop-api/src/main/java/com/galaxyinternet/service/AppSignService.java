@@ -5,6 +5,6 @@ import com.galaxyinternet.model.project.AppSign;
 
 public interface AppSignService extends BaseService<AppSign> {
 	
-	
+	Long select(AppSign appsign);
 
 }
