@@ -222,14 +222,18 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 			}*/
 			OperationMessageBo operationMessageBo = new OperationMessageBo();
 			initquery(operationMessageBo,user,roleIdList);
-			//读未删除的消息 2016/10/17
-			operationMessageBo.setAppDelete(0);
 			
-			List<OperationMessage> lis = operationMessageService.queryList(operationMessageBo);
+			
+			List<OperationMessage> lis = operationMessageService.selectList(operationMessageBo);
 			
 			for(OperationMessage li:lis){
-				li.setAppDelete(1);
-				operationMessageService.updateById(li);	
+				AppDelete sign = new AppDelete();
+				sign.setMessageId(li.getId().toString());
+				sign.setUserId(user.getId().toString());
+				sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
+				sign.setIsDelete(1);
+				
+				 appDeleteService.insert(sign);	
 			}			
 		
 			responseBody.setResult(new Result(Status.OK, "批量更新成功"));
@@ -242,8 +246,8 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 	}
 	
 	
-	//2016/10/17
-		//已读未读
+	//2016/10/17 2016/10/19号修改
+		//已读未读  最终的全部已读未读
 		@ResponseBody
 		@RequestMapping(value = "/ydwd", method = RequestMethod.GET)
 		public ResponseData<OperationMessage> allydwd(HttpServletRequest request) {
@@ -258,22 +262,27 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 					operationMessageBo.setBelongUid(user.getId());
 				}*/
 				OperationMessageBo operationMessageBo = new OperationMessageBo();
+				operationMessageBo.setUserId(user.getId().toString());
 				initquery(operationMessageBo,user,roleIdList);
-				//读未删除的消息 2016/10/17
-				operationMessageBo.setAppDelete(0);
-				
-				List<OperationMessage> lis = operationMessageService.queryList(operationMessageBo);
+
+				//修改下 
+				List<OperationMessage> lis = operationMessageService.selectList(operationMessageBo);
 				
 				for(OperationMessage li:lis){
-					li.setAppSign(1); //标记为 已读
-					operationMessageService.updateById(li);	
+					
+					AppSign sign = new AppSign();
+					sign.setMessageId(li.getId().toString());
+					sign.setUserId(user.getId().toString());
+					sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
+					sign.setIsRead(1);
+					appSignService.insert(sign);
 				}			
 			
-				responseBody.setResult(new Result(Status.OK, "批量更新成功"));
+				responseBody.setResult(new Result(Status.OK, "批量添加已读未读成功"));
 				return responseBody;	
 			} catch (PlatformException e) {
-				responseBody.getResult().addError("批量更新失败");
-				logger.error("updateById ", e);
+				responseBody.getResult().addError("批量添加已读未读失败");
+				logger.error("allydwd ", e);
 			}
 			return responseBody;
 		}
@@ -302,7 +311,7 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 				Long id = appDeleteService.insert(sign);
 				
 				responseBody.setId(id);
-				System.out.println(id);
+				//System.out.println(id);
 				
 				responseBody.setResult(new Result(Status.OK, null, "更新数据库成功!"));
 			} catch (Exception e) {
