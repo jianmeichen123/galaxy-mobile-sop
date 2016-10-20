@@ -228,13 +228,22 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 			List<OperationMessage> lis = operationMessageService.selectList(operationMessageBo);
 			
 			for(OperationMessage li:lis){
-				AppDelete sign = new AppDelete();
-				sign.setMessageId(li.getId().toString());
-				sign.setUserId(user.getId().toString());
-				sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
-				sign.setIsDelete(1);
 				
-				 appDeleteService.insert(sign);	
+				AppDelete ss = new AppDelete();
+				ss.setUserId(user.getId().toString());
+				ss.setMessageId(li.getId().toString());					
+				Long s = appDeleteService.select(ss);					
+				if(s==0){
+					AppDelete sign = new AppDelete();
+					sign.setMessageId(li.getId().toString());
+					sign.setUserId(user.getId().toString());
+					sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
+					sign.setIsDelete(1);	
+					appDeleteService.insert(sign);	
+				}else{
+					continue;
+				}
+				
 			}			
 		
 			responseBody.setResult(new Result(Status.OK, "批量更新成功"));
@@ -319,9 +328,9 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 				sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
 				sign.setIsDelete(1);
 				
-				Long id = appDeleteService.insert(sign);
+				 appDeleteService.insert(sign);
 				
-				responseBody.setId(id);
+				
 				//System.out.println(id);
 				
 				responseBody.setResult(new Result(Status.OK, null, "更新数据库成功!"));

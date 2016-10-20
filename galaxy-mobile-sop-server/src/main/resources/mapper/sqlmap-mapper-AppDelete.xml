@@ -48,6 +48,11 @@
 		<include refid="Base_Where_Clause" />
 	</select>
 	
+	<select id="selectIdByparms"  resultType="java.lang.Long" parameterType="java.util.Map">
+		select count(id) from app_delete a
+		where a.message_id = #{messageId} AND a.user_id= #{userId}
+	</select>
+	
 	<!-- 查询总数 -->
 	<select id="selectCount" resultType="java.lang.Long"
 		parameterType="java.util.Map">
