@@ -20,6 +20,12 @@ public class AppSignServiceImpl extends BaseServiceImpl<AppSign> implements AppS
 	protected BaseDao<AppSign, Long> getBaseDao() {
 		return this.appSignDao;
 	}
+
+	@Override
+	public Long select(AppSign appsign) {
+		
+		return appSignDao.select(appsign);
+	}
 	
 
 

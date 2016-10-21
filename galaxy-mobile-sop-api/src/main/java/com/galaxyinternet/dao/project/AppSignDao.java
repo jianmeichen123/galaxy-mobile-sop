@@ -6,6 +6,7 @@ import com.galaxyinternet.model.project.AppSign;
 public interface AppSignDao  extends BaseDao<AppSign, Long>{
 	
 
+	Long select(AppSign appsign);
 	
 	
 }

@@ -39,7 +39,10 @@
 		from app_sign
 		where id = #{id,jdbcType=BIGINT}
 	</select>
-	
+	<select id="selectIdByparms"  resultType="java.lang.Long" parameterType="java.util.Map">
+		select count(id) from app_sign a
+		where a.message_id = #{messageId} AND a.user_id= #{userId}
+	</select>
 	<!-- 查询 -->
 	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select

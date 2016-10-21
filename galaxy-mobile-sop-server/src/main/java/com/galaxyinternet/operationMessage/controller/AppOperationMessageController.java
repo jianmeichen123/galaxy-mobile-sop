@@ -39,6 +39,7 @@ import com.galaxyinternet.service.AppDeleteService;
 import com.galaxyinternet.service.AppSignService;
 import com.galaxyinternet.service.OperationMessageService;
 import com.galaxyinternet.service.UserRoleService;
+import com.gi.xm.platform.facede.AreaFacede;
 
 @Controller
 @RequestMapping("/galaxy/AppOperationMessage")
@@ -48,7 +49,7 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 	
 	@Autowired
 	private OperationMessageService operationMessageService;
-	
+
 	@Autowired
 	private UserRoleService userRoleService;
 	
@@ -227,13 +228,22 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 			List<OperationMessage> lis = operationMessageService.selectList(operationMessageBo);
 			
 			for(OperationMessage li:lis){
-				AppDelete sign = new AppDelete();
-				sign.setMessageId(li.getId().toString());
-				sign.setUserId(user.getId().toString());
-				sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
-				sign.setIsDelete(1);
 				
-				 appDeleteService.insert(sign);	
+				AppDelete ss = new AppDelete();
+				ss.setUserId(user.getId().toString());
+				ss.setMessageId(li.getId().toString());					
+				Long s = appDeleteService.select(ss);					
+				if(s==0){
+					AppDelete sign = new AppDelete();
+					sign.setMessageId(li.getId().toString());
+					sign.setUserId(user.getId().toString());
+					sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
+					sign.setIsDelete(1);	
+					appDeleteService.insert(sign);	
+				}else{
+					continue;
+				}
+				
 			}			
 		
 			responseBody.setResult(new Result(Status.OK, "批量更新成功"));
@@ -270,12 +280,22 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 				
 				for(OperationMessage li:lis){
 					
-					AppSign sign = new AppSign();
-					sign.setMessageId(li.getId().toString());
-					sign.setUserId(user.getId().toString());
-					sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
-					sign.setIsRead(1);
-					appSignService.insert(sign);
+					AppSign ss = new AppSign();
+					ss.setUserId(user.getId().toString());
+					ss.setMessageId(li.getId().toString());					
+					Long s = appSignService.select(ss);	
+					
+					if(s==0){
+						AppSign sign = new AppSign();
+						sign.setMessageId(li.getId().toString());
+						sign.setUserId(user.getId().toString());
+						sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
+						sign.setIsRead(1);
+						appSignService.insert(sign);						
+					}else{
+						continue;
+					}
+						
 				}			
 			
 				responseBody.setResult(new Result(Status.OK, "批量添加已读未读成功"));
@@ -308,9 +328,9 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 				sign.setUpdateTime(DateUtil.convertDateToStringChina (new Date()));
 				sign.setIsDelete(1);
 				
-				Long id = appDeleteService.insert(sign);
+				 appDeleteService.insert(sign);
 				
-				responseBody.setId(id);
+				
 				//System.out.println(id);
 				
 				responseBody.setResult(new Result(Status.OK, null, "更新数据库成功!"));
