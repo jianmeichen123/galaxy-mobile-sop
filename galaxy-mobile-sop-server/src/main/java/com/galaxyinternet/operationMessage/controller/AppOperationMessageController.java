@@ -39,7 +39,6 @@ import com.galaxyinternet.service.AppDeleteService;
 import com.galaxyinternet.service.AppSignService;
 import com.galaxyinternet.service.OperationMessageService;
 import com.galaxyinternet.service.UserRoleService;
-import com.gi.xm.platform.facede.AreaFacede;
 
 @Controller
 @RequestMapping("/galaxy/AppOperationMessage")
