@@ -189,20 +189,20 @@
 			<properties>
 
 <!-- 			    仿真数据库 -->
-			<!-- 	<jdbc.url>
+				<jdbc.url>
 					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
 				</jdbc.url>
 			    <jdbc.username>fxuser</jdbc.username>
- 				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password> -->
+ 				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password>
 			<!--     仿真数据库 -->
 						
 				<!-- 数据库连接地址和数据库名 -->
 
-				<jdbc.url>
+				<!-- <jdbc.url>
 					jdbc:mysql://10.9.11.234:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
 				</jdbc.url>
 				<jdbc.username>fxuser</jdbc.username>
-				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>							
+				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>	 -->						
 
 				<!-- 本地项目地址 -->
 				<log4j.path>${catalina.base}/logs/</log4j.path>
