@@ -962,10 +962,11 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 	@com.galaxyinternet.common.annotation.Logger(operationScope = LogType.IDEANEWS,recordType=com.galaxyinternet.common.annotation.RecordType.IDEAS)
 	public ResponseData<Idea> createProject(@RequestBody Idea ideaBo, HttpServletRequest request)
 	{
-		Long ideaId = ideaBo.getId();
-		String projectName = ideaBo.getProjectName();
+		//Long ideaId = ideaBo.getId();
+		//String projectName = ideaBo.getProjectName();
 		ResponseData<Idea> resp = new ResponseData<Idea>();
-		try {
+		
+		/*try {
 			MeetingRecord meetQuery = new MeetingRecord();
 			meetQuery.setProjectId(ideaId);
 			meetQuery.setRecordType(DictEnum.RecordType.IDEAS.getType());
@@ -979,10 +980,10 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 			Project obj = new Project();
 			obj.setProjectName(projectName);
 			List<Project> projectList = projectService.queryList(obj);
-			/*
+			
 			 * Integer count = 0 ; for (Project p: projectList) { count ++; }
 			 * if(count>0){
-			 */
+			 
 			if (null != projectList && projectList.size() > 0) {
 				resp.setResult(new Result(Status.ERROR, "cjxmcf", "和已有项目名称重复!"));
 				return resp;
@@ -997,7 +998,8 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 		{
 			resp.getResult().addError(e.getMessage());
 			logger.error("创建项目失败 ID:"+ideaId+" , Project Name:"+projectName, e);
-		}
+		}*/
+		resp.setResult(new Result(Status.ERROR, "创建项目失败请进行升级!"));
 		return resp;
 	}
 	@RequestMapping("/showProject")
