@@ -248,7 +248,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "添加项目失败请进行升级!"));
+		responseBody.setResult(new Result(Status.ERROR, null, "创建项目失败请前往pc端操作!"));
 		return responseBody;
 	}
 
@@ -331,7 +331,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "添加项目失败请进行升级!"));
+		responseBody.setResult(new Result(Status.ERROR, null, "创建项目失败请前往pc端操作!"));
 		return responseBody;
 	}
 	
@@ -395,7 +395,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			ControllerUtils.setRequestParamsForMessageTip(request,
 					project.getProjectName(), project.getId(),"2");
 		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "编辑项目失败请进行升级!"));
+		responseBody.setResult(new Result(Status.ERROR, null, "编辑项目失败请前往pc端操作!"));
 		return responseBody;
 	}
 
@@ -460,7 +460,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			ControllerUtils.setRequestParamsForMessageTip(request,
 					project.getProjectName(), project.getId(),"2");
 		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "编辑项目失败请进行升级!"));
+		responseBody.setResult(new Result(Status.ERROR, null, "编辑项目失败请前往pc端操作!"));
 		return responseBody;
 	}
 	/**
