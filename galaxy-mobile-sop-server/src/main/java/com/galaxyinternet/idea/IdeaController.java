@@ -1009,7 +1009,7 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 			resp.getResult().addError(e.getMessage());
 			logger.error("创建项目失败 ID:"+ideaId+" , Project Name:"+projectName, e);
 		}*/
-		resp.setResult(new Result(Status.ERROR, "创建项目失败请进行升级!"));
+		resp.setResult(new Result(Status.ERROR, "cjxmcf","创建项目失败请进行升级!"));
 		return resp;
 	}
 	@RequestMapping("/showProject")
