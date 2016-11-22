@@ -75,6 +75,13 @@ public class Project extends PagableEntity {
 	private String rkquanbu;
 	//查询的是创保连的项目(全部)
 	private String cblquanbu;
+	
+	
+	//2016/11/21号新增的字段  加速服务费占比
+	private Double serviceCharge;
+	
+	private FinanceHistory financeHistory;
+	
 	/**
 	 * app端新增判断暂无的字段
 	 * 		1.项目概述:projectDescribe
@@ -811,6 +818,22 @@ public class Project extends PagableEntity {
 
 	public void setCblquanbu(String cblquanbu) {
 		this.cblquanbu = cblquanbu;
+	}
+
+	public Double getServiceCharge() {
+		return serviceCharge;
+	}
+
+	public void setServiceCharge(Double serviceCharge) {
+		this.serviceCharge = serviceCharge;
+	}
+
+	public FinanceHistory getFinanceHistory() {
+		return financeHistory;
+	}
+
+	public void setFinanceHistory(FinanceHistory financeHistory) {
+		this.financeHistory = financeHistory;
 	}
 
 	
