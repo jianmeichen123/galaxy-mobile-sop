@@ -65,6 +65,7 @@ import com.galaxyinternet.model.common.Config;
 import com.galaxyinternet.model.department.Department;
 import com.galaxyinternet.model.dict.Dict;
 import com.galaxyinternet.model.operationLog.UrlNumber;
+import com.galaxyinternet.model.project.FinanceHistory;
 import com.galaxyinternet.model.project.FormatData;
 import com.galaxyinternet.model.project.InterviewRecord;
 import com.galaxyinternet.model.project.MeetingRecord;
@@ -86,6 +87,7 @@ import com.galaxyinternet.service.ConfigService;
 import com.galaxyinternet.service.DeliveryService;
 import com.galaxyinternet.service.DepartmentService;
 import com.galaxyinternet.service.DictService;
+import com.galaxyinternet.service.FinanceHistoryService;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
@@ -150,6 +152,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
 
+	
+	//2016/11/21 增加新的service   为了 新增的历史融资 计划 项目详情要显示
+	@Autowired
+	private FinanceHistoryService financeHistoryService;
+	
+	
+	
+	
 	private String tempfilePath;
 
 	public String getTempfilePath() {
@@ -479,6 +489,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		
 
 		Project project = projectService.queryById(Long.parseLong(pid));
+		//新增的融资历史 2016/11/21
+		FinanceHistory financeHistory= new FinanceHistory();
+		financeHistory.setProjectId(Long.parseLong(pid));
+		List<FinanceHistory> queryList = financeHistoryService.queryList(financeHistory);
+		if(queryList!=null && queryList.size()>0){
+			project.setFinanceHistory(queryList.get(0));
+		}
+		
 		if (project != null) {
 			Department Department = new Department();//
 			Department.setId(project.getProjectDepartid());
@@ -3643,7 +3661,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				} 			
 				if(schedulingList!=null && schedulingList.size()>0){	
 					List<String> ids = new ArrayList<String>();
-					for (MeetingScheduling ms : schedulingList) {
+					for (MeetingScheduling ms : schedulingList) {					
 						byte Edit = 1;
 						Integer sheduleStatus = ms.getScheduleStatus();
 						if (sheduleStatus == 2 || sheduleStatus == 3) {
