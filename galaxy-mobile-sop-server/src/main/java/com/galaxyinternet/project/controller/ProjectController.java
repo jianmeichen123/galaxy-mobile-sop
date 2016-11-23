@@ -3715,7 +3715,115 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	}
 	
 	
-	
+	/**
+	 * 查询指定的项目信息接口
+	 * @author gxc
+	 * @return 2016/6/13修改
+	 */
+	@com.galaxyinternet.common.annotation.Logger
+	@ResponseBody
+	@RequestMapping(value = "/xmms/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Project> selectAppProject(@PathVariable("pid") String pid, HttpServletRequest request) {
+		ResponseData<Project> responseBody = new ResponseData<Project>();
+
+		if (pid == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "重要参数缺失"));
+			return responseBody;
+		}
+		Project project = projectService.queryById(Long.parseLong(pid));
+		try {
+			if (project != null) {
+
+				Department Department = new Department();//
+				Department.setId(project.getProjectDepartid());
+				Department queryOne = departmentService.queryOne(Department);
+				Long deptId = null;
+				if (queryOne != null) {
+					project.setProjectCareerline(queryOne.getName());
+					deptId = queryOne.getManagerId();
+					if (null != deptId && deptId.longValue() > 0L) {
+						User queryById = userService.queryById(queryOne.getManagerId());
+						if (queryById != null) {
+							project.setHhrName(queryById.getRealName());
+						}
+					}
+				}
+
+				if (project.getIndustryOwn() != null) {
+					Department Dt = new Department();
+					Dt.setId(project.getIndustryOwn());
+					Department queryTwo = departmentService.queryOne(Dt);
+					if (queryTwo != null) {
+						project.setIndustryOwnDs(queryTwo.getName());
+					}
+				}
+
+				// 1.添加项目描述的暂无标识
+				if (project.getProjectDescribe() != null && !project.getProjectDescribe().equals("")) {
+					project.setProjectDescribezw(1);
+				} else {
+					project.setProjectDescribezw(0);
+				}
+				// 2.添加公司定位的暂无标识
+				if (project.getCompanyLocation() != null && !project.getCompanyLocation().equals("")) {
+					project.setCompanyLocationzw(1);
+				} else {
+					project.setCompanyLocationzw(0);
+				}
+				// 3.用户画像的暂无标识
+				if (project.getUserPortrait() != null && !project.getUserPortrait().equals("")) {
+					project.setUserPortraitzw(1);
+				} else {
+
+					project.setUserPortraitzw(0);
+				}
+				// 4.产品服务的暂无标识
+				if (project.getProjectBusinessModel() != null && !project.getProjectBusinessModel().equals("")) {
+					project.setProjectBusinessModelzw(1);
+				} else {
+					project.setProjectBusinessModelzw(0);
+				}
+				// 5.竟情分析的暂无标识
+				if (project.getProspectAnalysis() != null && !project.getProspectAnalysis().equals("")) {
+					project.setProspectAnalysiszw(1);
+				} else {
+					project.setProspectAnalysiszw(0);
+				}
+				// 6.运营数据的暂无标识
+				if (project.getOperationalData() != null && !project.getOperationalData().equals("")) {
+					project.setOperationalDatazw(1);
+				} else {
+					project.setOperationalDatazw(0);
+				}
+				// 7.行业分析的暂无标识
+				if (project.getIndustryAnalysis() != null && !project.getIndustryAnalysis().equals("")) {
+					project.setIndustryAnalysiszw(1);
+				} else {
+					project.setIndustryAnalysiszw(0);
+				}
+				// 8.下一轮融资路径的暂无标识
+				if (project.getNextFinancingSource() != null && !project.getNextFinancingSource().equals("")) {
+					project.setNextFinancingSourcezw(1);
+				} else {
+					project.setNextFinancingSourcezw(0);
+				}
+
+			} else {
+				responseBody.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
+				return responseBody;
+			}
+
+			responseBody.setEntity(project);
+			ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId());
+
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null, "查询项目详情出现异常"));
+			if (logger.isErrorEnabled()) {
+				logger.error("selectAppProject ", e);
+			}
+		}
+		return responseBody;
+	}
 	
 	
 	

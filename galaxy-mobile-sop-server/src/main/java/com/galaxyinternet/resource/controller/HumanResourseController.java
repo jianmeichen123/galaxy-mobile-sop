@@ -104,6 +104,9 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 					Str = Str.substring(0, 4) + "-" + Str.substring(4, 6) + "-" + Str.substring(6);
 					personPool.setPersonBirthdayStr(Str);
 				}*/
+				
+				
+				
 				if(personPool.getPersonBirthday()!=null){				
 					personPool.setPersonBirthdayStr(DateUtil.convertDateToString(personPool.getPersonBirthday()));					
 				}
@@ -116,6 +119,31 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 					}
 					if(personLearn.getBeginDate()!=null){
 						personLearn.setBeginDateStr(DateUtil.convertDateToString(personLearn.getBeginDate()));
+					}
+/*					if(personLearn.getDegree()!=null && personLearn.getDegree().equals("高中")){
+						personLearn.setIntdreege(1);
+					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("大专")){
+						personLearn.setIntdreege(2);
+					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("本科")){
+						personLearn.setIntdreege(3);
+					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("硕士")){
+						personLearn.setIntdreege(4);
+					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("MBA")){
+						personLearn.setIntdreege(5);
+					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("博士")){
+						personLearn.setIntdreege(6);
+					}else {
+						personLearn.setIntdreege(0);
+					}*/
+					
+				}
+				if(personLearns!=null && personLearns.size()>0){
+					PersonLearn personLea = personLearns.get(0);
+					personPool.setAgree(personLea.getDegree());
+					if(personLea.getSchool()!=null){
+					     personPool.setSchool(personLea.getSchool());
+					}else{
+						 personPool.setSchool("其他");
 					}
 				}
 				
