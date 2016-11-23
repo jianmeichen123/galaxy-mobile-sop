@@ -88,7 +88,7 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 	 * @param personPool
 	 * @param request
 	 * @param pid
-	 * @return
+	 * @return    2016/11/22 gxc修改 为新2.4.12期新需求
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/toaddPersonHr/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -98,12 +98,12 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 			Result result = new Result();
 			try {
 				PersonPool personPool = personPoolService.queryById(pid);
-				if(personPool.getPersonIdcard()!=null &&!"".equals(personPool.getPersonIdcard().trim())&& personPool.getPersonBirthday()==null){
+				/*if(personPool.getPersonIdcard()!=null &&!"".equals(personPool.getPersonIdcard().trim())&& personPool.getPersonBirthday()==null){
 					String str = personPool.getPersonIdcard();
 					String Str = str.substring(6, 14);
 					Str = Str.substring(0, 4) + "-" + Str.substring(4, 6) + "-" + Str.substring(6);
 					personPool.setPersonBirthdayStr(Str);
-				}
+				}*/
 				if(personPool.getPersonBirthday()!=null){				
 					personPool.setPersonBirthdayStr(DateUtil.convertDateToString(personPool.getPersonBirthday()));					
 				}
@@ -114,7 +114,9 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 					if(personLearn.getOverDate()!=null){
 						personLearn.setOverDateStr(DateUtil.convertDateToString(personLearn.getOverDate()));
 					}
-
+					if(personLearn.getBeginDate()!=null){
+						personLearn.setBeginDateStr(DateUtil.convertDateToString(personLearn.getBeginDate()));
+					}
 				}
 				
 				PersonWork personWorkQuery  = new PersonWork();
@@ -124,12 +126,16 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 					if(personWork.getBeginWork()!=null){
 						personWork.setBeginWorkStr(DateUtil.convertDateToString(personWork.getBeginWork()));
 					}
+					
+					if(personWork.getOverWork()!=null){
+						personWork.setOverWorkStr(DateUtil.convertDateToString(personWork.getOverWork()));
+					}
 				}
-				PersonInvest personInvest =new PersonInvest();
+			/*	PersonInvest personInvest =new PersonInvest();
 				personInvest.setPersonId(pid);
-				personInvest = personInvestService.queryOne(personInvest);
+				personInvest = personInvestService.queryOne(personInvest);*/
 				PersonResumetc personResumetc = new PersonResumetc();
-				personResumetc.setPersonInvest(personInvest);
+				//personResumetc.setPersonInvest(personInvest);
 				personResumetc.setPersonLearn(personLearns);
 				personResumetc.setPersonPool(personPool);
 				personResumetc.setPersonWork(personWorks);
