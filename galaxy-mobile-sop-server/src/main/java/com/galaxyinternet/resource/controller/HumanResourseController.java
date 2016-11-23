@@ -1,5 +1,7 @@
 package com.galaxyinternet.resource.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +25,6 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.framework.core.utils.DateUtil;
-import com.galaxyinternet.model.hr.PersonInvest;
 import com.galaxyinternet.model.hr.PersonLearn;
 import com.galaxyinternet.model.hr.PersonResumetc;
 import com.galaxyinternet.model.hr.PersonWork;
@@ -108,8 +109,11 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 				
 				
 				if(personPool.getPersonBirthday()!=null){				
-					personPool.setPersonBirthdayStr(DateUtil.convertDateToString(personPool.getPersonBirthday()));					
+					personPool.setPersonBirthdayStr(DateUtil.convertDateToString(personPool.getPersonBirthday()));	
+					personPool.setAge(getAge(personPool.getPersonBirthday()));
+				     
 				}
+				
 				PersonLearn personLearnQuery = new PersonLearn();
 				personLearnQuery.setPersonId(pid);
 				List<PersonLearn> personLearns =  personLearnService.queryList(personLearnQuery);
@@ -205,6 +209,36 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 		responseData.setEntity(personResumetc);
 		return responseData;
 		
+	}
+	
+	public static int getAge(Date birthDate) {
+		  
+		  if (birthDate == null)
+		   throw new
+		RuntimeException("出生日期不能为null");
+		  
+		  int age = 0;
+		  
+		  Date now = new Date();
+		  
+		  SimpleDateFormat format_y = new SimpleDateFormat("yyyy");
+		  SimpleDateFormat format_M = new SimpleDateFormat("MM");
+		  
+		  String birth_year = format_y.format(birthDate);
+		  String this_year  = format_y.format(now);
+		  
+		  String birth_month = format_M.format(birthDate);
+		  String this_month = format_M.format(now);
+		  
+		  // 初步，估算
+		  age = Integer.parseInt(this_year) - Integer.parseInt(birth_year);
+		  
+		  // 如果未到出生月份，则age - 1
+		  /*if(this_month.compareTo(birth_month) < 0)
+		   age -=1;*/
+		  if (age <0)
+		   age =0;
+		  return age;
 	}
 
 }

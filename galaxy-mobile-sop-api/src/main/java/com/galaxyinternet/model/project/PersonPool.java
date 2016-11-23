@@ -46,7 +46,8 @@ public class PersonPool extends PagableEntity{
     /*备注*/
     private String remark;
     
-    
+    //添加年龄 2016/11/23
+    private Integer age;
     //为了app端选出最高学历新添加 字段
     private Integer intagree;
     //学历
@@ -306,6 +307,12 @@ public class PersonPool extends PagableEntity{
 	}
 	public void setSchool(String school) {
 		this.school = school;
+	}
+	public Integer getAge() {
+		return age;
+	}
+	public void setAge(Integer age) {
+		this.age = age;
 	}
     
 	
