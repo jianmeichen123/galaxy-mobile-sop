@@ -40,8 +40,11 @@ public class PersonPool extends PagableEntity{
     private String formatAgeStr;
     private String formatWorkTime;
     
-    
-    
+  //  2011/11/22  新增两个字段为了app端 新增的团队成员简历
+    /*是否为联系人*/
+    private Integer isContacts;
+    /*备注*/
+    private String remark;
     
     
 	public String getFormatWorkTime() {
@@ -267,6 +270,19 @@ public class PersonPool extends PagableEntity{
 	public void setTeamAbility(String teamAbility) {
 		this.teamAbility = teamAbility;
 	}
+	public Integer getIsContacts() {
+		return isContacts;
+	}
+	public void setIsContacts(Integer isContacts) {
+		this.isContacts = isContacts;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
     
+	
     
 }
