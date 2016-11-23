@@ -47,6 +47,13 @@ public class PersonPool extends PagableEntity{
     private String remark;
     
     
+    //为了app端选出最高学历新添加 字段
+    private Integer intagree;
+    //学历
+    private String agree;
+    //学校
+    private String school;
+    
 	public String getFormatWorkTime() {
 		return formatWorkTime;
 	}
@@ -281,6 +288,24 @@ public class PersonPool extends PagableEntity{
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public Integer getIntagree() {
+		return intagree;
+	}
+	public void setIntagree(Integer intagree) {
+		this.intagree = intagree;
+	}
+	public String getAgree() {
+		return agree;
+	}
+	public void setAgree(String agree) {
+		this.agree = agree;
+	}
+	public String getSchool() {
+		return school;
+	}
+	public void setSchool(String school) {
+		this.school = school;
 	}
     
 	
