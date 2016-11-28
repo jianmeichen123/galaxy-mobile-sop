@@ -179,7 +179,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	public ResponseData<Project> addProject(@RequestBody Project project,
 			HttpServletRequest request) {
 		ResponseData<Project> responseBody = new ResponseData<Project>();
-		/*if (project == null || project.getProjectName() == null
+		if (project == null || project.getProjectName() == null
 				|| "".equals(project.getProjectName().trim())
 				|| project.getProjectType() == null
 				|| "".equals(project.getProjectType().trim())
@@ -199,9 +199,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		obj.setProjectName(project.getProjectName());
 		List<Project> projectList = projectService.queryList(obj);
 		
-		 * Integer count = 0 ; for (Project p: projectList) { count ++; }
+		/* * Integer count = 0 ; for (Project p: projectList) { count ++; }
 		 * if(count>0){
-		 
+		 */
 		if (null != projectList && projectList.size() > 0) {
 			responseBody.setResult(new Result(Status.ERROR, null, "项目名称重复!"));
 			return responseBody;
@@ -247,8 +247,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "创建项目失败请前往pc端操作!"));
+		}
 		return responseBody;
 	}
 
@@ -265,7 +264,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	public ResponseData<Project> cjxiangMu(@RequestBody Project project,
 			HttpServletRequest request) {
 		ResponseData<Project> responseBody = new ResponseData<Project>();
-		/*if (project == null || project.getProjectName() == null
+		if (project == null || project.getProjectName() == null
 				|| "".equals(project.getProjectName().trim())
 				|| project.getProjectType() == null
 				|| "".equals(project.getProjectType().trim())
@@ -330,8 +329,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "创建项目失败请前往pc端操作!"));
+		}
 		return responseBody;
 	}
 	
@@ -348,7 +346,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	public ResponseData<Project> resetProject(@RequestBody Project project,
 			HttpServletRequest request) throws ParseException {
 		ResponseData<Project> responseBody = new ResponseData<Project>();
-		/*if (project == null || project.getId() == null) {
+		if (project == null || project.getId() == null) {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
 		}
@@ -394,8 +392,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
 			ControllerUtils.setRequestParamsForMessageTip(request,
 					project.getProjectName(), project.getId(),"2");
-		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "编辑项目失败请前往pc端操作!"));
+		}
 		return responseBody;
 	}
 
@@ -413,7 +410,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	public ResponseData<Project> editProject(@RequestBody Project project,
 			HttpServletRequest request) throws ParseException {
 		ResponseData<Project> responseBody = new ResponseData<Project>();
-	/*	if (project == null || project.getId() == null) {
+		if (project == null || project.getId() == null) {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
 		}
@@ -459,8 +456,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
 			ControllerUtils.setRequestParamsForMessageTip(request,
 					project.getProjectName(), project.getId(),"2");
-		}*/
-		responseBody.setResult(new Result(Status.ERROR, null, "编辑项目失败请前往pc端操作!"));
+		}
 		return responseBody;
 	}
 	/**
