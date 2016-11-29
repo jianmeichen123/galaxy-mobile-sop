@@ -30,7 +30,7 @@ public class Project extends PagableEntity {
     private String projectProgress;
     private String projectStatus;
     private String projectDescribe;
-    private String projectBusinessModel;
+    private String projectBusinessModel; //商业模式
     private String companyLocation;
     private String userPortrait;
     private String prospectAnalysis;
@@ -81,6 +81,10 @@ public class Project extends PagableEntity {
 	private Double serviceCharge;
 	
 	private FinanceHistory financeHistory;
+	
+	private String projectDescribeFinancing ;//项目描述要点
+   
+	private Integer projectDescribeFinancingZW;//项目描述要点的暂无
 	
 	/**
 	 * app端新增判断暂无的字段
@@ -836,7 +840,23 @@ public class Project extends PagableEntity {
 		this.financeHistory = financeHistory;
 	}
 
-	
+	public String getProjectDescribeFinancing() {
+		return projectDescribeFinancing;
+	}
+
+	public void setProjectDescribeFinancing(String projectDescribeFinancing) {
+		this.projectDescribeFinancing = projectDescribeFinancing;
+	}
+
+	public Integer getProjectDescribeFinancingZW() {
+		return projectDescribeFinancingZW;
+	}
+
+	public void setProjectDescribeFinancingZW(Integer projectDescribeFinancingZW) {
+		this.projectDescribeFinancingZW = projectDescribeFinancingZW;
+	}
+
+
 	
 	
 	

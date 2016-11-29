@@ -680,7 +680,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				project.setNextFinancingSourcezw(1);
 			}else{
 				project.setNextFinancingSourcezw(0);
-			}			
+			}	
+			//9.项目的要点的暂无标识
+			if(project.getProjectDescribeFinancing()!=null &&!project.getProjectDescribeFinancing().equals("")){
+				project.setProjectDescribeFinancingZW(1);
+			}else{
+				project.setProjectDescribeFinancingZW(0);
+			}
 			
 		} else {
 			responseBody
@@ -3804,6 +3810,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				} else {
 					project.setNextFinancingSourcezw(0);
 				}
+				//9.项目的要点的暂无标识
+				if(project.getProjectDescribeFinancing()!=null &&!project.getProjectDescribeFinancing().equals("")){
+					project.setProjectDescribeFinancingZW(1);
+				}else{
+					project.setProjectDescribeFinancingZW(0);
+				}
+
 
 			} else {
 				responseBody.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
