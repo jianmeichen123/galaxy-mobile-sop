@@ -17,6 +17,10 @@ public class ProjectShares extends PagableEntity {
 
     private String remark;
 
+    //2016/11/28新增股权结构的币种
+    private Integer financeUnit;
+    //2016/11/28新增股权结构的融资金额
+    private Double financeAmount;
 
     public String getSharesType() {
         return sharesType;
@@ -64,6 +68,22 @@ public class ProjectShares extends PagableEntity {
 
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
+	}
+
+	public Integer getFinanceUnit() {
+		return financeUnit;
+	}
+
+	public void setFinanceUnit(Integer financeUnit) {
+		this.financeUnit = financeUnit;
+	}
+
+	public Double getFinanceAmount() {
+		return financeAmount;
+	}
+
+	public void setFinanceAmount(Double financeAmount) {
+		this.financeAmount = financeAmount;
 	}
     
     
