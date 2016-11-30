@@ -163,7 +163,7 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 		Project p = projectService.queryById(projectId);
 		//项目创建者用户ID与当前登录人ID是否一样
 		if(p != null && user.getId().doubleValue() != p.getCreateUid().doubleValue()){
-			responseBody.setResult(new Result(Status.ERROR, "没有权限删除该项目的团队成员!"));
+			responseBody.setResult(new Result(Status.ERROR, "没有权限删除该项目的股权结构!"));
 			return responseBody;
 		}
 		int count = projectSharesService.deleteById(id);
@@ -171,7 +171,7 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 			responseBody.setResult(new Result(Status.ERROR,"要删除的记录不存在！"));
 			return responseBody;
 		}
-		responseBody.setResult(new Result(Status.OK,"团队成员删除成功!"));
+		responseBody.setResult(new Result(Status.OK,"股权结构删除成功!"));
 		return responseBody;
 	}
 	
