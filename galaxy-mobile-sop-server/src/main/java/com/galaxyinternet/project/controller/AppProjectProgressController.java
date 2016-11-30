@@ -2362,8 +2362,8 @@ public class AppProjectProgressController extends BaseControllerImpl<Project, Pr
 					if (!listSop.isEmpty()) {
 						for (SopFile sop : listSop) {
 							asfile5 = new AppSopFile();
-
-							if(sop.getFileKey()!=null){
+//修改
+							if(sop.getFileKey()!=null && sop.getFileWorktype()!=null){
 								if (sop.getFileWorktype().equals(DictEnum.fileWorktype.投资意向书.getCode())) {
 									asfile5.setFileYwCode(sop.getFileWorktype());
 									asfile5.setFileWorktype(DictEnum.fileWorktype.getNameByCode(sop.getFileWorktype()));
