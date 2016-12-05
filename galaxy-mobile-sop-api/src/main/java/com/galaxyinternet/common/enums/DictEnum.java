@@ -18,7 +18,10 @@ public enum DictEnum {
 	档案来源("档案来源","fileSource"),
 	学历("学历","degree"),
 	融资状态("融资状态","financeStatus"),
-	项目状态("项目状态","projectStatus");
+	项目状态("项目状态","projectStatus"),
+	
+	//行业归属 2016/12/5号修改
+	行业归属("行业归属","industryOwn");
 	
 	private String name;
 
