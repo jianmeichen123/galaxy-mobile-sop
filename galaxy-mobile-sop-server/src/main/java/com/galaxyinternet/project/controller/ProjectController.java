@@ -511,14 +511,24 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				}
 			}
 			
-			if(project.getIndustryOwn()!=null){
+/*			if(project.getIndustryOwn()!=null){
 				Department Dt= new Department();
 				Dt.setId(project.getIndustryOwn());
 				Department queryTwo = departmentService.queryOne(Dt);
 				if (queryTwo != null) {
 					project.setIndustryOwnDs(queryTwo.getName());				
 				}
-			}
+			}*/
+			//新修改的项目行业归属 2016/12/5
+			if(project.getIndustryOwn()!=null){
+                String name=DictEnum.industryOwn.getNameByCode(
+        		 project.getIndustryOwn().toString());
+			if (name != null) {
+					project.setIndustryOwnDs(name);				
+				}else{
+					project.setIndustryOwnDs(null);
+				}
+			}		
 			//商业计划书 的 暂无 
 			if(StringUtils.isBlank(pid)){
 				responseBody.setResult(new Result(Status.ERROR,"传入的projectId为空"));
@@ -3752,7 +3762,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					}
 				}
 
-				if (project.getIndustryOwn() != null) {
+/*				if (project.getIndustryOwn() != null) {
 					Department Dt = new Department();
 					Dt.setId(project.getIndustryOwn());
 					Department queryTwo = departmentService.queryOne(Dt);
@@ -3760,7 +3770,18 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						project.setIndustryOwnDs(queryTwo.getName());
 					}
 				}
-
+				
+*/
+				//新修改的项目行业归属 2016/12/5
+				if(project.getIndustryOwn()!=null){
+	                String name=DictEnum.industryOwn.getNameByCode(
+	        		 project.getIndustryOwn().toString());
+				if (name != null) {
+						project.setIndustryOwnDs(name);				
+					}else{
+						project.setIndustryOwnDs(null);
+					}
+				}	
 				// 1.添加项目描述的暂无标识
 				if (project.getProjectDescribe() != null && !project.getProjectDescribe().equals("")) {
 					project.setProjectDescribezw(1);
