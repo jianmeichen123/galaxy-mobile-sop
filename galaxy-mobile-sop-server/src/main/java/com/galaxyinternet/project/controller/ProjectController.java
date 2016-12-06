@@ -1603,7 +1603,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				|| !validateInterviewRecord(project)
 				|| !validateBusinessBook(project)
 				|| !validatePersonMessage(project)){
-			responseBody.setResult(new Result(Status.ERROR, "401", "前置参数丢失!"));
+			responseBody.setResult(new Result(Status.ERROR, "401", "内容提交不完整，请登录PC端进行完善!"));
 			return responseBody;
 		}
 		
