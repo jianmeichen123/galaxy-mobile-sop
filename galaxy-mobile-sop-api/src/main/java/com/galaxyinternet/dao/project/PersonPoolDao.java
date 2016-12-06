@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.galaxyinternet.bo.project.PersonPoolBo;
 import com.galaxyinternet.framework.core.dao.BaseDao;
+import com.galaxyinternet.framework.core.exception.DaoException;
 import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.model.project.PersonPool;
 
@@ -16,4 +17,11 @@ public interface PersonPoolDao extends BaseDao<PersonPool, Long> {
 	
 	public List<PersonPool> selectNoToTask(Map<String,Object> params);
 		
+	
+	/**
+	 * 根据项目ID查询关联的团队成员列表
+	 * @param personPool
+	 * @return
+	 */
+	public List<PersonPool> selectPersonPoolByPID(Long pid) throws DaoException;
 }
