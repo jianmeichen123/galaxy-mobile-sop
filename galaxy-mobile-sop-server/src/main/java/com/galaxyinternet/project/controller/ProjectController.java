@@ -1529,13 +1529,16 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			List<PersonPool> personList = personPoolService.selectPersonPoolByPID(p.getId());
 			if(personList != null && personList.size() > 0){
 				for(PersonPool pool : personList){
+
 					if(pool.getPersonName() != null && !"".equals(pool.getPersonName().trim())
 							&& pool.getPersonSex() != null
 							&& pool.getPersonDuties() != null && !"".equals(pool.getPersonDuties().trim())
 							&& pool.getPersonBirthday() != null
-							//&& (pool.get || (pool.get && pool.get))是否为联系人校验
+							&& (pool.getIsContacts()==1 || (pool.getIsContacts()==0 &&
+							null!=pool.getPersonTelephone()&&!"".equals(pool.getPersonTelephone())))
 							){
 						return true;
+					
 					}
 				}
 			}
