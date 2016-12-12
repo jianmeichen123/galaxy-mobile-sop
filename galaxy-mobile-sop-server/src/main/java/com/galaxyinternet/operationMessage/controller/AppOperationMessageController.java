@@ -184,7 +184,11 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 			return responseBody;
 		}
 		
-		if(p.getId()!=null&&!p.equals("")){
+		if(p.getId()!=null&&!p.getId().equals("")){
+			if(operationMessageService.queryById(p.getId())==null){
+				responseBody.setResult(new Result(Status.ERROR, null, "没找到此条消息"));
+				return responseBody;
+			}
 			AppSign ss = new AppSign();
 			ss.setUserId(user.getId().toString());
 			ss.setMessageId(p.getId().toString());					
@@ -327,8 +331,15 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 			User user = (User) getUserFromSession(request);
 			if (p.getId() == null) 
 			{
+
 				responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 				return responseBody;
+			}
+			if(p.getId() != null && !p.getId().equals("")){
+				if(operationMessageService.queryById(p.getId())==null){
+					responseBody.setResult(new Result(Status.ERROR, null, "没找到此条消息"));
+					return responseBody;
+				}
 			}
 			try {	
 
