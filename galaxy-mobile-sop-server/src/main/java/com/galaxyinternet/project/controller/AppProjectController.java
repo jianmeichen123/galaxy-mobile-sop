@@ -831,12 +831,24 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 										}
 										
 										//financeStatus
-										Department dt=new Department();
+/*										Department dt=new Department();
 										if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
 											dt.setId(probean.getIndustryOwn());
 											Department queryDep = departmentService.queryOne(dt);
 											if(queryDep!=null){
 												probean.setIndustry(queryDep.getName());//行业归属名称
+											}else{
+												probean.setIndustry("");
+											}
+										}
+										*/
+										
+										
+										//2016/12/13修改行业归属								
+										if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+											String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
+											if(queryDep!=null){
+												probean.setIndustry(queryDep);//行业归属名称
 											}else{
 												probean.setIndustry("");
 											}
