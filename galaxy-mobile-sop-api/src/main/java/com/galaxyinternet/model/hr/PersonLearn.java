@@ -23,6 +23,9 @@ public class PersonLearn extends BaseEntity{
 	private String classmatePhone;//同学电话
 	private String   beginDateStr; //入学时间
 	private String   overDateStr; // 毕业时间
+	
+	//为排序新增字段
+	private Integer intdreege;
 	public Long getId() {
 		return id;
 	}
@@ -118,6 +121,12 @@ public class PersonLearn extends BaseEntity{
 	}
 	public void setOverDateStr(String overDateStr) {
 		this.overDateStr = overDateStr;
+	}
+	public Integer getIntdreege() {
+		return intdreege;
+	}
+	public void setIntdreege(Integer intdreege) {
+		this.intdreege = intdreege;
 	}
 	
 	

@@ -28,6 +28,7 @@ public class PersonWork extends BaseEntity{
 	private String colleaguePhone;//同事电话
 	
 	private String beginWorkStr;//入职时间 
+	private String overWorkStr;//离职时间
 	
 	public Long getId() {
 		return id;
@@ -149,6 +150,12 @@ public class PersonWork extends BaseEntity{
 	}
 	public void setBeginWorkStr(String beginWorkStr) {
 		this.beginWorkStr = beginWorkStr;
+	}
+	public String getOverWorkStr() {
+		return overWorkStr;
+	}
+	public void setOverWorkStr(String overWorkStr) {
+		this.overWorkStr = overWorkStr;
 	}
 	
 	

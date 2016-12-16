@@ -30,7 +30,7 @@ public class Project extends PagableEntity {
     private String projectProgress;
     private String projectStatus;
     private String projectDescribe;
-    private String projectBusinessModel;
+    private String projectBusinessModel; //商业模式
     private String companyLocation;
     private String userPortrait;
     private String prospectAnalysis;
@@ -75,6 +75,17 @@ public class Project extends PagableEntity {
 	private String rkquanbu;
 	//查询的是创保连的项目(全部)
 	private String cblquanbu;
+	
+	
+	//2016/11/21号新增的字段  加速服务费占比
+	private Double serviceCharge;
+	
+	private FinanceHistory financeHistory;
+	
+	private String projectDescribeFinancing ;//项目描述要点
+   
+	private Integer projectDescribeFinancingZW;//项目描述要点的暂无
+	
 	/**
 	 * app端新增判断暂无的字段
 	 * 		1.项目概述:projectDescribe
@@ -813,7 +824,39 @@ public class Project extends PagableEntity {
 		this.cblquanbu = cblquanbu;
 	}
 
-	
+	public Double getServiceCharge() {
+		return serviceCharge;
+	}
+
+	public void setServiceCharge(Double serviceCharge) {
+		this.serviceCharge = serviceCharge;
+	}
+
+	public FinanceHistory getFinanceHistory() {
+		return financeHistory;
+	}
+
+	public void setFinanceHistory(FinanceHistory financeHistory) {
+		this.financeHistory = financeHistory;
+	}
+
+	public String getProjectDescribeFinancing() {
+		return projectDescribeFinancing;
+	}
+
+	public void setProjectDescribeFinancing(String projectDescribeFinancing) {
+		this.projectDescribeFinancing = projectDescribeFinancing;
+	}
+
+	public Integer getProjectDescribeFinancingZW() {
+		return projectDescribeFinancingZW;
+	}
+
+	public void setProjectDescribeFinancingZW(Integer projectDescribeFinancingZW) {
+		this.projectDescribeFinancingZW = projectDescribeFinancingZW;
+	}
+
+
 	
 	
 	

@@ -40,9 +40,20 @@ public class PersonPool extends PagableEntity{
     private String formatAgeStr;
     private String formatWorkTime;
     
+  //  2011/11/22  新增两个字段为了app端 新增的团队成员简历
+    /*是否为联系人*/
+    private Integer isContacts;
+    /*备注*/
+    private String remark;
     
-    
-    
+    //添加年龄 2016/11/23
+    private Integer age;
+    //为了app端选出最高学历新添加 字段
+    private Integer intagree;
+    //学历
+    private String agree;
+    //学校
+    private String school;
     
 	public String getFormatWorkTime() {
 		return formatWorkTime;
@@ -267,6 +278,43 @@ public class PersonPool extends PagableEntity{
 	public void setTeamAbility(String teamAbility) {
 		this.teamAbility = teamAbility;
 	}
+	public Integer getIsContacts() {
+		return isContacts;
+	}
+	public void setIsContacts(Integer isContacts) {
+		this.isContacts = isContacts;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getIntagree() {
+		return intagree;
+	}
+	public void setIntagree(Integer intagree) {
+		this.intagree = intagree;
+	}
+	public String getAgree() {
+		return agree;
+	}
+	public void setAgree(String agree) {
+		this.agree = agree;
+	}
+	public String getSchool() {
+		return school;
+	}
+	public void setSchool(String school) {
+		this.school = school;
+	}
+	public Integer getAge() {
+		return age;
+	}
+	public void setAge(Integer age) {
+		this.age = age;
+	}
     
+	
     
 }

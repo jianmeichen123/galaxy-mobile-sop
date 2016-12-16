@@ -990,10 +990,7 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 			Project obj = new Project();
 			obj.setProjectName(projectName);
 			List<Project> projectList = projectService.queryList(obj);
-			
-			/* * Integer count = 0 ; for (Project p: projectList) { count ++; }
-			 * if(count>0){
-			 */
+
 			if (null != projectList && projectList.size() > 0) {
 				resp.setResult(new Result(Status.ERROR, "cjxmcf", "和已有项目名称重复!"));
 				return resp;

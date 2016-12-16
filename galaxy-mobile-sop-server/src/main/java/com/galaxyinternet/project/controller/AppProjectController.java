@@ -37,12 +37,14 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.department.Department;
+import com.galaxyinternet.model.dict.Dict;
 import com.galaxyinternet.model.project.AppMeetScheduling;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.AppProjectService;
 import com.galaxyinternet.service.AppProjecttService;
 import com.galaxyinternet.service.DepartmentService;
+import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.MeetingSchedulingService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.UserRoleService;
@@ -70,7 +72,9 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	@Autowired
 	private ProjectService projectService;
 	@Autowired
-	private UserRoleService userRoleService;	
+	private UserRoleService userRoleService;
+	@Autowired
+	private DictService dictService;
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
 	
@@ -507,7 +511,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 								}
 								
 								//financeStatus
-								Department dt=new Department();
+/*								Department dt=new Department();
 								if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
 									dt.setId(probean.getIndustryOwn());
 									Department queryDep = departmentService.queryOne(dt);
@@ -517,7 +521,21 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 										probean.setIndustry("");
 									}
 								}
-								
+								*/
+								//2016/12/13修改行业归属								
+								if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+								//	dt.setId(probean.getIndustryOwn());
+								/*	Dict dict = new Dict();
+									dict.setParentCode("industryOwn");*/
+								//	dict.setCode(code);
+									String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
+								//	String queryDep=dictService.selectbypd(dict)
+									if(queryDep!=null){
+										probean.setIndustry(queryDep);//行业归属名称
+									}else{
+										probean.setIndustry("");
+									}
+								}
 							    /*
 							     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
 							     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比
@@ -813,12 +831,24 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 										}
 										
 										//financeStatus
-										Department dt=new Department();
+/*										Department dt=new Department();
 										if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
 											dt.setId(probean.getIndustryOwn());
 											Department queryDep = departmentService.queryOne(dt);
 											if(queryDep!=null){
 												probean.setIndustry(queryDep.getName());//行业归属名称
+											}else{
+												probean.setIndustry("");
+											}
+										}
+										*/
+										
+										
+										//2016/12/13修改行业归属								
+										if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+											String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
+											if(queryDep!=null){
+												probean.setIndustry(queryDep);//行业归属名称
 											}else{
 												probean.setIndustry("");
 											}

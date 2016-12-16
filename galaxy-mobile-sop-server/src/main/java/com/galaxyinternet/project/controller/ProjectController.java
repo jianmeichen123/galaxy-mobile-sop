@@ -65,6 +65,7 @@ import com.galaxyinternet.model.common.Config;
 import com.galaxyinternet.model.department.Department;
 import com.galaxyinternet.model.dict.Dict;
 import com.galaxyinternet.model.operationLog.UrlNumber;
+import com.galaxyinternet.model.project.FinanceHistory;
 import com.galaxyinternet.model.project.FormatData;
 import com.galaxyinternet.model.project.InterviewRecord;
 import com.galaxyinternet.model.project.MeetingRecord;
@@ -86,6 +87,7 @@ import com.galaxyinternet.service.ConfigService;
 import com.galaxyinternet.service.DeliveryService;
 import com.galaxyinternet.service.DepartmentService;
 import com.galaxyinternet.service.DictService;
+import com.galaxyinternet.service.FinanceHistoryService;
 import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
@@ -150,6 +152,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
 
+	
+	//2016/11/21 增加新的service   为了 新增的历史融资 计划 项目详情要显示
+	@Autowired
+	private FinanceHistoryService financeHistoryService;
+	
+	
+	
+	
 	private String tempfilePath;
 
 	public String getTempfilePath() {
@@ -247,7 +257,11 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+<<<<<<< HEAD
 		}
+=======
+		}		
+>>>>>>> refs/remotes/origin/develop
 		return responseBody;
 	}
 
@@ -330,6 +344,10 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+<<<<<<< HEAD
+=======
+		
+>>>>>>> refs/remotes/origin/develop
 		return responseBody;
 	}
 	
@@ -392,7 +410,11 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
 			ControllerUtils.setRequestParamsForMessageTip(request,
 					project.getProjectName(), project.getId(),"2");
+<<<<<<< HEAD
 		}
+=======
+		}		
+>>>>>>> refs/remotes/origin/develop
 		return responseBody;
 	}
 
@@ -475,6 +497,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		
 
 		Project project = projectService.queryById(Long.parseLong(pid));
+		//新增的融资历史 2016/11/21
+		FinanceHistory financeHistory= new FinanceHistory();
+		financeHistory.setProjectId(Long.parseLong(pid));
+		List<FinanceHistory> queryList = financeHistoryService.queryList(financeHistory);
+		if(queryList!=null && queryList.size()>0){
+			project.setFinanceHistory(queryList.get(0));
+		}
+		
 		if (project != null) {
 			Department Department = new Department();//
 			Department.setId(project.getProjectDepartid());
@@ -492,14 +522,24 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				}
 			}
 			
-			if(project.getIndustryOwn()!=null){
+/*			if(project.getIndustryOwn()!=null){
 				Department Dt= new Department();
 				Dt.setId(project.getIndustryOwn());
 				Department queryTwo = departmentService.queryOne(Dt);
 				if (queryTwo != null) {
 					project.setIndustryOwnDs(queryTwo.getName());				
 				}
-			}
+			}*/
+			//新修改的项目行业归属 2016/12/5
+			if(project.getIndustryOwn()!=null){
+                String name=DictEnum.industryOwn.getNameByCode(
+        		 project.getIndustryOwn().toString());
+			if (name != null) {
+					project.setIndustryOwnDs(name);				
+				}else{
+					project.setIndustryOwnDs(null);
+				}
+			}		
 			//商业计划书 的 暂无 
 			if(StringUtils.isBlank(pid)){
 				responseBody.setResult(new Result(Status.ERROR,"传入的projectId为空"));
@@ -661,7 +701,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				project.setNextFinancingSourcezw(1);
 			}else{
 				project.setNextFinancingSourcezw(0);
-			}			
+			}	
+			//9.项目的要点的暂无标识
+			if(project.getProjectDescribeFinancing()!=null &&!project.getProjectDescribeFinancing().equals("")){
+				project.setProjectDescribeFinancingZW(1);
+			}else{
+				project.setProjectDescribeFinancingZW(0);
+			}
 			
 		} else {
 			responseBody
@@ -1488,6 +1534,70 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		return responseBody;
 	}
 
+	//
+	private boolean validatePersonMessage(Project p){
+		if(p != null){
+			List<PersonPool> personList = personPoolService.selectPersonPoolByPID(p.getId());
+			if(personList != null && personList.size() > 0){
+				for(PersonPool pool : personList){
+
+					if(pool.getPersonName() != null && !"".equals(pool.getPersonName().trim())
+							&& pool.getPersonSex() != null
+							&& pool.getPersonDuties() != null && !"".equals(pool.getPersonDuties().trim())
+							&& pool.getPersonBirthday() != null
+							&& (pool.getIsContacts()==1 || (pool.getIsContacts()==0 &&
+							null!=pool.getPersonTelephone()&&!"".equals(pool.getPersonTelephone())))
+							){
+						return true;
+					
+					}
+				}
+			}
+		}
+		return false;
+	}
+	private boolean validateBusinessBook(Project p){
+		if(p != null){
+			SopFile query = new SopFile();
+			query.setProjectId(p.getId());
+			query.setFileWorktype(DictEnum.fileWorktype.商业计划.getCode());
+			List<SopFile> fList = sopFileService.queryList(query);
+			if(fList != null && fList.size() > 0){
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean validateInterviewRecord(Project p){
+		if(p != null){
+			InterviewRecord query = new InterviewRecord();
+			query.setProjectId(p.getId());
+			List<InterviewRecord> irList = interviewRecordService.queryList(query);
+			if(irList != null && irList.size() > 0){
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean validateBasicData(Project p){
+		if(p != null 
+				//项目的几个大文本内容必填验证
+				&& p.getProjectDescribe() != null && !"".equals(p.getProjectDescribe().trim())
+				&& p.getProjectBusinessModel() != null && !"".equals(p.getProjectBusinessModel().trim())
+				&& p.getCompanyLocation() != null && !"".equals(p.getCompanyLocation().trim())
+				&& p.getUserPortrait() != null && !"".equals(p.getUserPortrait().trim())
+				&& p.getProjectBusinessModel() != null && !"".equals(p.getProjectBusinessModel().trim())
+				&& p.getIndustryAnalysis() != null && !"".equals(p.getIndustryAnalysis().trim())
+				&& p.getProspectAnalysis() != null && !"".equals(p.getProspectAnalysis())
+				//融资计划不能为空
+				&& p.getProjectContribution() != null && p.getProjectContribution().doubleValue() > 0
+				&& p.getProjectShareRatio() != null && p.getProjectShareRatio().doubleValue() > 0
+				&& p.getProjectValuations() != null && p.getProjectValuations().doubleValue() > 0
+				){
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * 接触访谈阶段: 启动内部评审
 	 * 
@@ -1501,6 +1611,16 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		ResponseData<Project> responseBody = new ResponseData<Project>();
 		User user = (User) getUserFromSession(request);
 		Project project = projectService.queryById(pid);
+		
+		//新加的验证
+		if(!validateBasicData(project) 
+				|| !validateInterviewRecord(project)
+				|| !validateBusinessBook(project)
+				|| !validatePersonMessage(project)){
+			responseBody.setResult(new Result(Status.ERROR, "401", "内容提交不完整，请登录PC端进行完善!"));
+			return responseBody;
+		}
+		
 		Result result = validate(DictEnum.projectProgress.接触访谈.getCode(),
 				project, user);
 		if (!result.getStatus().equals(Status.OK)) {
@@ -3639,7 +3759,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				} 			
 				if(schedulingList!=null && schedulingList.size()>0){	
 					List<String> ids = new ArrayList<String>();
-					for (MeetingScheduling ms : schedulingList) {
+					for (MeetingScheduling ms : schedulingList) {					
 						byte Edit = 1;
 						Integer sheduleStatus = ms.getScheduleStatus();
 						if (sheduleStatus == 2 || sheduleStatus == 3) {
@@ -3693,7 +3813,133 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	}
 	
 	
-	
+	/**
+	 * 查询指定的项目信息接口
+	 * @author gxc
+	 * @return 2016/6/13修改
+	 */
+	@com.galaxyinternet.common.annotation.Logger
+	@ResponseBody
+	@RequestMapping(value = "/xmms/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Project> selectAppProject(@PathVariable("pid") String pid, HttpServletRequest request) {
+		ResponseData<Project> responseBody = new ResponseData<Project>();
+
+		if (pid == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "重要参数缺失"));
+			return responseBody;
+		}
+		Project project = projectService.queryById(Long.parseLong(pid));
+		try {
+			if (project != null) {
+
+				Department Department = new Department();//
+				Department.setId(project.getProjectDepartid());
+				Department queryOne = departmentService.queryOne(Department);
+				Long deptId = null;
+				if (queryOne != null) {
+					project.setProjectCareerline(queryOne.getName());
+					deptId = queryOne.getManagerId();
+					if (null != deptId && deptId.longValue() > 0L) {
+						User queryById = userService.queryById(queryOne.getManagerId());
+						if (queryById != null) {
+							project.setHhrName(queryById.getRealName());
+						}
+					}
+				}
+
+/*				if (project.getIndustryOwn() != null) {
+					Department Dt = new Department();
+					Dt.setId(project.getIndustryOwn());
+					Department queryTwo = departmentService.queryOne(Dt);
+					if (queryTwo != null) {
+						project.setIndustryOwnDs(queryTwo.getName());
+					}
+				}
+				
+*/
+				//新修改的项目行业归属 2016/12/5
+				if(project.getIndustryOwn()!=null){
+	                String name=DictEnum.industryOwn.getNameByCode(
+	        		 project.getIndustryOwn().toString());
+				if (name != null) {
+						project.setIndustryOwnDs(name);				
+					}else{
+						project.setIndustryOwnDs(null);
+					}
+				}	
+				// 1.添加项目描述的暂无标识
+				if (project.getProjectDescribe() != null && !project.getProjectDescribe().equals("")) {
+					project.setProjectDescribezw(1);
+				} else {
+					project.setProjectDescribezw(0);
+				}
+				// 2.添加公司定位的暂无标识
+				if (project.getCompanyLocation() != null && !project.getCompanyLocation().equals("")) {
+					project.setCompanyLocationzw(1);
+				} else {
+					project.setCompanyLocationzw(0);
+				}
+				// 3.用户画像的暂无标识
+				if (project.getUserPortrait() != null && !project.getUserPortrait().equals("")) {
+					project.setUserPortraitzw(1);
+				} else {
+
+					project.setUserPortraitzw(0);
+				}
+				// 4.产品服务的暂无标识
+				if (project.getProjectBusinessModel() != null && !project.getProjectBusinessModel().equals("")) {
+					project.setProjectBusinessModelzw(1);
+				} else {
+					project.setProjectBusinessModelzw(0);
+				}
+				// 5.竟情分析的暂无标识
+				if (project.getProspectAnalysis() != null && !project.getProspectAnalysis().equals("")) {
+					project.setProspectAnalysiszw(1);
+				} else {
+					project.setProspectAnalysiszw(0);
+				}
+				// 6.运营数据的暂无标识
+				if (project.getOperationalData() != null && !project.getOperationalData().equals("")) {
+					project.setOperationalDatazw(1);
+				} else {
+					project.setOperationalDatazw(0);
+				}
+				// 7.行业分析的暂无标识
+				if (project.getIndustryAnalysis() != null && !project.getIndustryAnalysis().equals("")) {
+					project.setIndustryAnalysiszw(1);
+				} else {
+					project.setIndustryAnalysiszw(0);
+				}
+				// 8.下一轮融资路径的暂无标识
+				if (project.getNextFinancingSource() != null && !project.getNextFinancingSource().equals("")) {
+					project.setNextFinancingSourcezw(1);
+				} else {
+					project.setNextFinancingSourcezw(0);
+				}
+				//9.项目的要点的暂无标识
+				if(project.getProjectDescribeFinancing()!=null &&!project.getProjectDescribeFinancing().equals("")){
+					project.setProjectDescribeFinancingZW(1);
+				}else{
+					project.setProjectDescribeFinancingZW(0);
+				}
+
+
+			} else {
+				responseBody.setResult(new Result(Status.ERROR, null, "未查找到指定项目信息!"));
+				return responseBody;
+			}
+
+			responseBody.setEntity(project);
+			ControllerUtils.setRequestParamsForMessageTip(request, project.getProjectName(), project.getId());
+
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null, "查询项目详情出现异常"));
+			if (logger.isErrorEnabled()) {
+				logger.error("selectAppProject ", e);
+			}
+		}
+		return responseBody;
+	}
 	
 	
 	
