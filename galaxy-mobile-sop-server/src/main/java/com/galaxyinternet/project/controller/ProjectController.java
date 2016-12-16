@@ -257,11 +257,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-<<<<<<< HEAD
 		}
-=======
-		}		
->>>>>>> refs/remotes/origin/develop
 		return responseBody;
 	}
 
@@ -344,10 +340,6 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-<<<<<<< HEAD
-=======
-		
->>>>>>> refs/remotes/origin/develop
 		return responseBody;
 	}
 	
@@ -410,11 +402,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
 			ControllerUtils.setRequestParamsForMessageTip(request,
 					project.getProjectName(), project.getId(),"2");
-<<<<<<< HEAD
 		}
-=======
-		}		
->>>>>>> refs/remotes/origin/develop
 		return responseBody;
 	}
 
