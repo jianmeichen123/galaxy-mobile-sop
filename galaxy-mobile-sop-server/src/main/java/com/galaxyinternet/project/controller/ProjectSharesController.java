@@ -100,7 +100,7 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 		
 		ResponseData<ProjectShares> responseBody = new ResponseData<ProjectShares>();
 		Page<ProjectShares> pageList = projectSharesService.queryPageList(query, new PageRequest(query.getPageNum(), query.getPageSize()));
-		List<ProjectShares>   ss = pageList.getContent();
+		/*List<ProjectShares>   ss = pageList.getContent();
 		if(ss!=null&&ss.size()>0){
 			for(ProjectShares sj:ss){
 				if(sj.getSharesRatio()!=null){
@@ -109,7 +109,7 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 			}
 		}
 		
-		responseBody.setPageList(pageList);
+*/		responseBody.setPageList(pageList);
 		return responseBody;
 		
 	}
