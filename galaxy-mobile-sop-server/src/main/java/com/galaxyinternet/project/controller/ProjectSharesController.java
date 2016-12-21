@@ -1,4 +1,6 @@
 package com.galaxyinternet.project.controller;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -98,7 +100,16 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 		
 		ResponseData<ProjectShares> responseBody = new ResponseData<ProjectShares>();
 		Page<ProjectShares> pageList = projectSharesService.queryPageList(query, new PageRequest(query.getPageNum(), query.getPageSize()));
-		responseBody.setPageList(pageList);
+		/*List<ProjectShares>   ss = pageList.getContent();
+		if(ss!=null&&ss.size()>0){
+			for(ProjectShares sj:ss){
+				if(sj.getSharesRatio()!=null){
+					sj.setSharesRatiofrom(String.valueOf(sj.getSharesRatio()));
+				}
+			}
+		}
+		
+*/		responseBody.setPageList(pageList);
 		return responseBody;
 		
 	}

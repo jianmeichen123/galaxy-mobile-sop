@@ -339,7 +339,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, "ERROR", "项目添加失败!"));
 		}
+
 		return responseBody;
 	}
 	
@@ -432,6 +434,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		project.getProjectShareRatio();
 
 		User user = (User) getUserFromSession(request);
+		
 		if (project.getProjectValuations() == null) {
 			if (project.getProjectShareRatio() != null
 					&& project.getProjectShareRatio() > 0
