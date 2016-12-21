@@ -339,7 +339,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseBody.setResult(new Result(Status.ERROR, "ERROR", "项目添加失败!"));
+			responseBody.setResult(new Result(Status.ERROR, "ERROR", "填写错误,请检查填写内容"));
 		}
 		
 		return responseBody;
