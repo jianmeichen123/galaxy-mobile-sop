@@ -844,16 +844,19 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 										*/
 										
 										
-										//2016/12/13修改行业归属								
-										if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
-											String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
-											if(queryDep!=null){
-												probean.setIndustry(queryDep);//行业归属名称
-											}else{
-												probean.setIndustry("");
+										//2016/12/13修改行业归属	
+										if(probean.getIndustryOwn()!=null){
+											if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+												String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
+												if(queryDep!=null){
+													probean.setIndustry(queryDep);//行业归属名称
+												}else{
+													probean.setIndustry("");
+												}
 											}
+										}else{
+											probean.setIndustry("");
 										}
-										
 									    /*
 									     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
 									     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比
