@@ -59,7 +59,7 @@
 			</trim>
 		</where>
 		<if test="sorting != null">order by ${sorting}</if>
-		<if test="sorting == null">order by over_work desc</if> 
+		<if test="sorting == null">order by begin_work desc</if> 
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
