@@ -168,7 +168,11 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 						}
 						
 						if(personWork.getOverWork()!=null){
-							personWork.setOverWorkStr(DateUtil.convertDateToString(personWork.getOverWork()));
+							if((DateUtil.convertDateToString(personWork.getOverWork())).equals("0002-11-30")){
+								personWork.setOverWorkStr("至今");
+							}else{
+								personWork.setOverWorkStr(DateUtil.convertDateToString(personWork.getOverWork()));
+							}							
 						}
 					}
 				}
