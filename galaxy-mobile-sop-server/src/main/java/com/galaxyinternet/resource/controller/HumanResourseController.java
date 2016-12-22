@@ -108,38 +108,44 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 				
 				
 				
-				if(personPool.getPersonBirthday()!=null){				
+				if(personPool!=null && personPool.getPersonBirthday()!=null){				
 					personPool.setPersonBirthdayStr(DateUtil.convertDateToString(personPool.getPersonBirthday()));	
 					personPool.setAge(getAge(personPool.getPersonBirthday()));
 				     
-				}
+				}				
 				
 				PersonLearn personLearnQuery = new PersonLearn();
 				personLearnQuery.setPersonId(pid);
 				List<PersonLearn> personLearns =  personLearnService.queryList(personLearnQuery);
-				for (PersonLearn personLearn : personLearns) {
-					if(personLearn.getOverDate()!=null){
-						personLearn.setOverDateStr(DateUtil.convertDateToString(personLearn.getOverDate()));
+				if(personLearns!=null){
+					for (PersonLearn personLearn : personLearns) {
+						if(personLearn.getOverDate()!=null){
+							if((DateUtil.convertDateToString(personLearn.getOverDate())).equals("0002-11-30")){
+								personLearn.setOverDateStr("至今");
+							}else{							
+								personLearn.setOverDateStr(DateUtil.convertDateToString(personLearn.getOverDate()));
+							}
+						}
+						if(personLearn.getBeginDate()!=null){
+							personLearn.setBeginDateStr(DateUtil.convertDateToString(personLearn.getBeginDate()));
+						}
+	/*					if(personLearn.getDegree()!=null && personLearn.getDegree().equals("高中")){
+							personLearn.setIntdreege(1);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("大专")){
+							personLearn.setIntdreege(2);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("本科")){
+							personLearn.setIntdreege(3);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("硕士")){
+							personLearn.setIntdreege(4);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("MBA")){
+							personLearn.setIntdreege(5);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("博士")){
+							personLearn.setIntdreege(6);
+						}else {
+							personLearn.setIntdreege(0);
+						}*/
+						
 					}
-					if(personLearn.getBeginDate()!=null){
-						personLearn.setBeginDateStr(DateUtil.convertDateToString(personLearn.getBeginDate()));
-					}
-/*					if(personLearn.getDegree()!=null && personLearn.getDegree().equals("高中")){
-						personLearn.setIntdreege(1);
-					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("大专")){
-						personLearn.setIntdreege(2);
-					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("本科")){
-						personLearn.setIntdreege(3);
-					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("硕士")){
-						personLearn.setIntdreege(4);
-					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("MBA")){
-						personLearn.setIntdreege(5);
-					}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("博士")){
-						personLearn.setIntdreege(6);
-					}else {
-						personLearn.setIntdreege(0);
-					}*/
-					
 				}
 				if(personLearns!=null && personLearns.size()>0){
 					PersonLearn personLea = personLearns.get(0);
@@ -154,13 +160,15 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 				PersonWork personWorkQuery  = new PersonWork();
 				personWorkQuery.setPersonId(pid);
 				List<PersonWork> personWorks =personWorkService.queryList(personWorkQuery);
-				for (PersonWork personWork : personWorks) {
-					if(personWork.getBeginWork()!=null){
-						personWork.setBeginWorkStr(DateUtil.convertDateToString(personWork.getBeginWork()));
-					}
-					
-					if(personWork.getOverWork()!=null){
-						personWork.setOverWorkStr(DateUtil.convertDateToString(personWork.getOverWork()));
+				if(personWorks!=null){
+					for (PersonWork personWork : personWorks) {
+						if(personWork.getBeginWork()!=null){
+							personWork.setBeginWorkStr(DateUtil.convertDateToString(personWork.getBeginWork()));
+						}
+						
+						if(personWork.getOverWork()!=null){
+							personWork.setOverWorkStr(DateUtil.convertDateToString(personWork.getOverWork()));
+						}
 					}
 				}
 			/*	PersonInvest personInvest =new PersonInvest();
