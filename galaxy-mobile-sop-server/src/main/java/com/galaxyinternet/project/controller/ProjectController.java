@@ -1574,6 +1574,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		if(p != null 
 				//项目的几个大文本内容必填验证
 				&& p.getProjectDescribe() != null && !"".equals(p.getProjectDescribe().trim())
+				//项目商业模式
+				&& p.getProjectDescribeFinancing() != null && !"".equals(p.getProjectDescribeFinancing().trim())
 				&& p.getProjectBusinessModel() != null && !"".equals(p.getProjectBusinessModel().trim())
 				&& p.getCompanyLocation() != null && !"".equals(p.getCompanyLocation().trim())
 				&& p.getUserPortrait() != null && !"".equals(p.getUserPortrait().trim())
