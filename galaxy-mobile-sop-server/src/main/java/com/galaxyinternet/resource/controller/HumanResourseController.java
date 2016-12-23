@@ -1,5 +1,7 @@
 package com.galaxyinternet.resource.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +90,7 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 	 * @param personPool
 	 * @param request
 	 * @param pid
-	 * @return
+	 * @return    2016/11/22 gxc修改 为新2.4.12期新需求
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/toaddPersonHr/{pid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -98,38 +100,87 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 			Result result = new Result();
 			try {
 				PersonPool personPool = personPoolService.queryById(pid);
-				if(personPool.getPersonIdcard()!=null &&!"".equals(personPool.getPersonIdcard().trim())&& personPool.getPersonBirthday()==null){
+				/*if(personPool.getPersonIdcard()!=null &&!"".equals(personPool.getPersonIdcard().trim())&& personPool.getPersonBirthday()==null){
 					String str = personPool.getPersonIdcard();
 					String Str = str.substring(6, 14);
 					Str = Str.substring(0, 4) + "-" + Str.substring(4, 6) + "-" + Str.substring(6);
 					personPool.setPersonBirthdayStr(Str);
-				}
-				if(personPool.getPersonBirthday()!=null){				
-					personPool.setPersonBirthdayStr(DateUtil.convertDateToString(personPool.getPersonBirthday()));					
-				}
+				}*/
+				
+				
+				
+				if(personPool!=null && personPool.getPersonBirthday()!=null){				
+					personPool.setPersonBirthdayStr(DateUtil.convertDateToString(personPool.getPersonBirthday()));	
+					personPool.setAge(getAge(personPool.getPersonBirthday()));
+				     
+				}				
+				
 				PersonLearn personLearnQuery = new PersonLearn();
 				personLearnQuery.setPersonId(pid);
 				List<PersonLearn> personLearns =  personLearnService.queryList(personLearnQuery);
-				for (PersonLearn personLearn : personLearns) {
-					if(personLearn.getOverDate()!=null){
-						personLearn.setOverDateStr(DateUtil.convertDateToString(personLearn.getOverDate()));
+				if(personLearns!=null){
+					for (PersonLearn personLearn : personLearns) {
+						if(personLearn.getOverDate()!=null){
+							if((DateUtil.convertDateToString(personLearn.getOverDate())).equals("0002-11-30")){
+								personLearn.setOverDateStr("至今");
+							}else{							
+								personLearn.setOverDateStr(DateUtil.convertDateToString(personLearn.getOverDate()));
+							}
+						}
+						if(personLearn.getBeginDate()!=null){
+							personLearn.setBeginDateStr(DateUtil.convertDateToString(personLearn.getBeginDate()));
+						}
+	/*					if(personLearn.getDegree()!=null && personLearn.getDegree().equals("高中")){
+							personLearn.setIntdreege(1);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("大专")){
+							personLearn.setIntdreege(2);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("本科")){
+							personLearn.setIntdreege(3);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("硕士")){
+							personLearn.setIntdreege(4);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("MBA")){
+							personLearn.setIntdreege(5);
+						}else if(personLearn.getDegree()!=null && personLearn.getDegree().equals("博士")){
+							personLearn.setIntdreege(6);
+						}else {
+							personLearn.setIntdreege(0);
+						}*/
+						
 					}
-
+				}
+				if(personLearns!=null && personLearns.size()>0){
+					PersonLearn personLea = personLearns.get(0);
+					personPool.setAgree(personLea.getDegree());
+					if(personLea.getSchool()!=null){
+					     personPool.setSchool(personLea.getSchool());
+					}else{
+						 personPool.setSchool("其他");
+					}
 				}
 				
 				PersonWork personWorkQuery  = new PersonWork();
 				personWorkQuery.setPersonId(pid);
 				List<PersonWork> personWorks =personWorkService.queryList(personWorkQuery);
-				for (PersonWork personWork : personWorks) {
-					if(personWork.getBeginWork()!=null){
-						personWork.setBeginWorkStr(DateUtil.convertDateToString(personWork.getBeginWork()));
+				if(personWorks!=null){
+					for (PersonWork personWork : personWorks) {
+						if(personWork.getBeginWork()!=null){
+							personWork.setBeginWorkStr(DateUtil.convertDateToString(personWork.getBeginWork()));
+						}
+						
+						if(personWork.getOverWork()!=null){
+							if((DateUtil.convertDateToString(personWork.getOverWork())).equals("0002-11-30")){
+								personWork.setOverWorkStr("至今");
+							}else{
+								personWork.setOverWorkStr(DateUtil.convertDateToString(personWork.getOverWork()));
+							}							
+						}
 					}
 				}
-				PersonInvest personInvest =new PersonInvest();
+			/*	PersonInvest personInvest =new PersonInvest();
 				personInvest.setPersonId(pid);
-				personInvest = personInvestService.queryOne(personInvest);
+				personInvest = personInvestService.queryOne(personInvest);*/
 				PersonResumetc personResumetc = new PersonResumetc();
-				personResumetc.setPersonInvest(personInvest);
+				//personResumetc.setPersonInvest(personInvest);
 				personResumetc.setPersonLearn(personLearns);
 				personResumetc.setPersonPool(personPool);
 				personResumetc.setPersonWork(personWorks);
@@ -171,6 +222,36 @@ public class HumanResourseController extends BaseControllerImpl<PersonPool, Pers
 		responseData.setEntity(personResumetc);
 		return responseData;
 		
+	}
+	
+	public static int getAge(Date birthDate) {
+		  
+		  if (birthDate == null)
+		   throw new
+		RuntimeException("出生日期不能为null");
+		  
+		  int age = 0;
+		  
+		  Date now = new Date();
+		  
+		  SimpleDateFormat format_y = new SimpleDateFormat("yyyy");
+		  SimpleDateFormat format_M = new SimpleDateFormat("MM");
+		  
+		  String birth_year = format_y.format(birthDate);
+		  String this_year  = format_y.format(now);
+		  
+		  String birth_month = format_M.format(birthDate);
+		  String this_month = format_M.format(now);
+		  
+		  // 初步，估算
+		  age = Integer.parseInt(this_year) - Integer.parseInt(birth_year);
+		  
+		  // 如果未到出生月份，则age - 1
+		  /*if(this_month.compareTo(birth_month) < 0)
+		   age -=1;*/
+		  if (age <0)
+		   age =0;
+		  return age;
 	}
 
 }

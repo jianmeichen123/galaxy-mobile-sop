@@ -1,4 +1,6 @@
 package com.galaxyinternet.project.controller;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,8 +61,12 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 	public ResponseData<ProjectShares> addProjectShares(@RequestBody ProjectShares entity,HttpServletRequest request) {
 		ResponseData<ProjectShares> responseBody = new ResponseData<ProjectShares>();
 		
-		if(StringUtils.isEmpty(String.valueOf(entity.getProjectId())) || StringUtils.isEmpty(entity.getSharesType())
+/*		if(StringUtils.isEmpty(String.valueOf(entity.getProjectId())) || StringUtils.isEmpty(entity.getSharesType())
 				|| StringUtils.isEmpty(entity.getSharesOwner()) ||StringUtils.isEmpty(entity.getSharesRatio().toString())){
+			responseBody.setResult(new Result(Status.ERROR, "必要的参数丢失!"));
+			return responseBody;
+		}*/
+		if(StringUtils.isEmpty(String.valueOf(entity.getProjectId()))){
 			responseBody.setResult(new Result(Status.ERROR, "必要的参数丢失!"));
 			return responseBody;
 		}
@@ -98,7 +104,16 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 		
 		ResponseData<ProjectShares> responseBody = new ResponseData<ProjectShares>();
 		Page<ProjectShares> pageList = projectSharesService.queryPageList(query, new PageRequest(query.getPageNum(), query.getPageSize()));
-		responseBody.setPageList(pageList);
+		/*List<ProjectShares>   ss = pageList.getContent();
+		if(ss!=null&&ss.size()>0){
+			for(ProjectShares sj:ss){
+				if(sj.getSharesRatio()!=null){
+					sj.setSharesRatiofrom(String.valueOf(sj.getSharesRatio()));
+				}
+			}
+		}
+		
+*/		responseBody.setPageList(pageList);
 		return responseBody;
 		
 	}
@@ -163,7 +178,7 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 		Project p = projectService.queryById(projectId);
 		//项目创建者用户ID与当前登录人ID是否一样
 		if(p != null && user.getId().doubleValue() != p.getCreateUid().doubleValue()){
-			responseBody.setResult(new Result(Status.ERROR, "没有权限删除该项目的团队成员!"));
+			responseBody.setResult(new Result(Status.ERROR, "没有权限删除该项目的股权结构!"));
 			return responseBody;
 		}
 		int count = projectSharesService.deleteById(id);
@@ -171,7 +186,7 @@ public class ProjectSharesController extends BaseControllerImpl<ProjectShares, P
 			responseBody.setResult(new Result(Status.ERROR,"要删除的记录不存在！"));
 			return responseBody;
 		}
-		responseBody.setResult(new Result(Status.OK,"团队成员删除成功!"));
+		responseBody.setResult(new Result(Status.OK,"股权结构删除成功!"));
 		return responseBody;
 	}
 	

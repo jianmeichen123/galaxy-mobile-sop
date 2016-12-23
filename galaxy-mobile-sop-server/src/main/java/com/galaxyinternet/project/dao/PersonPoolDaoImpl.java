@@ -38,5 +38,16 @@ public class PersonPoolDaoImpl extends BaseDaoImpl<PersonPool, Long> implements 
 			throw new DaoException(String.format("根据pids查询：%s", getSqlName(SqlId.SQL_SELECT)), e);
 		}
 	}
+	//新增
+	@Override
+	public List<PersonPool> selectPersonPoolByPID(Long pid) throws DaoException {
+		Assert.notNull(pid);
+		try {
+		return sqlSessionTemplate.selectList(getSqlName("selectPersonPoolByPID"),pid);
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询对象列表出错：%s", getSqlName("selectPersonPoolByPID")), e);
+		}
+	}
+	
 
 }
