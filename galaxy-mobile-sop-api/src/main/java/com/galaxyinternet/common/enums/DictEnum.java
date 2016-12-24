@@ -21,7 +21,8 @@ public enum DictEnum {
 	项目状态("项目状态","projectStatus"),
 	
 	//行业归属 2016/12/5号修改
-	行业归属("行业归属","industryOwn");
+	行业归属("行业归属","industryOwn"),
+	团队成员的当前职位("团队成员的当前职位","zhiwei");
 	
 	private String name;
 
@@ -889,5 +890,62 @@ public enum DictEnum {
 			        return null;
 			    }
 			}
+			
+			// 职位信息
+			public enum zhiwei {
+				CEO首席执行官("CEO首席执行官", "CEO首席执行官"),
+				COO首席运营官("COO首席运营官", "COO首席运营官"),
+				CFO首席财务官("CFO首席财务官", "CFO首席财务官"),
+				CIO首席信息官("CIO首席信息官", "CIO首席信息官"),
+				CTO首席技术官("CTO首席技术官", "CTO首席技术官"),
+				CDO首席数据官("CDO首席数据官", "CDO首席数据官"),
+				CMO首席市场官("CMO首席市场官", "CMO首席市场官"),
+				CBO首席商务官("CBO首席商务官", "CBO首席商务官"),
+				GM总经理("GM总经理", "GM总经理"),
+				VP副总裁("VP副总裁", "VP副总裁"),
+				ExpertConsultant专家顾问("Expert Consultant专家顾问", "Expert Consultant专家顾问"),
+				Others其他("Others其他", "Others其他");
+				
+				private String name;
+				private String code;
+
+				private zhiwei(String name, String code) {
+					this.name = name;
+					this.code = code;
+				}
+
+				public String getName() {
+					return name;
+				}
+
+				public String getCode() {
+					return code;
+				}
+
+				/**
+				 * 根据code get name
+				 * 
+				 * @param reslut
+				 * @return
+				 */
+				public static String getNameByCode(String code) {
+
+					if (code != null && !code.trim().equals("")) {
+
+						zhiwei[] values = zhiwei.values();
+						for (int i = 0; i < values.length; i++) {
+							if (code.equals(values[i].getCode())) {
+								return values[i].getName();
+							}
+						}
+					}
+					return null;
+				}
+				
+				
+			}
+			
+			
+			
 }
 
