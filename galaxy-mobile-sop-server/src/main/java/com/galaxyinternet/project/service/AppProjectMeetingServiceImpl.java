@@ -299,6 +299,7 @@ public class AppProjectMeetingServiceImpl extends BaseServiceImpl<MeetingRecord>
 		long nowTime = System.currentTimeMillis();
 		SopFile  sfEntity = new SopFile();
 		sfEntity.setProjectId(p1.getId());
+		//应该取传过来的项目流程 2016/11/30号提出的问题 待解决
 		sfEntity.setProjectProgress(p1.getProjectProgress());
 //		sfEntity.setCareerLine(new Long(user.getDepartmentId()));
 		sfEntity.setCareerLine(careerLine);

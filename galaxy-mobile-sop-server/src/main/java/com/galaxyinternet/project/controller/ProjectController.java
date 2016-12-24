@@ -955,13 +955,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 	/**
 	 * 添加团队成员
-	 * 
+	 * 2016/12/24 修改
 	 * @author yangshuhua
 	 */
 	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
-	@RequestMapping(value = "/app", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseData<PersonPoolBo> addProjectPerson(
+	@RequestMapping(value = "/insertProjectPerson", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<PersonPoolBo> insertProjectPerson(
 			@RequestBody PersonPoolBo pool, HttpServletRequest request) {
 		ResponseData<PersonPoolBo> responseBody = new ResponseData<PersonPoolBo>();
 		if (pool.getProjectId() == null || pool.getProjectId() <= 0
@@ -980,6 +980,10 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			return responseBody;
 		}
 		try {
+			if(pool.getPersonBirthdayStr() != null){
+				Date date = DateUtil.convertStringToDate(pool.getPersonBirthdayStr()+"-01-01 00:00:00");
+				pool.setPersonBirthday(date);
+			}			
 			pool.setCreatedTime(System.currentTimeMillis());
 			Long id = personPoolService.addProjectPerson(pool);
 			if (id > 0) {
@@ -1002,7 +1006,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	 */
 	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
-	@RequestMapping(value = "/upp", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/resetProjectPerson", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<PersonPoolBo> resetProjectPerson(
 			@RequestBody PersonPoolBo pool, HttpServletRequest request) {
 		ResponseData<PersonPoolBo> responseBody = new ResponseData<PersonPoolBo>();
@@ -1019,7 +1023,16 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					"没有权限修改该项目的团队成员信息!"));
 			return responseBody;
 		}
-
+		
+		if(pool.getPersonBirthdayStr() != null){
+			try {
+				Date date = DateUtil.convertStringToDate(pool.getPersonBirthdayStr()+"-01-01 00:00:00");
+				pool.setPersonBirthday(date);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		int num = personPoolService.updateById(pool);
 		if (num > 0) {
 			responseBody.setResult(new Result(Status.OK, null, "团队成员信息修改成功!"));
@@ -3932,6 +3945,34 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		return responseBody;
 	}
 	
+	
+	/**
+	 * 2016/12/24 添加 取消排期的功能 只改 排期的状态    schedule_status 改为 2 (投资经理取消排期)
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/qxpq", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<MeetingSchedulingBo> qxpq(@RequestBody MeetingSchedulingBo meetingSchedulingBo,
+			HttpServletRequest request) throws ParseException {
+		ResponseData<MeetingSchedulingBo> responseBody = new ResponseData<MeetingSchedulingBo>();
+		if (meetingSchedulingBo == null || meetingSchedulingBo.getId() == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
+			return responseBody;
+		}		
+		MeetingScheduling ss = new MeetingScheduling();
+			ss.setId(meetingSchedulingBo.getId());
+			ss.setScheduleStatus(2);
+		int nui = meetingSchedulingService.updateById(ss);
+		if(nui>0){
+			responseBody.setResult(new Result(Status.OK, null, "取消排期成功"));
+			return responseBody;
+		}else{
+			responseBody.setResult(new Result(Status.ERROR, null, "取消排期异常"));
+			return responseBody;
+		}
+	
+		
+		
+	}
 	
 	
 	
