@@ -200,7 +200,7 @@
 		      <if test="updatedTime != null" >  updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
 		      <if test="createdTime != null" >  created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		      <if test="isContacts != null" >  is_contacts = #{isContacts,jdbcType=INTEGER}, </if>
-		      <if test="remark != null" >  remark = #{remark,jdbcType=VARCHAR}, </if>
+		        remark = #{remark,jdbcType=VARCHAR} 
 		</set>
 		where id = #{id}
 	</update>
