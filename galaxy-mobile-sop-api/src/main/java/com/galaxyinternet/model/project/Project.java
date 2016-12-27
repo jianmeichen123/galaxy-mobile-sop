@@ -333,7 +333,7 @@ public class Project extends PagableEntity {
 
     public Double getProjectValuations() {
     	if(this.formatValuations != null && !"".equals(this.formatValuations.trim())){
-			this.projectValuations = NumberUtils.toFormatNoSplit(this.formatValuations.trim());
+			this.projectValuations = NumberUtils.toFormatNoSplitFour(this.formatValuations.trim());
 		}
         return projectValuations;
     }
@@ -344,7 +344,7 @@ public class Project extends PagableEntity {
 
     public Double getProjectContribution() {
     	if(this.formatContribution != null && !"".equals(this.formatContribution.trim())){
-			this.projectContribution = NumberUtils.toFormatNoSplit(this.formatContribution.trim());
+			this.projectContribution = NumberUtils.toFormatNoSplitFour(this.formatContribution.trim());
 		}
         return projectContribution;
     }
@@ -366,7 +366,7 @@ public class Project extends PagableEntity {
 
     public Double getProjectShareRatio() {
     	if(this.formatShareRatio != null && !"".equals(this.formatShareRatio.trim())){
-			this.projectShareRatio = NumberUtils.toFormatNoSplitFour(this.formatShareRatio.trim());
+			this.projectShareRatio = NumberUtils.toFormatNoSplit(this.formatShareRatio.trim());
 		}
         return projectShareRatio;
     }
@@ -624,7 +624,7 @@ public class Project extends PagableEntity {
 
 	public Double getFinalValuations() {
     	if(this.formatFinalValuations != null && !"".equals(this.formatFinalValuations.trim())){
-			this.finalValuations = NumberUtils.toFormatNoSplit(this.formatFinalValuations.trim());
+			this.finalValuations = NumberUtils.toFormatNoSplitFour(this.formatFinalValuations.trim());
 		}
        
 		return finalValuations;
@@ -636,7 +636,7 @@ public class Project extends PagableEntity {
 
 	public Double getFinalContribution() {
 		if(this.formatFinalContribution != null && !"".equals(this.formatFinalContribution.trim())){
-			this.finalContribution = NumberUtils.toFormatNoSplit(this.formatFinalContribution.trim());
+			this.finalContribution = NumberUtils.toFormatNoSplitFour(this.formatFinalContribution.trim());
 		}
 		return finalContribution;
 	}
@@ -647,7 +647,7 @@ public class Project extends PagableEntity {
 
 	public Double getFinalShareRatio() {
 		if(this.formatFinalShareRatio != null && !"".equals(this.formatFinalShareRatio.trim())){
-			this.finalShareRatio = NumberUtils.toFormatNoSplitFour(this.formatFinalShareRatio.trim());
+			this.finalShareRatio = NumberUtils.toFormatNoSplit(this.formatFinalShareRatio.trim());
 		}
 		
 		return finalShareRatio;

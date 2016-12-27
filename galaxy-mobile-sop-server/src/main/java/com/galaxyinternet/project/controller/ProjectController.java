@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ import com.galaxyinternet.bo.project.MeetingSchedulingBo;
 import com.galaxyinternet.bo.project.PersonPoolBo;
 import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.bo.touhou.DeliveryBo;
+import com.galaxyinternet.bo.touhou.ProjectHealthBo;
 import com.galaxyinternet.common.SopResult;
 import com.galaxyinternet.common.annotation.LogType;
 import com.galaxyinternet.common.annotation.RecordType;
@@ -78,6 +80,7 @@ import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.soptask.SopTask;
 import com.galaxyinternet.model.timer.PassRate;
+import com.galaxyinternet.model.touhou.ProjectHealth;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.model.user.UserRole;
 import com.galaxyinternet.operationMessage.handler.StageChangeHandler;
@@ -93,6 +96,7 @@ import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
 import com.galaxyinternet.service.PassRateService;
 import com.galaxyinternet.service.PersonPoolService;
+import com.galaxyinternet.service.ProjectHealthService;
 import com.galaxyinternet.service.ProjectPersonService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.ProjectSharesService;
@@ -141,6 +145,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	@Autowired
 	private HandlerManager handlerManager;
 
+	@Autowired
+	private ProjectHealthService projectHealthService;
+	
 	@Autowired
 	private DepartmentService departmentService;
 	@Autowired
@@ -632,9 +639,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				mes.setMeetingTypeList(meetingTypeList);
 				Page<MeetingRecord> mrpageList = meetingService.queryPageList(mes,new PageRequest(pageNummm,pageSizeee));
 				
-				if(mrpageList==null){
+				ProjectHealthBo healthQuery = new ProjectHealthBo();
+				healthQuery.setProjectId(Long.parseLong(pid));
+				PageRequest healthPageable = new PageRequest(0,1, new Sort(Direction.DESC,"created_time"));
+				List<ProjectHealth> healthList = projectHealthService.queryList(healthQuery, healthPageable);
+ 
+				if(mrpageList==null && healthList==null){
 					project.setYyfxzw(0);
-				}else if(mrpageList!=null && mrpageList.getContent().size()==0){
+				}else if(mrpageList!=null && mrpageList.getContent().size()==0 && healthList!=null && healthList.size()==0){
 					project.setYyfxzw(0);
 				}else{
 					project.setYyfxzw(1);
@@ -4015,20 +4027,38 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		if (meetingSchedulingBo == null || meetingSchedulingBo.getId() == null) {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
-		}		
-		MeetingScheduling ss = new MeetingScheduling();
-			ss.setId(meetingSchedulingBo.getId());
-			ss.setScheduleStatus(2);
-		int nui = meetingSchedulingService.updateById(ss);
-		if(nui>0){
-			responseBody.setResult(new Result(Status.OK, null, "取消排期成功"));
-			return responseBody;
-		}else{
-			responseBody.setResult(new Result(Status.ERROR, null, "取消排期异常"));
-			return responseBody;
 		}
-	
+
+		MeetingScheduling ji = meetingSchedulingService.queryById(meetingSchedulingBo.getId());
+		try{
+			if( ji==null){
+				responseBody.setResult(new Result(Status.ERROR, null, "不存在此排期"));
+				return responseBody;
+			}
+			if(ji!=null && !ji.getScheduleStatus().equals(DictEnum.meetingSheduleResult.待排期.getCode())){
+							
+				responseBody.setResult(new Result(Status.ERROR, null, "此排期不在待排期中"));
+				return responseBody;
+			}
 		
+			MeetingScheduling ss = new MeetingScheduling();
+				ss.setId(meetingSchedulingBo.getId());
+				ss.setScheduleStatus(DictEnum.meetingSheduleResult.已通过.getCode());
+				ss.setStatus(DictEnum.meetingResult.通过.getCode());
+			int nui = meetingSchedulingService.updateById(ss);
+			if(nui>0){
+				responseBody.setResult(new Result(Status.OK, null, "取消排期成功"));				
+			}else{
+				responseBody.setResult(new Result(Status.ERROR, null, "取消排期异常"));
+				return responseBody;
+			}
+		}catch(Exception e){
+			responseBody.setResult(new Result(Status.ERROR, null, "取消排期异常"));
+			if (logger.isErrorEnabled()) {
+				logger.error("selectAppProject ", e);
+			}
+		}
+		return responseBody;
 		
 	}
 	
