@@ -153,5 +153,28 @@ public class MeetingSchedulingDaoImpl extends BaseDaoImpl<MeetingScheduling, Lon
 	}
 
 	
+
+	//2016/12/26 为了 新一期 排期列表的排队数目
+	@Override
+	public Long selectpdCount(MeetingScheduling query) {
+		try {
+			Long count= sqlSessionTemplate.selectOne(getSqlName("selectpdCount"),query);
+			return count;
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询排队数出错！语句：%s", getSqlName("selectpdCount")),e);
+		}
+	}
+
+	//2016/12/26 为了 新一期 排期列表的排队数目
+	@Override
+	public Long selectltpdCount(MeetingScheduling query) {
+		try {
+			Long count= sqlSessionTemplate.selectOne(getSqlName("selectltpdCount"),query);
+			return count;
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询排队数出错！语句：%s", getSqlName("selectltpdCount")),e);
+		}
+	}
+	
 	
 }
