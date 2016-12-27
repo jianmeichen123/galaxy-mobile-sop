@@ -40,6 +40,10 @@ public class ProjectHealth extends PagableEntity {
 				healthStateStr = "正常";
 			}else if(healthState == 3){
 				healthStateStr = "健康预警";
+			}else if(healthState == 4){
+				healthStateStr = "清算";
+			}else if(healthState == 0){
+				healthStateStr = "初始";
 			}
 		}
         this.healthState = healthState;
