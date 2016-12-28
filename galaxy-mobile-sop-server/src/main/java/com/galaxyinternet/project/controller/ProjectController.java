@@ -977,8 +977,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			@RequestBody PersonPoolBo pool, HttpServletRequest request) {
 		ResponseData<PersonPoolBo> responseBody = new ResponseData<PersonPoolBo>();
 		if (pool.getProjectId() == null || pool.getProjectId() <= 0
-				|| pool.getPersonName() == null
-				|| pool.getPersonTelephone() == null) {
+				|| pool.getPersonName() == null) {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
 		}
@@ -995,7 +994,10 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			if(pool.getPersonBirthdayStr() != null){
 				Date date = DateUtil.convertStringToDate(pool.getPersonBirthdayStr()+"-01-01 00:00:00");
 				pool.setPersonBirthday(date);
-			}			
+			}	
+			if( pool.getPersonTelephone() == null){
+				pool.setPersonTelephone("");
+			}
 			pool.setCreatedTime(System.currentTimeMillis());
 			Long id = personPoolService.addProjectPerson(pool);
 			if (id > 0) {
@@ -1044,7 +1046,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				e.printStackTrace();
 			}
 		}
-		
+		if( pool.getPersonTelephone() == null){
+			pool.setPersonTelephone("");
+		}
 		int num = personPoolService.updateById(pool);
 		if (num > 0) {
 			responseBody.setResult(new Result(Status.OK, null, "团队成员信息修改成功!"));
