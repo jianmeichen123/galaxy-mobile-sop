@@ -3702,6 +3702,24 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 							}
 		
 						}
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
 					}
 					
 				}		
@@ -3776,6 +3794,23 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 								ms.setCreateUname(p.getCreateUname());
 							}
 		
+						}
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
 						}
 					}
 					
@@ -3873,6 +3908,24 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 								ms.setCreateUname(p.getCreateUname());
 							}
 		
+						}
+						
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
 						}
 					}
 					
