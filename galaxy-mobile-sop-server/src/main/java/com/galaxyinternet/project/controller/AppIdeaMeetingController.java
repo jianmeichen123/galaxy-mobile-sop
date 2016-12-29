@@ -216,7 +216,7 @@ public class AppIdeaMeetingController extends BaseControllerImpl<Idea, Idea>{
 					id = meetingRecordService.addCyMeetRecord(meetingRecord,file);
 				}
 				responseBody.setId(id);
-				responseBody.setResult(new Result(Status.OK, ""));			
+				responseBody.setResult(new Result(Status.OK, "会议添加成功"));			
 			} catch (Exception e) {
 				responseBody.setResult(new Result(Status.ERROR,null, "会议添加失败"));
 				if(logger.isErrorEnabled()){
