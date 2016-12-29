@@ -337,7 +337,7 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 				MeetingRecordBo bo = new MeetingRecordBo();
 				bo.setId(ib.getId());
 				bo.setProjectId(ib.getProjectId());
-				bo.setProName(proIdNameMap.get(ib.getProjectId()));
+	//			bo.setProName(proIdNameMap.get(ib.getProjectId()));
 				bo.setMeetingDateStr(ib.getMeetingDateStr());
 				bo.setMeetingType(ib.getMeetingType());
 				bo.setMeetingTypeStr(ib.getMeetingTypeStr());
