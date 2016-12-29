@@ -497,6 +497,10 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 				responseBody.setResult(new Result(Status.ERROR, "CYLGZ", "创意已经放弃!"));
 				return responseBody;
 			}
+			if(DictEnum.IdeaProgress.CYXM.getCode().equals(queryIdea.getIdeaProgress())){
+				responseBody.setResult(new Result(Status.ERROR, "CYXM", "创意已经创建成项目不能放弃!"));
+				return responseBody;
+			}
 			if(queryIdea !=null && queryIdea.getIdeaProgress()!=null){
 				if(queryIdea.getIdeaProgress().equals(SopConstant.IDEA_PROGRESS_GZ)){
 					responseBody.setResult(new Result(Status.ERROR, null, "操作过期"));
@@ -1434,7 +1438,7 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 				responseBody.setResult(new Result(Status.OK,""));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				responseBody.setResult(new Result(Status.ERROR,"添加创意失败"));
+				responseBody.setResult(new Result(Status.ERROR,"判断是否创建成项目失败"));
 			}
 			return responseBody;
 		}
