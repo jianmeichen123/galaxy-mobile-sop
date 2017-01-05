@@ -164,10 +164,10 @@
 		      <if test="createdTime != null" >  created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		      <if test="isContacts != null" >  is_contacts = #{isContacts,jdbcType=INTEGER}, </if>
 		      <if test="remark != null" >  remark = #{remark,jdbcType=VARCHAR}, </if>
-		        file_path = #{filePath,jdbcType=VARCHAR}, 
-		       file_length = #{fileLength,jdbcType=VARCHAR}, 
-		       file_name = #{fileName,jdbcType=VARCHAR}, 
-		       file_suffix = #{fileSuffix,jdbcType=VARCHAR}
+		      <if test="filePath != null" > file_path = #{filePath,jdbcType=VARCHAR}, </if>
+		      <if test="fileLength != null" > file_length = #{fileLength,jdbcType=VARCHAR}, </if>
+		      <if test="fileName != null" > file_name = #{fileName,jdbcType=VARCHAR}, </if>
+		      <if test="fileSuffix != null" > file_suffix = #{fileSuffix,jdbcType=VARCHAR} </if>
 		</set>
 		<where>
 			<trim prefixOverrides="and">
@@ -209,10 +209,10 @@
 		      <if test="createdTime != null" >  created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		      <if test="isContacts != null" >  is_contacts = #{isContacts,jdbcType=INTEGER}, </if>
 		        remark = #{remark,jdbcType=VARCHAR}, 
-		        file_path = #{filePath,jdbcType=VARCHAR}, 
-		       file_length = #{fileLength,jdbcType=VARCHAR}, 
-		       file_name = #{fileName,jdbcType=VARCHAR}, 
-		       file_suffix = #{fileSuffix,jdbcType=VARCHAR}
+		      <if test="filePath != null" > file_path = #{filePath,jdbcType=VARCHAR}, </if>
+		      <if test="fileLength != null" > file_length = #{fileLength,jdbcType=VARCHAR}, </if>
+		      <if test="fileName != null" > file_name = #{fileName,jdbcType=VARCHAR}, </if>
+		      <if test="fileSuffix != null" > file_suffix = #{fileSuffix,jdbcType=VARCHAR} </if>
 		</set>
 		where id = #{id}
 	</update>
