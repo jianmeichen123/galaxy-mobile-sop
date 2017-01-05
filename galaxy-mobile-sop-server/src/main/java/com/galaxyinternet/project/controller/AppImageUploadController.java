@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,6 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.project.PersonPool;
-import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.sopfile.AppSopFile;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.service.PersonPoolService;
@@ -55,27 +53,28 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 	private SopFileService sopFileService;
 	
 	@Autowired
-	private ProjectService proJectService;
-	
-	@Autowired
 	private PersonPoolService personPoolService;
-/*	@Autowired
-	private UserRoleService userRoleService;*/
 	
-	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private ProjectService projectService;
-
+	//文件上传的路径
 	private String tempfilePath;
 
 	public String getTempfilePath() {
 		return tempfilePath;
 	}
-	@Value("${galaxy.project.sop.endpoint}")
+	@Value("${app.uploadimage.up}")
 	public void setTempfilePath(String tempfilePath) {
 		this.tempfilePath = tempfilePath;
+	}
+	//文件的读取路径
+	private String showfilePath;
+		
+	public String getShowfilePath() {
+		return showfilePath;
+	}
+	
+	@Value("${app.uploadimage.path}")
+	public void setShowfilePath(String showfilePath) {
+		this.showfilePath = showfilePath;
 	}
 	
 	@Override
@@ -84,11 +83,11 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 	}
 	
 	/**
-	 * 上传录音文件-系统自动上传
+	 * 上传图片文件-系统自动上传  
 	 * @param file
 	 * @param request
 	 * @param model
-	 * @return   10.9.11.161
+	 * @return   app端上传的头像图片
 	 */	
 	 @ResponseBody
 	 @RequestMapping(value = "/uploadFile/{pid}", produces = MediaType.APPLICATION_JSON_VALUE) 	 
@@ -96,7 +95,7 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 		 ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
 				 	ServletContext s1 = request.getServletContext();
 				 //	String path = s1.getRealPath("/")+"/image";				 	
-				 	String strDirPath = request.getSession().getServletContext().getRealPath("/")+ File.separator+"image";
+				 	String strDirPath = tempfilePath+ File.separator+"image";
 			 		File uploadDirectory = new File(strDirPath); 
 			 		if(!uploadDirectory.exists()){
 			 			uploadDirectory.mkdirs();
@@ -118,7 +117,7 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 				        	PersonPool  personPool = personPoolService.queryById(Long.parseLong(pid));
 					        personPool.setFileName(fileName);
 					        personPool.setFileSuffix(contentType);
-					        personPool.setFilePath(tempfilePath+"image/"+fileName);
+					        personPool.setFilePath(showfilePath+"image/"+fileName);
 					        personPool.setFileLength(size.toString());
 					        int num =  personPoolService.updateById(personPool);
 				            //properties.replace("app."+appName+".version", appVersion);
