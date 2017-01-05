@@ -95,7 +95,7 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 		 ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
 				 	ServletContext s1 = request.getServletContext();
 				 //	String path = s1.getRealPath("/")+"/image";				 	
-				 	String strDirPath = tempfilePath+ File.separator+"image";
+				 	String strDirPath = tempfilePath+"image";
 			 		File uploadDirectory = new File(strDirPath); 
 			 		if(!uploadDirectory.exists()){
 			 			uploadDirectory.mkdirs();
