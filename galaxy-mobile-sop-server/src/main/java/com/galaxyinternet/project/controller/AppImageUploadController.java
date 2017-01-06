@@ -92,7 +92,7 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 	 */	
 	 @ResponseBody
 	 @RequestMapping(value = "/uploadFile/{pid}", method = RequestMethod.POST) 	 
-	 public String uploadFile(@PathVariable("pid") String pid,HttpServletRequest request) {
+	 public void uploadFile(@PathVariable("pid") String pid,HttpServletRequest request) {
 		// ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
 		 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request; // 请求转换
 		 		MultipartFile fileList = multipartRequest.getFile("fileList"); // 获取multipartFile文件
@@ -132,7 +132,7 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 				        //model.addAttribute("fileUrl", path + File.separator + fileName);  
 		 			}		 			
 		 			//responseBody.setResult(new Result(Status.OK, null, "上传成功"));			 	
-		 			return "request";		 	
+		 			//return "request";		 	
 	 }
 	 
 	 @RequestMapping(value = "/showFile/{pid}", method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE) 
