@@ -33,13 +33,17 @@
     
     <result column="is_contacts" property="isContacts" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="file_path" property="filePath" jdbcType="VARCHAR" />
+    <result column="file_length" property="fileLength" jdbcType="VARCHAR" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="file_suffix" property="fileSuffix" jdbcType="VARCHAR" />
   </resultMap>
   
   <sql id="Base_Column_List" >
     id, tid, person_name, person_sex, person_age, highest_degree, work_time, person_duties, person_birthday, person_idcard, person_telephone, person_email, 
     person_character, person_goodness, person_disparity, talk_ability, team_ability, 
     business_strength, free, team_role, member_relation, labor_dispute, ability_star, 
-    level_star, end_comment, create_id, updated_time, created_time,is_contacts,remark
+    level_star, end_comment, create_id, updated_time, created_time,is_contacts,remark,file_path,file_length,file_name,file_suffix
   </sql>
   
   
@@ -113,7 +117,7 @@
 	     insert into sop_person_pool (id,tid, person_name, person_sex, person_age, highest_degree, work_time, person_duties, person_birthday, person_idcard, person_telephone, person_email, 
     		person_character, person_goodness, person_disparity, talk_ability, team_ability, 
    			business_strength, free, team_role, member_relation, labor_dispute, ability_star, 
-    		level_star, end_comment, create_id, updated_time, created_time ,is_contacts,remark)
+    		level_star, end_comment, create_id, updated_time, created_time ,is_contacts,remark,file_path,file_length,file_name,file_suffix)
 	    values (#{id,jdbcType=BIGINT}, #{tid,jdbcType=BIGINT}, #{personName,jdbcType=VARCHAR}, #{personSex,jdbcType=INTEGER}, 
 	      #{personAge,jdbcType=INTEGER}, #{highestDegree,jdbcType=VARCHAR}, #{workTime,jdbcType=INTEGER}, #{personDuties,jdbcType=VARCHAR},
 	      #{personBirthday,jdbcType=TIMESTAMP}, #{personIdcard,jdbcType=VARCHAR}, #{personTelephone,jdbcType=VARCHAR}, 
@@ -123,7 +127,7 @@
 	      #{free,jdbcType=INTEGER}, #{teamRole,jdbcType=VARCHAR}, #{memberRelation,jdbcType=VARCHAR}, 
 	      #{laborDispute,jdbcType=INTEGER}, #{abilityStar,jdbcType=INTEGER}, #{levelStar,jdbcType=INTEGER}, 
 	      #{endComment,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
-	      #{updatedTime,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT} ,#{isContacts,jdbcType=INTEGER},#{remark,jdbcType=VARCHAR})
+	      #{updatedTime,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT} ,#{isContacts,jdbcType=INTEGER},#{remark,jdbcType=VARCHAR},#{filePath,jdbcType=VARCHAR},#{fileLength,jdbcType=VARCHAR},#{fileName,jdbcType=VARCHAR},#{fileSuffix,jdbcType=VARCHAR})
 	    ]]>
     </insert>
     
@@ -160,6 +164,10 @@
 		      <if test="createdTime != null" >  created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		      <if test="isContacts != null" >  is_contacts = #{isContacts,jdbcType=INTEGER}, </if>
 		      <if test="remark != null" >  remark = #{remark,jdbcType=VARCHAR}, </if>
+		      <if test="filePath != null" > file_path = #{filePath,jdbcType=VARCHAR}, </if>
+		      <if test="fileLength != null" > file_length = #{fileLength,jdbcType=VARCHAR}, </if>
+		      <if test="fileName != null" > file_name = #{fileName,jdbcType=VARCHAR}, </if>
+		      <if test="fileSuffix != null" > file_suffix = #{fileSuffix,jdbcType=VARCHAR} </if>
 		</set>
 		<where>
 			<trim prefixOverrides="and">
@@ -200,7 +208,11 @@
 		      <if test="updatedTime != null" >  updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
 		      <if test="createdTime != null" >  created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		      <if test="isContacts != null" >  is_contacts = #{isContacts,jdbcType=INTEGER}, </if>
-		      <if test="remark != null" >  remark = #{remark,jdbcType=VARCHAR}, </if>
+		        remark = #{remark,jdbcType=VARCHAR}, 
+		      <if test="filePath != null" > file_path = #{filePath,jdbcType=VARCHAR}, </if>
+		      <if test="fileLength != null" > file_length = #{fileLength,jdbcType=VARCHAR}, </if>
+		      <if test="fileName != null" > file_name = #{fileName,jdbcType=VARCHAR}, </if>
+		      <if test="fileSuffix != null" > file_suffix = #{fileSuffix,jdbcType=VARCHAR} </if>
 		</set>
 		where id = #{id}
 	</update>

@@ -73,6 +73,11 @@ public class MeetingScheduling extends PagableEntity {
 	private String meetingTypeStr;
 	
 	
+	//2016/12/26 为新一期需求 新增的排队数量字段
+	private String pdCount;
+	
+	private Long paiQCount;
+	
 	public Timestamp getReserveTimeEnd() {
 		if (StringUtils.isNotBlank(this.reserveTimeEndStr)) {
 			Date tmp = null;
@@ -362,6 +367,23 @@ public class MeetingScheduling extends PagableEntity {
 	public void setCreateId(String createId) {
 		this.createId = createId;
 	}
+
+	public String getPdCount() {
+		return pdCount;
+	}
+
+	public void setPdCount(String pdCount) {
+		this.pdCount = pdCount;
+	}
+
+	public Long getPaiQCount() {
+		return paiQCount;
+	}
+
+	public void setPaiQCount(Long paiQCount) {
+		this.paiQCount = paiQCount;
+	}
+	
 	
 	
 

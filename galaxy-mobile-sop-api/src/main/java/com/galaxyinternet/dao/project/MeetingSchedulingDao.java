@@ -69,5 +69,19 @@ public interface MeetingSchedulingDao extends BaseDao<MeetingScheduling, Long> {
     public Long selectdpqCount(MeetingSchedulingBo query);
     
     
+    /**
+     * 2016/12/26
+     * 查询出排队数量
+     */
     
+    public Long selectpdCount(MeetingScheduling query);
+    
+    
+    
+    /**
+     * 2016/12/26
+     * 查询出排队数量
+     */
+    
+    public Long selectltpdCount(MeetingScheduling query);
 }

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.galaxyinternet.bo.DictBo;
 import com.galaxyinternet.bo.UserBo;
 import com.galaxyinternet.bo.project.ProjectBo;
+import com.galaxyinternet.common.enums.DictEnum;
+import com.galaxyinternet.exception.PlatformException;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.constants.UserConstant;
 import com.galaxyinternet.framework.core.exception.DaoException;
@@ -37,6 +39,7 @@ import com.galaxyinternet.service.DepartmentService;
 import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.UserRoleService;
+import com.galaxyinternet.service.UserService;
 import com.galaxyinternet.utils.RoleUtils;
 
 @Controller
@@ -49,6 +52,8 @@ public class CommonController extends BaseControllerImpl<User, UserBo>{
 	private UserRoleService userRoleService;
 	@Autowired
 	private DepartmentService departmentService;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
 	@Autowired
@@ -325,4 +330,107 @@ public class CommonController extends BaseControllerImpl<User, UserBo>{
 		responseBody.setEntity(projectBo);
 		return responseBody;
 	}
+	
+	
+	/**
+	 * 根据事业线查询相应的投资经理
+	 * @version 2016-12-21
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getUserList/{departmentId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<User> getUserList(@PathVariable("departmentId") Long departmentId, HttpServletRequest request) {
+		ResponseData<User> responseBody = new ResponseData<User>();
+		User currentUser = (User) getUserFromSession(request);
+		User user = new User();
+		List<Long> departmentIds = new ArrayList<Long>();
+		if(departmentId.longValue() == 0L){
+			Department query = new Department();
+			query.setType(1);
+			List<Department> careerlineList = departmentService.queryList(query);
+			for(Department d : careerlineList){
+				departmentIds.add(d.getId());
+			}
+		}else{
+			departmentIds.add(departmentId);
+		}
+		user.setDepartmentIds(departmentIds);
+		user.setStatus("0");
+		List<User> userList = userService.queryList(user);
+		List<User> responseUserList = new ArrayList<User>();
+		List<Long> uids = userRoleService.selectUserIdByRoleId(UserConstant.TZJL);
+		for(User u : userList){
+			if(uids.contains(u.getId())){
+				if(u.getId().intValue() == currentUser.getId().intValue()){
+					u.setCurrentUser(true);
+				}
+				responseUserList.add(u);
+			}
+		}
+		responseBody.setEntityList(responseUserList);
+		responseBody.setResult(new Result(Status.OK, null, "获取投资经理成功！"));
+		return responseBody;
+	}
+	
+	
+	
+	/**
+	 * 根据大的事业部查询出小的事业部
+	 * 2016/12/24 为app端2.5.1 新需求
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getAppDepartmentId/{belongType}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Department> getAppDepartmentId(@PathVariable("belongType") Integer belongType, HttpServletRequest request) {
+		ResponseData<Department> responseBody = new ResponseData<Department>();
+		User user = (User) getUserFromSession(request);		
+		if(belongType!=null){			
+			Department dt = new Department();
+			dt.setType(1);
+			dt.setBelongType(belongType);
+			List<Department> careerlineList = departmentService.queryList(dt);
+			for(Department department : careerlineList){
+				if(user.getDepartmentId().longValue() == department.getId().longValue()){
+					department.setCurrentUser(true);
+					break;
+				}
+			}
+			responseBody.setEntityList(careerlineList);
+			responseBody.setResult(new Result(Status.OK, null, "获取事业线成功！"));			
+		}else{
+			responseBody.setResult(new Result(Status.OK, null, "缺少必要参数"));
+		}
+		return responseBody;
+	}
+	
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "/getzhiwei", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<Dict> getDictByParent(HttpServletRequest request) {
+		ResponseData<Dict> responseBody = new ResponseData<Dict>();
+		List<Dict> dicts = new ArrayList<Dict>();
+		Dict dict = null;
+		Result result = new Result();
+		try {
+			for (DictEnum.zhiwei degree : DictEnum.zhiwei.values()) {
+				dict = new Dict();
+				dict.setCode(degree.getCode());
+				dict.setName(degree.getName());
+				dicts.add(dict);
+			}
+		} catch (PlatformException e) {
+			result.setErrorCode(e.getCode() + "");
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setMessage("系统错误");
+			result.addError("系统错误");
+			logger.error("查询职位出错", e);
+		}
+		
+		result.setStatus(Status.OK);
+		responseBody.setEntityList(dicts);
+		responseBody.setResult(result);
+		return responseBody;
+	}
+
+	
 }

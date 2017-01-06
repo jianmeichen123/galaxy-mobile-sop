@@ -331,4 +331,35 @@
 				AND STR_TO_DATE(CONCAT(#{dateTime} , ' 23:59:59') ,'%Y-%m-%d %H:%i:%s' )]]>
 	</select>
   
+  	
+  
+  
+  	<!-- 查询排队数量 -->
+	 <select id="selectpdCount" resultType="java.lang.Long" parameterType="com.galaxyinternet.model.project.MeetingScheduling">		
+		 SELECT COUNT(id) 
+		 FROM sop_meeting_scheduling sms 
+		 WHERE 
+		  sms.meeting_type='meetingType:2' 
+		 AND
+		 sms.schedule_status='0'
+		 AND 
+		 sms.apply_time<![CDATA[<]]> #{applyTime} 				
+	</select>
+	
+	
+	  	<!-- 查询排队数量 -->
+	 <select id="selectltpdCount" resultType="java.lang.Long" parameterType="com.galaxyinternet.model.project.MeetingScheduling">		
+		 SELECT COUNT(id) 
+		 FROM sop_meeting_scheduling sms 
+		 WHERE 
+		  sms.meeting_type<![CDATA[<>]]>'meetingType:2' 
+		 AND
+		 sms.schedule_status='0'
+		 AND 
+		 sms.apply_time<![CDATA[<]]> #{applyTime} 				
+	</select>
+  
+  
+  
+  
 </mapper>

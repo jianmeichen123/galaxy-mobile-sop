@@ -386,5 +386,20 @@ public class MeetingSchedulingServiceImpl
 		return meetingSchedulingDao.selectdpqCount(query);
 	}
 
+	@Override
+	public Long selectpdCount(MeetingScheduling query) {
+		
+		return meetingSchedulingDao.selectpdCount(query);
+	}
+
+
+	
+
+	@Override
+	public Long selectltpdCount(MeetingScheduling query) {
+		
+		return meetingSchedulingDao.selectltpdCount(query);
+	}
+
 
 }

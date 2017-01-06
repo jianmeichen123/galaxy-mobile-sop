@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ import com.galaxyinternet.bo.project.MeetingSchedulingBo;
 import com.galaxyinternet.bo.project.PersonPoolBo;
 import com.galaxyinternet.bo.project.ProjectBo;
 import com.galaxyinternet.bo.touhou.DeliveryBo;
+import com.galaxyinternet.bo.touhou.ProjectHealthBo;
 import com.galaxyinternet.common.SopResult;
 import com.galaxyinternet.common.annotation.LogType;
 import com.galaxyinternet.common.annotation.RecordType;
@@ -78,6 +80,7 @@ import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.soptask.SopTask;
 import com.galaxyinternet.model.timer.PassRate;
+import com.galaxyinternet.model.touhou.ProjectHealth;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.model.user.UserRole;
 import com.galaxyinternet.operationMessage.handler.StageChangeHandler;
@@ -93,6 +96,7 @@ import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
 import com.galaxyinternet.service.PassRateService;
 import com.galaxyinternet.service.PersonPoolService;
+import com.galaxyinternet.service.ProjectHealthService;
 import com.galaxyinternet.service.ProjectPersonService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.ProjectSharesService;
@@ -141,6 +145,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	@Autowired
 	private HandlerManager handlerManager;
 
+	@Autowired
+	private ProjectHealthService projectHealthService;
+	
 	@Autowired
 	private DepartmentService departmentService;
 	@Autowired
@@ -632,9 +639,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				mes.setMeetingTypeList(meetingTypeList);
 				Page<MeetingRecord> mrpageList = meetingService.queryPageList(mes,new PageRequest(pageNummm,pageSizeee));
 				
-				if(mrpageList==null){
+				ProjectHealthBo healthQuery = new ProjectHealthBo();
+				healthQuery.setProjectId(Long.parseLong(pid));
+				PageRequest healthPageable = new PageRequest(0,1, new Sort(Direction.DESC,"created_time"));
+				List<ProjectHealth> healthList = projectHealthService.queryList(healthQuery, healthPageable);
+ 
+				if(mrpageList==null && healthList==null){
 					project.setYyfxzw(0);
-				}else if(mrpageList!=null && mrpageList.getContent().size()==0){
+				}else if(mrpageList!=null && mrpageList.getContent().size()==0 && healthList!=null && healthList.size()==0){
 					project.setYyfxzw(0);
 				}else{
 					project.setYyfxzw(1);
@@ -955,18 +967,17 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 	/**
 	 * 添加团队成员
-	 * 
+	 * 2016/12/24 修改
 	 * @author yangshuhua
 	 */
 	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
-	@RequestMapping(value = "/app", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseData<PersonPoolBo> addProjectPerson(
+	@RequestMapping(value = "/insertProjectPerson", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<PersonPoolBo> insertProjectPerson(
 			@RequestBody PersonPoolBo pool, HttpServletRequest request) {
 		ResponseData<PersonPoolBo> responseBody = new ResponseData<PersonPoolBo>();
 		if (pool.getProjectId() == null || pool.getProjectId() <= 0
-				|| pool.getPersonName() == null
-				|| pool.getPersonTelephone() == null) {
+				|| pool.getPersonName() == null) {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
 		}
@@ -980,6 +991,13 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			return responseBody;
 		}
 		try {
+			if(pool.getPersonBirthdayStr() != null){
+				Date date = DateUtil.convertStringToDate(pool.getPersonBirthdayStr()+"-01-01 00:00:00");
+				pool.setPersonBirthday(date);
+			}	
+			if( pool.getPersonTelephone() == null){
+				pool.setPersonTelephone("");
+			}
 			pool.setCreatedTime(System.currentTimeMillis());
 			Long id = personPoolService.addProjectPerson(pool);
 			if (id > 0) {
@@ -1002,7 +1020,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 	 */
 	@com.galaxyinternet.common.annotation.Logger
 	@ResponseBody
-	@RequestMapping(value = "/upp", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/resetProjectPerson", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<PersonPoolBo> resetProjectPerson(
 			@RequestBody PersonPoolBo pool, HttpServletRequest request) {
 		ResponseData<PersonPoolBo> responseBody = new ResponseData<PersonPoolBo>();
@@ -1019,7 +1037,18 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					"没有权限修改该项目的团队成员信息!"));
 			return responseBody;
 		}
-
+		
+		if(pool.getPersonBirthdayStr() != null){
+			try {
+				Date date = DateUtil.convertStringToDate(pool.getPersonBirthdayStr()+"-01-01 00:00:00");
+				pool.setPersonBirthday(date);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if( pool.getPersonTelephone() == null){
+			pool.setPersonTelephone("");
+		}
 		int num = personPoolService.updateById(pool);
 		if (num > 0) {
 			responseBody.setResult(new Result(Status.OK, null, "团队成员信息修改成功!"));
@@ -3228,6 +3257,26 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						}
 						ms.setIsEdit(Edit);
 						ids.add(String.valueOf(ms.getProjectId()));
+						
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						
 					}
 		
 					/**
@@ -3354,6 +3403,26 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 							}
 		
 						}
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						
+						
 					}
 					
 				}
@@ -3483,6 +3552,24 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 								ms.setCreateUname(p.getCreateUname());
 							}
 		
+						}
+						
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
 						}
 					}
 					
@@ -3617,6 +3704,24 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 							}
 		
 						}
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
 					}
 					
 				}		
@@ -3691,6 +3796,23 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 								ms.setCreateUname(p.getCreateUname());
 							}
 		
+						}
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
 						}
 					}
 					
@@ -3788,6 +3910,24 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 								ms.setCreateUname(p.getCreateUname());
 							}
 		
+						}
+						
+						if(ms.getScheduleStatus()==0 && ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
+						}
+						
+						if(ms.getScheduleStatus()==0 && !ms.getMeetingType().equals(DictEnum.meetingType.CEO评审.getCode())){
+							
+							Long s  = meetingSchedulingService.selectltpdCount(ms);
+							String ss = pdcount(s.intValue());
+							ms.setPdCount(ss);	
+							ms.setPaiQCount(s);
+								
 						}
 					}
 					
@@ -3932,6 +4072,68 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			}
 		}
 		return responseBody;
+	}
+	
+	
+	/**
+	 * 2016/12/24 添加 取消排期的功能 只改 排期的状态    schedule_status 改为 2 (投资经理取消排期)
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/qxpq", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<MeetingSchedulingBo> qxpq(@RequestBody MeetingSchedulingBo meetingSchedulingBo,
+			HttpServletRequest request) throws ParseException {
+		ResponseData<MeetingSchedulingBo> responseBody = new ResponseData<MeetingSchedulingBo>();
+		if (meetingSchedulingBo == null || meetingSchedulingBo.getId() == null) {
+			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
+			return responseBody;
+		}
+
+		MeetingScheduling ji = meetingSchedulingService.queryById(meetingSchedulingBo.getId());
+		try{
+			if( ji==null){
+				responseBody.setResult(new Result(Status.ERROR, null, "不存在此排期"));
+				return responseBody;
+			}
+			if(ji!=null && !ji.getScheduleStatus().equals(DictEnum.meetingSheduleResult.待排期.getCode())){
+							
+				responseBody.setResult(new Result(Status.ERROR, null, "此排期不在待排期中"));
+				return responseBody;
+			}
+		
+			MeetingScheduling ss = new MeetingScheduling();
+				ss.setId(meetingSchedulingBo.getId());
+				ss.setScheduleStatus(DictEnum.meetingSheduleResult.已通过.getCode());
+				ss.setStatus(DictEnum.meetingResult.通过.getCode());
+			int nui = meetingSchedulingService.updateById(ss);
+			if(nui>0){
+				responseBody.setResult(new Result(Status.OK, null, "取消排期成功"));				
+			}else{
+				responseBody.setResult(new Result(Status.ERROR, null, "取消排期异常"));
+				return responseBody;
+			}
+		}catch(Exception e){
+			responseBody.setResult(new Result(Status.ERROR, null, "取消排期异常"));
+			if (logger.isErrorEnabled()) {
+				logger.error("selectAppProject ", e);
+			}
+		}
+		return responseBody;
+		
+	}
+	
+	public static String pdcount(Integer s){
+		if(s>=0 && s<=9){
+			return "小于10";
+		}else if(10<=s && s<=29){
+			return "小于30";
+		}else if(30<=s&&s<=49){
+			return "小于50";
+		}else if(50<=s&&s<=99){
+			return "大于50";
+		}else if(s>100){
+			return "大于100";
+		}
+		return "";
 	}
 	
 	

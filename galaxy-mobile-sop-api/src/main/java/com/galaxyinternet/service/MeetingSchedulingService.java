@@ -92,5 +92,15 @@ public interface MeetingSchedulingService extends BaseService<MeetingScheduling>
     public Long selectdpqCount(MeetingSchedulingBo query);
     
     
+    /**
+     * 查询出排队数量
+     */
+    public Long selectpdCount(MeetingScheduling query);
+    
 
+    
+    /**
+     * 查询出排队数量
+     */
+    public Long selectltpdCount(MeetingScheduling query);
 }
