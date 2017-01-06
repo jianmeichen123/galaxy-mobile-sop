@@ -92,8 +92,8 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 	 */	
 	 @ResponseBody
 	 @RequestMapping(value = "/uploadFile/{pid}", method = RequestMethod.POST) 	 
-	 public ResponseData<PersonPool> uploadFile(@PathVariable("pid") String pid,HttpServletRequest request) {
-		 ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
+	 public String uploadFile(@PathVariable("pid") String pid,HttpServletRequest request) {
+		// ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
 		 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request; // 请求转换
 		 		MultipartFile fileList = multipartRequest.getFile("fileList"); // 获取multipartFile文件
 				 //	ServletContext s1 = request.getServletContext();
@@ -126,13 +126,13 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 				            //properties.replace("app."+appName+".version", appVersion);
 				        } catch (Exception e) {  
 				            e.printStackTrace(); 
-				            responseBody.setResult(new Result(Status.ERROR, null, "上传失败"));			 	
-				 			return responseBody;		 	
+				   /*         responseBody.setResult(new Result(Status.ERROR, null, "上传失败"));			 	
+				 			return responseBody;	*/	 	
 				        }  
 				        //model.addAttribute("fileUrl", path + File.separator + fileName);  
 		 			}		 			
-		 			responseBody.setResult(new Result(Status.OK, null, "上传成功"));			 	
-		 			return responseBody;		 	
+		 			//responseBody.setResult(new Result(Status.OK, null, "上传成功"));			 	
+		 			return "request";		 	
 	 }
 	 
 	 @RequestMapping(value = "/showFile/{pid}", method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE) 
