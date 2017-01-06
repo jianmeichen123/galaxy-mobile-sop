@@ -90,7 +90,7 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 	 * @return   app端上传的头像图片
 	 */	
 	 @ResponseBody
-	 @RequestMapping(value = "/uploadFile/{pid}", method = RequestMethod.POST) 	 
+	 @RequestMapping(value = "/uploadFile/{pid}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE) 	 
 	 public ResponseData<PersonPool> uploadFile(@PathVariable("pid") String pid, @RequestParam(value = "fileList") MultipartFile fileList,HttpServletRequest request) {
 		 ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
 				 	ServletContext s1 = request.getServletContext();
