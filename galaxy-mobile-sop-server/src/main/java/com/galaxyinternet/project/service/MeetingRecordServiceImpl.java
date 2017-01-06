@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.galaxyinternet.bo.project.MeetingRecordBo;
 import com.galaxyinternet.common.constants.SopConstant;
 import com.galaxyinternet.common.enums.DictEnum;
+import com.galaxyinternet.dao.idea.IdeaDao;
 import com.galaxyinternet.dao.project.MeetingRecordDao;
 import com.galaxyinternet.dao.project.MeetingSchedulingDao;
 import com.galaxyinternet.dao.project.ProjectDao;
@@ -23,6 +24,7 @@ import com.galaxyinternet.dao.soptask.SopTaskDao;
 import com.galaxyinternet.framework.core.dao.BaseDao;
 import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
+import com.galaxyinternet.model.idea.Idea;
 import com.galaxyinternet.model.project.MeetingRecord;
 import com.galaxyinternet.model.project.MeetingScheduling;
 import com.galaxyinternet.model.project.Project;
@@ -44,6 +46,8 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 	private ProjectDao projectDao;
 	@Autowired
 	private SopTaskDao sopTaskDao;
+	@Autowired
+	private IdeaDao ideaDao;
 	@Autowired
 	private SopFileDao sopFileDao;
 	@Autowired
@@ -337,7 +341,14 @@ public class MeetingRecordServiceImpl extends BaseServiceImpl<MeetingRecord> imp
 				MeetingRecordBo bo = new MeetingRecordBo();
 				bo.setId(ib.getId());
 				bo.setProjectId(ib.getProjectId());
-				bo.setProName(proIdNameMap.get(ib.getProjectId()));
+				if(ib.getRecordType()==0){
+					bo.setProName(proIdNameMap.get(ib.getProjectId()));
+				}else if(ib.getRecordType()==1){
+					Idea ide = ideaDao.selectById(ib.getProjectId());
+					if(ide!=null && ide.getIdeaName()!=null){
+						bo.setProName(ide.getIdeaName());
+					}
+				}
 				bo.setMeetingDateStr(ib.getMeetingDateStr());
 				bo.setMeetingType(ib.getMeetingType());
 				bo.setMeetingTypeStr(ib.getMeetingTypeStr());
