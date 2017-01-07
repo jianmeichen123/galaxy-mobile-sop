@@ -224,7 +224,7 @@
 				<galaxy.project.sop.endpoint>http://fxmob.qa.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
 				<xinge.enviroment>2</xinge.enviroment>
 				<app.uploadimage.up>/data/apps/fxmob/files/</app.uploadimage.up>
-                <app.uploadimage.path>http://fxmob.dev.galaxyinternet.com/files/</app.uploadimage.path>
+                <app.uploadimage.path>http://fxmob.qa.galaxyinternet.com/files/</app.uploadimage.path>
 			</properties>
 		</profile>
 
