@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.framework.core.model.ResponseData;
@@ -91,12 +90,10 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 	 * @return   app端上传的头像图片
 	 */	
 	 @ResponseBody
-	 @RequestMapping(value = "/uploadFile/{pid}", method = RequestMethod.POST) 	 
-	 public void uploadFile(@PathVariable("pid") String pid,HttpServletRequest request) {
-		// ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
-		 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request; // 请求转换
-		 		MultipartFile fileList = multipartRequest.getFile("fileList"); // 获取multipartFile文件
-				 //	ServletContext s1 = request.getServletContext();
+	 @RequestMapping(value = "/uploadFile/{pid}", produces = MediaType.APPLICATION_JSON_VALUE) 	 
+	 public ResponseData<PersonPool> uploadFile(@PathVariable("pid") String pid, @RequestParam(value = "fileList") MultipartFile fileList,HttpServletRequest request) {
+		 ResponseData<PersonPool> responseBody = new ResponseData<PersonPool>();
+				 	ServletContext s1 = request.getServletContext();
 				 //	String path = s1.getRealPath("/")+"/image";				 	
 				 	String strDirPath = tempfilePath+"image";
 			 		File uploadDirectory = new File(strDirPath); 
@@ -126,13 +123,13 @@ public class AppImageUploadController extends BaseControllerImpl<SopFile, AppSop
 				            //properties.replace("app."+appName+".version", appVersion);
 				        } catch (Exception e) {  
 				            e.printStackTrace(); 
-				   /*         responseBody.setResult(new Result(Status.ERROR, null, "上传失败"));			 	
-				 			return responseBody;	*/	 	
+				            responseBody.setResult(new Result(Status.ERROR, null, "上传失败"));			 	
+				 			return responseBody;		 	
 				        }  
 				        //model.addAttribute("fileUrl", path + File.separator + fileName);  
 		 			}		 			
-		 			//responseBody.setResult(new Result(Status.OK, null, "上传成功"));			 	
-		 			//return "request";		 	
+		 			responseBody.setResult(new Result(Status.OK, null, "上传成功"));			 	
+		 			return responseBody;		 	
 	 }
 	 
 	 @RequestMapping(value = "/showFile/{pid}", method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE) 
