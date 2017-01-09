@@ -86,8 +86,8 @@ public class PostOperatationController extends BaseControllerImpl<MeetingRecord,
 			Page<MeetingRecord> pageList = meetingService.queryPageList(meetingRecord, pageRequest);
 			responseBody.setPageList(pageList);
 			
-			//运营状态-默认为正常(2)
-			Byte healthState = (byte)2;
+			//运营状态-默认为正常(2)(null)
+			Byte healthState = null;
 			ProjectHealthBo healthQuery = new ProjectHealthBo();
 			healthQuery.setProjectId(meetingRecord.getProjectId());
 			PageRequest healthPageable = new PageRequest(0,1, new Sort(Direction.DESC,"created_time"));
