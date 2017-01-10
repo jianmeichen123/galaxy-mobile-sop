@@ -358,6 +358,10 @@
 	</select>
   
   
-  
+  	<select id="selectqueryAllCount" resultType="java.lang.Long" parameterType="java.util.Map">
+		select count(id)
+		from sop_meeting_scheduling
+		<include refid="Base_Where_Clausee" />
+	</select>
   
 </mapper>

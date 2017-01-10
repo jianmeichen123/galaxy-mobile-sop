@@ -84,4 +84,11 @@ public interface MeetingSchedulingDao extends BaseDao<MeetingScheduling, Long> {
      */
     
     public Long selectltpdCount(MeetingScheduling query);
+    
+    /***
+     * 项目名查询时的counts
+     * @param query
+     * @return
+     */
+    public Long selectqueryAllCount(MeetingScheduling query);
 }
