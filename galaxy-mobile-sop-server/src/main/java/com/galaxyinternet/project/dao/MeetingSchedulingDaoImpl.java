@@ -2,6 +2,7 @@ package com.galaxyinternet.project.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
@@ -14,6 +15,7 @@ import com.galaxyinternet.framework.core.exception.DaoException;
 import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.model.PageRequest;
 import com.galaxyinternet.framework.core.query.Query;
+import com.galaxyinternet.framework.core.utils.BeanUtils;
 import com.galaxyinternet.model.project.MeetingScheduling;
 
 
@@ -102,7 +104,7 @@ public class MeetingSchedulingDaoImpl extends BaseDaoImpl<MeetingScheduling, Lon
 		// TODO Auto-generated method stub
 				try {
 					List<MeetingScheduling> list=sqlSessionTemplate.selectList(getSqlName("selectqueryAll"), getParams(query, pageRequest));
-					return new  Page<MeetingScheduling>(list, pageRequest, this.selectCount(query));
+					return new  Page<MeetingScheduling>(list, pageRequest, selectqueryAllCount(query));
 				} catch (Exception e) {
 					throw new DaoException(String.format("查询对象出错！语句：%s", getSqlName("selectqueryAll")), e);
 				}
@@ -152,6 +154,39 @@ public class MeetingSchedulingDaoImpl extends BaseDaoImpl<MeetingScheduling, Lon
 		}
 	}
 
+	
+
+	//2016/12/26 为了 新一期 排期列表的排队数目
+	@Override
+	public Long selectpdCount(MeetingScheduling query) {
+		try {
+			Long count= sqlSessionTemplate.selectOne(getSqlName("selectpdCount"),query);
+			return count;
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询排队数出错！语句：%s", getSqlName("selectpdCount")),e);
+		}
+	}
+
+	//2016/12/26 为了 新一期 排期列表的排队数目
+	@Override
+	public Long selectltpdCount(MeetingScheduling query) {
+		try {
+			Long count= sqlSessionTemplate.selectOne(getSqlName("selectltpdCount"),query);
+			return count;
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询排队数出错！语句：%s", getSqlName("selectltpdCount")),e);
+		}
+	}
+	
+	@Override
+	public Long selectqueryAllCount(MeetingScheduling query) {
+		try {
+			Map<String, Object> params = BeanUtils.toMap(query);
+			return sqlSessionTemplate.selectOne(getSqlName("selectqueryAllCount"), params);
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询对象总数出错！语句：%s", getSqlName("selectqueryAllCount")), e);
+		}
+	}
 	
 	
 }

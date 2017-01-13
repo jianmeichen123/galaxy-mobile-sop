@@ -55,6 +55,14 @@ public class PersonPool extends PagableEntity{
     //学校
     private String school;
     
+    //2016/12/30新一期上线新增4个字段
+    private String filePath;       //文件的地址
+    private String fileLength;    //文件的长度
+    private String fileName;      //文件的名字
+    private String fileSuffix;    //文件的后缀
+    
+    
+    
 	public String getFormatWorkTime() {
 		return formatWorkTime;
 	}
@@ -313,6 +321,31 @@ public class PersonPool extends PagableEntity{
 	}
 	public void setAge(Integer age) {
 		this.age = age;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	public String getFileLength() {
+		return fileLength;
+	}
+	public void setFileLength(String fileLength) {
+		this.fileLength = fileLength;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getFileSuffix() {
+		return fileSuffix;
+	}
+	public void setFileSuffix(String fileSuffix) {
+		this.fileSuffix = fileSuffix;
 	}
     
 	
