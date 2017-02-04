@@ -52,6 +52,8 @@ public class Project extends PagableEntity {
     private String formatUnit;
     private String formatShareRatio;
     private String nameCodeLike;
+    //
+    private String formatServiceCharge;
     //详情数据转换
   	private String createDate;
   	private String updateDate;
