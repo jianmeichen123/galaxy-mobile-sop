@@ -38,6 +38,7 @@ import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.framework.core.utils.GSONUtil;
 import com.galaxyinternet.framework.core.utils.JSONUtils;
 import com.galaxyinternet.model.operationLog.UrlNumber;
+import com.galaxyinternet.model.project.InterviewRecord;
 import com.galaxyinternet.model.project.MeetingRecord;
 import com.galaxyinternet.model.project.MeetingScheduling;
 import com.galaxyinternet.model.project.Project;
@@ -45,6 +46,7 @@ import com.galaxyinternet.model.sopfile.AppSopFile;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.AppProjectMeetingService;
+import com.galaxyinternet.service.InterviewRecordService;
 import com.galaxyinternet.service.MeetingRecordService;
 import com.galaxyinternet.service.MeetingSchedulingService;
 import com.galaxyinternet.service.ProjectService;
@@ -73,6 +75,10 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 	com.galaxyinternet.framework.cache.Cache cache;
 	@Autowired
 	private AppProjectMeetingService appPmService;
+	
+	@Autowired
+	private InterviewRecordService interviewRecordService;
+	
 	
 	private String tempfilePath;
 
@@ -671,5 +677,77 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 			}
 			return retMap;
 		}
+		
+
+		
+		/**
+		 * 为满足app端修改访谈  2017/1/17
+		 * @param interviewRecord
+		 * @param request
+		 * @return
+		 */
+		@com.galaxyinternet.common.annotation.Logger
+		@ResponseBody
+		@RequestMapping(value = "/updateInterview", produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseData<InterviewRecord> updateInterview(@RequestBody InterviewRecord interviewRecord, HttpServletRequest request ) {
+			ResponseData<InterviewRecord> responseBody = new ResponseData<InterviewRecord>();
+				if(interviewRecord.getId()==null){
+					responseBody.setResult(new Result(Status.ERROR, "参数缺失"));
+					return responseBody;
+				//	responseBody.setId(interviewRecord.getId());
+				}
+				if(interviewRecord.getViewNotes()==null){
+					interviewRecord.setViewNotes("");
+				}
+			try {								
+				interviewRecordService.updateById(interviewRecord);
+				responseBody.setResult(new Result(Status.OK, "修改访谈记录成功"));
+				responseBody.setId(interviewRecord.getId());
+							
+			//	ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), "3", UrlNumber.one);
+			} catch (Exception e) {
+				responseBody.setResult(new Result(Status.ERROR,null, "修改访谈记录失败"));
+				
+				if(logger.isErrorEnabled()){
+					logger.error("updateInterview 修改访谈记录失败",e);
+				}
+			}
+			return responseBody;
+		}
+		/**
+		 * 2017/1/17开发为了app端修改会议(包括创意也在这修改)
+		 * @param meetingRecord
+		 * @param request
+		 * @return
+		 */
+		@com.galaxyinternet.common.annotation.Logger
+		@ResponseBody
+		@RequestMapping(value = "/updatemeet", produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseData<MeetingRecord> updatemeet(@RequestBody MeetingRecord meetingRecord, HttpServletRequest request ) {
+			ResponseData<MeetingRecord> responseBody = new ResponseData<MeetingRecord>();
+			try {
+				if(meetingRecord.getId()==null){
+					responseBody.setResult(new Result(Status.ERROR,null, "主键缺失"));
+					return responseBody;
+				}
+				if(meetingRecord.getMeetingNotes()==null){
+					meetingRecord.setMeetingNotes("");
+				}
+				//RecordType { PROJECT((byte) 0, "项目"), IDEAS((byte) 1, "创意");
+				meetingRecordService.updateById(meetingRecord);
+			    responseBody.setResult(new Result(Status.OK, "修改会议纪要成功"));
+				responseBody.setId(meetingRecord.getId());
+				
+				meetingRecord = meetingRecordService.queryById(meetingRecord.getId());
+				//ControllerUtils.setRequestParamsForMessageTip(request, null, project.getProjectName(), project.getId(), messageType, UrlNumber.one);
+			} catch (Exception e) {
+				responseBody.setResult(new Result(Status.ERROR,null, "修改会议纪要失败"));
+				logger.error("updatemeet 修改会议纪要失败",e);
+			}
+			return responseBody;
+		}
+		
+		
+		
 
 }
