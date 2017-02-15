@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +64,7 @@ import com.galaxyinternet.model.idea.Idea;
 import com.galaxyinternet.model.operationLog.UrlNumber;
 import com.galaxyinternet.model.project.MeetingRecord;
 import com.galaxyinternet.model.project.Project;
+import com.galaxyinternet.model.project.ProjectShares;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.user.User;
@@ -1442,6 +1445,105 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 			}
 			return responseBody;
 		}
+		
+	/**
+	 * 修改创意的简述
+	 * @param idea
+	 * @param request
+	 * @param response
+	 * @return
+	 * /<[^>]+>/g,""
+	 */
+		@ResponseBody
+		@RequestMapping(value="/updateIdeams",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseData<Idea> updateIdeams(@RequestBody Idea idea,HttpServletRequest request,HttpServletResponse response){
+			ResponseData<Idea> responseBody = new ResponseData<Idea>();
+			if(idea.getId()==null){
+				responseBody.setResult(new Result(Status.ERROR,"创意id为空"));
+				return responseBody;
+			}
+			Idea ideae = ideaService.queryById(idea.getId());
+			if(ideae == null || ideae.getDepartmentId()==null){
+				responseBody.setResult(new Result(Status.ERROR,null, "创意信息错误"));
+				return responseBody;
+			}
+			try {
+				if(idea.getIdeaDescHtml()==null){
+					idea.setIdeaDescHtml("");
+				}
+				if(idea.getIdeaDesc()==null){
+					String ty = replaceSpeciall(idea.getIdeaDescHtml());
+					idea.setIdeaDesc(ty);
+				}
+				ideaService.updateById(idea);	
+				Idea ideas = ideaService.queryById(idea.getId());
+				
+				responseBody.setEntity(ideas);
+				responseBody.setResult(new Result(Status.OK,"编辑创意的简述成功"));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				responseBody.setResult(new Result(Status.ERROR,"编辑创意的简述失败"));
+			}
+			return responseBody;
+		}
+		
+		/**
+		 * 功能描述：去掉html标签从pc端烤过来的正则
+		 */
+		public static String replaceSpecial(String source) {
+			if(source!=null){
+				return source.replace("<[^>]+>","");//去掉所有的html标记
+			}else{
+				return "";
+			}
+		}
+		/***
+		 * 使用此正则进行html的标签过滤
+		 * @param source
+		 * @return
+		 */
+		public static String replaceSpeciall(String source) {
+			String dest = "";
+			if (source != null) {
+				Pattern p = Pattern.compile("<[^>]+>");
+				Matcher m = p.matcher(source);
+				dest = m.replaceAll("");
+			}
+			return dest;
+		}
+		
+		/***
+		 *获取创意的详情 2017/2/14 新开发的接口
+		 * @param pid
+		 * @param request
+		 * @param response
+		 * @return
+		 */
+		@ResponseBody
+		@RequestMapping(value="/getIdeaApp/{pid}",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseData<Idea> getIdeaApp(@PathVariable("pid") Long pid,HttpServletRequest request,HttpServletResponse response){
+			ResponseData<Idea> responseBody = new ResponseData<Idea>();
+			if(pid==null){
+				responseBody.setResult(new Result(Status.ERROR,"创意id缺失"));
+				return responseBody;
+			}
+			try {
+				 Idea idea = ideaService.queryById(pid);
+				 if(idea==null){
+						responseBody.setResult(new Result(Status.ERROR,"创意缺失"));
+						return responseBody;
+				 }
+				responseBody.setEntity(idea);
+				responseBody.setResult(new Result(Status.OK,"查询创意成功"));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				responseBody.setResult(new Result(Status.ERROR,"查询创意失败"));
+			}
+			return responseBody;
+		}
+		
+		
+		
 		
 		
 }
