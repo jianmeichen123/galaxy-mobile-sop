@@ -684,15 +684,31 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 		 * 为满足app端修改访谈  2017/1/17
 		 * @param interviewRecord
 		 * @param request
-		 * @return
+		 * @return  2017/2/15修改 
 		 */
 		@com.galaxyinternet.common.annotation.Logger
 		@ResponseBody
 		@RequestMapping(value = "/updateInterview", produces = MediaType.APPLICATION_JSON_VALUE)
 		public ResponseData<InterviewRecord> updateInterview(@RequestBody InterviewRecord interviewRecord, HttpServletRequest request ) {
 			ResponseData<InterviewRecord> responseBody = new ResponseData<InterviewRecord>();
+			User user = (User) getUserFromSession(request);
+			// 项目创建者用户ID与当前登录人ID是否一样
+			
+			
+				if(interviewRecord.getProjectId()!=null){
+					Project p = projectService.queryById(interviewRecord.getProjectId());
+					if (user.getId().longValue() != p.getCreateUid().longValue()) {					
+						responseBody
+								.setResult(new Result(Status.ERROR, null, "没有权限修改该项目!"));
+						return responseBody;
+					}
+				}else{
+					responseBody.setResult(new Result(Status.ERROR, "projectId参数缺失"));
+					return responseBody;
+				}
+				
 				if(interviewRecord.getId()==null){
-					responseBody.setResult(new Result(Status.ERROR, "参数缺失"));
+					responseBody.setResult(new Result(Status.ERROR, "访谈id参数缺失"));
 					return responseBody;
 				//	responseBody.setId(interviewRecord.getId());
 				}
@@ -718,13 +734,30 @@ public class AppProjectMeetingController extends BaseControllerImpl<Project, Pro
 		 * 2017/1/17开发为了app端修改会议(包括创意也在这修改)
 		 * @param meetingRecord
 		 * @param request
-		 * @return
+		 * @return 2017/2/15修改 
 		 */
 		@com.galaxyinternet.common.annotation.Logger
 		@ResponseBody
 		@RequestMapping(value = "/updatemeet", produces = MediaType.APPLICATION_JSON_VALUE)
 		public ResponseData<MeetingRecord> updatemeet(@RequestBody MeetingRecord meetingRecord, HttpServletRequest request ) {
 			ResponseData<MeetingRecord> responseBody = new ResponseData<MeetingRecord>();
+			
+			User user = (User) getUserFromSession(request);
+			// 项目创建者用户ID与当前登录人ID是否一样
+			
+			
+				if(meetingRecord.getProjectId()!=null){
+					
+					Project p = projectService.queryById(meetingRecord.getProjectId());
+					if (user.getId().longValue() != p.getCreateUid().longValue()) {
+						responseBody
+								.setResult(new Result(Status.ERROR, null, "没有权限修改该项目!"));
+						return responseBody;
+					}
+				}else{
+					responseBody.setResult(new Result(Status.ERROR, "projectId参数缺失"));
+					return responseBody;
+				}
 			try {
 				if(meetingRecord.getId()==null){
 					responseBody.setResult(new Result(Status.ERROR,null, "主键缺失"));

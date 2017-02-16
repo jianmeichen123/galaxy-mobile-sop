@@ -893,6 +893,13 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 		if(responseBody !=null){
 			return responseBody;
 		}
+		
+		//为app端与pc端不一样做准备 2017/2/15
+		if(idea.getIdeaDesc()!=null){
+			
+			idea.setIdeaDescHtml(idea.getIdeaDesc());
+			
+		}	
 		User user = (User) request.getSession().getAttribute(Constants.SESSION_USER_KEY);
 		if (user == null) {
 			responseBody.setResult(new Result(Status.ERROR, "未登录!"));
@@ -1447,7 +1454,7 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 		}
 		
 	/**
-	 * 修改创意的简述
+	 * 修改创意的简述 2017/2/14
 	 * @param idea
 	 * @param request
 	 * @param response
