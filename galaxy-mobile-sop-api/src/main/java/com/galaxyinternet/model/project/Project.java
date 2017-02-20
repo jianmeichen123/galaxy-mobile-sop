@@ -161,13 +161,21 @@ public class Project extends PagableEntity {
 	private String faName;//中介名称
     
     
-    
-    
-    
-    
-    
-    
-    public String getIndustry() {
+    //2017/2/20 添加项目中的 判断是否是移交中的 项目 
+	
+	private String projectYjz;
+	
+
+    public String getProjectYjz() {
+		return projectYjz;
+	}
+
+	public void setProjectYjz(String projectYjz) {
+		this.projectYjz = projectYjz;
+	}
+
+	
+	public String getIndustry() {
 		return industry;
 	}
 
