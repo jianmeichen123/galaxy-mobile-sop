@@ -807,6 +807,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 									projectBo.setCeeword(projectBo.getKeyword().toUpperCase());
 								
 								}
+								projectBo.setCreateUid(null);
 								genProjectBean = appProjecttService.queryPageList(projectBo,  new PageRequest(projectBo.getPageNum(), projectBo.getPageSize(),sort));
 							}
 							if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){

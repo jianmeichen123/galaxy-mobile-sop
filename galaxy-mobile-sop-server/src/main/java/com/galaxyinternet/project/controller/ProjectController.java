@@ -451,6 +451,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						* 100 / project.getProjectShareRatio());
 			}
 		}
+		if (project.getServiceCharge() == null) {
+			project.setServiceCharge(0.0000);
+		}
 		if(null!=project.getIndustryOwn()&&project.getIndustryOwn().longValue()==0){
 			project.setIndustryOwn(null);
 		}
