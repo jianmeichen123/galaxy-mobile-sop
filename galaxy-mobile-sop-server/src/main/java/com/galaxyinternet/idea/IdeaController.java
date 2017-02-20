@@ -1478,10 +1478,11 @@ public class IdeaController extends BaseControllerImpl<Idea, Idea> {
 				if(idea.getIdeaDescHtml()==null){
 					idea.setIdeaDescHtml("");
 				}
-				if(idea.getIdeaDesc()==null){
+				//好像有个问题 不用加判断
+			/*	if(idea.getIdeaDesc()==null){*/
 					String ty = replaceSpeciall(idea.getIdeaDescHtml());
 					idea.setIdeaDesc(ty);
-				}
+			/*	}*/
 				ideaService.updateById(idea);	
 				Idea ideas = ideaService.queryById(idea.getId());
 				
