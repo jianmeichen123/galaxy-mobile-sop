@@ -13,6 +13,7 @@
     <result column="meeting_notes_text" property="meetingNotesText" jdbcType="VARCHAR" />
     <result column="meeting_name" jdbcType="BIGINT" property="meetingName" />
     <result column="created_time" property="createdTime" jdbcType="BIGINT" />
+    <result column="update_time" property="updatedTime" jdbcType="BIGINT" />
     <result column="record_type" jdbcType="TINYINT" property="recordType" />
     <result column="participant" jdbcType="VARCHAR" property="participant" />
     <result column="meet_valid" jdbcType="TINYINT" property="meetValid" />
@@ -20,7 +21,7 @@
   
   
   <sql id="Base_Column_List" >
-    id, project_id, file_id, meeting_date, meeting_type, meeting_result, meeting_notes, meeting_notes_text,created_time,record_type,participant,meet_valid,meeting_name
+    id, project_id, file_id, meeting_date, meeting_type, meeting_result, meeting_notes, meeting_notes_text,created_time,update_time,record_type,participant,meet_valid,meeting_name
   </sql>
   
   
@@ -49,6 +50,7 @@
 		      <if test="meetingNotes != null" >and meeting_notes = #{meetingNotes,jdbcType=VARCHAR} </if>
 		      <if test="meetingNotesText != null" >and meeting_notes_text = #{meetingNotesText,jdbcType=VARCHAR} </if>
 		      <if test="createdTime != null" >and created_time = #{createdTime,jdbcType=BIGINT} </if>
+		      <if test="updatedTime != null" > and update_time = #{updatedTime,jdbcType=BIGINT} </if>
 			  <if test="recordType != null"> and record_type = #{recordType,jdbcType=TINYINT} </if>	
 			  <if test="meetValid != null"> and meet_valid = #{meetValid,jdbcType=TINYINT} </if>	
 		  	  <if test="meetingName != null" >and meeting_name = #{meetingName,jdbcType=BIGINT} </if>
@@ -92,10 +94,10 @@
 	    <![CDATA[
 	    insert into sop_meeting_record (id, project_id, file_id, 
 	      meeting_date, meeting_type, meeting_result, 
-	      meeting_notes, meeting_notes_text,created_time,record_type,participant,meet_valid)
+	      meeting_notes, meeting_notes_text,created_time,update_time,record_type,participant,meet_valid)
 	    values (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{fileId,jdbcType=BIGINT}, 
 	      #{meetingDate,jdbcType=TIMESTAMP}, #{meetingType,jdbcType=VARCHAR}, #{meetingResult,jdbcType=VARCHAR}, 
-	      #{meetingNotes,jdbcType=VARCHAR}, #{meetingNotesText,jdbcType=VARCHAR},#{createdTime,jdbcType=BIGINT},#{recordType,jdbcType=TINYINT}, 
+	      #{meetingNotes,jdbcType=VARCHAR}, #{meetingNotesText,jdbcType=VARCHAR},#{createdTime,jdbcType=BIGINT},#{updatedTime,jdbcType=BIGINT},#{recordType,jdbcType=TINYINT}, 
 	      #{participant,jdbcType=VARCHAR},#{meetValid,jdbcType=TINYINT})
 	    ]]>
     </insert>
@@ -112,6 +114,7 @@
 		    <if test="meetingNotes != null" > meeting_notes = #{meetingNotes,jdbcType=VARCHAR}, </if>
 		    <if test="meetingNotesText != null" > meeting_notes_text = #{meetingNotesText,jdbcType=VARCHAR}, </if>
 		    <if test="createdTime != null" > created_time = #{createdTime,jdbcType=BIGINT}, </if>
+		    <if test="updatedTime != null" > update_time = #{updatedTime,jdbcType=BIGINT}, </if>
 		    <if test="meetValid != null">  meet_valid = #{meetValid,jdbcType=TINYINT} </if>
 		</set>
 		<where>
@@ -125,6 +128,7 @@
 		        <if test="meetingNotes != null" >and meeting_notes = #{meetingNotes,jdbcType=VARCHAR} </if>
 		        <if test="meetingNotesText != null" >and meeting_notes_text = #{meetingNotesText,jdbcType=VARCHAR} </if>
 		        <if test="createdTime != null" >and created_time = #{createdTime,jdbcType=BIGINT} </if>
+		        <if test="updatedTime != null" > and update_time = #{updatedTime,jdbcType=BIGINT} </if>
 		        <if test="recordType != null"> and record_type = #{recordType,jdbcType=TINYINT} </if>	
 		        
 			</trim>
@@ -142,6 +146,7 @@
 		    <if test="meetingNotes != null" > meeting_notes = #{meetingNotes,jdbcType=VARCHAR}, </if>
 		    <if test="meetingNotesText != null" > meeting_notes_text = #{meetingNotesText,jdbcType=VARCHAR}, </if>
 		    <if test="createdTime != null" > created_time = #{createdTime,jdbcType=BIGINT}, </if>
+		    <if test="updatedTime != null" > update_time = #{updatedTime,jdbcType=BIGINT}, </if>
 		    <if test="recordType != null"> record_type = #{recordType,jdbcType=TINYINT},</if>
 		    <if test="participant != null" > meeting_result = #{participant,jdbcType=VARCHAR}, </if>
 		    <if test="meetValid != null">  meet_valid = #{meetValid,jdbcType=TINYINT} </if>
@@ -174,6 +179,7 @@
 	    <result column="meeting_notes" property="meetingNotes" jdbcType="VARCHAR" />
 	    <result column="meeting_notes_text" property="meetingNotesText" jdbcType="VARCHAR" />
 	    <result column="created_time" property="createdTime" jdbcType="BIGINT" />
+	    <result column="update_time" property="updatedTime" jdbcType="BIGINT" />
 	</resultMap>
 	
   
