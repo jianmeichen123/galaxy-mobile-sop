@@ -76,6 +76,7 @@ import com.galaxyinternet.model.project.PersonPool;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.project.ProjectPerson;
 import com.galaxyinternet.model.project.ProjectShares;
+import com.galaxyinternet.model.project.ProjectTransfer;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.soptask.SopTask;
@@ -100,6 +101,7 @@ import com.galaxyinternet.service.ProjectHealthService;
 import com.galaxyinternet.service.ProjectPersonService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.ProjectSharesService;
+import com.galaxyinternet.service.ProjectTransferService;
 import com.galaxyinternet.service.SopFileService;
 import com.galaxyinternet.service.SopTaskService;
 import com.galaxyinternet.service.SopVoucherFileService;
@@ -158,6 +160,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
+	
+	@Autowired
+	private ProjectTransferService projectTransferService;
 
 	
 	//2016/11/21 增加新的service   为了 新增的历史融资 计划 项目详情要显示
@@ -507,6 +512,15 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		
 		if (project != null) {
+			
+			List<ProjectTransfer> ss = projectTransferService.applyTransferData(project.getId());
+			
+			if(null == ss || ss.size() ==0 ){
+				project.setProjectYjz("1");  //1 标识 项目不处于移交中
+			}else{
+				project.setProjectYjz("0");  //0 标识 项目处于移交中 
+			}
+			
 			Department Department = new Department();//
 			Department.setId(project.getProjectDepartid());
 			Department queryOne = departmentService.queryOne(Department);
