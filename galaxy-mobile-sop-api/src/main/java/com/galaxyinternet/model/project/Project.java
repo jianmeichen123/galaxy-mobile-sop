@@ -165,6 +165,9 @@ public class Project extends PagableEntity {
 	
 	private String projectYjz;
 	
+	
+	//2017/2/21  pc端新增的 项目时间
+	private Long projectTime;
 
     public String getProjectYjz() {
 		return projectYjz;
@@ -864,6 +867,14 @@ public class Project extends PagableEntity {
 
 	public void setProjectDescribeFinancingZW(Integer projectDescribeFinancingZW) {
 		this.projectDescribeFinancingZW = projectDescribeFinancingZW;
+	}
+
+	public Long getProjectTime() {
+		return projectTime;
+	}
+
+	public void setProjectTime(Long projectTime) {
+		this.projectTime = projectTime;
 	}
 
 

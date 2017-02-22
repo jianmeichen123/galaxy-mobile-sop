@@ -258,6 +258,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		Long did = user.getDepartmentId();
 		project.setProjectDepartid(did);
 		project.setUpdatedTime(new Date().getTime());
+		//修改 项目时间 
+		project.setProjectTime(new Date().getTime());
 		try {
 			project.setCreatedTime(DateUtil.convertStringToDate(
 					project.getCreateDate().trim(), "yyyy-MM-dd").getTime());
@@ -341,6 +343,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				project.setProjectProgress(DictEnum.projectProgress.接触访谈.getCode());
 				project.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
 				project.setUpdatedTime(new Date().getTime());
+				//修改 项目时间  2017/2/21
+				project.setProjectTime(new Date().getTime());
 				project.setCreatedTime(DateUtil.convertStringToDate(project.getCreateDate().trim(), "yyyy-MM-dd").getTime());
 				long id = projectService.newProject(project);
 				if (id > 0) {
