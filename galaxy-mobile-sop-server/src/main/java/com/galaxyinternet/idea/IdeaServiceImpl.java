@@ -207,7 +207,23 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 		Project project = new Project();
 		project.setIdeaId(id);
 		project.setProjectName(projectName);
-		project.setCreatedTime(new Date().getTime());
+	
+		/**
+		 * 2017/2/27号修改 时间 
+		 */
+		//project.setCreatedTime(new Date().getTime());
+		Date date=new Date();
+		String str= DateUtil.convertDateToString(date);
+		try {
+			project.setCreatedTime(DateUtil.stringToLong(str,"yyyy-MM-dd"));
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		project.setUpdatedTime(new Date().getTime());
+		project.setProjectTime(new Date().getTime());
+		
+		
 		project.setCreateUid(idea.getClaimantUid());
 		project.setCurrencyUnit(0);
 		//新增初始的行业归属
