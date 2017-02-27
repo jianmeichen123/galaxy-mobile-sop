@@ -97,7 +97,7 @@
 	      meeting_notes, meeting_notes_text,created_time,update_time,record_type,participant,meet_valid)
 	    values (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{fileId,jdbcType=BIGINT}, 
 	      #{meetingDate,jdbcType=TIMESTAMP}, #{meetingType,jdbcType=VARCHAR}, #{meetingResult,jdbcType=VARCHAR}, 
-	      #{meetingNotes,jdbcType=VARCHAR}, #{meetingNotesText,jdbcType=VARCHAR},#{createdTime,jdbcType=BIGINT},#{updatedTime,jdbcType=BIGINT},#{recordType,jdbcType=TINYINT}, 
+	      #{meetingNotes,jdbcType=VARCHAR}, #{meetingNotesText,jdbcType=VARCHAR},#{createdTime,jdbcType=BIGINT},#{createdTime,jdbcType=BIGINT},#{recordType,jdbcType=TINYINT}, 
 	      #{participant,jdbcType=VARCHAR},#{meetValid,jdbcType=TINYINT})
 	    ]]>
     </insert>
