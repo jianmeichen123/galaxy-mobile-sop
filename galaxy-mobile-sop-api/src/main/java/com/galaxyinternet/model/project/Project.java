@@ -52,6 +52,8 @@ public class Project extends PagableEntity {
     private String formatUnit;
     private String formatShareRatio;
     private String nameCodeLike;
+    //
+    private String formatServiceCharge;
     //详情数据转换
   	private String createDate;
   	private String updateDate;
@@ -159,13 +161,24 @@ public class Project extends PagableEntity {
 	private String faName;//中介名称
     
     
-    
-    
-    
-    
-    
-    
-    public String getIndustry() {
+    //2017/2/20 添加项目中的 判断是否是移交中的 项目 
+	
+	private String projectYjz;
+	
+	
+	//2017/2/21  pc端新增的 项目时间
+	private Long projectTime;
+
+    public String getProjectYjz() {
+		return projectYjz;
+	}
+
+	public void setProjectYjz(String projectYjz) {
+		this.projectYjz = projectYjz;
+	}
+
+	
+	public String getIndustry() {
 		return industry;
 	}
 
@@ -854,6 +867,14 @@ public class Project extends PagableEntity {
 
 	public void setProjectDescribeFinancingZW(Integer projectDescribeFinancingZW) {
 		this.projectDescribeFinancingZW = projectDescribeFinancingZW;
+	}
+
+	public Long getProjectTime() {
+		return projectTime;
+	}
+
+	public void setProjectTime(Long projectTime) {
+		this.projectTime = projectTime;
 	}
 
 

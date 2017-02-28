@@ -37,9 +37,9 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.department.Department;
-import com.galaxyinternet.model.dict.Dict;
 import com.galaxyinternet.model.project.AppMeetScheduling;
 import com.galaxyinternet.model.project.Project;
+import com.galaxyinternet.model.project.ProjectTransfer;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.service.AppProjectService;
 import com.galaxyinternet.service.AppProjecttService;
@@ -47,6 +47,7 @@ import com.galaxyinternet.service.DepartmentService;
 import com.galaxyinternet.service.DictService;
 import com.galaxyinternet.service.MeetingSchedulingService;
 import com.galaxyinternet.service.ProjectService;
+import com.galaxyinternet.service.ProjectTransferService;
 import com.galaxyinternet.service.UserRoleService;
 import com.galaxyinternet.vo.GeneralProjectVO;
 import com.galaxyinternet.vo.GeneralProjecttVO;
@@ -77,6 +78,8 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 	private DictService dictService;
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
+	@Autowired
+	private ProjectTransferService projectTransferService;
 	
 	@Override
 	protected BaseService<Project> getBaseService() {
@@ -807,6 +810,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 									projectBo.setCeeword(projectBo.getKeyword().toUpperCase());
 								
 								}
+								projectBo.setCreateUid(null);
 								genProjectBean = appProjecttService.queryPageList(projectBo,  new PageRequest(projectBo.getPageNum(), projectBo.getPageSize(),sort));
 							}
 							if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
@@ -842,8 +846,15 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 											}
 										}
 										*/
+										//2017/2/20 修改 判断 移交中的项目 本人也不能修改 
 										
+										List<ProjectTransfer> ss = projectTransferService.applyTransferData(probean.getId());
 										
+										if(null == ss || ss.size() ==0 ){
+											probean.setProjectYjz("1");  //1 标识 项目不处于移交中
+										}else{
+											probean.setProjectYjz("0");  //0 标识 项目处于移交中 
+										}
 										//2016/12/13修改行业归属	
 										if(probean.getIndustryOwn()!=null){
 											if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){

@@ -76,6 +76,7 @@ import com.galaxyinternet.model.project.PersonPool;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.project.ProjectPerson;
 import com.galaxyinternet.model.project.ProjectShares;
+import com.galaxyinternet.model.project.ProjectTransfer;
 import com.galaxyinternet.model.sopfile.SopFile;
 import com.galaxyinternet.model.sopfile.SopVoucherFile;
 import com.galaxyinternet.model.soptask.SopTask;
@@ -100,6 +101,7 @@ import com.galaxyinternet.service.ProjectHealthService;
 import com.galaxyinternet.service.ProjectPersonService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.ProjectSharesService;
+import com.galaxyinternet.service.ProjectTransferService;
 import com.galaxyinternet.service.SopFileService;
 import com.galaxyinternet.service.SopTaskService;
 import com.galaxyinternet.service.SopVoucherFileService;
@@ -158,6 +160,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 	@Autowired
 	com.galaxyinternet.framework.cache.Cache cache;
+	
+	@Autowired
+	private ProjectTransferService projectTransferService;
 
 	
 	//2016/11/21 增加新的service   为了 新增的历史融资 计划 项目详情要显示
@@ -253,6 +258,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		Long did = user.getDepartmentId();
 		project.setProjectDepartid(did);
 		project.setUpdatedTime(new Date().getTime());
+		//修改 项目时间 
+		project.setProjectTime(new Date().getTime());
 		try {
 			project.setCreatedTime(DateUtil.convertStringToDate(
 					project.getCreateDate().trim(), "yyyy-MM-dd").getTime());
@@ -336,6 +343,8 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				project.setProjectProgress(DictEnum.projectProgress.接触访谈.getCode());
 				project.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
 				project.setUpdatedTime(new Date().getTime());
+				//修改 项目时间  2017/2/21
+				project.setProjectTime(new Date().getTime());
 				project.setCreatedTime(DateUtil.convertStringToDate(project.getCreateDate().trim(), "yyyy-MM-dd").getTime());
 				long id = projectService.newProject(project);
 				if (id > 0) {
@@ -451,6 +460,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 						* 100 / project.getProjectShareRatio());
 			}
 		}
+		if (project.getServiceCharge() == null) {
+			project.setServiceCharge(0.0000);
+		}
 		if(null!=project.getIndustryOwn()&&project.getIndustryOwn().longValue()==0){
 			project.setIndustryOwn(null);
 		}
@@ -504,6 +516,15 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		}
 		
 		if (project != null) {
+			
+			List<ProjectTransfer> ss = projectTransferService.applyTransferData(project.getId());
+			
+			if(null == ss || ss.size() ==0 ){
+				project.setProjectYjz("1");  //1 标识 项目不处于移交中
+			}else{
+				project.setProjectYjz("0");  //0 标识 项目处于移交中 
+			}
+			
 			Department Department = new Department();//
 			Department.setId(project.getProjectDepartid());
 			Department queryOne = departmentService.queryOne(Department);
