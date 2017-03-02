@@ -550,7 +550,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				}
 			}*/
 			//新修改的项目行业归属 2016/12/5
-			if(project.getIndustryOwn()!=null){
+		/*	if(project.getIndustryOwn()!=null){
                 String name=DictEnum.industryOwn.getNameByCode(
         		 project.getIndustryOwn().toString());
 			if (name != null) {
@@ -558,7 +558,26 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				}else{
 					project.setIndustryOwnDs(null);
 				}
-			}		
+			}	*/
+			//2017/3/2 修改 
+			if(project.getIndustryOwn()!=null){
+				if(StringUtils.isNotBlank(project.getIndustryOwn().toString())){
+					//String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
+					Dict d = new Dict();
+					d.setCode(project.getIndustryOwn().toString());
+					d.setParentCode("industryOwn");
+					Dict s = dictService.selecthyName(d);
+					if(s!=null && s.getName()!=null){
+						project.setIndustryOwnDs(s.getName());//行业归属名称
+					}else{
+						project.setIndustryOwnDs(null);
+					}
+					
+					
+				}
+			}else{
+				project.setIndustryOwnDs(null);
+			}
 			//商业计划书 的 暂无 
 			if(StringUtils.isBlank(pid)){
 				responseBody.setResult(new Result(Status.ERROR,"传入的projectId为空"));
@@ -4010,7 +4029,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				
 */
 				//新修改的项目行业归属 2016/12/5
-				if(project.getIndustryOwn()!=null){
+/*				if(project.getIndustryOwn()!=null){
 	                String name=DictEnum.industryOwn.getNameByCode(
 	        		 project.getIndustryOwn().toString());
 				if (name != null) {
@@ -4018,7 +4037,26 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 					}else{
 						project.setIndustryOwnDs(null);
 					}
-				}	
+				}*/	
+				//2017/3/2 修改 
+				if(project.getIndustryOwn()!=null){
+					if(StringUtils.isNotBlank(project.getIndustryOwn().toString())){
+						//String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
+						Dict d = new Dict();
+						d.setCode(project.getIndustryOwn().toString());
+						d.setParentCode("industryOwn");
+						Dict s = dictService.selecthyName(d);
+						if(s!=null && s.getName()!=null){
+							project.setIndustryOwnDs(s.getName());//行业归属名称
+						}else{
+							project.setIndustryOwnDs("");
+						}
+						
+						
+					}
+				}else{
+					project.setIndustryOwnDs("");
+				}
 				// 1.添加项目描述的暂无标识
 				if (project.getProjectDescribe() != null && !project.getProjectDescribe().equals("")) {
 					project.setProjectDescribezw(1);

@@ -37,6 +37,7 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.department.Department;
+import com.galaxyinternet.model.dict.Dict;
 import com.galaxyinternet.model.project.AppMeetScheduling;
 import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.project.ProjectTransfer;
@@ -856,7 +857,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 											probean.setProjectYjz("0");  //0 标识 项目处于移交中 
 										}
 										//2016/12/13修改行业归属	
-										if(probean.getIndustryOwn()!=null){
+/*										if(probean.getIndustryOwn()!=null){
 											if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
 												String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
 												if(queryDep!=null){
@@ -867,7 +868,34 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 											}
 										}else{
 											probean.setIndustry("");
+										}*/
+										//2017/3/1 修改 行业归属 下期可能要修改的字段
+										if(probean.getIndustryOwn()!=null){
+											if(StringUtils.isNotBlank(probean.getIndustryOwn().toString())){
+												//String queryDep = DictEnum.industryOwn.getNameByCode(probean.getIndustryOwn().toString());
+												Dict d = new Dict();
+												d.setCode(probean.getIndustryOwn().toString());
+												d.setParentCode("industryOwn");
+												Dict s = dictService.selecthyName(d);
+												if(s!=null && s.getName()!=null){
+													probean.setIndustry(s.getName());//行业归属名称
+												}else{
+													probean.setIndustry("");
+												}
+												
+												
+											}
+										}else{
+											probean.setIndustry("");
 										}
+										
+										
+										
+										
+										
+										
+										
+										
 									    /*
 									     * #project_valuations 初始估值 #final_valuations 实际估值 #project_contribution 初始投资额 
 									     * #final_contribution 实际投资额  #project_share_ratio 所占股份百分比  #final_share_ratio 实际所占股份百分比
