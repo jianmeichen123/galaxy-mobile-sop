@@ -202,6 +202,7 @@
 				<!-- 数据库连接地址和数据库名 -->
 
 
+
 				<jdbc.url>
 					jdbc:mysql://10.9.11.234:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
 				</jdbc.url>
