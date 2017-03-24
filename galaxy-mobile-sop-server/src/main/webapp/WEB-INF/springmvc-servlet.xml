@@ -40,6 +40,7 @@
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Service" />
 	</context:component-scan>
+	
 	<!-- springmvc的关键配置 -->
 	<mvc:annotation-driven>
 		<mvc:message-converters>
