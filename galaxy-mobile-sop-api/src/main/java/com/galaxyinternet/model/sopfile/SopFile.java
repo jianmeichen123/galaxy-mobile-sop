@@ -116,9 +116,20 @@ public class SopFile extends PagableRecordEntity {
     private String fileSuffix;
     
     
+    /**
+     * 临时地址
+     */
+    private String tempPath;
     
-    
-    //详情数据转换
+    public String getTempPath() {
+		return tempPath;
+	}
+
+	public void setTempPath(String tempPath) {
+		this.tempPath = tempPath;
+	}
+
+	//详情数据转换
     //数据库转换
   	private String fileUName;
   	private String projectName;

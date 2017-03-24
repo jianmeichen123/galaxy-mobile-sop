@@ -5,9 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.galaxyinternet.common.dictEnum.DictEnum;
+
 public class FileUtils {
 	private static List<WorktypeTask> worktypeTaskList;
-	
+	private static String[] fileTypeCodes = {
+			DictEnum.fileType.文档.getCode(),
+			DictEnum.fileType.音频文件.getCode(),
+			DictEnum.fileType.视频文件.getCode(),
+			DictEnum.fileType.图片.getCode()
+	};
+	private static String[][] fileTypes = {
+			{"doc","docx","ppt","pptx","pps","xls","xlsx","pdf","txt","pages","key","numbers","DOC","DOCX","PPT","PPTX","PPS","XLS","XLSX","PDF","TXT","PAGES","KEY","NUMBER"},
+			{"mp3","mp4","avi","wav","wma","aac","m4a","m4r","MP3","MP4","AVI","WAV","WMA","AAC","M4A","M4R"},
+			{"avi,AVI"},
+			{"bmp","jpg","gif","png","jpeg","BMP","JPG","GIF","PNG","JPEG"}
+	};
 	static{
 		worktypeTaskList = new ArrayList<WorktypeTask>();
 		worktypeTaskList.add(new WorktypeTask(1,5,true));
@@ -84,5 +97,21 @@ public class FileUtils {
 			retMap.put("fileSuffix", fileName.substring(dotPos+1));
 		}
 		return retMap;
+	}
+	
+	public static String getFileType(String suffix)
+	{
+		if(suffix == null) return null;
+		for(int i =0; i<fileTypes.length;i++)
+		{
+			for(int j = 0; j<fileTypes[i].length;j++)
+			{
+				if(suffix.equals(fileTypes[i][j]))
+				{
+					return fileTypeCodes[i];
+				}
+			}
+		}
+		return null;
 	}
 }
