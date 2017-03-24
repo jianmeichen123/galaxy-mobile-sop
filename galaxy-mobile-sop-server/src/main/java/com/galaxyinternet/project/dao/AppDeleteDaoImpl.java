@@ -1,5 +1,7 @@
 package com.galaxyinternet.project.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.galaxyinternet.dao.project.AppDeleteDao;
@@ -21,6 +23,16 @@ public class AppDeleteDaoImpl extends BaseDaoImpl<AppDelete, Long> implements Ap
 			return count;
 		} catch (Exception e) {
 			throw new DaoException(String.format("查询对象总数出错！语句：%s", getSqlName("selectIdByparms")),e);
+		}
+	}
+
+	@Override
+	public List<String> selectappDelete(AppDelete appDelete) {
+		try {
+			List<String>  ss = sqlSessionTemplate.selectList(getSqlName("selectappDelete"),appDelete);
+			return ss;
+		} catch (Exception e) {
+			throw new DaoException(String.format("查询对象总数出错！语句：%s", getSqlName("selectappDelete")),e);
 		}
 	}
 }
