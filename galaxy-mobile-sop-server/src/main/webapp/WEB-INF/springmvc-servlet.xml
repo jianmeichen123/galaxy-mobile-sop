@@ -35,7 +35,12 @@
 	</bean>
 
 	<!-- 定义扫描Controller的base-package -->
-	<context:component-scan base-package="com.galaxyinternet.*"></context:component-scan>
+	<context:component-scan base-package="com.galaxyinternet.*">
+		<!-- 不扫描Service注解的类 2017/3/24修改 为了 处理 cacheService报错 -->
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+	
 	<!-- springmvc的关键配置 -->
 	<mvc:annotation-driven>
 		<mvc:message-converters>
