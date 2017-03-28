@@ -74,15 +74,15 @@ public class InformationListdataController extends BaseControllerImpl<Informatio
         ResponseData<InformationListdata> responseBody = new ResponseData<>();
         try{
             List<InformationListdata> listdataList = data.getDataList();
+            //先删除之前的成员列表
+            InformationListdata query = new InformationListdata();
+            query.setTitleId(listdataList.get(0).getTitleId());
+            query.setProjectId(listdataList.get(0).getProjectId());
+            informationListdataService.delete(query);
             if(listdataList != null && !listdataList.isEmpty()){
-                //先删除之前的成员列表
-                InformationListdata query = new InformationListdata();
-                query.setTitleId(listdataList.get(0).getTitleId());
-                query.setProjectId(listdataList.get(0).getProjectId());
-                informationListdataService.delete(query);
-
                 for (InformationListdata entity : listdataList){
-                    if(entity.getCode().equals("team-members")){
+                    if(null != entity.getCode() && entity.getCode().equals("team-members")){
+                        entity.setCreateTime(System.currentTimeMillis());
                         informationListdataService.insert(entity);
                         Long id = entity.getId();
                         List<InformationListdata> studyList = entity.getStudyList();
@@ -236,6 +236,70 @@ public class InformationListdataController extends BaseControllerImpl<Informatio
             informationListdataService.updateById(row);
         }
         return data;
+    }
+    
+    /*
+     *根据projectId 和 titleId查询表格列表
+     */
+    /**
+     * app端获取团队列表 2017/3/27
+     * @param data
+     * @return
+     */
+    @RequestMapping("/querySelectList")
+    @ResponseBody
+    public ResponseData<InformationListdata> querySelectList(@RequestBody InformationListdata data){
+        ResponseData<InformationListdata> resp = new ResponseData<>();
+        Long projectId  = data.getProjectId();
+        Long titleId  = data.getTitleId();
+        if(null == projectId || null == titleId){
+            resp.setResult(new Result(Result.Status.ERROR,null, "projectId或titleId缺失"));
+            logger.error("queryRowsList 失败 :projectId或titleId缺失");
+            return resp;
+        }
+        try{
+            InformationListdataRemark remark = informationListdataRemarkService.queryByTitleId(data.getTitleId());
+            if(remark == null){
+                resp.setResult(new Result(Result.Status.ERROR,null, "titleId错误"));
+                logger.error("queryRowsList 失败 :titleId错误");
+                return resp;
+            }
+            String code = remark.getCode();
+            data.setCode(code);
+            data.setProjectId(projectId);
+            List<InformationListdata> list = informationListdataService.queryList(data);
+            resp.setEntityList(list);
+        }catch(Exception e){
+            resp.setResult(new Result(Result.Status.ERROR,null, "查询表格列表失败"));
+            logger.error("querySelectList 失败 ",e);
+        }
+        return resp;
+    }
+    /**
+     * app端获取更多2017/3/28
+     * @param data
+     * @return
+     */
+    @RequestMapping("/queryResultList")
+    @ResponseBody
+    public ResponseData<InformationListdata> queryResultList(@RequestBody InformationListdata data){
+        ResponseData<InformationListdata> resp = new ResponseData<>();
+        Long projectId  = data.getProjectId();
+        Long titleId  = data.getTitleId();
+        if(null == projectId || null == titleId){
+            resp.setResult(new Result(Result.Status.ERROR,null, "projectId或titleId缺失"));
+            logger.error("queryRowsList 失败 :projectId或titleId缺失");
+            return resp;
+        }
+        try{
+           
+            List<InformationListdata> list = informationListdataService.queryList(data);
+            resp.setEntityList(list);
+        }catch(Exception e){
+            resp.setResult(new Result(Result.Status.ERROR,null, "查询表格列表失败"));
+            logger.error("queryResultList 失败 ",e);
+        }
+        return resp;
     }
 
 }
