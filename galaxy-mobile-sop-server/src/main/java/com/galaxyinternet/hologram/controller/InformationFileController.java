@@ -365,7 +365,7 @@ public class InformationFileController extends BaseControllerImpl<InformationFil
 
     
     /**
-	 * 根据项目id来获取全息图上传的图片  2017/3/27号新增
+	 * 根据项目id来获取全息图上传的图片
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getFileAppByProject", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
