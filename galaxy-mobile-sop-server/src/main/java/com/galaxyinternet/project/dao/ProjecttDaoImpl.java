@@ -137,7 +137,7 @@ public class ProjecttDaoImpl extends BaseDaoImpl<Project, Long> implements Proje
 		try {
 			List<Project> contentList = sqlSessionTemplate.selectList( getSqlName("selectBygjz"),getParams(queryy, pageable));
 					
-			return new  Page<Project>(contentList, pageable, this.selectCount(queryy));
+			return new  Page<Project>(contentList, pageable, queryCountgjz(queryy));
 		} catch (Exception e) {
 			throw new DaoException(String.format("根据分页对象查询列表出错！语句:%s", getSqlName("selectBygjz")), e);
 		}
@@ -154,7 +154,7 @@ public class ProjecttDaoImpl extends BaseDaoImpl<Project, Long> implements Proje
 		try {
 			List<Project> contentList = sqlSessionTemplate.selectList( getSqlName("selectByth"),getParams(query, pageable));
 					
-			return new  Page<Project>(contentList, pageable, this.selectCount(query));
+			return new  Page<Project>(contentList, pageable, queryCountthyy(query));
 		} catch (Exception e) {
 			throw new DaoException(String.format("根据分页对象查询列表出错！语句:%s", getSqlName("selectByth")), e);
 		}
@@ -174,7 +174,7 @@ public class ProjecttDaoImpl extends BaseDaoImpl<Project, Long> implements Proje
 		try {
 			List<Project> contentList = sqlSessionTemplate.selectList( getSqlName("selectByfj"),getParams(query, pageable));
 					
-			return new  Page<Project>(contentList, pageable, this.selectCount(query));
+			return new  Page<Project>(contentList, pageable, queryCountfj(query));
 		} catch (Exception e) {
 			throw new DaoException(String.format("根据分页对象查询列表出错！语句:%s", getSqlName("selectByfj")), e);
 		}

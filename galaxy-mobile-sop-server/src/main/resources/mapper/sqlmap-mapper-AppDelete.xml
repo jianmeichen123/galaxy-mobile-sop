@@ -102,4 +102,14 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
+		
+		<!--  2017/3/9修改 的-->
+	<select id="selectappDelete"  resultType="java.lang.String" parameterType="java.util.Map">
+		select
+			message_id
+		from app_delete 
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	
 </mapper>

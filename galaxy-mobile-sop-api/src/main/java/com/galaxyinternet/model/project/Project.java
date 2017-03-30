@@ -169,6 +169,11 @@ public class Project extends PagableEntity {
 	//2017/2/21  pc端新增的 项目时间
 	private Long projectTime;
 
+	
+	
+	//2017/3/27 新增项目合伙人字段
+	private String projectHhrName;
+	
     public String getProjectYjz() {
 		return projectYjz;
 	}
@@ -877,7 +882,16 @@ public class Project extends PagableEntity {
 		this.projectTime = projectTime;
 	}
 
+	public String getProjectHhrName() {
+		return projectHhrName;
+	}
 
+	public void setProjectHhrName(String projectHhrName) {
+		this.projectHhrName = projectHhrName;
+	}
+
+
+	
 	
 	
 	
