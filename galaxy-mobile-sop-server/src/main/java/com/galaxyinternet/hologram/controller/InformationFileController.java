@@ -1,7 +1,6 @@
 package com.galaxyinternet.hologram.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.galaxyinternet.common.controller.BaseControllerImpl;
-import com.galaxyinternet.common.enums.DictEnum;
 import com.galaxyinternet.framework.cache.Cache;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.file.FileResult;
@@ -334,7 +332,8 @@ public class InformationFileController extends BaseControllerImpl<InformationFil
 					return result;
 				}
 			}else{
-				result = OSSHelper.simpleUploadByOSS(tempFile, fileKey, OSSHelper.setRequestHeader(fileName, multipartFile.getSize())); //上传至阿里云
+				result = OSSHelper.simpleUploadByOSSTO(tempFile, fileKey, OSSHelper.setRequestHeaderForContentType(fileName, multipartFile.getSize(),multipartFile.getContentType())); //上传至阿里云
+				
 				//若文件上传成功
 				if(result.getResult().getStatus()==null || result.getResult().getStatus().equals(Status.ERROR)){
 					return result;

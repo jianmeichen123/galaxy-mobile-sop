@@ -508,7 +508,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 		Project project = projectService.queryById(Long.parseLong(pid));
 		
-		if(project.getProjectDepartid()!=null){
+		/*if(project.getProjectDepartid()!=null){
 			Map<String, Object> deptHHRQuery = new HashMap<String, Object>();
 			deptHHRQuery.put("roleId", 3);
 			deptHHRQuery.put("departmentId", project.getProjectDepartid());  
@@ -521,7 +521,7 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				}
 			}
 			
-		}
+		}*/
 		//新增的融资历史 2016/11/21
 		FinanceHistory financeHistory= new FinanceHistory();
 		financeHistory.setProjectId(Long.parseLong(pid));
