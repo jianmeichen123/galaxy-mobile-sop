@@ -48,8 +48,22 @@ public class InformationOperationTime extends PagableEntity{
     private Date time10;
 
     private String reflect;
+    
+    private Long updateDate;
 
-    public Long getProjectId() {
+    
+
+	
+
+	public Long getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Long updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public Long getProjectId() {
         return projectId;
     }
 
