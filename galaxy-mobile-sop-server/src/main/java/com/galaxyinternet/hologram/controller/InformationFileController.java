@@ -1,6 +1,7 @@
 package com.galaxyinternet.hologram.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.galaxyinternet.common.controller.BaseControllerImpl;
+import com.galaxyinternet.common.enums.DictEnum;
 import com.galaxyinternet.framework.cache.Cache;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.file.FileResult;
@@ -224,10 +226,12 @@ public class InformationFileController extends BaseControllerImpl<InformationFil
 					    }
 					    startSignal.await();
 					}
+					cache.removeRedisKeyOBJ(redisKey);
 			}
 			responseBody.setResult(new Result(Status.OK,null));
 		} catch (Exception e) {
 			e.printStackTrace();
+			cache.removeRedisKeyOBJ(user.getId()+informationFile.getFileReidsKey());
 			responseBody.setResult(new Result(Status.ERROR,null, "操作失败"));
 			logger.error("operInformationFile 操作失败",e);
 		}
