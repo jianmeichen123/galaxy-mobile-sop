@@ -1,7 +1,6 @@
 package com.galaxyinternet.hologram.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.galaxyinternet.common.controller.BaseControllerImpl;
-import com.galaxyinternet.common.enums.DictEnum;
 import com.galaxyinternet.framework.cache.Cache;
 import com.galaxyinternet.framework.core.constants.Constants;
 import com.galaxyinternet.framework.core.file.FileResult;
@@ -181,8 +179,8 @@ public class InformationFileController extends BaseControllerImpl<InformationFil
 		}
 		try {
 			//如有历史上传文件进行删除
-			String deleteids = informationFile.getDeleteids();
-			if(StringUtils.isNotEmpty(deleteids) && deleteids.contains(",")){
+			String deleteids = informationFile.getDeleteids() == null ? "" : informationFile.getDeleteids();
+			if(StringUtils.isNotEmpty(deleteids) || deleteids.contains(",")){
 				String [] fileids = deleteids.split(",");
 				for(int i=0;i < fileids.length; i++){
 					if(StringUtils.isNotEmpty(fileids[i]) && isNumeric(fileids[i])){
@@ -228,6 +226,7 @@ public class InformationFileController extends BaseControllerImpl<InformationFil
 					}
 					cache.removeRedisKeyOBJ(redisKey);
 			}
+			
 			responseBody.setResult(new Result(Status.OK,null));
 		} catch (Exception e) {
 			e.printStackTrace();
