@@ -814,10 +814,10 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 								projectBo.setCreateUid(null);
 								genProjectBean = appProjecttService.queryPageList(projectBo,  new PageRequest(projectBo.getPageNum(), projectBo.getPageSize(),sort));
 							}
-							if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
+/*							if(genProjectBean.getPvPage().getContent()==null || genProjectBean.getPvPage().getContent().size()==0){
 								genProjectBean.getPvPage().setContent(new ArrayList<Project>());
 								genProjectBean.getPvPage().setTotal(0L);
-							}else{
+							}else{*/
 								Page<Project> page = genProjectBean.getPvPage();
 								List<Project> filterList = page.getContent();
 			                    
@@ -917,7 +917,7 @@ public class AppProjectController extends BaseControllerImpl<Project, ProjectBo>
 								 
 								 page.setContent(filterList);
 								 genProjectBean.setPvPage(page);
-							}
+							/*}*/
 							Long gjzNum = appProjecttService.queryProjectgjzCount(projectBo);
 							
 							Long thyyNum = appProjecttService.queryProjectthyyCount(projectBo);

@@ -1,6 +1,8 @@
 package com.galaxyinternet.operationMessage.controller;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +75,7 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 	@ResponseBody
 	@RequestMapping(value = "/AppQueryList", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<OperationMessage> queryUserList(HttpServletRequest request,@RequestBody OperationMessageBo operationMessageBo) {
+		
 		ResponseData<OperationMessage> responseBody = new ResponseData<OperationMessage>();
 		Result result = new Result();
 		try {
@@ -85,16 +88,34 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 			initquery(operationMessageBo,user,roleIdList);
 			//读未删除的消息 2016/10/17
 		
+			/*Date date = new Date();
+			String p = beforNumDay(date,-3);
+			//获取前三天的数据
+			operationMessageBo.setUpdateTtime(p);*/
 			
+/*			AppDelete ap = new AppDelete();
+			ap.setUserId(user.getId().toString());
+			List<String> ss = appDeleteService.selectappDelete(ap);
+			
+			operationMessageBo.setIdsss(ss);*/
+					
 			Page<OperationMessage> operationMessage = operationMessageService.selectListMessage(operationMessageBo,new PageRequest(operationMessageBo.getPageNum(), operationMessageBo.getPageSize()));
 			
+			
+			
 			responseBody.setPageList(operationMessage);
+			
+			
 			responseBody.setResult(new Result(Status.OK, ""));
-			return responseBody;	
+			
+			
+		//	return responseBody;	
 		} catch (PlatformException e) {
 			result.addError(e.getMessage(), e.getCode()+"");
 			logger.error("queryUserList ", e);
 		}
+		
+
 		return responseBody;
 	}
 	
@@ -363,5 +384,14 @@ public class AppOperationMessageController extends BaseControllerImpl<OperationM
 			return responseBody;
 		}
 		
+		
+		//获取当前时间 3天前的时间 
+		
+	    public String beforNumDay(Date date, int day) {
+	        Calendar c = Calendar.getInstance();
+	        c.setTime(date);
+	        c.add(Calendar.DAY_OF_YEAR, day);
+	        return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(c.getTime());
+	    }
 	
 }
