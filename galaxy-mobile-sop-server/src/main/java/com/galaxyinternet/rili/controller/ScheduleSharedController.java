@@ -82,13 +82,17 @@ public class ScheduleSharedController  extends BaseControllerImpl<ScheduleShared
 	*/
 	@ResponseBody
 	@RequestMapping(value = "/queryMySharedUsers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseData<ScheduleShared> queryMySharedUsers(HttpServletRequest request,@RequestParam(value="toUname", required=false)String toUname ) {
+	public ResponseData<ScheduleShared> queryMySharedUsers(HttpServletRequest request,@RequestBody ScheduleShared scheduleShared ) {
+		
+		
+	//	@RequestParam(value="toUname", required=false)String toUname 
+		
 		
 		ResponseData<ScheduleShared> responseBody = new ResponseData<ScheduleShared>();
 		try{
 			Object objUser = request.getSession().getAttribute(Constants.SESSION_USER_KEY);
 			
-			List<ScheduleShared> cusers = scheduleSharedService.queryMySharedUsers(objUser,toUname);
+			List<ScheduleShared> cusers = scheduleSharedService.queryMySharedUsers(objUser,scheduleShared.getToUname());
 			
 			responseBody.setEntityList(cusers);
 			responseBody.setResult(new Result(Status.OK, ""));

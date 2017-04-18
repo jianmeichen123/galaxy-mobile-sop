@@ -2,6 +2,7 @@ package com.galaxyinternet.rili.service;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import com.galaxyinternet.rili.model.ScheduleDepartUno;
 import com.galaxyinternet.rili.model.ScheduleInfo;
 import com.galaxyinternet.rili.model.ScheduleMettingUsers;
 import com.galaxyinternet.rili.model.SchedulePersonPlan;
-import com.galaxyinternet.rili.model.ScheduleShared;
+import com.galaxyinternet.rili.util.AccountDate;
 import com.galaxyinternet.rili.util.DeptNoUsers;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 import com.galaxyinternet.rili.util.UtilService;
@@ -72,6 +73,90 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		//结果查询  封装
 		List<ScheduleInfo> qList = scheduleInfoDao.selectList(query);
+
+		//有隔日的日程list
+		List<ScheduleInfo> scheduleInfoList = new ArrayList<ScheduleInfo>();
+		
+		//有隔日的日程重新封装list按年月查询
+		if(query.getDay()==null){
+			if(qList!=null && !qList.isEmpty()){
+				ScheduleInfo sinfo ;
+				for(ScheduleInfo temp : qList){	
+					if(temp.getStartTime()!=null && temp.getEndTime()!=null && !AccountDate.get(temp.getStartTime(),temp.getEndTime())){														
+						
+						List<String> sss = AccountDate.getXiuEveryday(temp.getStartTime().substring(0, 10),temp.getEndTime().substring(0, 10), query.getLastMouthDay());
+						for(String ss:sss){
+							sinfo = new ScheduleInfo();
+							if(temp.getStartTime().substring(0, 10).equals(ss)){
+								sinfo.setStartTime(temp.getStartTime());
+								sinfo.setEndTime(ss+" 23:59:00");
+								sinfo.setName(temp.getName());
+								sinfo.setId(temp.getId());							
+							}
+							else if(temp.getEndTime().substring(0, 10).equals(ss)){
+								sinfo.setStartTime(ss+" 00:00:00");
+								sinfo.setEndTime(temp.getEndTime());
+								sinfo.setName(temp.getName());
+								sinfo.setId(temp.getId());														
+							}else{				
+								sinfo.setStartTime(ss+" 00:00:00");
+								sinfo.setEndTime(ss+" 23:59:00");
+								sinfo.setName(temp.getName());
+								sinfo.setId(temp.getId());								
+								
+							}	
+							scheduleInfoList.add(sinfo);
+							
+						}
+	
+					}
+					
+				}
+				
+			}		
+			qList.addAll(scheduleInfoList);
+			Iterator<ScheduleInfo> it = qList.iterator();
+			while(it.hasNext()){
+				ScheduleInfo x = it.next();
+			    if(x.getStartTime()!=null && x.getEndTime()!=null && !AccountDate.get(x.getStartTime(),x.getEndTime())){
+			        it.remove();
+			    }		    
+			}
+		}
+		//按天查询时日程跨日的情况
+		if(query.getDay()!=null){
+			if(qList!=null && !qList.isEmpty()){
+				ScheduleInfo sinfo ;
+				for(ScheduleInfo temp : qList){	
+					if(temp.getStartTime()!=null && temp.getEndTime()!=null && !AccountDate.get(temp.getStartTime(),temp.getEndTime())){																				
+						List<String> sss = AccountDate.getXiuEveryday(temp.getStartTime().substring(0, 10),temp.getEndTime().substring(0, 10), query.getLastMouthDay());
+						for(String ss:sss){
+							sinfo = new ScheduleInfo();
+							if(temp.getStartTime().substring(0, 10).equals(ss)){
+								sinfo.setStartTime(temp.getStartTime());
+								sinfo.setEndTime(ss+" 23:59:00");
+								sinfo.setName(temp.getName());
+								sinfo.setId(temp.getId());	
+								
+							}							
+							scheduleInfoList.add(sinfo);
+							
+						}
+	
+					}
+					
+				}
+
+			}
+			qList.addAll(scheduleInfoList);
+			Iterator<ScheduleInfo> it = qList.iterator();
+			while(it.hasNext()){
+				ScheduleInfo x = it.next();
+			    if(x.getStartTime()!=null && x.getEndTime()!=null && !AccountDate.get(x.getStartTime(),x.getEndTime())){
+			        it.remove();
+			    }		    
+			}
+		}
 		
 		//结果封装
 		if(qList!=null && !qList.isEmpty()){
@@ -91,37 +176,41 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				String code = null;
 				
 				for(ScheduleInfo temp : qList){
-					
-					Long dateKeyLong = DateUtil.stringToLong(temp.getStartTime(), "yyyy-MM-dd HH:mm:ss");
-					
-					for(int i=0;i<group.length;i++){
-						
-						if(dateKeyLong > group[i]){
-							switch (i) {
-							case 1:
-								code = "a";
-								break;
-							case 2:
-								code = "b";
-								break;
-							case 3:
-								code = "c";
-								break;
-							case 4:
-								code = "d";
-								break;
-							default:
-								break;
+					if(temp.getStartTime()!=null){
+						if(temp.getIsAllday()!=null && temp.getIsAllday().intValue()==1){
+							code = "e" ;
+						}else{						
+							Long dateKeyLong = DateUtil.stringToLong(temp.getStartTime(), "yyyy-MM-dd HH:mm:ss");
+							
+							for(int i=0;i<group.length;i++){
+								
+								if(dateKeyLong > group[i]){
+									switch (i) {
+									case 1:
+										code = "a";
+										break;
+									case 2:
+										code = "b";
+										break;
+									case 3:
+										code = "c";
+										break;
+									case 4:
+										code = "d";
+										break;
+									default:
+										break;
+									}
+								}
 							}
 						}
-					}
-					
-					if(dateKey_infos.containsKey(code)){
-						dateKey_infos.get(code).add(temp);
-					}else{
-						List<ScheduleInfo> tempInfos = new ArrayList<ScheduleInfo>();
-						tempInfos.add(temp);
-						dateKey_infos.put(code, tempInfos);
+						if(dateKey_infos.containsKey(code)){
+							dateKey_infos.get(code).add(temp);
+						}else{
+							List<ScheduleInfo> tempInfos = new ArrayList<ScheduleInfo>();
+							tempInfos.add(temp);
+							dateKey_infos.put(code, tempInfos);
+						}
 					}
 				}
 			}else if (query.getDay()==null){
@@ -134,7 +223,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				
 				for(ScheduleInfo temp : qList){
 					//2017/4/17号修改 报空指针
-					String stime= temp.getStartTime().substring(0,10);
+					String stime= temp.getStartTime().substring(0,format.length());
 					//String dateKey = DateUtil.dateFormat(temp.getStartTime(), format);
 					String dateKey = DateUtil.dateFormat(stime, format);
 					if(dateKey_infos.containsKey(dateKey)){

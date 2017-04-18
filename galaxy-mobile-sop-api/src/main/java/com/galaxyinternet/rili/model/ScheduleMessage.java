@@ -1,5 +1,7 @@
 package com.galaxyinternet.rili.model;
 
+import java.util.List;
+
 import com.galaxyinternet.framework.core.model.PagableEntity;
 
 /**
@@ -25,6 +27,9 @@ public class ScheduleMessage extends PagableEntity {
 
 	private String createdUname;
 
+	private List<ScheduleMessageUser> toUsers;
+	private ScheduleMessageUser mUsers;
+	
 	
 	public Byte getCategory() {
 		return category;
@@ -90,4 +95,21 @@ public class ScheduleMessage extends PagableEntity {
 		this.createdUname = createdUname == null ? null : createdUname.trim();
 	}
 
+	public List<ScheduleMessageUser> getToUsers() {
+		return toUsers;
+	}
+
+	public void setToUsers(List<ScheduleMessageUser> toUsers) {
+		this.toUsers = toUsers;
+	}
+
+	public ScheduleMessageUser getmUsers() {
+		return mUsers;
+	}
+
+	public void setmUsers(ScheduleMessageUser mUsers) {
+		this.mUsers = mUsers;
+	}
+
+	
 }

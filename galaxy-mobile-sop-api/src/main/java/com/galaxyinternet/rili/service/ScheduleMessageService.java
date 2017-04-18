@@ -7,6 +7,9 @@ import com.galaxyinternet.rili.model.ScheduleMessage;
 
 public interface ScheduleMessageService extends BaseService<ScheduleMessage>{
 
+	void saveMessageByInfo(Object scheduleInfo);
+
+	
 	/**
 	 * 查询 
 	 */
