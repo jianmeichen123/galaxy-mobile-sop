@@ -163,6 +163,8 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 	}
 
 	
+	
+
 	//分页的联系人列表查询
 	@ResponseBody
 	@RequestMapping(value = "/selectPersonList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -183,6 +185,7 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		}
 		return responseBody;
 	}
+	
 	//不分页查询联系人列表
 	@ResponseBody
 	@RequestMapping(value = "/selectAppPersonList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -190,11 +193,8 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 			HttpServletRequest request) {
 		ResponseData<ScheduleContacts> responseBody = new ResponseData<ScheduleContacts>();
 		User user = (User) getUserFromSession(request);
-		try{
-			if(scheduleContacts.getCreatedId()==null){
-				
-			 scheduleContacts.setCreatedId(user.getId());
-			}
+		try{		
+			scheduleContacts.setCreatedId(user.getId());
 			List<ScheduleContacts> ss = scheduleContactsService.queryList(scheduleContacts);
 			responseBody.setEntityList(ss);
 			responseBody.setResult(new Result(Status.OK, null,"查询联系人列表成功"));
@@ -206,6 +206,9 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		}
 		return responseBody;
 	}
+	
+	
+	
 	
 	
 	

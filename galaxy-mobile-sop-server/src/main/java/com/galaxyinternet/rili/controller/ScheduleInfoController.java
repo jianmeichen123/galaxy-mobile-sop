@@ -38,6 +38,7 @@ import com.galaxyinternet.rili.service.ScheduleDictService;
 import com.galaxyinternet.rili.service.ScheduleInfoService;
 import com.galaxyinternet.rili.service.ScheduleMettingUsersService;
 import com.galaxyinternet.rili.service.SchedulePersonPlanService;
+import com.galaxyinternet.rili.util.AccountDate;
 import com.galaxyinternet.rili.util.Receipt;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 import com.galaxyinternet.service.ProjectService;
@@ -104,6 +105,10 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			else{
 				pageable = new PageRequest(pageNum,pageSize);
 			}*/
+			if(query.getYear()!=null && query.getMonth()!=null){
+				String lastMouthDay = AccountDate.getLastDayOfMonth(query.getYear(), query.getMonth()-1);
+				query.setLastMouthDay(lastMouthDay);
+			}
 			if(query.getProperty()==null)  query.setProperty("start_time"); 
 			if(query.getDirection()==null) query.setDirection("asc");
 			if(query.getCreatedId()==null) query.setCreatedId(user.getId());
@@ -662,9 +667,12 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		
 		try {
 			
-			String ss = scheduleInfoService.getCconflictSchedule(scheduleInfo);			
-			responseBody.setResult(new Result(Status.OK, null,ss));
-		
+			String ss = scheduleInfoService.getCconflictSchedule(scheduleInfo);	
+			if(ss==null){
+				responseBody.setResult(new Result(Status.OK, null,""));
+			}else{
+				responseBody.setResult(new Result(Status.OK, null,ss));
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();

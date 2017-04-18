@@ -62,6 +62,10 @@ public class ScheduleInfo extends PagableEntity{
     
     private List<ScheduleContacts> scheduleContactsList;//拜访人集合
     
+    private String lastMouthDay;//当月最后一天
+    
+
+    
     public Byte getType() {
         return type;
     }
@@ -268,6 +272,14 @@ public class ScheduleInfo extends PagableEntity{
 
 	public void setScheduleContactsList(List<ScheduleContacts> scheduleContactsList) {
 		this.scheduleContactsList = scheduleContactsList;
+	}
+
+	public String getLastMouthDay() {
+		return lastMouthDay;
+	}
+
+	public void setLastMouthDay(String lastMouthDay) {
+		this.lastMouthDay = lastMouthDay;
 	}
 
 	
