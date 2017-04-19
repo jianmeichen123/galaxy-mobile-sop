@@ -33,6 +33,7 @@ public class ScheduleDepartUno  extends PagableEntity {
     Boolean isCheckedAllUser; //是否部门人员全选  true:全选
     List<UtilUser> deptUsers; //部门下人员
     
+    private String uname;
 
     public Byte getRemarkType() {
         return remarkType;
@@ -112,6 +113,14 @@ public class ScheduleDepartUno  extends PagableEntity {
 
 	public void setDeptUsers(List<UtilUser> deptUsers) {
 		this.deptUsers = deptUsers;
+	}
+
+	public String getUname() {
+		return uname;
+	}
+
+	public void setUname(String uname) {
+		this.uname = uname;
 	}
 
     

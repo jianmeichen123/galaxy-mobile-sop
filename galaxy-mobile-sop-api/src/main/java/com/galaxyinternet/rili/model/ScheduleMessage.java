@@ -1,6 +1,7 @@
 package com.galaxyinternet.rili.model;
 
 import java.util.List;
+import java.util.Set;
 
 import com.galaxyinternet.framework.core.model.PagableEntity;
 
@@ -27,8 +28,11 @@ public class ScheduleMessage extends PagableEntity {
 
 	private String createdUname;
 
+	private Long remarkId;//存的是日程的id
+	
+	
+	private Set<Long> ids;
 	private List<ScheduleMessageUser> toUsers;
-	private ScheduleMessageUser mUsers;
 	
 	
 	public Byte getCategory() {
@@ -103,13 +107,23 @@ public class ScheduleMessage extends PagableEntity {
 		this.toUsers = toUsers;
 	}
 
-	public ScheduleMessageUser getmUsers() {
-		return mUsers;
+	public Set<Long> getIds() {
+		return ids;
 	}
 
-	public void setmUsers(ScheduleMessageUser mUsers) {
-		this.mUsers = mUsers;
+	public void setIds(Set<Long> ids) {
+		this.ids = ids;
 	}
+
+	public Long getRemarkId() {
+		return remarkId;
+	}
+
+	public void setRemarkId(Long remarkId) {
+		this.remarkId = remarkId;
+	}
+
+	
 
 	
 }

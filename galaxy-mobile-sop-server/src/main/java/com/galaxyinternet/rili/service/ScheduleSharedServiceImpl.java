@@ -72,7 +72,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 	 * @return {[toUid:111, toUname:"TEST",toDeptName:"DNAME"]}
 	 */
 	public List<ScheduleShared> queryMySharedUsers(Object objUser,String toUname) {
-		User user = (User)objUser;
+		/*	User user = (User)objUser;
 		
 		ScheduleShared query = new ScheduleShared();
 		query.setCreateUid(user.getId());
@@ -96,8 +96,9 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 				tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
 			}
 		}
-		
-		return cusers;
+		*/
+		//return cusers;
+		return null;
 	}
 
 
@@ -106,17 +107,17 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 	 * @param  {deptNoUsers : [{deptId:111,userCount:10,userIds:[222,333]},{deptId:111, userCount:10,userIds:[222,333]}]}
 	 */
 	@Transactional
-	public void saveSharedUsers(Object objUser, ScheduleShared comShareQ, ScheduleDepartUno dun, List<DeptNoUsers> deptNoUsers){
+	public void saveSharedUsers(Object objUser, ScheduleShared comShareQ, List<DeptNoUsers> deptNoUsers){
 		User user = (User)objUser;
 		
 		//删除所有共享人
 		scheduleSharedDao.delete(comShareQ);
 		
-		//删除所有部门共享人数量
-		scheduleDepartUnoDao.delete(dun);
+		/*//删除所有部门共享人数量
+		scheduleDepartUnoDao.delete(dun);*/
 		
 		List<ScheduleShared> toSaveShaerds = new ArrayList<ScheduleShared>();
-		List<ScheduleDepartUno> toSaveDeptUnos = new ArrayList<ScheduleDepartUno>();
+		//List<ScheduleDepartUno> toSaveDeptUnos = new ArrayList<ScheduleDepartUno>();
 		
 		if(deptNoUsers!=null && !deptNoUsers.isEmpty()){
 			
@@ -129,12 +130,12 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 				
 				
 				// 部门-相关人数
-				dun = new ScheduleDepartUno();
+			/*	dun = new ScheduleDepartUno();
 				dun.setRemarkType((byte) 1);
 				dun.setDepartmentId(temp.getDeptId());
 				dun.setUserCount(temp.getUserCount());
 				dun.setCreatedId(user.getId());
-				toSaveDeptUnos.add(dun);
+				toSaveDeptUnos.add(dun);*/
 				
 				for(Long uidTemp : userIds){
 					// 日程共享
@@ -151,7 +152,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 			}
 			
 			if(!toSaveShaerds.isEmpty()) scheduleSharedDao.insertInBatch(toSaveShaerds);
-			if(!toSaveDeptUnos.isEmpty()) scheduleDepartUnoDao.insertInBatch(toSaveDeptUnos);
+		//	if(!toSaveDeptUnos.isEmpty()) scheduleDepartUnoDao.insertInBatch(toSaveDeptUnos);
 		}
 	}
 
@@ -167,6 +168,13 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 
 		//删除共享人
 		scheduleSharedDao.deleteById(id);
+	}
+
+
+	@Override
+	public List<Long> selectByUserId(ScheduleShared query) {
+		// TODO Auto-generated method stub
+		return scheduleSharedDao.selectByUserId(query);
 	}
 
 	

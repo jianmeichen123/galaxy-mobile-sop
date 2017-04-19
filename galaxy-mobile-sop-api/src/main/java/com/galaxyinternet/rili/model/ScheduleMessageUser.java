@@ -25,6 +25,8 @@ public class ScheduleMessageUser extends PagableEntity {
 
     private Byte isDel;  //0:未删除  1:已删除
 
+    private ScheduleMessage message;
+    
     
     public Long getMid() {
         return mid;
@@ -90,5 +92,15 @@ public class ScheduleMessageUser extends PagableEntity {
         this.isDel = isDel;
     }
 
+	public ScheduleMessage getMessage() {
+		return message;
+	}
 
+	public void setMessage(ScheduleMessage message) {
+		this.message = message;
+	}
+
+	
+
+    
 }

@@ -34,4 +34,10 @@ public interface ScheduleDepartUnoService extends BaseService<ScheduleDepartUno>
 	 * 查询
 	 */
 	
+	ScheduleDepartUno queryPerson(Object objUser, ScheduleDepartUno query);
+	
+	/**
+	 * 
+	 */
+	public ScheduleDepartUno queryPerswwon(Object objUser, ScheduleDepartUno query);
 }

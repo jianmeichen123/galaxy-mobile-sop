@@ -16,7 +16,7 @@ import com.galaxyinternet.rili.model.ScheduleMessage;
 
 
 @Component
-public class MessageGenerator implements InitializingBean,ApplicationContextAware
+public class ScheduleMessageGenerator implements InitializingBean,ApplicationContextAware
 {
 	private ApplicationContext context;
 	private List<ScheduleMessageHandler> handlers;

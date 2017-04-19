@@ -6,6 +6,7 @@
 		<id 	column="id" 			property="id" 			jdbcType="BIGINT" />
 		<result column="category" 		property="category" 	jdbcType="TINYINT" />
 		<result column="type" 			property="type" 		jdbcType="TINYINT" />
+		<result column="remrk_id" 		property="remarkId" 	jdbcType="BIGINT" />
 		<result column="content" 		property="content" 		jdbcType="VARCHAR" />
 		<result column="remark" 		property="remark" 		jdbcType="VARCHAR" />
 		<result column="send_time" 		property="sendTime" 	jdbcType="BIGINT" />
@@ -19,7 +20,7 @@
 
 
 	<sql id="Base_Column_List">
-		id, category, type, content, remark, send_time, status, created_uid, created_uname, 
+		id, category, type, remrk_id, content, remark, send_time, status, created_uid, created_uname, 
     	created_time, updated_time
 	</sql>
 
@@ -29,8 +30,17 @@
 		<where>
 			<trim prefixOverrides="and">
 				<if test="id != null"> and id = #{id ,jdbcType=BIGINT} </if>
+				
+				<if test="ids != null">
+					and id IN
+					<foreach collection="ids" index="item" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if> 
+				
 				<if test="category != null" > and category = #{category ,jdbcType=TINYINT}  </if>
 				<if test="type != null" > and type = #{type ,jdbcType=TINYINT}  </if>
+				<if test="remarkId != null" > and remrk_id = #{remarkId ,jdbcType=BIGINT}  </if>
 				<if test="content != null" > and content = #{content ,jdbcType=VARCHAR}  </if>
 				<if test="remark != null" > and remark = #{remark ,jdbcType=VARCHAR}  </if>
 				<if test="sendTime != null" > and send_time = #{sendTime ,jdbcType=BIGINT}  </if>
@@ -43,7 +53,6 @@
 			</trim>
 			
 			<if test="sorting != null">order by ${sorting}</if>
-			<if test="property != null">order by ${property} ${direction}</if>
 			
 			<if test="offset != null and limit != null">
 				limit #{offset}, #{limit}
@@ -54,11 +63,11 @@
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.galaxyinternet.rili.model.ScheduleMessage">
 	    <![CDATA[
-	    insert into schedule_message (id, category, type, 
+	    insert into schedule_message (id, category, type, remrk_id, 
 	      content, remark, send_time, 
 	      status, created_uid, created_uname, 
 	      created_time, updated_time)
-	    values (#{id,jdbcType=BIGINT}, #{category,jdbcType=TINYINT}, #{type,jdbcType=TINYINT}, 
+	    values (#{id,jdbcType=BIGINT}, #{category,jdbcType=TINYINT}, #{type,jdbcType=TINYINT},#{remarkId,jdbcType=BIGINT} 
 	      #{content,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{sendTime,jdbcType=BIGINT}, 
 	      #{status,jdbcType=TINYINT}, #{createdUid,jdbcType=BIGINT}, #{createdUname,jdbcType=VARCHAR}, 
 	      #{createdTime,jdbcType=BIGINT}, #{updatedTime,jdbcType=BIGINT})
@@ -99,6 +108,7 @@
 		<set>
 			<if test="category != null" > category = #{category,jdbcType=TINYINT}, </if>
 			<if test="type != null" > type = #{type,jdbcType=TINYINT}, </if>
+			<if test="remarkId != null" > remrk_id = #{remarkId,jdbcType=BIGINT}, </if>
 			<if test="content != null" > content = #{content,jdbcType=VARCHAR}, </if>
 			<if test="remark != null" > remark = #{remark,jdbcType=VARCHAR}, </if>
 			<if test="sendTime != null" > send_time = #{sendTime,jdbcType=BIGINT}, </if>
