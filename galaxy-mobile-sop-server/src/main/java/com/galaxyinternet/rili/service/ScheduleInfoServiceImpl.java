@@ -91,18 +91,36 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 								sinfo.setStartTime(temp.getStartTime());
 								sinfo.setEndTime(ss+" 23:59:00");
 								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());							
+								sinfo.setId(temp.getId());	
+								sinfo.setCreatedId(temp.getCreatedId());
+								sinfo.setUpdatedId(temp.getUpdatedId());
+								sinfo.setIsAllday(temp.getIsAllday());
+								sinfo.setRemark(temp.getRemark());
+								sinfo.setCreatedTime(temp.getCreatedTime());
+								sinfo.setUpdatedTime(temp.getUpdatedTime());
 							}
 							else if(temp.getEndTime().substring(0, 10).equals(ss)){
 								sinfo.setStartTime(ss+" 00:00:00");
 								sinfo.setEndTime(temp.getEndTime());
 								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());														
+								sinfo.setId(temp.getId());	
+								sinfo.setCreatedId(temp.getCreatedId());
+								sinfo.setUpdatedId(temp.getUpdatedId());
+								sinfo.setIsAllday(temp.getIsAllday());
+								sinfo.setRemark(temp.getRemark());
+								sinfo.setCreatedTime(temp.getCreatedTime());
+								sinfo.setUpdatedTime(temp.getUpdatedTime());
 							}else{				
 								sinfo.setStartTime(ss+" 00:00:00");
 								sinfo.setEndTime(ss+" 23:59:00");
 								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());								
+								sinfo.setId(temp.getId());
+								sinfo.setCreatedId(temp.getCreatedId());
+								sinfo.setUpdatedId(temp.getUpdatedId());
+								sinfo.setIsAllday(temp.getIsAllday());
+								sinfo.setRemark(temp.getRemark());
+								sinfo.setCreatedTime(temp.getCreatedTime());
+								sinfo.setUpdatedTime(temp.getUpdatedTime());
 								
 							}	
 							scheduleInfoList.add(sinfo);
@@ -137,7 +155,12 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 								sinfo.setEndTime(ss+" 23:59:00");
 								sinfo.setName(temp.getName());
 								sinfo.setId(temp.getId());	
-								
+								sinfo.setCreatedId(temp.getCreatedId());
+								sinfo.setUpdatedId(temp.getUpdatedId());
+								sinfo.setIsAllday(temp.getIsAllday());
+								sinfo.setRemark(temp.getRemark());
+								sinfo.setCreatedTime(temp.getCreatedTime());
+								sinfo.setUpdatedTime(temp.getUpdatedTime());
 							}							
 							scheduleInfoList.add(sinfo);
 							
