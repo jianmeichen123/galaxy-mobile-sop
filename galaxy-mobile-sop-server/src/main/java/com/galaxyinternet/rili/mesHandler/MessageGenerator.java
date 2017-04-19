@@ -1,4 +1,4 @@
-package com.galaxyinternet.rili.mesHandler;
+/*package com.galaxyinternet.rili.mesHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,10 +63,11 @@ public class MessageGenerator implements InitializingBean,ApplicationContextAwar
 	}
 	
 	
-	/*public OperationMessage generate(OperationType type, User user, Map<String, Object> map)
+	public OperationMessage generate(OperationType type, User user, Map<String, Object> map)
 	{
 		
 		
 		return null;
-	}*/
+	}
 }
+*/
