@@ -6,19 +6,15 @@
 	<resultMap id="BaseResultMap" type="com.galaxyinternet.rili.model.ScheduleShared" >
 		<id 	column="id" 			property="id" 			jdbcType="BIGINT" />
 		<result column="to_uid" 		property="toUid" 		jdbcType="BIGINT" />
-		
-		<result column="to_uname" 		property="toUname" 		jdbcType="VARCHAR" />
-		
 		<result column="department_id" 	property="departmentId" jdbcType="BIGINT" />
 		<result column="create_uid" 	property="createUid" 	jdbcType="BIGINT" />
-		<result column="create_uname" 	property="createUname" 	jdbcType="VARCHAR" />
 		<result column="created_time" 	property="createdTime" 	jdbcType="BIGINT" />
 	</resultMap>
 
 
 
 	<sql id="Base_Column_List">
-		id, to_uid, to_uname, department_id, create_uid, create_uname, created_time
+		id, to_uid, department_id, create_uid,created_time
 	</sql>
 
 
@@ -27,10 +23,8 @@
 			<trim prefixOverrides="and">
 				<if test="id != null"> and id = #{id ,jdbcType=BIGINT} </if>
 				<if test="toUid != null" > and to_uid = #{toUid ,jdbcType=BIGINT}  </if>
-				<if test="toUname != null" > and to_uname = #{toUname ,jdbcType=VARCHAR}  </if>
 				<if test="departmentId != null" > and department_id = #{departmentId ,jdbcType=BIGINT}  </if>
 				<if test="createUid != null" > and create_uid = #{createUid ,jdbcType=BIGINT}  </if>
-				<if test="createUname != null" > and create_uname = #{createUname ,jdbcType=VARCHAR}  </if>
 				<if test="createdTime != null" > and created_time = #{createdTime ,jdbcType=BIGINT}  </if>
 				
 			</trim>
@@ -47,11 +41,11 @@
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.galaxyinternet.rili.model.ScheduleShared">
 	    <![CDATA[
-	    insert into schedule_shared (id, to_uid, to_uname, department_id, 
-	      create_uid, create_uname, created_time
+	    insert into schedule_shared (id, to_uid, department_id, 
+	      create_uid,created_time
 	      )
-	    values (#{id,jdbcType=BIGINT}, #{toUid,jdbcType=BIGINT}, #{toUname,jdbcType=VARCHAR}, #{departmentId,jdbcType=BIGINT}, 
-	      #{createUid,jdbcType=BIGINT}, #{createUname,jdbcType=VARCHAR}, #{createdTime,jdbcType=BIGINT}
+	    values (#{id,jdbcType=BIGINT}, #{toUid,jdbcType=BIGINT}, #{departmentId,jdbcType=BIGINT}, 
+	      #{createUid,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT}
 	      )
 	    ]]>
 	</insert>
@@ -89,10 +83,8 @@
 		update schedule_shared
 		<set>
 			<if test="toUid != null" > to_uid = #{toUid,jdbcType=BIGINT}, </if>
-			<if test="toUname != null" > to_uname = #{toUname ,jdbcType=VARCHAR},  </if>
 			<if test="departmentId != null" > department_id = #{departmentId,jdbcType=BIGINT}, </if>
 			<if test="createUid != null" > create_uid = #{createUid,jdbcType=BIGINT}, </if>
-			<if test="createUname != null" > create_uname = #{createUname,jdbcType=VARCHAR}, </if>
 			<if test="createdTime != null" > created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		</set>
 		where id = #{id}
@@ -112,7 +104,15 @@
 		delete from schedule_shared
 		where id = #{id}
 	</delete>
-
+	
+	
+<!-- 查询出部门共享人id -->
+	<select id="selectByUserId" resultType="java.lang.Long" parameterType="java.util.Map">
+		select
+			schedule_shared.to_uid
+		from schedule_shared
+		<include refid="Base_Where_Clause" />
+	</select>
 	
 	
 </mapper>

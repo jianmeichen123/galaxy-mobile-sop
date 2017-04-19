@@ -1,4 +1,4 @@
-/*package com.galaxyinternet.rili.mesHandler.handlerOper;
+package com.galaxyinternet.rili.mesHandler.handlerOper;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -39,15 +39,16 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 		
 		ScheduleInfo model = (ScheduleInfo) info;
 		
-		String startTime = model.getStartTime();
-		byte isAllday = model.getIsAllday()== null ? (byte) 0 : (byte) 1; //是否全天 0:否 1:是
+		String startTime = model.getStartTime().replace("/","-");
+		byte isAllday = model.getIsAllday(); //是否全天 0:否 1:是
 		Long dictId = model.getWakeupId();
 		
 		
 		//消息内容
 		message.setCreatedUid(model.getCreatedId());
 		message.setCreatedUname(model.getUserName());
-		
+		//消息中存的日程的id
+		message.setRemarkId(model.getId());
 		
 		StringBuffer content = new StringBuffer();
 		content.append("您有一个日程将于 ");
@@ -64,6 +65,7 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 		try {
 			message.setSendTime(UtilOper.getSendTimeBy(startTime, isAllday, dictId));
 		} catch (ParseException e) {
+			e.printStackTrace();
 			message.setSendTime(null);
 			logger.error("CommonScheduleHandler . handle 异常 ",e.getMessage());
 		}
@@ -82,4 +84,3 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 
 }
 
-*/

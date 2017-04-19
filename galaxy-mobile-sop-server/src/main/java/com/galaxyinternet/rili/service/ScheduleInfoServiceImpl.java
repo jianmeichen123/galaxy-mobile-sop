@@ -8,22 +8,16 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.galaxyinternet.framework.core.dao.BaseDao;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
 import com.galaxyinternet.framework.core.utils.DateUtil;
-import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.rili.dao.ScheduleDepartUnoDao;
 import com.galaxyinternet.rili.dao.ScheduleInfoDao;
 import com.galaxyinternet.rili.dao.ScheduleMettingUsersDao;
 import com.galaxyinternet.rili.dao.SchedulePersonPlanDao;
-import com.galaxyinternet.rili.model.ScheduleDepartUno;
 import com.galaxyinternet.rili.model.ScheduleInfo;
-import com.galaxyinternet.rili.model.ScheduleMettingUsers;
-import com.galaxyinternet.rili.model.SchedulePersonPlan;
 import com.galaxyinternet.rili.util.AccountDate;
-import com.galaxyinternet.rili.util.DeptNoUsers;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 import com.galaxyinternet.rili.util.UtilService;
 
@@ -303,14 +297,10 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 	}
 
 
-	
-	
-	
-	
 	/**
 	 * 添加 会议及与会人
 	 */
-	@Transactional
+	/*@Transactional
 	public Long saveMeetSchedule(Object objUser,ScheduleInfo query) {
 		
 
@@ -379,7 +369,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 
 	/**
 	 * 拜访的添加
-	 */
+	 *//*
 	@Transactional
 	public Long savePlanSchedule(Object objUser, ScheduleInfo scheduleInfo) {
 		User user = (User)objUser;	
@@ -397,9 +387,9 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		return id;
 	}
 
-	/**
+	*//**
 	 * 更新拜访     需要传的参数有schedule_id 拜访日历的id  contacts_id 联系人的id
-	 */
+	 *//*
 	@Transactional
 	public void updatePlanSchedule(Object objUser,ScheduleInfo scheduleInfo) {
 		
@@ -428,9 +418,9 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 	}
 	
-	/**
+	*//**
 	 * 拜访的删除
-	 */
+	 *//*
 
 	@Override
 	public void delePlanSchedule(ScheduleInfo scheduleInfo) {
@@ -448,7 +438,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 	}
 
-
+*/
 	
 	
 	

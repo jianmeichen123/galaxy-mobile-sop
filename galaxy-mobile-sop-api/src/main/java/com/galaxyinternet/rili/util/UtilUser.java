@@ -11,6 +11,8 @@ public class UtilUser implements Serializable{
 	
 	private String name;
 
+	private String departName;   //所属事业部的名称
+	private Long departId;       //所属事业部的id
 	Boolean isChecked; //该人员是否已选择  true:已选
 	
 	public Long getId() {
@@ -35,6 +37,22 @@ public class UtilUser implements Serializable{
 
 	public void setIsChecked(Boolean isChecked) {
 		this.isChecked = isChecked;
+	}
+
+	public String getDepartName() {
+		return departName;
+	}
+
+	public void setDepartName(String departName) {
+		this.departName = departName;
+	}
+
+	public Long getDepartId() {
+		return departId;
+	}
+
+	public void setDepartId(Long departId) {
+		this.departId = departId;
 	} 
 	
 	

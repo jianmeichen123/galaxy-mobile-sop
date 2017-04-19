@@ -7,7 +7,6 @@
     <result column="remark_type" property="remarkType" jdbcType="TINYINT" />
     <result column="remark_id" property="remarkId" jdbcType="BIGINT" />
     <result column="department_id" property="departmentId" jdbcType="BIGINT" />
-    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
     <result column="user_count" property="userCount" jdbcType="INTEGER" />
     <result column="created_time" property="createdTime" jdbcType="BIGINT" />
     <result column="created_id" property="createdId" jdbcType="BIGINT" />
@@ -18,7 +17,7 @@
   
   
   <sql id="Base_Column_List" >
-    id, remark_type, remark_id, department_id, dept_name, user_count, created_time, created_id, 
+    id, remark_type, remark_id, department_id, user_count, created_time, created_id, 
     updated_time, updated_id
   </sql>
 	
@@ -29,7 +28,7 @@
 				<if test="remarkType != null"> and remark_type = #{remarkType,jdbcType=TINYINT} </if>
 				<if test="remarkId != null"> and remark_id = #{remarkId,jdbcType=BIGINT} </if>			
 				<if test="departmentId != null"> and department_id = #{departmentId,jdbcType=BIGINT} </if>
-				<if test="deptName != null"> and dept_name = #{deptName,jdbcType=VARCHAR} </if>
+				
 				<if test="userCount != null"> and user_count = #{userCount,jdbcType=INTEGER} </if>
 				<if test="createdTime != null"> and created_time = #{createdTime,jdbcType=BIGINT} </if>		
 				<if test="createdId != null"> and created_id = #{createdId,jdbcType=BIGINT} </if>	
@@ -49,11 +48,11 @@
 
 	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="com.galaxyinternet.rili.model.ScheduleDepartUno">
 		insert into schedule_depart_uno (id, remark_type, remark_id, 
-	      department_id, dept_name, user_count, 
+	      department_id, user_count, 
 	      created_time, created_id, updated_time, 
 	      updated_id)
 	    values (#{id,jdbcType=BIGINT}, #{remarkType,jdbcType=TINYINT}, #{remarkId,jdbcType=BIGINT}, 
-	      #{departmentId,jdbcType=BIGINT}, #{deptName,jdbcType=VARCHAR}, #{userCount,jdbcType=INTEGER}, 
+	      #{departmentId,jdbcType=BIGINT}, #{userCount,jdbcType=INTEGER}, 
 	      #{createdTime,jdbcType=BIGINT}, #{createdId,jdbcType=BIGINT}, #{updatedTime,jdbcType=BIGINT}, 
 	      #{updatedId,jdbcType=BIGINT})
 	</insert>
@@ -99,7 +98,6 @@
 		      <if test="remarkType != null" > remark_type = #{remarkType,jdbcType=TINYINT}, </if>
 		      <if test="remarkId != null" > remark_id = #{remarkId,jdbcType=BIGINT},  </if>
 		      <if test="departmentId != null" > department_id = #{departmentId,jdbcType=BIGINT}, </if>
-		      <if test="deptName != null" > dept_name = #{deptName,jdbcType=VARCHAR}, </if>
 		      <if test="userCount != null" > user_count = #{userCount,jdbcType=INTEGER}, </if>
 		      <if test="createdTime != null" > created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		      <if test="createdId != null" > created_id = #{createdId,jdbcType=BIGINT}, </if>
@@ -116,7 +114,6 @@
 		      <if test="remarkType != null" > remark_type = #{remarkType,jdbcType=TINYINT}, </if>
 		      <if test="remarkId != null" > remark_id = #{remarkId,jdbcType=BIGINT},  </if>
 		      <if test="departmentId != null" > department_id = #{departmentId,jdbcType=BIGINT}, </if>
-		      <if test="deptName != null" > dept_name = #{deptName,jdbcType=VARCHAR}, </if>
 		      <if test="userCount != null" > user_count = #{userCount,jdbcType=INTEGER}, </if>
 		      <if test="createdTime != null" > created_time = #{createdTime,jdbcType=BIGINT}, </if>
 		      <if test="createdId != null" > created_id = #{createdId,jdbcType=BIGINT}, </if>
@@ -129,7 +126,6 @@
 				<if test="remarkType != null"> and remark_type = #{remarkType,jdbcType=TINYINT} </if>
 				<if test="remarkId != null"> and remark_id = #{remarkId,jdbcType=BIGINT} </if>			
 				<if test="departmentId != null"> and department_id = #{departmentId,jdbcType=BIGINT} </if>
-				<if test="deptName != null"> and dept_name = #{deptName,jdbcType=VARCHAR} </if>
 				<if test="userCount != null"> and user_count = #{userCount,jdbcType=INTEGER} </if>
 				<if test="createdTime != null"> and created_time = #{createdTime,jdbcType=BIGINT} </if>		
 				<if test="createdId != null"> and created_id = #{createdId,jdbcType=BIGINT} </if>	

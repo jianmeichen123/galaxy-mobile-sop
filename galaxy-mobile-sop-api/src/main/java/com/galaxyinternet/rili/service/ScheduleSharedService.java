@@ -31,8 +31,8 @@ public interface ScheduleSharedService extends BaseService<ScheduleShared>{
 	  @param  {deptNoUsers : [{deptId:111,userCount:10,userIds:[222,333]},{deptId:111, userCount:10,userIds:[222,333]}]}
 	 */
 	//void saveSharedUsers(Object objUser, ScheduleShared query);
-	void saveSharedUsers(Object objUser, ScheduleShared comShareQ, ScheduleDepartUno dun, List<DeptNoUsers> deptNoUsers);
-	
+	//void saveSharedUsers(Object objUser, ScheduleShared comShareQ, ScheduleDepartUno dun, List<DeptNoUsers> deptNoUsers);
+	void saveSharedUsers(Object objUser, ScheduleShared comShareQ, List<DeptNoUsers> deptNoUsers);
 	/**
 	 * 删除共享人
 	 */
@@ -40,8 +40,12 @@ public interface ScheduleSharedService extends BaseService<ScheduleShared>{
 
 	
 
-
-	
+	/**
+	 * 查询出用户id
+	 * @param query
+	 * @return
+	 */
+	public List<Long> selectByUserId(ScheduleShared query);
 
 
 }

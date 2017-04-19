@@ -25,13 +25,13 @@ public interface ScheduleInfoService extends BaseService<ScheduleInfo>{
 	/**
 	 * 添加日程-会议
 	 */
-	public Long saveMeetSchedule(Object objUser,ScheduleInfo scheduleInfo);
+	//public Long saveMeetSchedule(Object objUser,ScheduleInfo scheduleInfo);
 
 
 	/**
 	 * 添加日程-拜访计划的
 	 */
-	public Long savePlanSchedule(Object objUser,ScheduleInfo scheduleInfo);
+//	public Long savePlanSchedule(Object objUser,ScheduleInfo scheduleInfo);
 
 
 	
@@ -39,13 +39,13 @@ public interface ScheduleInfoService extends BaseService<ScheduleInfo>{
 	 * 
 	 * 拜访的删除
 	 */
-	public void delePlanSchedule(ScheduleInfo scheduleInfo);
+//	public void delePlanSchedule(ScheduleInfo scheduleInfo);
 	
 	
 	/**
 	 * 拜访的更新
 	 */
-	public void updatePlanSchedule(Object objUser,ScheduleInfo scheduleInfo);
+	//public void updatePlanSchedule(Object objUser,ScheduleInfo scheduleInfo);
 	
 	
 	

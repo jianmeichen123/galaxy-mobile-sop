@@ -96,8 +96,8 @@ public class UtilOper {
 			}
 		}
 
-		String tim = DateUtil.longString(sendTime);
-		
+	/*	String tim = DateUtil.longString(sendTime);
+		System.out.println(tim);*/
 		return sendTime;
 	}
 	

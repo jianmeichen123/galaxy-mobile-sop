@@ -78,7 +78,7 @@ public class ScheduleSharedController  extends BaseControllerImpl<ScheduleShared
 	 * 自己共享的 共享人列表查询
 	 * 共享人列表
 	 * @param  toUname 查询
-	 * @return {[id:1, toUid:111, toUname:"TEST",toDeptName:"DNAME"]}
+	 * @return {[id:1, toUid:111, toUname:"TEST",toDeptName:"DNAME"]}    //有问题
 	*/
 	@ResponseBody
 	@RequestMapping(value = "/queryMySharedUsers", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -121,23 +121,36 @@ public class ScheduleSharedController  extends BaseControllerImpl<ScheduleShared
 			Object objUser = request.getSession().getAttribute(Constants.SESSION_USER_KEY);
 			User user = (User)objUser;
 			
+			//传入的需要保存的 
+			List<DeptNoUsers> deptNoUsers = query.getDeptNoUsers();
+			if(deptNoUsers!=null && deptNoUsers.size()>0){
+				for(DeptNoUsers dUsers:deptNoUsers){
+					if(dUsers.getUserIds()==null){
+						ScheduleShared scheduleShared = new ScheduleShared();
+						scheduleShared.setDepartmentId(dUsers.getDeptId());
+						scheduleShared.setCreateUid(user.getId());
+						List<Long> ss= scheduleSharedService.selectByUserId(scheduleShared);
+						dUsers.setUserIds(ss);
+					}
+				}
+			
+			}
 			//删除所有共享人
 			ScheduleShared comShareQ = new ScheduleShared();
 			comShareQ.setCreateUid(user.getId());
 			
 			
-			//删除所有部门共享人数量
+		/*	//删除所有部门共享人数量
 			ScheduleDepartUno dun = new ScheduleDepartUno();
 			dun.setRemarkType((byte) 1);
 			dun.setCreatedId(user.getId());
+			*/
 			
 			
-			//传入的需要保存的 
-			List<DeptNoUsers> deptNoUsers = query.getDeptNoUsers();
 			
 			
-			scheduleSharedService.saveSharedUsers(objUser,comShareQ, dun, deptNoUsers);
-			
+		//	scheduleSharedService.saveSharedUsers(objUser,comShareQ, dun, deptNoUsers);
+			scheduleSharedService.saveSharedUsers(objUser,comShareQ, deptNoUsers);
 			responseBody.setResult(new Result(Status.OK, null, "添加成功"));
 		} catch (Exception e) {
 			responseBody.setResult(new Result(Status.ERROR, null, "添加失败"));

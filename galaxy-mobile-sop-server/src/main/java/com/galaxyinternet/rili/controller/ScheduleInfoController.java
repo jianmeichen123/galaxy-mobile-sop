@@ -2,8 +2,6 @@ package com.galaxyinternet.rili.controller;
 
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +34,7 @@ import com.galaxyinternet.rili.model.ScheduleMettingUsers;
 import com.galaxyinternet.rili.model.SchedulePersonPlan;
 import com.galaxyinternet.rili.service.ScheduleDictService;
 import com.galaxyinternet.rili.service.ScheduleInfoService;
+import com.galaxyinternet.rili.service.ScheduleMessageService;
 import com.galaxyinternet.rili.service.ScheduleMettingUsersService;
 import com.galaxyinternet.rili.service.SchedulePersonPlanService;
 import com.galaxyinternet.rili.util.AccountDate;
@@ -49,7 +48,7 @@ import com.galaxyinternet.service.ProjectService;
 public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, ScheduleInfo> {
 
 	final Logger logger = LoggerFactory.getLogger(ScheduleInfoController.class);
-	
+
 	@Autowired
 	private ProjectService projectService;
 	@Autowired
@@ -60,6 +59,8 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	private ScheduleMettingUsersService scheduleMettingUsersService;
 	@Autowired
 	private SchedulePersonPlanService  schedulePersonPlanService;	
+	@Autowired
+	private ScheduleMessageService scheduleMessageService;
 	@Override
 	protected BaseService<ScheduleInfo> getBaseService() {
 		return this.scheduleInfoService;
@@ -160,13 +161,14 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			//标识是 其他日程
 			scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
-			scheduleInfo.setUserName(user.getRealName());
 			
 			Long id = scheduleInfoService.insert(scheduleInfo);
+			scheduleInfo.setMessageType("common_schedule");
+			scheduleInfo.setId(id);
 			
 			responseBody.setId(id);			
 			responseBody.setResult(new Result(Status.OK, null,"添加日程成功"));
-			
+			scheduleMessageService.saveMessageByInfo(scheduleInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.setResult(new Result(Status.ERROR, null,"添加日程失败"));
@@ -339,22 +341,21 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	 * @param request
 	 * @return
 	 */
-	@ResponseBody
+	/*@ResponseBody
 	@RequestMapping(value = "/saveMeetSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<ScheduleInfo> saveMeetSchedule(@RequestBody ScheduleInfo scheduleInfo,
 			HttpServletRequest request) {
 		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
 		User user = (User) getUserFromSession(request);
 		Object objUser = request.getSession().getAttribute(Constants.SESSION_USER_KEY);
-/*		if(scheduleInfo.getIsAllday()==1){
+		if(scheduleInfo.getIsAllday()==1){
 			
 		}
-		*/
+		
 		try {
 			//标识是会议
 			scheduleInfo.setType((byte) 1);
 			scheduleInfo.setCreatedId(user.getId());
-			scheduleInfo.setUserName(user.getRealName());
 			
 			Long id = scheduleInfoService.saveMeetSchedule(objUser,scheduleInfo);
 			
@@ -368,7 +369,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		}
 		return responseBody;
 	}
-	
+	*/
 	
 	
 
@@ -378,22 +379,21 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	 * @param request
 	 * @return
 	 */
-	@ResponseBody
+	/*@ResponseBody
 	@RequestMapping(value = "/savePlanSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<ScheduleInfo> savePlanSchedule(@RequestBody ScheduleInfo scheduleInfo,
 			HttpServletRequest request) {
 		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
 		User user = (User) getUserFromSession(request);
 
-/*		if(scheduleInfo.getIsAllday()==1){
+		if(scheduleInfo.getIsAllday()==1){
 			
 		}
-		*/
+		
 		try {
 			//标识是拜访日程
 			scheduleInfo.setType((byte) 2);
 			scheduleInfo.setCreatedId(user.getId());
-			scheduleInfo.setUserName(user.getRealName());
 			
 			Long id = scheduleInfoService.savePlanSchedule(user,scheduleInfo);
 			
@@ -409,12 +409,12 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	}
 	
 	
-	/**
+	*//**
 	 * 日程会议的详情    可能有问题 判断
 	 * @param ScheduleInfo
 	 * @param request
 	 * @return
-	 */
+	 *//*
 	
 	@ResponseBody
 	@RequestMapping(value = "/selectMeetScheduleById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -464,9 +464,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		return responseBody;
 	}
 	
-	/**
+	*//**
 	 * 查询 会议回执信息
-	 */
+	 *//*
 
 	@ResponseBody
 	@RequestMapping(value = "/selectMeetReceiptById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -536,9 +536,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		return responseBody;
 	}
 	
-	/**
+	*//**
 	 * 拜访日程详情
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/selectPlanScheduleById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<ScheduleInfo> selectPlanScheduleById(@PathVariable String id) {
@@ -590,12 +590,12 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		return responseBody;
 	}
 	
-	/**
+	*//**
 	 * 更新拜访日程
 	 * @param scheduleInfo
 	 * @param request
 	 * @return
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/updatePlanSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<ScheduleInfo> updatePlanSchedule(@RequestBody ScheduleInfo scheduleInfo,
@@ -627,11 +627,11 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		return responseBody;
 	}
 	
-	/**
+	*//**
 	 * 删除拜访日程
 	 * @param id
 	 * @return
-	 */
+	 *//*
 	@ResponseBody
 	@RequestMapping(value = "/deletePlanScheduleById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<ScheduleInfo> deletePlanScheduleById(@PathVariable String id) {
@@ -651,7 +651,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;
-	}
+	}*/
 	
 	/**
 	 * 获取验证时间
