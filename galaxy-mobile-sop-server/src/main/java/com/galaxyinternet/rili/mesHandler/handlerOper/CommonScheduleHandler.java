@@ -1,4 +1,4 @@
-package com.galaxyinternet.rili.mesHandler.handlerOper;
+/*package com.galaxyinternet.rili.mesHandler.handlerOper;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -82,3 +82,4 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 
 }
 
+*/

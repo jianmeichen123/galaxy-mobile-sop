@@ -1,4 +1,4 @@
-package com.galaxyinternet.rili.service;
+/*package com.galaxyinternet.rili.service;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 
 				ScheduleMessage message = messageGenerator.process(info);
 				Long mid = scheduleMessageDao.insert(message);
-				/*
+				
 				private Long mid; // 消息 id
 			    private Long uid; // 接收人 id
 			    private String uname; 
@@ -54,7 +54,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			    private Byte isSend; //0:未发送  1+:已发送
 			    private Byte isRead; //0:未读    1:已读
 			    private Byte isDel;  //0:未删除  1:已删除
-			    */
+			    
 				List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
 				for(ScheduleMessageUser toU : message.getToUsers()){
 					toU.setMid(mid);
@@ -68,3 +68,4 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	
 	
 }
+*/
