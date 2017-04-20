@@ -28,6 +28,14 @@
 			<trim prefixOverrides="and">
 				<if test="id != null"> and id = #{id ,jdbcType=BIGINT} </if>
 				<if test="mid != null" > and mid = #{mid ,jdbcType=BIGINT}  </if>
+				
+				<if test="mids != null">
+					and mid IN
+					<foreach collection="mids" index="item" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if> 
+				
 				<if test="uid != null" > and uid = #{uid ,jdbcType=BIGINT}  </if>
 				<if test="uname != null" > and uname = #{uname ,jdbcType=VARCHAR}  </if>
 				<if test="typeRole != null" > and type_role = #{typeRole ,jdbcType=TINYINT}  </if>

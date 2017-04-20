@@ -23,18 +23,21 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 	
 	
 	// 普通日程 （ 其它日程）
-	public static final String COMMON_SCHEDULE = "common_schedule";
-	
+	public static final String SAVE_SCHEDULE = "save_schedule";
+	// 普通日程 （ 其它日程）
+	public static final String UPDATE_SCHEDULE = "update_schedule";
+	// 普通日程 （ 其它日程）
+	public static final String DELETE_SCHEDULE = "delete_schedule";
 
 
 	public boolean support(Object info) {
 		ScheduleInfo message = (ScheduleInfo) info;
-		return message != null && message.getMessageType()!= null && message.getMessageType().equals(CommonScheduleHandler.COMMON_SCHEDULE);
+		return message != null && message.getMessageType()!= null && message.getMessageType().equals(CommonScheduleHandler.SAVE_SCHEDULE);
 	}
 
 	
 	
-	// 您有一个日程将于①明日（2017-12-12） ②3:00开始，日程名称“③XXXXX”。
+	// 您有一个日程将于①明日（2017-12-12） ②3:00开始，日程名称“③XXXXX”。  &&message.getMessageType().equals(CommonScheduleHandler.UPDATE_SCHEDULE)&&message.getMessageType().equals(CommonScheduleHandler.DELETE_SCHEDULE)
 	public void handle(ScheduleMessage message,Object info) {
 		
 		ScheduleInfo model = (ScheduleInfo) info;
@@ -51,12 +54,14 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 		message.setRemarkId(model.getId());
 		
 		StringBuffer content = new StringBuffer();
-		content.append("您有一个日程将于 ");
-		content.append("<time>").append(startTime).append("</time>");
-		content.append(" 开始，");
-		content.append("日程名称\"").append("<name>").append(model.getName()).append("</name>\"。");
-		content.append("<id>").append(model.getId()).append("</id>");
-		content.append("<type>schedule</type>");
+		if(model.getMessageType().equals(CommonScheduleHandler.SAVE_SCHEDULE)){
+			content.append("您有一个日程将于 ");
+			content.append("<time>").append(startTime).append("</time>");
+			content.append(" 开始，");
+			content.append("日程名称\"").append("<name>").append(model.getName()).append("</name>\"。");
+			content.append("<id>").append(model.getId()).append("</id>");
+			content.append("<type>1.3</type>");
+		}
 		
 		message.setContent(content.toString());
 		

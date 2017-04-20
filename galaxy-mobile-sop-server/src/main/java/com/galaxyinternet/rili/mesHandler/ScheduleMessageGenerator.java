@@ -51,8 +51,8 @@ public class ScheduleMessageGenerator implements InitializingBean,ApplicationCon
 					ScheduleMessage message = new ScheduleMessage();
 					
 					message.setCategory((byte) 0);  // 0:操作消息  1:系统消息
-					message.setType((byte) 3);      // 消息类型  日程(1:会议 2:拜访 3:其它)
-					message.setStatus((byte) 0);    // 0:可用 1:禁用
+					message.setType("1.3");      // 消息类型  日程(1:会议 2:拜访 3:其它)
+					message.setStatus((byte) 1);    // 0:可用 1:禁用
 					
 					handler.handle(message,info);
 					return message;

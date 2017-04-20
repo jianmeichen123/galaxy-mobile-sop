@@ -46,9 +46,9 @@
 				<if test="startTime != null" > and start_time = #{startTime,jdbcType=TIMESTAMP} </if>
 				<if test="endTime != null" > and end_time = #{endTime,jdbcType=TIMESTAMP} </if>
 				
-				<if test="bqStartTime != null"> <![CDATA[  and start_time >= #{bqStartTime,jdbcType=BIGINT} ]]> </if>
-			    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime,jdbcType=BIGINT} ]]> </if>
-			    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime,jdbcType=BIGINT} ]]> </if>
+				<if test="bqStartTime != null"> <![CDATA[  and start_time >= #{bqStartTime} ]]> </if>
+			    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime} ]]> </if>
+			    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime} ]]> </if>
     
 				<if test="isAllday != null" > and is_allday = #{isAllday,jdbcType=TINYINT} </if>
 				<if test="wakeupId != null" > and wakeup_id = #{wakeupId,jdbcType=BIGINT} </if>

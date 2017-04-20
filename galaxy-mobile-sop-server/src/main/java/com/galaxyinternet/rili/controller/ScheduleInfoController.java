@@ -1,7 +1,6 @@
 package com.galaxyinternet.rili.controller;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,20 +24,18 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.framework.core.utils.DateUtil;
-import com.galaxyinternet.model.project.Project;
 import com.galaxyinternet.model.user.User;
-import com.galaxyinternet.rili.model.ScheduleContacts;
 import com.galaxyinternet.rili.model.ScheduleDict;
 import com.galaxyinternet.rili.model.ScheduleInfo;
-import com.galaxyinternet.rili.model.ScheduleMettingUsers;
-import com.galaxyinternet.rili.model.SchedulePersonPlan;
+import com.galaxyinternet.rili.model.ScheduleMessage;
+import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleDictService;
 import com.galaxyinternet.rili.service.ScheduleInfoService;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
+import com.galaxyinternet.rili.service.ScheduleMessageUserService;
 import com.galaxyinternet.rili.service.ScheduleMettingUsersService;
 import com.galaxyinternet.rili.service.SchedulePersonPlanService;
 import com.galaxyinternet.rili.util.AccountDate;
-import com.galaxyinternet.rili.util.Receipt;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 import com.galaxyinternet.service.ProjectService;
 
@@ -61,6 +58,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	private SchedulePersonPlanService  schedulePersonPlanService;	
 	@Autowired
 	private ScheduleMessageService scheduleMessageService;
+	
+	@Autowired
+	private ScheduleMessageUserService scheduleMessageUserService;
 	@Override
 	protected BaseService<ScheduleInfo> getBaseService() {
 		return this.scheduleInfoService;
@@ -163,9 +163,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			scheduleInfo.setCreatedId(user.getId());
 			
 			Long id = scheduleInfoService.insert(scheduleInfo);
-			scheduleInfo.setMessageType("common_schedule");
+			scheduleInfo.setMessageType("save_schedule");
 			scheduleInfo.setId(id);
-			
+			scheduleInfo.setUserName(user.getRealName());
 			responseBody.setId(id);			
 			responseBody.setResult(new Result(Status.OK, null,"添加日程成功"));
 			scheduleMessageService.saveMessageByInfo(scheduleInfo);
@@ -184,12 +184,40 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteOtherScheduleById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseData<ScheduleInfo> delete(@PathVariable String id) {
-		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();		
+	public ResponseData<ScheduleInfo> delete(@PathVariable String id ,HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();	
+		User user = (User) getUserFromSession(request);
 		try{
 			ScheduleInfo ss = scheduleInfoService.queryById(Long.valueOf(id));
 			if(ss!=null){
 				int y = scheduleInfoService.deleteById(Long.valueOf(id));
+				
+				
+				ScheduleMessage schmess = new ScheduleMessage();
+				
+				schmess.setRemarkId(Long.parseLong(id));
+				schmess.setType("1.3");
+				
+				ScheduleMessage scheduleMessage =scheduleMessageService.queryOne(schmess);
+				
+				
+				if(scheduleMessage!=null){
+					ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+					
+					scheduleMessageUser.setMid(scheduleMessage.getId());
+					scheduleMessageUser.setUid(user.getId());
+					
+					ScheduleMessageUser sss = scheduleMessageUserService.queryOne(scheduleMessageUser);
+					
+					ScheduleMessageUser schuleMgeUser = new ScheduleMessageUser();
+					
+					schuleMgeUser.setId(sss.getId());
+					schuleMgeUser.setIsDel((byte)1);
+					
+					scheduleMessageUserService.updateById(schuleMgeUser);
+					
+				}
+				
 				responseBody.setResult(new Result(Status.OK, null,"删除其他日程成功"));
 				System.out.println(y);
 			}else{

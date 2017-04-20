@@ -72,9 +72,11 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 			pageable = new PageRequest(pageNum,pageSize, new Sort(direction,property));
 			
 			query.setUid(user.getId());
+			query.setIsDel((byte) 0);
+			
 			
 			//结果查询  封装
-			List<ScheduleMessageUser> qList = scheduleMessageService.queryAndConvertList(query,pageable);
+			List<ScheduleMessageUser> qList = scheduleMessageService.queryPerMessAndConvertList(query,pageable);
 			
 			responseBody.setEntityList(qList);
 			responseBody.setResult(new Result(Status.OK, ""));
