@@ -58,8 +58,8 @@ public class UtilServiceServiceImpl extends BaseServiceImpl<ScheduleShared> impl
 		
 		if(depts!=null && !depts.isEmpty()){
 			Department query = new Department();
-			query.setType(1);
-			//query.setIds(depts);
+			//query.setType(1);
+			query.setIds(depts);
 			List<Department> deptList = departmentService.queryList(query);
 			
 			for (Department dep : deptList) {
