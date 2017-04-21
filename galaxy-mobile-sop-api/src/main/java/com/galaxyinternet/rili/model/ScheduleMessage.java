@@ -1,5 +1,6 @@
 package com.galaxyinternet.rili.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,8 +15,9 @@ public class ScheduleMessage extends PagableEntity {
 
 	private byte category; //0:操作消息 1:系统消息
 
-	private Byte type;   //消息类型 日程(1:会议 2:拜访 3:其它)
-
+	private String type;   //消息类型  日程(1.1:会议  1.2:拜访  1.3:其它)
+	private Long remarkId;//存的是日程的id
+	
 	private String content; // 消息内容
 
 	private String remark;  // 消息备注(拒绝原因、)
@@ -28,12 +30,12 @@ public class ScheduleMessage extends PagableEntity {
 
 	private String createdUname;
 
-	private Long remarkId;//存的是日程的id
-	
 	
 	private Set<Long> ids;
 	private List<ScheduleMessageUser> toUsers;
 	
+	private Long btime;  // 消息发送时间
+	private Long etime;  // 消息发送时间
 	
 	public Byte getCategory() {
 		return category;
@@ -43,14 +45,23 @@ public class ScheduleMessage extends PagableEntity {
 		this.category = category;
 	}
 
-	public byte getType() {
+	
+	public String getType() {
 		return type;
 	}
 
-	public void setType(Byte type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
+	public Long getRemarkId() {
+		return remarkId;
+	}
+
+	public void setRemarkId(Long remarkId) {
+		this.remarkId = remarkId;
+	}
+	
 	public String getContent() {
 		return content;
 	}
@@ -100,7 +111,7 @@ public class ScheduleMessage extends PagableEntity {
 	}
 
 	public List<ScheduleMessageUser> getToUsers() {
-		return toUsers;
+		return toUsers == null ? new ArrayList<ScheduleMessageUser>() : toUsers;
 	}
 
 	public void setToUsers(List<ScheduleMessageUser> toUsers) {
@@ -115,15 +126,24 @@ public class ScheduleMessage extends PagableEntity {
 		this.ids = ids;
 	}
 
-	public Long getRemarkId() {
-		return remarkId;
+
+	public Long getBtime() {
+		return btime;
 	}
 
-	public void setRemarkId(Long remarkId) {
-		this.remarkId = remarkId;
+	public void setBtime(Long btime) {
+		this.btime = btime;
 	}
 
-	
+	public Long getEtime() {
+		return etime;
+	}
+
+	public void setEtime(Long etime) {
+		this.etime = etime;
+	}
+
+
 
 	
 }

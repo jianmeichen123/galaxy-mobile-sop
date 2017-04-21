@@ -372,17 +372,43 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 	
 	//查询出全部部门及部门中的人及人是否已经共享的部门是否 默认及
 	public ScheduleDepartUno queryPerswwon(Object objUser, ScheduleDepartUno query) {
-		Map<String,List<ScheduleDepartUno>> deptIdAndUser = new HashMap<String,List<ScheduleDepartUno>>();
+		Map<String,List<Object>> deptIdAndUser = new HashMap<String,List<Object>>();
 		
-		List<ScheduleDepartUno>  ss = deptIdAndUser.get("");
-		for(ScheduleDepartUno scheduleDepartUno:ss){
-			if(scheduleDepartUno.getDeptUsers()!=null && scheduleDepartUno.getDeptUsers().size()>0){
+		List<Object>  ss = deptIdAndUser.get("");
+		for(Object object:ss){
+			//if(scheduleDepartUno.getDeptUsers()!=null && scheduleDepartUno.getDeptUsers().size()>0){
 				
 			}
+		//}
+		
+		List<ScheduleDepartUno> sdu = new ArrayList<ScheduleDepartUno>();
+		
+		for(ScheduleDepartUno scheduleDepartUno:sdu){
+			
+			if(scheduleDepartUno.getDeptUsers()!=null && scheduleDepartUno.getDeptUsers().size()>0){
+				
+				for(UtilUser duser:scheduleDepartUno.getDeptUsers()){
+					
+					
+					
+					
+				}
+				
+			}
+			
+			
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	
 		return null;
 	
 	}
-	
 }

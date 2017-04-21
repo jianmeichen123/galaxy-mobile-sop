@@ -123,7 +123,7 @@ public class ScheduleSharedController  extends BaseControllerImpl<ScheduleShared
 			
 			//传入的需要保存的 
 			List<DeptNoUsers> deptNoUsers = query.getDeptNoUsers();
-			if(deptNoUsers!=null && deptNoUsers.size()>0){
+			/*if(deptNoUsers!=null && deptNoUsers.size()>0){
 				for(DeptNoUsers dUsers:deptNoUsers){
 					if(dUsers.getUserIds()==null){
 						ScheduleShared scheduleShared = new ScheduleShared();
@@ -134,7 +134,7 @@ public class ScheduleSharedController  extends BaseControllerImpl<ScheduleShared
 					}
 				}
 			
-			}
+			}*/
 			//删除所有共享人
 			ScheduleShared comShareQ = new ScheduleShared();
 			comShareQ.setCreateUid(user.getId());
@@ -173,15 +173,15 @@ public class ScheduleSharedController  extends BaseControllerImpl<ScheduleShared
 		
 		ResponseData<ScheduleShared> responseBody = new ResponseData<ScheduleShared>();
 		try{
-			User user = (User)request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			//User user = (User)request.getSession().getAttribute(Constants.SESSION_USER_KEY);
 			
 			//部门共享人数量 - 1
-			ScheduleDepartUno queryDun = new ScheduleDepartUno();
-			queryDun.setRemarkType((byte) 1);
+		//	ScheduleDepartUno queryDun = new ScheduleDepartUno();
+			/*		queryDun.setRemarkType((byte) 1);
 			queryDun.setDepartmentId(user.getDepartmentId());
-			queryDun.setCreatedId(user.getId());
-			
-			scheduleSharedService.delSharedUser(id, queryDun);
+			queryDun.setCreatedId(user.getId());*/
+			scheduleSharedService.deleteById(id);
+			//scheduleSharedService.delSharedUser(id, queryDun);
 			
 			responseBody.setResult(new Result(Status.OK, null, "删除成功"));
 		} catch (Exception e) {

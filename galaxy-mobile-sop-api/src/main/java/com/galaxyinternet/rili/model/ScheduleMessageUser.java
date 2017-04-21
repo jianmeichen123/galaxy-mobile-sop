@@ -1,5 +1,8 @@
 package com.galaxyinternet.rili.model;
 
+import java.util.List;
+import java.util.Set;
+
 import com.galaxyinternet.framework.core.model.PagableEntity;
 
 /**
@@ -25,7 +28,11 @@ public class ScheduleMessageUser extends PagableEntity {
 
     private Byte isDel;  //0:未删除  1:已删除
 
+    
+    
     private ScheduleMessage message;
+    
+    private List<Long> mids;
     
     
     public Long getMid() {
@@ -99,6 +106,16 @@ public class ScheduleMessageUser extends PagableEntity {
 	public void setMessage(ScheduleMessage message) {
 		this.message = message;
 	}
+
+	public List<Long> getMids() {
+		return mids;
+	}
+
+	public void setMids(List<Long> mids) {
+		this.mids = mids;
+	}
+
+	
 
 	
 

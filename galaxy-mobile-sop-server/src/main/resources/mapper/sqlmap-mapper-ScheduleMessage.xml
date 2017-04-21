@@ -5,7 +5,7 @@
 	<resultMap id="BaseResultMap" type="com.galaxyinternet.rili.model.ScheduleMessage">
 		<id 	column="id" 			property="id" 			jdbcType="BIGINT" />
 		<result column="category" 		property="category" 	jdbcType="TINYINT" />
-		<result column="type" 			property="type" 		jdbcType="TINYINT" />
+		<result column="type" 			property="type" 		jdbcType="VARCHAR" />
 		<result column="remrk_id" 		property="remarkId" 	jdbcType="BIGINT" />
 		<result column="content" 		property="content" 		jdbcType="VARCHAR" />
 		<result column="remark" 		property="remark" 		jdbcType="VARCHAR" />
@@ -39,11 +39,15 @@
 				</if> 
 				
 				<if test="category != null" > and category = #{category ,jdbcType=TINYINT}  </if>
-				<if test="type != null" > and type = #{type ,jdbcType=TINYINT}  </if>
+				<if test="type != null" > and type = #{type ,jdbcType=VARCHAR}  </if>
 				<if test="remarkId != null" > and remrk_id = #{remarkId ,jdbcType=BIGINT}  </if>
 				<if test="content != null" > and content = #{content ,jdbcType=VARCHAR}  </if>
 				<if test="remark != null" > and remark = #{remark ,jdbcType=VARCHAR}  </if>
 				<if test="sendTime != null" > and send_time = #{sendTime ,jdbcType=BIGINT}  </if>
+				
+				<if test="btime != null"> <![CDATA[ and send_time >= #{btime,jdbcType=BIGINT} ]]> </if>
+			    <if test="etime != null"> <![CDATA[ and send_time <= #{etime,jdbcType=BIGINT} ]]> </if>
+			    
 				<if test="status != null" > and status = #{status ,jdbcType=TINYINT}  </if>
 				<if test="createdUid != null" > and created_uid = #{createdUid ,jdbcType=BIGINT}  </if>
 				<if test="createdUname != null" > and created_uname = #{createdUname ,jdbcType=VARCHAR}  </if>
@@ -53,6 +57,7 @@
 			</trim>
 			
 			<if test="sorting != null">order by ${sorting}</if>
+			<if test="property != null">order by ${property} ${direction}</if>
 			
 			<if test="offset != null and limit != null">
 				limit #{offset}, #{limit}
@@ -67,7 +72,7 @@
 	      content, remark, send_time, 
 	      status, created_uid, created_uname, 
 	      created_time, updated_time)
-	    values (#{id,jdbcType=BIGINT}, #{category,jdbcType=TINYINT}, #{type,jdbcType=TINYINT},#{remarkId,jdbcType=BIGINT} 
+	    values (#{id,jdbcType=BIGINT}, #{category,jdbcType=TINYINT}, #{type,jdbcType=VARCHAR},#{remarkId,jdbcType=BIGINT}, 
 	      #{content,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{sendTime,jdbcType=BIGINT}, 
 	      #{status,jdbcType=TINYINT}, #{createdUid,jdbcType=BIGINT}, #{createdUname,jdbcType=VARCHAR}, 
 	      #{createdTime,jdbcType=BIGINT}, #{updatedTime,jdbcType=BIGINT})
@@ -107,7 +112,7 @@
 		update schedule_message
 		<set>
 			<if test="category != null" > category = #{category,jdbcType=TINYINT}, </if>
-			<if test="type != null" > type = #{type,jdbcType=TINYINT}, </if>
+			<if test="type != null" > type = #{type,jdbcType=VARCHAR}, </if>
 			<if test="remarkId != null" > remrk_id = #{remarkId,jdbcType=BIGINT}, </if>
 			<if test="content != null" > content = #{content,jdbcType=VARCHAR}, </if>
 			<if test="remark != null" > remark = #{remark,jdbcType=VARCHAR}, </if>

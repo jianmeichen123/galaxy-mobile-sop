@@ -5,9 +5,39 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.galaxyinternet.framework.core.utils.DateUtil;
+import com.galaxyinternet.rili.model.ScheduleMessage;
 
 public class UtilOper {
 
+	
+	/**
+	 * 根据传入的    原始的  message.content , 重新封装 message
+	 */
+	public static String getMessContent(ScheduleMessage mess){
+		
+		//您有一个日程将于 <time>2017-4-15 16:56</time> 开始，日程名称"<name>测试其qqqqq程测试</name>"。<id>27</id><type>1.3</type>
+		String content = mess.getContent();
+				
+		try {
+			String dataMark = content.substring(content.indexOf("<id>"), content.length());
+			String timeMark = content.substring(content.indexOf("<time>"), content.indexOf("</time>")+"</time>".length());
+			String nameMark = content.substring(content.indexOf("<name>"), content.indexOf("</name>")+"</name>".length());
+			
+			String nameStr = nameMark.substring(nameMark.indexOf("<name>")+"<name>".length(), nameMark.indexOf("</name>"));
+			
+			String beginTimeStr = timeMark.substring(timeMark.indexOf("<time>")+"<time>".length(), timeMark.indexOf("</time>"));
+			String timeFormat = DateUtil.convertTimeForSuchDay(beginTimeStr);
+			
+			content.replace(dataMark, "").replace(timeMark, timeFormat).replace(nameMark, nameStr);
+		} catch (Exception e) {
+			return mess.getContent();
+		}
+		
+		return content;
+	}
+	
+	
+	
 	
 	
 	/**

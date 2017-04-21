@@ -72,7 +72,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 	 * @return {[toUid:111, toUname:"TEST",toDeptName:"DNAME"]}
 	 */
 	public List<ScheduleShared> queryMySharedUsers(Object objUser,String toUname) {
-		/*	User user = (User)objUser;
+		User user = (User)objUser;
 		
 		ScheduleShared query = new ScheduleShared();
 		query.setCreateUid(user.getId());
@@ -96,9 +96,9 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 				tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
 			}
 		}
-		*/
-		//return cusers;
-		return null;
+		
+		return cusers;
+		
 	}
 
 
@@ -126,7 +126,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 				List<Long> userIds = temp.getUserIds();
 				if(userIds == null || userIds.isEmpty()) continue;
 				
-				Map<Long, String> uidNmaeMap = utilService.queryUidNmaeMap(userIds);
+				//Map<Long, String> uidNmaeMap = utilService.queryUidNmaeMap(userIds);
 				
 				
 				// 部门-相关人数
@@ -142,10 +142,10 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 					comShareQ = new ScheduleShared();
 					
 					comShareQ.setToUid(uidTemp);
-					comShareQ.setToUname(uidNmaeMap.get(uidTemp));
+					//comShareQ.setToUname(uidNmaeMap.get(uidTemp));
 					comShareQ.setDepartmentId(temp.getDeptId());
 					comShareQ.setCreateUid(user.getId());
-					comShareQ.setCreateUname(user.getRealName());
+					//comShareQ.setCreateUname(user.getRealName());
 					
 					toSaveShaerds.add(comShareQ);
 				}
@@ -164,7 +164,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 	@Transactional
 	public void delSharedUser(Long id, ScheduleDepartUno queryDun) {
 		
-		scheduleDepartUnoDao.changeUno(queryDun);
+		//scheduleDepartUnoDao.changeUno(queryDun);
 
 		//删除共享人
 		scheduleSharedDao.deleteById(id);
