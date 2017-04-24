@@ -27,6 +27,13 @@
 		<where>
 			<trim prefixOverrides="and">
 				<if test="id != null"> and id = #{id ,jdbcType=BIGINT} </if>
+				<if test="ids != null">
+					and id IN
+					<foreach collection="ids" index="atem" item="atem" open="(" separator="," close=")">
+						#{atem}
+					</foreach>
+				</if> 
+				
 				<if test="mid != null" > and mid = #{mid ,jdbcType=BIGINT}  </if>
 				
 				<if test="mids != null">
@@ -115,6 +122,41 @@
 		</set>
 		where id = #{id}
 	</update>
+	
+	<update id="updateByIdSelective" parameterType="com.galaxyinternet.rili.model.ScheduleMessageUser">
+		update schedule_message_user
+		<set>
+			<if test="isUse != null" > is_use = #{isUse,jdbcType=TINYINT}, </if>
+			<if test="isSend != null" > is_send = #{isSend,jdbcType=TINYINT}, </if>
+			<if test="isRead != null" > is_read = #{isRead,jdbcType=TINYINT}, </if>
+			<if test="isDel != null" > is_del = #{isDel,jdbcType=TINYINT}, </if>
+			<if test="updatedTime != null" > updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
+		</set>
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and id = #{id ,jdbcType=BIGINT} </if>
+				<if test="ids != null">
+					and id IN
+					<foreach collection="ids" index="atem" item="atem" open="(" separator="," close=")">
+						#{atem}
+					</foreach>
+				</if> 
+				<if test="mid != null" > and mid = #{mid ,jdbcType=BIGINT}  </if>
+				<if test="mids != null">
+					and mid IN
+					<foreach collection="mids" index="item" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if> 
+				<if test="uid != null" > and uid = #{uid ,jdbcType=BIGINT}  </if>
+
+			</trim>
+		</where>
+	</update>
+	
+	
+	
+	
 	
 	
 	<!-- 删除 -->

@@ -2,9 +2,11 @@ package com.galaxyinternet.rili.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,14 @@ import com.galaxyinternet.framework.core.model.PageRequest;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
 import com.galaxyinternet.framework.core.thread.GalaxyThreadPool;
 import com.galaxyinternet.framework.core.utils.DateUtil;
+import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.rili.dao.ScheduleMessageDao;
 import com.galaxyinternet.rili.dao.ScheduleMessageUserDao;
 import com.galaxyinternet.rili.mesHandler.ScheduleMessageGenerator;
+import com.galaxyinternet.rili.model.ScheduleInfo;
 import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
+import com.galaxyinternet.rili.util.SchedulePushMessControlTask;
 
 
 @Service("com.galaxyinternet.rili.service.ScheduleMessageService")
@@ -74,6 +79,73 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	
 	
 	
+	
+	
+	/**
+	 * 个人消息  设为全部已读
+	 * 1.查询出 消息user 表中      个人的   可用   未读  未删除  的数据
+	 * 2.查询出消息内容列表          状态为可用的消息
+     */
+	public void perMessageToRead(Object objUser){
+		
+		User user = (User)objUser;
+		
+		/*
+		private Long mid; // 消息 id
+	    private Long uid; // 接收人 id
+	    private String uname; 
+	    private Byte typeRole; //会议(1:组织人 2:受邀人) 拜访(3:去拜访者 4:被拜访人)
+	    private byte isUse;  //0:可用    1:禁用
+	    private Byte isSend; //0:未发送  1+:已发送
+	    private Byte isRead; //0:未读    1:已读
+	    private Byte isDel;  //0:未删除  1:已删除
+	    */
+		ScheduleMessageUser query = new ScheduleMessageUser();
+		query.setUid(user.getId());
+		query.setIsUse((byte)0);  //0:可用    1:禁用
+		query.setIsRead((byte)0); //0:未读    1:已读
+		query.setIsDel((byte)0);  //0:未删除  1:已删除
+		
+		List<ScheduleMessageUser> mus = scheduleMessageUserDao.selectList(query);
+		
+		if(mus != null && !mus.isEmpty()){
+			
+			Map<Long,Long> muid_mid_map = new HashMap<Long,Long>();
+			
+			for(ScheduleMessageUser tempU: mus){
+				muid_mid_map.put(tempU.getId(), tempU.getMid());
+			}
+			
+			ScheduleMessage mQ = new ScheduleMessage();
+			mQ.setStatus((byte) 0);
+			Set<Long> set = new HashSet<Long>(muid_mid_map.values());
+			mQ.setIds(set);
+			List<ScheduleMessage> mess = scheduleMessageDao.selectList(mQ);
+			
+			if(mess != null && !mess.isEmpty()){
+				List<Long> editMuids = new ArrayList<Long>();
+				for(ScheduleMessage tempm : mess){
+					for(Map.Entry<Long,Long> entry : muid_mid_map.entrySet()) {
+						if(entry.getValue().longValue() == tempm.getId().longValue()){
+							editMuids.add(entry.getKey());
+						}
+					}
+				}
+				
+				ScheduleMessageUser updateU = new ScheduleMessageUser();
+				updateU.setIds(editMuids);
+				updateU.setIsRead((byte)1); //0:未读    1:已读
+				scheduleMessageUserDao.updateByIdSelective(updateU);
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	
+	
 	/**
 	 * 消息   查询   当天需要推送的消息
      */
@@ -106,6 +178,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		ScheduleMessage mQ = new ScheduleMessage();
 		mQ.setBtime(bdate);
 		mQ.setEtime(edate);
+		//mQ.setSendTimeNotNull(true);
 		mQ.setStatus((byte) 1);
 		mQ.setProperty("send_time");
 		mQ.setDirection("asc");
@@ -131,7 +204,13 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 				for(ScheduleMessage tempM : mess){
 					for(ScheduleMessageUser tempU : mus){
 						if(tempU.getMid().longValue() == tempM.getId().longValue()){
-							tempM.getToUsers().add(tempU);
+							if(tempM.getToUsers() == null){
+								List<ScheduleMessageUser> tmus = new ArrayList<ScheduleMessageUser>();
+								tmus.add(tempU);
+								tempM.setToUsers(tmus);
+							}else{
+								tempM.getToUsers().add(tempU);
+							}
 						}
 					}
 					mid_mess_map.put(tempM.getId(), tempM);
@@ -145,9 +224,13 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	
 	
 	
-	
+	/**
+	 * 新增（日程 、、）操作完成后
+	 * 生成对应消息
+	 * ScheduleMessage    ScheduleMessageUser
+     */
 	@Override
-	public void saveMessageByInfo(Object scheduleInfo){
+	public void operateMessageBySaveInfo(Object scheduleInfo){
 		
 		final Object info = scheduleInfo;
 		
@@ -157,6 +240,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 
 				ScheduleMessage message = messageGenerator.process(info);
 				Long mid = scheduleMessageDao.insert(message);
+				
 				/*
 				private Long mid; // 消息 id
 			    private Long uid; // 接收人 id
@@ -173,6 +257,13 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					toInserts.add(toU);
 				}
 				scheduleMessageUserDao.insertInBatch(toInserts);
+				
+				
+				//通知消息 已经改变
+				if(DateUtil.checkLongIsToday(message.getSendTime())){
+					SchedulePushMessControlTask.setHasChanged(true);
+				}
+				
 			}
 		});
 		
@@ -182,9 +273,67 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 
 	
 
-
+	/**
+	 * 删除（日程 、、）操作完成后
+	 * 消息同步修改
+	 * ScheduleMessage    ScheduleMessageUser
+     */
+	@Override
+	public void operateMessageByDeleteInfo(Object scheduleInfo){
+		
+		final Object info = scheduleInfo;
+		
+		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
+			@Override
+			public void run() {
+/*
+				ScheduleInfo model = (ScheduleInfo) info;
+				
+				ScheduleMessage scheduleMessage =scheduleMessageDao.selectById(model.getId());
+				
+				
+				if(scheduleMessage!=null){
+					ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+					
+					scheduleMessageUser.setMid(scheduleMessage.getId());
+					
+					List<ScheduleMessageUser> sss = scheduleMessageUserDao.selectList(scheduleMessageUser);
+					
+					ScheduleMessageUser schuleMgeUser = new ScheduleMessageUser();
+					schuleMgeUser.setId(sss.getId());
+					schuleMgeUser.setIsDel((byte)1);
+					
+					scheduleMessageUserDao.updateById(schuleMgeUser);
+					
+				}
+				*/
+			}
+		});
+		
+	}
 
 	
+	
+	/**
+	 * 修改（日程 、、）操作完成后
+	 * 消息同步修改
+	 * ScheduleMessage    ScheduleMessageUser
+     */
+	@Override
+	public void operateMessageByUpdateInfo(Object scheduleInfo){
+		
+		final Object info = scheduleInfo;
+		
+		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
+			@Override
+			public void run() {
+
+
+
+			}
+		});
+		
+	}
 	
 	
 }

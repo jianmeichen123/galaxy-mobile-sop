@@ -11,11 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.galaxyinternet.common.utils.WebUtils;
 import com.galaxyinternet.framework.core.exception.BusinessException;
 import com.galaxyinternet.framework.core.thread.GalaxyThreadPool;
-import com.galaxyinternet.framework.core.utils.BeanContextUtils;
 import com.galaxyinternet.rili.dao.ScheduleMessageDao;
+import com.galaxyinternet.rili.dao.ScheduleMessageUserDao;
 import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
@@ -34,8 +33,8 @@ public class SchedulePushMessTask extends BaseGalaxyTask{
 	//public static final String CACHE_SCHEDULE_MESS_TODAY_TOSEND = "SCHEDULE_MESS_TODAY_TOSEND";   
 	
 	
-	//定义消息 可以延后发送的时间，  00:1分钟发送  + 延后 2分钟  
-	public static final long TO_LAZY_TIME_BY_MESSAGE = (long) 2 * 60 * 1000 ;
+	//定义消息 可以延后发送的时间，  00:1分钟发送  + 延后 5分钟  
+	public static final long TO_LAZY_TIME_BY_MESSAGE = (long) 5 * 60 * 1000 ;
 	
 	
 	//定义消息推送线程的name
@@ -59,13 +58,10 @@ public class SchedulePushMessTask extends BaseGalaxyTask{
 	@Autowired
 	private ScheduleMessageService scheduleMessageService;
 	
-	/*@Autowired
-	private ScheduleMessageUserDao scheduleMessageUserDao;*/
-	
-	
-	//@Autowired
-	//private Cache cache;
-	
+	@Autowired
+	private ScheduleMessageDao scheduleMessageDao;
+	@Autowired
+	private ScheduleMessageUserDao scheduleMessageUserDao;
 	
 	
 	
@@ -99,7 +95,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask{
 		
 		SchedulePushMessTask.mid_mess_map = scheduleMessageService.queryTodayMessToSend();
 		if(SchedulePushMessTask.mid_mess_map != null && !SchedulePushMessTask.mid_mess_map.isEmpty()){
-			sendUtil = new Thread(new ToSendMessage(),SchedulePushMessTask.THREAD_NAME_SCHEDULE_MESS_TODAY_TOSEND);
+			sendUtil = new Thread(new ToSendMessage(scheduleMessageDao,scheduleMessageUserDao),SchedulePushMessTask.THREAD_NAME_SCHEDULE_MESS_TODAY_TOSEND);
 			sendUtil.start();
 			
 		}
@@ -113,7 +109,13 @@ class ToSendMessage implements Runnable{
 
 	private final static Logger logger = LoggerFactory.getLogger(ToSendMessage.class);
 	
-	//ScheduleMessageDao scheduleMessageDao = BeanContextUtils.getBean(ScheduleMessageDao.class);
+	private ScheduleMessageDao scheduleMessageDao;
+	private ScheduleMessageUserDao scheduleMessageUserDao;
+	
+	public ToSendMessage(ScheduleMessageDao scheduleMessageDao,ScheduleMessageUserDao scheduleMessageUserDao){
+		this.scheduleMessageDao = scheduleMessageDao;
+		this.scheduleMessageUserDao = scheduleMessageUserDao;
+	}
 	
 	
 	@Override
@@ -137,17 +139,17 @@ class ToSendMessage implements Runnable{
 			long current = System.currentTimeMillis();
 			if(mess.getSendTime().longValue() -(long) 2 > current){   //发送时间  》 当前时间    等待
 				try {
-					Thread.sleep(mess.getSendTime().longValue() - current);
+					Thread.sleep(mess.getSendTime().longValue() -(long) 2 - current);
 				} catch (InterruptedException e) {
 					logger.error("ToSendMessage . run Interrupted", e.getMessage());
 				}
-			}else if(mess.getSendTime().longValue() < (current - SchedulePushMessTask.TO_LAZY_TIME_BY_MESSAGE)){  //发送时间  《 当前时间+2m  跳过不发
+			}else if(mess.getSendTime().longValue() < (current - SchedulePushMessTask.TO_LAZY_TIME_BY_MESSAGE)){  //发送时间  《 当前时间+ lazy tm  跳过不发
 				toContinue = true;
 			}
 			
 			
 			mess.setStatus((byte) 0);
-			//scheduleMessageDao.updateById(mess);
+			scheduleMessageDao.updateById(mess);
 			if(toContinue){
 				toContinue = false;
 				continue;
@@ -182,6 +184,10 @@ class ToSendMessage implements Runnable{
 				}
 			});
 			
+			
+			if(!iterator.hasNext()){
+				SchedulePushMessTask.setMid_mess_map(null);
+			}
 		}
 		
 		System.err.println("------------------------------------------ run end --------------------------------------");

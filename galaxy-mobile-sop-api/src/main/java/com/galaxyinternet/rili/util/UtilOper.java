@@ -19,7 +19,7 @@ public class UtilOper {
 		String content = mess.getContent();
 				
 		try {
-			String dataMark = content.substring(content.indexOf("<id>"), content.length());
+			//String dataMark = content.substring(content.indexOf("<id>"), content.length());
 			String timeMark = content.substring(content.indexOf("<time>"), content.indexOf("</time>")+"</time>".length());
 			String nameMark = content.substring(content.indexOf("<name>"), content.indexOf("</name>")+"</name>".length());
 			
@@ -28,7 +28,7 @@ public class UtilOper {
 			String beginTimeStr = timeMark.substring(timeMark.indexOf("<time>")+"<time>".length(), timeMark.indexOf("</time>"));
 			String timeFormat = DateUtil.convertTimeForSuchDay(beginTimeStr);
 			
-			content.replace(dataMark, "").replace(timeMark, timeFormat).replace(nameMark, nameStr);
+			content = content.replace(timeMark, timeFormat).replace(nameMark, nameStr);
 		} catch (Exception e) {
 			return mess.getContent();
 		}

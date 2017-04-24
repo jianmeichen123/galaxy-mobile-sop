@@ -5,12 +5,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +30,7 @@ import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
+import com.galaxyinternet.rili.service.ScheduleMessageUserService;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 
 
@@ -39,6 +43,8 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 	@Autowired
 	private ScheduleMessageService scheduleMessageService;
 
+	@Autowired
+	private ScheduleMessageUserService scheduleMessageUserService;
 
 
 	@Override
@@ -53,7 +59,7 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 	 * 个人消息 列表查询
      */
 	@ResponseBody
-	@RequestMapping(value = "/querySchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/querySchedule", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<ScheduleMessageUser> querySchedule(HttpServletRequest request,@RequestBody ScheduleMessageUser query ) {
 		
 		ResponseData<ScheduleMessageUser> responseBody = new ResponseData<ScheduleMessageUser>();
@@ -67,9 +73,10 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 			Integer pageNum = query.getPageNum() != null ? query.getPageNum() : 0;
 			Integer pageSize = query.getPageSize() != null ? query.getPageSize() : 10;
 			String property = query.getProperty() != null ? query.getProperty() : "created_time";
-			String direction = query.getDirection() != null ? query.getDirection() : "desc";
+			String dir = query.getDirection() != null ? query.getDirection() : "desc";
 			
-			pageable = new PageRequest(pageNum,pageSize, new Sort(direction,property));
+			Direction direction = Direction.fromString(dir);
+			pageable = new PageRequest(pageNum,pageSize, direction, property);
 			
 			query.setUid(user.getId());
 			query.setIsDel((byte) 0);
@@ -90,11 +97,59 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 	
 	
 	
-	
+	/**
+	 * 已读
+     */
+	@ResponseBody
+	@RequestMapping(value = "/toRead/{muid}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleMessageUser> toRead(HttpServletRequest request,@PathVariable Long muid ) {
+		
+		ResponseData<ScheduleMessageUser> responseBody = new ResponseData<ScheduleMessageUser>();
+		
+		try {
+			User user = (User)request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			
+			ScheduleMessageUser updateU = new ScheduleMessageUser();
+			updateU.setId(muid);
+			updateU.setIsRead((byte)1); //0:未读    1:已读
+			scheduleMessageUserService.updateById(updateU);
+			
+			responseBody.setResult(new Result(Status.OK, ""));
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"异常"));
+			logger.error("ScheduleMessageController . toRead 异常",e);
+		}
+		
+		return responseBody;
+	}
 	
 	
 
-	
+	/**
+	 * 个人消息列表  设为全部已读
+	 * 1.查询出 消息user 表中      个人的   可用   未读  未删除  的数据
+	 * 2.查询出消息内容列表          状态为可用的消息
+     */
+	@ResponseBody
+	@RequestMapping(value = "/perMessageToRead", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleMessageUser> perMessageToRead(HttpServletRequest request ) {
+		
+		ResponseData<ScheduleMessageUser> responseBody = new ResponseData<ScheduleMessageUser>();
+		
+		try {
+			Object objU = request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			
+			//结果查询  封装
+			scheduleMessageService.perMessageToRead(objU);
+			
+			responseBody.setResult(new Result(Status.OK, ""));
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"异常"));
+			logger.error("ScheduleMessageController . perMessageToRead 异常",e);
+		}
+		
+		return responseBody;
+	}
 	
 	
 	

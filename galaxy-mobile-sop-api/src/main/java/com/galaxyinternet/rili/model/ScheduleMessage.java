@@ -36,6 +36,9 @@ public class ScheduleMessage extends PagableEntity {
 	
 	private Long btime;  // 消息发送时间
 	private Long etime;  // 消息发送时间
+	private Boolean sendTimeNotNull;
+	
+	
 	
 	public Byte getCategory() {
 		return category;
@@ -111,7 +114,7 @@ public class ScheduleMessage extends PagableEntity {
 	}
 
 	public List<ScheduleMessageUser> getToUsers() {
-		return toUsers == null ? new ArrayList<ScheduleMessageUser>() : toUsers;
+		return toUsers;
 	}
 
 	public void setToUsers(List<ScheduleMessageUser> toUsers) {
@@ -141,6 +144,14 @@ public class ScheduleMessage extends PagableEntity {
 
 	public void setEtime(Long etime) {
 		this.etime = etime;
+	}
+
+	public Boolean getSendTimeNotNull() {
+		return sendTimeNotNull;
+	}
+
+	public void setSendTimeNotNull(Boolean sendTimeNotNull) {
+		this.sendTimeNotNull = sendTimeNotNull;
 	}
 
 

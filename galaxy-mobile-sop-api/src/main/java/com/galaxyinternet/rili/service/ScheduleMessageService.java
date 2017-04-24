@@ -18,13 +18,32 @@ public interface ScheduleMessageService extends BaseService<ScheduleMessage>{
      */
 	List<ScheduleMessageUser> queryPerMessAndConvertList(ScheduleMessageUser query, PageRequest pageable);
 	
+	
+	/**
+	 * 个人消息列表  设为全部已读
+	 * 1.查询出 消息user 表中      个人的   可用   未读  未删除  的数据
+	 * 2.查询出消息内容列表          状态为可用的消息
+     */
+	void perMessageToRead(Object objUser);
+	
+	
 	/**
 	 * 消息   查询   当天需要推送的消息
      */
 	LinkedHashMap<Long,ScheduleMessage> queryTodayMessToSend();
 	
 
-	void saveMessageByInfo(Object scheduleInfo);
+	/**
+	 * 新增  修改  删除（日程 、、）操作完成后
+	 * 消息同步修改
+	 * ScheduleMessage    ScheduleMessageUser
+     */
+	void operateMessageBySaveInfo(Object scheduleInfo);
+	void operateMessageByDeleteInfo(Object scheduleInfo);
+	void operateMessageByUpdateInfo(Object scheduleInfo);
+
+	
+	
 
 	
 }

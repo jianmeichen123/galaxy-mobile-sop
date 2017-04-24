@@ -163,12 +163,12 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			scheduleInfo.setCreatedId(user.getId());
 			
 			Long id = scheduleInfoService.insert(scheduleInfo);
-			scheduleInfo.setMessageType("save_schedule");
+			scheduleInfo.setMessageType("1.3.1");
 			scheduleInfo.setId(id);
 			scheduleInfo.setUserName(user.getRealName());
 			responseBody.setId(id);			
 			responseBody.setResult(new Result(Status.OK, null,"添加日程成功"));
-			scheduleMessageService.saveMessageByInfo(scheduleInfo);
+			scheduleMessageService.operateMessageBySaveInfo(scheduleInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.setResult(new Result(Status.ERROR, null,"添加日程失败"));
@@ -191,33 +191,6 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			ScheduleInfo ss = scheduleInfoService.queryById(Long.valueOf(id));
 			if(ss!=null){
 				int y = scheduleInfoService.deleteById(Long.valueOf(id));
-				
-				
-				ScheduleMessage schmess = new ScheduleMessage();
-				
-				schmess.setRemarkId(Long.parseLong(id));
-				schmess.setType("1.3");
-				
-				ScheduleMessage scheduleMessage =scheduleMessageService.queryOne(schmess);
-				
-				
-				if(scheduleMessage!=null){
-					ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
-					
-					scheduleMessageUser.setMid(scheduleMessage.getId());
-					scheduleMessageUser.setUid(user.getId());
-					
-					ScheduleMessageUser sss = scheduleMessageUserService.queryOne(scheduleMessageUser);
-					
-					ScheduleMessageUser schuleMgeUser = new ScheduleMessageUser();
-					
-					schuleMgeUser.setId(sss.getId());
-					schuleMgeUser.setIsDel((byte)1);
-					
-					scheduleMessageUserService.updateById(schuleMgeUser);
-					
-				}
-				
 				responseBody.setResult(new Result(Status.OK, null,"删除其他日程成功"));
 				System.out.println(y);
 			}else{

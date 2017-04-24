@@ -45,6 +45,8 @@
 				<if test="remark != null" > and remark = #{remark ,jdbcType=VARCHAR}  </if>
 				<if test="sendTime != null" > and send_time = #{sendTime ,jdbcType=BIGINT}  </if>
 				
+				<if test="sendTimeNotNull != null" > and send_time is not null  </if>
+				
 				<if test="btime != null"> <![CDATA[ and send_time >= #{btime,jdbcType=BIGINT} ]]> </if>
 			    <if test="etime != null"> <![CDATA[ and send_time <= #{etime,jdbcType=BIGINT} ]]> </if>
 			    
@@ -57,7 +59,7 @@
 			</trim>
 			
 			<if test="sorting != null">order by ${sorting}</if>
-			<if test="property != null">order by ${property} ${direction}</if>
+			<!-- <if test="property != null">order by ${property} ${direction}</if> -->
 			
 			<if test="offset != null and limit != null">
 				limit #{offset}, #{limit}

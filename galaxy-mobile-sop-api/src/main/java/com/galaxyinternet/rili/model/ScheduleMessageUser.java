@@ -30,6 +30,9 @@ public class ScheduleMessageUser extends PagableEntity {
 
     
     
+    
+    private List<Long> ids;
+    
     private ScheduleMessage message;
     
     private List<Long> mids;
@@ -98,6 +101,14 @@ public class ScheduleMessageUser extends PagableEntity {
     public void setIsDel(Byte isDel) {
         this.isDel = isDel;
     }
+
+	public List<Long> getIds() {
+		return ids;
+	}
+
+	public void setIds(List<Long> ids) {
+		this.ids = ids;
+	}
 
 	public ScheduleMessage getMessage() {
 		return message;
