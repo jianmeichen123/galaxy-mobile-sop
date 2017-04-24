@@ -21,20 +21,21 @@ public class SchedulePushMessControlTask extends BaseGalaxyTask{
 	
 	
 	
-	// 是否改变
-	private static boolean hasChanged = false;
+	
 	// 是否在校验
 	private static boolean hasChecked = false;
 	
 	// 等待校验时间（ executeInteral 运行时间）
-	private static long waitTime = 500;
+	private static long waitTime = 20;
 	
 	
 	
+	
+	// 是否改变
+	private static boolean hasChanged = false;
 	public static boolean isHasChanged() {
 		return hasChanged;
 	}
-
 	public synchronized static void setHasChanged(boolean hasChanged) {
 		
 		while(hasChecked){
@@ -61,12 +62,12 @@ public class SchedulePushMessControlTask extends BaseGalaxyTask{
 		SchedulePushMessControlTask.hasChecked = true;
 		
 		if(SchedulePushMessControlTask.hasChanged){
+			SchedulePushMessControlTask.hasChanged = false;
 			schedulePushMessTask.executeInteral();
 		}
 		
 		SchedulePushMessControlTask.hasChecked = false;
 	}
-
 
 	
 	
