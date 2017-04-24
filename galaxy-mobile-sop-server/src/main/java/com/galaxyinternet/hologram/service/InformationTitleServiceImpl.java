@@ -593,7 +593,14 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 		resultQuery.setTitleIds(titleIds);
 		resultQuery.setProperty("title_id");
 		resultQuery.setDirection(Direction.ASC.toString());
-		Map<Long, String> dict = (Map<Long, String>) cache.get(CacheOperationServiceImpl.CACHE_KEY_VALUE_ID_NAME);
+		//Map<Long, String> dict = (Map<Long, String>) cache.get(CacheOperationServiceImpl.CACHE_KEY_VALUE_ID_NAME);
+		Map<Long,String> dict = new HashMap<Long,String>();
+		
+		//cache.remove(CacheOperationServiceImpl.CACHE_KEY_VALUE_ID_NAME);
+		List<InformationDictionary> allValue = informationDictionaryDao.selectAll();
+		for(InformationDictionary avalue : allValue){
+			dict.put(avalue.getId(), avalue.getName());
+		}
 		List<InformationResult> resultList = resultDao.selectList(resultQuery);
 		if(resultList != null && resultList.size() > 0)
 		{
