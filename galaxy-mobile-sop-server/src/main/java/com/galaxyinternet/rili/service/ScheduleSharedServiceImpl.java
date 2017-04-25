@@ -76,7 +76,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 			Map<Long, String> name = new HashMap<Long, String>();
 			 JsonParser parser=new JsonParser(); 
 		   	 JsonObject object=(JsonObject) parser.parse(content);
-		   	if(object.get("value")!=null){
+		   	if(object.get("success").getAsBoolean()){
 			   	 JsonArray array=object.get("value").getAsJsonArray();
 			   	 for(int i=0;i<array.size();i++){
 		             JsonObject subObject=array.get(i).getAsJsonObject();
@@ -123,7 +123,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 				Map<Long, String> name = new HashMap<Long, String>();
 				 JsonParser parser=new JsonParser(); 
 			   	 JsonObject object=(JsonObject) parser.parse(content);
-			   	 if(object.get("value")!=null){
+			   	if(object.get("success").getAsBoolean()){
 				   	 JsonArray array=object.get("value").getAsJsonArray();
 				   	 for(int i=0;i<array.size();i++){
 			             JsonObject subObject=array.get(i).getAsJsonObject();
@@ -147,10 +147,10 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("userName", toUname);
 			String content = httpClientUtils.send("http://10.8.232.205/authority_service/user/findUserByName", map);
-
+//			/content.indexOf("\"value":"null"/");
 			 JsonParser parser=new JsonParser(); 
 		   	 JsonObject object=(JsonObject) parser.parse(content);
-		   	 if(object.get("value")!=null){
+		   	if(object.get("success").getAsBoolean()){
 			   	 JsonArray array=object.get("value").getAsJsonArray();
 			   	for(int i=0;i<array.size();i++){
 		             JsonObject subObject=array.get(i).getAsJsonObject();

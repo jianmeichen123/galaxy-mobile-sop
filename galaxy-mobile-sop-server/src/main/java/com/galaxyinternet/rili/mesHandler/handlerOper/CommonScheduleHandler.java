@@ -39,7 +39,7 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 
 	public boolean support(Object info) {
 		ScheduleInfo message = (ScheduleInfo) info;
-		return  message != null && map.containsKey(message.getMessageType());
+		return  message != null && (map.containsKey(message.getMessageType()) || message.getMessageType().startsWith("1.3"));
 	}
 
 	
@@ -52,24 +52,22 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 		String startTime = model.getStartTime().replace("/","-");
 		byte isAllday = model.getIsAllday(); //是否全天 0:否 1:是
 		Long dictId = model.getWakeupId();
-		Long smessId = model.getId();
+		Long info_id = model.getId();
 		
 		//消息内容
 		message.setCategory((byte) 0);  // 0:操作消息  1:系统消息
 		message.setType("1.3");         // 消息类型  日程(1.1:会议  1.2:拜访  1.3:其它)
-		message.setRemarkId(smessId);
+		message.setRemarkId(info_id);
 		message.setCreatedUid(model.getCreatedId());
 		message.setCreatedUname(model.getUserName());
 		
 		StringBuffer content = new StringBuffer();
-		if(model.getMessageType().equals(add_com_schedule)){
+		//if(model.getMessageType().equals(add_com_schedule)){
 			content.append("您有一个日程将于 ");
 			content.append("<time>").append(startTime).append("</time>");
 			content.append(" 开始，");
 			content.append("日程名称\"").append("<name>").append(model.getName()).append("</name>\"。");
-			//content.append("<id>").append(model.getId()).append("</id>");
-			//content.append("<type>1.3</type>");
-		}
+		//}
 		message.setContent(content.toString());
 		
 		
@@ -77,7 +75,6 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 		try {
 			message.setSendTime(UtilOper.getSendTimeBy(startTime, isAllday, dictId));
 		} catch (ParseException e) {
-			e.printStackTrace();
 			message.setSendTime(null);
 			logger.error("CommonScheduleHandler . handle sendtime 异常 ",e.getMessage());
 		}

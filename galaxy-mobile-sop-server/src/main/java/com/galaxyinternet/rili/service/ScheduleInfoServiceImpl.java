@@ -1,6 +1,7 @@
 package com.galaxyinternet.rili.service;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.galaxyinternet.framework.core.dao.BaseDao;
+import com.galaxyinternet.framework.core.model.Result;
+import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
 import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.rili.dao.ScheduleDepartUnoDao;
@@ -295,8 +298,31 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		return content;
 	}
+	/**
+	 * 判断今天 添加其他日程 是否超过20个
+	 */
+	public String getCountSchedule(ScheduleInfo query){
+		
+		ScheduleInfo scheduleInfo = new ScheduleInfo();
+		scheduleInfo.setCreatedId(query.getCreatedId());
+		scheduleInfo.setType((byte) 3);
+		String content = null;
+		
+		String bqStartTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 00:00:00";
+		String bqEndTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 23:59:59";
+		
 
+		scheduleInfo.setBqEndTime(bqEndTime);
+		scheduleInfo.setBqStartTime(bqStartTime);
 
+		List<ScheduleInfo> qList = scheduleInfoDao.selectList(scheduleInfo);
+		if(qList != null && !qList.isEmpty()){
+			if(qList.size() >20){
+				content = "您每天最多可创建20条日程，无法再创建了。";				
+			}
+		}
+	return content;
+	}
 	/**
 	 * 添加 会议及与会人
 	 */

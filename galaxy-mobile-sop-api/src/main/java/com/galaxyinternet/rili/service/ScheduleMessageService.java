@@ -26,11 +26,16 @@ public interface ScheduleMessageService extends BaseService<ScheduleMessage>{
      */
 	void perMessageToRead(Object objUser);
 	
+	/**
+	 * 个人消息列表 清空
+     */
+	void perMessageToClear(Object objUser);
+	
 	
 	/**
 	 * 消息   查询   当天需要推送的消息
      */
-	LinkedHashMap<Long,ScheduleMessage> queryTodayMessToSend();
+	List<ScheduleMessage> queryTodayMessToSend();
 	
 
 	/**
@@ -39,8 +44,8 @@ public interface ScheduleMessageService extends BaseService<ScheduleMessage>{
 	 * ScheduleMessage    ScheduleMessageUser
      */
 	void operateMessageBySaveInfo(Object scheduleInfo);
-	void operateMessageByDeleteInfo(Object scheduleInfo);
-	void operateMessageByUpdateInfo(Object scheduleInfo);
+	void operateMessageByDeleteInfo(Object scheduleInfo, String messageType);
+	void operateMessageByUpdateInfo(Object scheduleInfo, String messageType);
 
 	
 	

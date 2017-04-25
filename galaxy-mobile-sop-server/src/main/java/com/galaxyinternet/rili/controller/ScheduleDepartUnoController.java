@@ -21,7 +21,9 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.rili.model.ScheduleDepartUno;
+import com.galaxyinternet.rili.model.SharePerson;
 import com.galaxyinternet.rili.service.ScheduleDepartUnoService;
+import com.galaxyinternet.rili.util.UtilUser;
 
 
 @Controller
@@ -169,6 +171,36 @@ public class ScheduleDepartUnoController  extends BaseControllerImpl<ScheduleDep
 		
 		return responseBody;
 	}
+	/***
+	 * 
+	 * 通过http获取 返回的数据 给app用于添加共享处的 模糊查询 
+	 */
+	
+	@ResponseBody
+	@RequestMapping(value = "/queryAppPerson", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<SharePerson> queryAppPerson(HttpServletRequest request,@RequestBody ScheduleDepartUno query ) {
+		
+		ResponseData<SharePerson> responseBody = new ResponseData<SharePerson>();
+		
+		try{
+			Object objUser = request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			
+			List<SharePerson> s = scheduleDepartUnoService.queryAppPerson(objUser,query);
+			
+
+			
+			responseBody.setEntityList(s);
+			responseBody.setResult(new Result(Status.OK, "查询人名成功"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null, "查询失败"));
+			logger.error("queryDeptUinfo 异常 ");
+		}
+		
+		return responseBody;
+	}
+	
+	
 	
 	
 	

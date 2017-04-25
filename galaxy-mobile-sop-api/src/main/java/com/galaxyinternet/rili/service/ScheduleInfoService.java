@@ -47,7 +47,12 @@ public interface ScheduleInfoService extends BaseService<ScheduleInfo>{
 	 */
 	//public void updatePlanSchedule(Object objUser,ScheduleInfo scheduleInfo);
 	
-	
+	/**
+	 * 校验超过20个没有
+	 * @param scheduleInfo
+	 * @return
+	 */
+	public String getCountSchedule(ScheduleInfo query);
 	
 	
 }

@@ -158,9 +158,16 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		}
 		*/
 		try {
+
 			//标识是 其他日程
 			scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
+			
+			String cont = scheduleInfoService.getCountSchedule(scheduleInfo);
+			if(cont!=null){
+				responseBody.setResult(new Result(Status.ERROR, null,cont));
+				return responseBody;
+			}
 			
 			Long id = scheduleInfoService.insert(scheduleInfo);
 			scheduleInfo.setMessageType("1.3.1");
@@ -189,14 +196,27 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		User user = (User) getUserFromSession(request);
 		try{
 			ScheduleInfo ss = scheduleInfoService.queryById(Long.valueOf(id));
+			/*if(ss.getStartTime())*/
+
+		
 			if(ss!=null){
+				//判断是否过期
+				Long st= DateUtil.stringToLong(ss.getStartTime(), "yyyy-MM-dd HH:mm");
+				
+				if(System.currentTimeMillis()>st){
+					
+					responseBody.setResult(new Result(Status.ERROR, null,"此其他日程过期了"));
+					return responseBody;
+				}				
 				int y = scheduleInfoService.deleteById(Long.valueOf(id));
 				responseBody.setResult(new Result(Status.OK, null,"删除其他日程成功"));
 				System.out.println(y);
+				scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
 			}else{
 				responseBody.setResult(new Result(Status.ERROR, null,"此其他日程不存在"));
 				return responseBody;
 			}
+	
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.setResult(new Result(Status.ERROR, null,"删除其他日程失败"));
@@ -212,14 +232,23 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectOtherScheduleById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseData<ScheduleInfo> selectOtherScheduleById(@PathVariable String id) {
-		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();		
+	public ResponseData<ScheduleInfo> selectOtherScheduleById(@PathVariable String id,HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
 		try{
 			
 			ScheduleInfo ss = scheduleInfoService.queryById(Long.valueOf(id));
+			
+
+			
 			if(ss==null){
 				responseBody.setResult(new Result(Status.ERROR, null,"其他日程不存在"));
 				return responseBody;
+			}
+			//为了防止共享的人查看详情
+			if(ss.getCreatedId().longValue()!=user.getId().longValue()){
+				responseBody.setResult(new Result(Status.ERROR, null,"没有查看的权限"));
+				return responseBody;				
 			}
 			if(ss.getStartTime()!=null){
 				
@@ -271,10 +300,18 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		try {
 			ScheduleInfo ss =scheduleInfoService.queryById(scheduleInfo.getId());
 			if(ss!=null){
+				//判断是否过期
+				Long st= DateUtil.stringToLong(ss.getStartTime(), "yyyy-MM-dd HH:mm");
+				
+				if(System.currentTimeMillis()>st){
+					
+					responseBody.setResult(new Result(Status.ERROR, null,"此其他日程过期了"));
+					return responseBody;
+				}				
 				scheduleInfo.setUpdatedId(user.getId());
 				int y= scheduleInfoService.updateById(scheduleInfo);
 				responseBody.setResult(new Result(Status.OK, null,"修改其他日程成功"));
-				
+				scheduleMessageService.operateMessageByUpdateInfo(ss, "1.3");
 			}else{				
 				responseBody.setResult(new Result(Status.ERROR, null,"其他日程不存在"));
 				return responseBody;
@@ -628,11 +665,11 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		return responseBody;
 	}
 	
-	*//**
+	/**
 	 * 删除拜访日程
 	 * @param id
 	 * @return
-	 *//*
+/*
 	@ResponseBody
 	@RequestMapping(value = "/deletePlanScheduleById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseData<ScheduleInfo> deletePlanScheduleById(@PathVariable String id) {
