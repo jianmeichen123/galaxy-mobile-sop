@@ -1,8 +1,10 @@
 package com.galaxyinternet.rili.service;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,10 @@ import com.galaxyinternet.rili.model.ScheduleDepartUno;
 import com.galaxyinternet.rili.model.ScheduleShared;
 import com.galaxyinternet.rili.util.DeptNoUsers;
 import com.galaxyinternet.rili.util.UtilService;
+import com.galaxyinternet.rili.util.httpClientUtils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 
 @Service("com.galaxyinternet.rili.service.ScheduleSharedService")
@@ -55,10 +61,36 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 		cusers.add(my);
 		
 		ScheduleShared query = new ScheduleShared();
-		query.setToUid(user.getId());
+		query.setToUid(16L);
 		List<ScheduleShared> qList = scheduleSharedDao.selectList(query);
 		
 		if(qList!=null && !qList.isEmpty()){
+			List<Long> uids = new ArrayList<Long>();
+			for(ScheduleShared tempU : qList){
+				uids.add(tempU.getCreateUid());
+			}
+			
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("userIds", object2JSONString(uids));
+			String content = httpClientUtils.send("http://10.8.232.205/authority_service/user/getUserByIds", map);
+			Map<Long, String> name = new HashMap<Long, String>();
+			 JsonParser parser=new JsonParser(); 
+		   	 JsonObject object=(JsonObject) parser.parse(content);
+		   	if(object.get("value")!=null){
+			   	 JsonArray array=object.get("value").getAsJsonArray();
+			   	 for(int i=0;i<array.size();i++){
+		             JsonObject subObject=array.get(i).getAsJsonObject();
+		             String ids = subObject.get("userId").getAsString();
+		             String userName = subObject.get("userName").getAsString();
+		             Long userId = Long.valueOf(ids);
+		             name.put(userId, userName);		   		 
+			   	 }
+		   	}
+		   	for(ScheduleShared tempU : qList){
+//				/tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
+				tempU.setToUname(name.get(tempU.getCreateUid()));
+			}
+						
 			cusers.addAll(qList);
 		}
 		return cusers;
@@ -73,34 +105,73 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 	 */
 	public List<ScheduleShared> queryMySharedUsers(Object objUser,String toUname) {
 		User user = (User)objUser;
-		
+		List<ScheduleShared> cusers ;
 		ScheduleShared query = new ScheduleShared();
 		query.setCreateUid(user.getId());
-		if(toUname!=null){
-			query.setToUname(toUname);
-		}
-		List<ScheduleShared> cusers = scheduleSharedDao.selectList(query);
-		
-		if(cusers!=null && !cusers.isEmpty()){
-			List<Long> uids = new ArrayList<Long>();
-			List<Long> depts = new ArrayList<Long>();
-			for(ScheduleShared tempU : cusers){
-				//uids.add(tempU.getToUid());
-				depts.add(tempU.getDepartmentId());
+		if(toUname==null){
+			cusers = scheduleSharedDao.selectList(query);		
+			if(cusers!=null && !cusers.isEmpty()){
+				List<Long> uids = new ArrayList<Long>();
+				//List<Long> depts = new ArrayList<Long>();
+				for(ScheduleShared tempU : cusers){
+					uids.add(tempU.getToUid());
+					//depts.add(tempU.getDepartmentId());
+				}
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("userIds", object2JSONString(uids));
+				String content = httpClientUtils.send("http://10.8.232.205/authority_service/user/getUserByIds", map);
+				Map<Long, String> name = new HashMap<Long, String>();
+				 JsonParser parser=new JsonParser(); 
+			   	 JsonObject object=(JsonObject) parser.parse(content);
+			   	 if(object.get("value")!=null){
+				   	 JsonArray array=object.get("value").getAsJsonArray();
+				   	 for(int i=0;i<array.size();i++){
+			             JsonObject subObject=array.get(i).getAsJsonObject();
+			             String ids = subObject.get("userId").getAsString();
+			             String userName = subObject.get("userName").getAsString();
+			             Long userId = Long.valueOf(ids);
+			             name.put(userId, userName);		   		 
+				   	 }
+			   	 }
+				//Map<Long, String> uidNmaeMap = utilService.queryUidNmaeMap(uids);
+			//	Map<Long, String> deptIdNmaeMap = utilService.queryDeptIdNmaeMap(uids);
+				
+				for(ScheduleShared tempU : cusers){
+	//				/tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
+					tempU.setToUname(name.get(tempU.getToUid()));
+				}
 			}
-			
-			//Map<Long, String> uidNmaeMap = utilService.queryUidNmaeMap(uids);
-			Map<Long, String> deptIdNmaeMap = utilService.queryDeptIdNmaeMap(uids);
-			
-			for(ScheduleShared tempU : cusers){
-				tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
-			}
-		}
-		
-		return cusers;
-		
-	}
+			return cusers ;
+		}else{
+			cusers = new ArrayList<ScheduleShared>();
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("userName", toUname);
+			String content = httpClientUtils.send("http://10.8.232.205/authority_service/user/findUserByName", map);
 
+			 JsonParser parser=new JsonParser(); 
+		   	 JsonObject object=(JsonObject) parser.parse(content);
+		   	 if(object.get("value")!=null){
+			   	 JsonArray array=object.get("value").getAsJsonArray();
+			   	for(int i=0;i<array.size();i++){
+		             JsonObject subObject=array.get(i).getAsJsonObject();
+		             String ids = subObject.get("userId").getAsString();
+		             String userName = subObject.get("userName").getAsString();
+		             Long userId = Long.valueOf(ids);
+		             query.setToUid(userId);
+		             ScheduleShared scheduleShared = scheduleSharedDao.selectOne(query);
+		            
+		             if(scheduleShared!=null){
+		            	 scheduleShared.setToUname(userName);
+		            	 cusers.add(scheduleShared);
+		             }	             
+			   		 
+			   	 }
+		   	 }
+		    return cusers;
+
+		}
+		
+	}	
 
 	/**
 	 * 添加共享人
@@ -178,6 +249,14 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 	}
 
 	
-	
+	private String object2JSONString(Object object){
+		String jsonString = null;
+		try{
+			jsonString = new ObjectMapper().writeValueAsString(object);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return jsonString;
+	}
 	
 }

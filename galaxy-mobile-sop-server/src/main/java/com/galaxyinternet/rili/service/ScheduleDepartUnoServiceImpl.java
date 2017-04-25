@@ -1,6 +1,7 @@
 package com.galaxyinternet.rili.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,12 @@ import com.galaxyinternet.rili.model.ScheduleDepartUno;
 import com.galaxyinternet.rili.model.ScheduleMettingUsers;
 import com.galaxyinternet.rili.model.ScheduleShared;
 import com.galaxyinternet.rili.util.UtilUser;
+import com.galaxyinternet.rili.util.httpClientUtils;
 import com.galaxyinternet.service.DepartmentService;
 import com.galaxyinternet.service.UserService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @Service("ScheduleDepartUnoService")
 public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepartUno> implements ScheduleDepartUnoService{
@@ -57,27 +62,94 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 		List<ScheduleDepartUno> resultList = new ArrayList<ScheduleDepartUno>();
 		
 		byte remarkType = query.getRemarkType();
-		Long userDdptId = user.getDepartmentId();
-		//boolean isCheckedAll = false;
+		//Long userDdptId = user.getDepartmentId();
+
+		 ScheduleMettingUsers muQ = null;  //查询   日程（会议）- 部门下人数    条件封装
+		 ScheduleShared comShareQ = null;  //查询  共享                     - 部门下人数    条件封装
+		 ScheduleDepartUno dun = null;     //返回结果  封装
 		
-		//部门用户表   ：   部门id - 各部门所选人数num
-/*		Map<Long,Integer> deptIdUnum = new HashMap<Long,Integer>();
-		query.setCreatedId(user.getId());
-		List<ScheduleDepartUno> queryDunList = scheduleDepartUnoDao.selectList(query);
-		if(queryDunList!=null && !queryDunList.isEmpty()){
-			for(ScheduleDepartUno temp : queryDunList){
-				deptIdUnum.put(temp.getDepartmentId(), temp.getUserCount());
+		List<UtilUser> deptUsers = null;  // 部门下的人员 并标记是否已选择
+		List<Long> deptCheckedUid = new ArrayList<Long>(); // 各部门下的 已经选择的人员id
+		//部门已经选择的人
+			if(remarkType == 0){ //日程（会议）
+				muQ = new ScheduleMettingUsers();
+				muQ.setScheduleId(query.getRemarkId());
+				//muQ.setDepartmentId(deptTempId);
+				muQ.setCreatedId(user.getId());
+				
+				List<ScheduleMettingUsers> queryMus = ScheduleMettingUsersDao.selectList(muQ);
+				if(queryMus != null && !queryMus.isEmpty()){
+					for(ScheduleMettingUsers temp : queryMus){
+						deptCheckedUid.add(temp.getUserId());
+					}
+				}
+			}else if(remarkType == 1){ //共享
+				comShareQ = new ScheduleShared();
+				//comShareQ.setDepartmentId(deptTempId);
+				comShareQ.setCreateUid(user.getId());
+				
+				List<ScheduleShared> queryShareds = scheduleSharedDao.selectList(comShareQ);
+				if(queryShareds != null && !queryShareds.isEmpty()){
+					for(ScheduleShared temp : queryShareds){
+						deptCheckedUid.add(temp.getToUid());
+					}
+				}
 			}
-		}*/
+		Map<String,Object> map = new HashMap<String,Object>();
 		
-		//部门表中的数据   所有部门
-		Department deptquery = new Department();
-		deptquery.setType(1);
-		//List<Department> deptList = departmentService.queryAll();
+		String content = httpClientUtils.send("http://10.8.232.205/authority_service/depart/getLeafDepartList", map);
 		
-		//
-		List<Department> deptList = departmentService.queryList(deptquery);
-		User uq = null;  //查询部门下人  条件封装
+		//System.out.println("开始1"+ System.currentTimeMillis());
+	   	 JsonParser parser=new JsonParser(); 
+	   	 JsonObject object=(JsonObject) parser.parse(content);
+	   	 JsonArray array=object.get("value").getAsJsonArray();
+	     //User uq = null;  //查询部门下人  条件封装
+		
+         for(int i=0;i<array.size();i++){
+            
+             JsonObject subObject=array.get(i).getAsJsonObject();
+
+            String ids = subObject.get("depId").getAsString();
+            Long deptTempId = Long.valueOf(ids);
+             
+             deptUsers = new ArrayList<UtilUser>();
+ 			//部门下所有人中 对已经选择的人标记
+ 			 map.put("depId", deptTempId); 			
+ 			 String contentt = httpClientUtils.send("http://10.8.232.205/authority_service/user/getUsersByDepId", map); 			
+ 			 //System.out.println("开始2"+ System.currentTimeMillis());
+ 			 JsonObject objectt=(JsonObject) parser.parse(contentt);
+ 		   	 JsonArray arrayy;
+ 		   if(objectt.get("value")!=null){
+	 		   	 arrayy=objectt.get("value").getAsJsonArray();	 		 
+		 		for(int j=0;j<arrayy.size();j++){	
+						 JsonObject subObjectt=arrayy.get(j).getAsJsonObject();
+		
+			            String idss = subObjectt.get("userId").getAsString();
+			            Long userId = Long.valueOf(idss);
+			            String userName = subObjectt.get("userName").getAsString();
+						
+			            UtilUser au = new UtilUser();
+		 				au.setId(userId);
+		 				au.setName(userName);
+		 				if(deptCheckedUid.contains(userId.longValue())){
+		 					au.setIsChecked(true);
+		 				}
+		 				deptUsers.add(au);
+					}
+ 		   }
+ 			//结果返回
+ 			dun = new ScheduleDepartUno();
+ 			dun.setDeptUsers(deptUsers);
+ 			dun.setRemarkType(remarkType);
+ 			dun.setRemarkId(query.getRemarkId());
+ 			dun.setDepartmentId(deptTempId);
+ 			dun.setDeptName(subObject.get("depName").getAsString());
+ 			
+ 			resultList.add(dun);
+             
+         }
+       //  System.out.println("结束1"+ System.currentTimeMillis());
+		/*User uq = null;  //查询部门下人  条件封装
 		ScheduleMettingUsers muQ = null;  //查询   日程（会议）- 部门下人数    条件封装
 		ScheduleShared comShareQ = null;  //查询  共享                     - 部门下人数    条件封装
 		ScheduleDepartUno dun = null;     //返回结果  封装
@@ -132,11 +204,11 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 			}
 			
 			//是否全选
-			/*if(deptCheckedUid.size() == deptUs.size()){
+			if(deptCheckedUid.size() == deptUs.size()){
 				isCheckedAll = true;
 			}else{
 				isCheckedAll = false;
-			}*/
+			}
 			
 			//结果返回
 			dun = new ScheduleDepartUno();
@@ -154,7 +226,8 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 			
 			resultList.add(dun);
 		}
-		
+		*/
+        
 		return resultList;
 	}
 	
@@ -334,7 +407,7 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 		result.setIsCheckedAllUser(isCheckedAll);
 		result.setDeptUsers(deptUsers);
 		
-		
+		System.out.println("结束"+new Date().getTime());
 		return result;
 	}
 
