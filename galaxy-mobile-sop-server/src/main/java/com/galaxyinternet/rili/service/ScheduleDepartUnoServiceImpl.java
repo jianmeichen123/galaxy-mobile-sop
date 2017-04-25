@@ -119,7 +119,7 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
  			 //System.out.println("开始2"+ System.currentTimeMillis());
  			 JsonObject objectt=(JsonObject) parser.parse(contentt);
  		   	 JsonArray arrayy;
- 		   if(objectt.get("value")!=null){
+ 		   if(objectt.get("success").getAsBoolean()){
 	 		   	 arrayy=objectt.get("value").getAsJsonArray();	 		 
 		 		for(int j=0;j<arrayy.size();j++){	
 						 JsonObject subObjectt=arrayy.get(j).getAsJsonObject();
