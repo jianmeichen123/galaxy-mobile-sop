@@ -131,6 +131,7 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 			            UtilUser au = new UtilUser();
 		 				au.setId(userId);
 		 				au.setName(userName);
+		 				au.setDepartId(deptTempId);
 		 				if(deptCheckedUid.contains(userId.longValue())){
 		 					au.setIsChecked(true);
 		 				}
