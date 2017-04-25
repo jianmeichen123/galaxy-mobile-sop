@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,10 +20,10 @@ import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.rili.dao.ScheduleMessageDao;
 import com.galaxyinternet.rili.dao.ScheduleMessageUserDao;
 import com.galaxyinternet.rili.mesHandler.ScheduleMessageGenerator;
+import com.galaxyinternet.rili.mesSchedule.SchedulePushMessTask;
 import com.galaxyinternet.rili.model.ScheduleInfo;
 import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
-import com.galaxyinternet.rili.util.SchedulePushMessControlTask;
 
 
 @Service("com.galaxyinternet.rili.service.ScheduleMessageService")
@@ -38,6 +37,8 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	@Autowired
 	ScheduleMessageGenerator messageGenerator;
 	
+	@Autowired
+	SchedulePushMessTask schedulePushMessTask;
 	
 	@Override
 	protected BaseDao<ScheduleMessage, Long> getBaseDao() {
@@ -118,6 +119,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			
 			ScheduleMessage mQ = new ScheduleMessage();
 			mQ.setStatus((byte) 0);
+			//mQ.setIds((Set<Long>) muid_mid_map.values());
 			Set<Long> set = new HashSet<Long>(muid_mid_map.values());
 			mQ.setIds(set);
 			List<ScheduleMessage> mess = scheduleMessageDao.selectList(mQ);
@@ -147,12 +149,65 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	
 	
 	/**
+	 * 个人消息  清空
+     */
+	public void perMessageToClear(Object objUser){
+		
+		User user = (User)objUser;
+		
+		ScheduleMessageUser query = new ScheduleMessageUser();
+		query.setUid(user.getId());
+		//query.setIsUse((byte)0);  //0:可用    1:禁用
+		query.setIsDel((byte)0);  //0:未删除  1:已删除
+		
+		List<ScheduleMessageUser> mus = scheduleMessageUserDao.selectList(query);
+		
+		if(mus != null && !mus.isEmpty()){
+			
+			Map<Long,Long> muid_mid_map = new HashMap<Long,Long>();
+			
+			for(ScheduleMessageUser tempU: mus){
+				muid_mid_map.put(tempU.getId(), tempU.getMid());
+			}
+			
+			ScheduleMessage mQ = new ScheduleMessage();
+			mQ.setStatus((byte) 0);
+			//mQ.setIds((Set<Long>) muid_mid_map.values());
+			Set<Long> set = new HashSet<Long>(muid_mid_map.values());
+			mQ.setIds(set);
+			List<ScheduleMessage> mess = scheduleMessageDao.selectList(mQ);
+			
+			if(mess != null && !mess.isEmpty()){
+				List<Long> editMuids = new ArrayList<Long>();
+				for(ScheduleMessage tempm : mess){
+					for(Map.Entry<Long,Long> entry : muid_mid_map.entrySet()) {
+						if(entry.getValue().longValue() == tempm.getId().longValue()){
+							editMuids.add(entry.getKey());
+						}
+					}
+				}
+				
+				ScheduleMessageUser updateU = new ScheduleMessageUser();
+				updateU.setIds(editMuids);
+				updateU.setIsDel((byte)1);
+				scheduleMessageUserDao.updateByIdSelective(updateU);
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	/**
 	 * 消息   查询   当天需要推送的消息
      */
-	public LinkedHashMap<Long,ScheduleMessage> queryTodayMessToSend() {
+	public List<ScheduleMessage> queryTodayMessToSend() {
 		
 		//List<ScheduleMessageUser> results = new ArrayList<ScheduleMessageUser>();
-		LinkedHashMap<Long,ScheduleMessage> mid_mess_map = new LinkedHashMap<Long,ScheduleMessage>();
+		//LinkedHashMap<Long,ScheduleMessage> mid_mess_map = new LinkedHashMap<Long,ScheduleMessage>();
+		
+		List<ScheduleMessage> results = new ArrayList<ScheduleMessage>();
 		
 		
 		Calendar calendar = Calendar.getInstance();
@@ -176,7 +231,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		
 		// 消息内容查询
 		ScheduleMessage mQ = new ScheduleMessage();
-		mQ.setBtime(bdate);
+		//mQ.setBtime(bdate);
 		mQ.setEtime(edate);
 		//mQ.setSendTimeNotNull(true);
 		mQ.setStatus((byte) 1);
@@ -197,6 +252,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			muQ.setIsUse((byte)0);    //0:可用    1:禁用
 			muQ.setIsSend((byte)0);   //0:未发送  1+:已发送
 			muQ.setIsDel((byte)0);    //0:未删除  1:已删除
+			muQ.setIsRead((byte)0);   //0:未读    1:已读
 			muQ.setMids(mids);
 			List<ScheduleMessageUser> mus = scheduleMessageUserDao.selectList(muQ);
 			
@@ -213,13 +269,13 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 							}
 						}
 					}
-					mid_mess_map.put(tempM.getId(), tempM);
+					results.add(tempM);
+					//mid_mess_map.put(tempM.getId(), tempM);
 				}
 			}
-			
 		}
 		
-		return mid_mess_map;
+		return results;
 	}
 	
 	
@@ -253,15 +309,20 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			    */
 				List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
 				for(ScheduleMessageUser toU : message.getToUsers()){
+					toU.setIsSend((byte) 0);
+					toU.setIsRead((byte) 0);
+					toU.setIsDel((byte) 0);
 					toU.setMid(mid);
+					
 					toInserts.add(toU);
 				}
 				scheduleMessageUserDao.insertInBatch(toInserts);
 				
-				
-				//通知消息 已经改变
+				//通知消息 ：  已经添加新的消息
 				if(DateUtil.checkLongIsToday(message.getSendTime())){
-					SchedulePushMessControlTask.setHasChanged(true);
+					//SchedulePushMessControlTask.setHasChanged(true);
+					message.setToUsers(toInserts);
+					schedulePushMessTask.setHasSaved(message);
 				}
 				
 			}
@@ -279,34 +340,73 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	 * ScheduleMessage    ScheduleMessageUser
      */
 	@Override
-	public void operateMessageByDeleteInfo(Object scheduleInfo){
+	public void operateMessageByDeleteInfo(Object scheduleInfo, String messageType){
 		
 		final Object info = scheduleInfo;
+		final String mType = messageType;
 		
 		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 			@Override
 			public void run() {
-/*
-				ScheduleInfo model = (ScheduleInfo) info;
 				
-				ScheduleMessage scheduleMessage =scheduleMessageDao.selectById(model.getId());
-				
-				
-				if(scheduleMessage!=null){
-					ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+				if(mType.startsWith("1")){
 					
-					scheduleMessageUser.setMid(scheduleMessage.getId());
+					//日程
+					ScheduleInfo info_model = (ScheduleInfo) info;
 					
-					List<ScheduleMessageUser> sss = scheduleMessageUserDao.selectList(scheduleMessageUser);
+					// 消息内容
+					ScheduleMessage mq = new ScheduleMessage();
+					mq.setType(mType);
+					mq.setRemarkId(info_model.getId());
+					ScheduleMessage message =scheduleMessageDao.selectOne(mq);
 					
-					ScheduleMessageUser schuleMgeUser = new ScheduleMessageUser();
-					schuleMgeUser.setId(sss.getId());
-					schuleMgeUser.setIsDel((byte)1);
-					
-					scheduleMessageUserDao.updateById(schuleMgeUser);
-					
+					//主从判断
+					Long info_pid = info_model.getParentId();
+					if(info_pid != null){
+						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+						scheduleMessageUser.setMid(message.getId());
+						scheduleMessageUser.setUid(info_model.getCreatedId());
+						scheduleMessageUserDao.delete(scheduleMessageUser);
+						
+						
+						//通知消息 ：  删除消息
+						if(DateUtil.checkLongIsToday(message.getSendTime()) && message.getSendTime().longValue() > System.currentTimeMillis()){
+							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+							
+							List<Long> mids = new ArrayList<Long>();
+							mids.add(message.getId());
+							
+							List<Long> muids = new ArrayList<Long>();
+							muids.add(info_model.getCreatedId());
+							
+							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
+							
+							schedulePushMessTask.setHasDeled(delMap);
+						}
+					}else{
+						scheduleMessageDao.deleteById(message.getId());
+						
+						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+						scheduleMessageUser.setMid(message.getId());
+						scheduleMessageUserDao.delete(scheduleMessageUser);
+						
+						
+						//通知消息 ：  删除消息
+						if(DateUtil.checkLongIsToday(message.getSendTime()) && message.getSendTime().longValue() > System.currentTimeMillis()){
+							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+							
+							List<Long> mids = new ArrayList<Long>();
+							mids.add(message.getId());
+							
+							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+							
+							schedulePushMessTask.setHasDeled(delMap);
+						}
+					}
 				}
-				*/
+				
+				
 			}
 		});
 		
@@ -320,15 +420,93 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	 * ScheduleMessage    ScheduleMessageUser
      */
 	@Override
-	public void operateMessageByUpdateInfo(Object scheduleInfo){
+	public void operateMessageByUpdateInfo(Object scheduleInfo, String messageType){
 		
 		final Object info = scheduleInfo;
+		final String mType = messageType;
+		
 		
 		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 			@Override
 			public void run() {
+				
+				if(mType.startsWith("1")){
+					
+					//日程
+					ScheduleInfo info_model = (ScheduleInfo) info;
+					
+					// 消息内容
+					ScheduleMessage mq = new ScheduleMessage();
+					mq.setType(mType);
+					mq.setRemarkId(info_model.getId());
+					ScheduleMessage message =scheduleMessageDao.selectOne(mq);
+					
+					//主从判断
+					Long info_pid = info_model.getParentId();
+					if(info_pid != null){
+						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+						scheduleMessageUser.setMid(message.getId());
+						scheduleMessageUser.setUid(info_model.getCreatedId());
+						scheduleMessageUserDao.delete(scheduleMessageUser);
+						
+						
+						//通知消息 ：  删除消息
+						if(message.getSendTime().longValue() > System.currentTimeMillis()){
+							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+							
+							List<Long> mids = new ArrayList<Long>();
+							mids.add(message.getId());
+							
+							List<Long> muids = new ArrayList<Long>();
+							muids.add(info_model.getCreatedId());
+							
+							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
+							
+							schedulePushMessTask.setHasDeled(delMap);
+						}
+					}else{
+						scheduleMessageDao.deleteById(message.getId());
+						
+						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+						scheduleMessageUser.setMid(message.getId());
+						scheduleMessageUserDao.delete(scheduleMessageUser);
+						
+						
+						//通知消息 ：  删除消息
+						if(message.getSendTime().longValue() > System.currentTimeMillis()){
+							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+							
+							List<Long> mids = new ArrayList<Long>();
+							mids.add(message.getId());
+							
+							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+							
+							schedulePushMessTask.setHasDeled(delMap);
+						}
+					}
+				}
 
-
+				
+				ScheduleMessage message = messageGenerator.process(info);
+				Long mid = scheduleMessageDao.insert(message);
+				
+				List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
+				for(ScheduleMessageUser toU : message.getToUsers()){
+					toU.setIsSend((byte) 0);
+					toU.setIsRead((byte) 0);
+					toU.setIsDel((byte) 0);
+					toU.setMid(mid);
+					
+					toInserts.add(toU);
+				}
+				scheduleMessageUserDao.insertInBatch(toInserts);
+				
+				//通知消息 ：  已经添加新的消息
+				if(DateUtil.checkLongIsToday(message.getSendTime())){
+					message.setToUsers(toInserts);
+					schedulePushMessTask.setHasSaved(message);
+				}
 
 			}
 		});

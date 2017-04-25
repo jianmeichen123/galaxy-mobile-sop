@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.rili.model.ScheduleDepartUno;
+import com.galaxyinternet.rili.model.SharePerson;
 
 public interface ScheduleDepartUnoService extends BaseService<ScheduleDepartUno>
 {
@@ -39,5 +40,5 @@ public interface ScheduleDepartUnoService extends BaseService<ScheduleDepartUno>
 	/**
 	 * 
 	 */
-	public ScheduleDepartUno queryPerswwon(Object objUser, ScheduleDepartUno query);
+	public List<SharePerson> queryAppPerson(Object objUser, ScheduleDepartUno query);
 }

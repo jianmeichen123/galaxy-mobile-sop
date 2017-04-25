@@ -153,6 +153,32 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 	
 	
 	
+	/**
+	 * 个人消息列表  清空
+	 * 1.查询出 消息user 表中      个人的  未删除  的数据
+	 * 2.查询出消息内容列表          状态为可用的消息
+     */
+	@ResponseBody
+	@RequestMapping(value = "/perMessageToClear", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleMessageUser> perMessageToClear(HttpServletRequest request ) {
+		
+		ResponseData<ScheduleMessageUser> responseBody = new ResponseData<ScheduleMessageUser>();
+		
+		try {
+			Object objU = request.getSession().getAttribute(Constants.SESSION_USER_KEY);
+			
+			//结果查询  封装
+			scheduleMessageService.perMessageToClear(objU);
+			
+			responseBody.setResult(new Result(Status.OK, ""));
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"异常"));
+			logger.error("ScheduleMessageController . perMessageToRead 异常",e);
+		}
+		
+		return responseBody;
+	}
+	
 	
 }
 

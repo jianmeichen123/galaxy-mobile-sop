@@ -19,6 +19,7 @@ import com.galaxyinternet.rili.dao.ScheduleSharedDao;
 import com.galaxyinternet.rili.model.ScheduleDepartUno;
 import com.galaxyinternet.rili.model.ScheduleMettingUsers;
 import com.galaxyinternet.rili.model.ScheduleShared;
+import com.galaxyinternet.rili.model.SharePerson;
 import com.galaxyinternet.rili.util.UtilUser;
 import com.galaxyinternet.rili.util.httpClientUtils;
 import com.galaxyinternet.service.DepartmentService;
@@ -64,6 +65,16 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 		byte remarkType = query.getRemarkType();
 		//Long userDdptId = user.getDepartmentId();
 
+		
+		Map<String,Object> map = new HashMap<String,Object>();
+		
+		String content = httpClientUtils.send("http://10.8.232.205/authority_service/depart/getLeafDepartList", map);
+		
+		//System.out.println("开始1"+ System.currentTimeMillis());
+	   	 JsonParser parser=new JsonParser(); 
+	   	 JsonObject object=(JsonObject) parser.parse(content);
+	   	 JsonArray array=object.get("value").getAsJsonArray();
+	     //User uq = null;  //查询部门下人  条件封装
 		 ScheduleMettingUsers muQ = null;  //查询   日程（会议）- 部门下人数    条件封装
 		 ScheduleShared comShareQ = null;  //查询  共享                     - 部门下人数    条件封装
 		 ScheduleDepartUno dun = null;     //返回结果  封装
@@ -95,16 +106,6 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 					}
 				}
 			}
-		Map<String,Object> map = new HashMap<String,Object>();
-		
-		String content = httpClientUtils.send("http://10.8.232.205/authority_service/depart/getLeafDepartList", map);
-		
-		//System.out.println("开始1"+ System.currentTimeMillis());
-	   	 JsonParser parser=new JsonParser(); 
-	   	 JsonObject object=(JsonObject) parser.parse(content);
-	   	 JsonArray array=object.get("value").getAsJsonArray();
-	     //User uq = null;  //查询部门下人  条件封装
-		
          for(int i=0;i<array.size();i++){
             
              JsonObject subObject=array.get(i).getAsJsonObject();
@@ -445,44 +446,38 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 	
 	
 	//查询出全部部门及部门中的人及人是否已经共享的部门是否 默认及
-	public ScheduleDepartUno queryPerswwon(Object objUser, ScheduleDepartUno query) {
-		Map<String,List<Object>> deptIdAndUser = new HashMap<String,List<Object>>();
+	public List<SharePerson> queryAppPerson(Object objUser, ScheduleDepartUno query) {
 		
-		List<Object>  ss = deptIdAndUser.get("");
-		for(Object object:ss){
-			//if(scheduleDepartUno.getDeptUsers()!=null && scheduleDepartUno.getDeptUsers().size()>0){
-				
-			}
-		//}
+		List<SharePerson> sharePersonList = new ArrayList<SharePerson>();
 		
-		List<ScheduleDepartUno> sdu = new ArrayList<ScheduleDepartUno>();
+		Map<String,Object> map = new HashMap<String,Object>();
 		
-		for(ScheduleDepartUno scheduleDepartUno:sdu){
-			
-			if(scheduleDepartUno.getDeptUsers()!=null && scheduleDepartUno.getDeptUsers().size()>0){
-				
-				for(UtilUser duser:scheduleDepartUno.getDeptUsers()){
-					
-					
-					
-					
+		map.put("userKey", query.getUname());
+		String content = httpClientUtils.send("http://10.8.232.205/authority_service/user/getUsersByKey", map);
+		
+		//System.out.println("开始1"+ System.currentTimeMillis());
+	   	 JsonParser parser=new JsonParser(); 
+	   	 JsonObject object=(JsonObject) parser.parse(content);
+	   	 JsonArray array;		
+	   	if(object.get("success").getAsBoolean()){
+	   			   		
+	   		array=object.get("value").getAsJsonArray();	 		 
+	 		for(int j=0;j<array.size();j++){
+	 			SharePerson SharePerson =new SharePerson();
+					JsonObject subObjectt=array.get(j).getAsJsonObject();
+
+		            String userId = subObjectt.get("userId").getAsString();		           
+		            String userName = subObjectt.get("userName").getAsString();
+		            String depName = subObjectt.get("depName").getAsString();			           
+		            String depId = subObjectt.get("depId").getAsString();
+		            SharePerson.setUserId(userId);
+		            SharePerson.setUserName(userName);
+		            SharePerson.setDepartName(depName);
+		            SharePerson.setDepartId(depId);
+		            sharePersonList.add(SharePerson);	 				
 				}
-				
-			}
-			
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	
-		return null;
+	   }				
+		return sharePersonList;
 	
 	}
 }
