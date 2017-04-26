@@ -57,10 +57,10 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 	/** 
 	* 日历结果分组
 	* 上中下午分组
-	*    深夜 00:00-05:59 
-	*    上午 06:00-11:59
-	*    下午 12:00-17:59
-	*    晚上 18:00-23:59
+	*    深夜 00:00-05:59 d
+	*    上午 06:00-11:59 c
+	*    下午 12:00-17:59 b
+	*    晚上 18:00-23:59 a
 	* 日分组
 	* 月分组
 	*/
@@ -170,7 +170,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 						if(!temp.getStartTime().substring(0, 10).equals(sd)){
 							
 							temp.setStartTime(sd+" 00:00:00");
-	
+							
+							
 						}
 						if(!temp.getEndTime().substring(0, 10).equals(sd)){							
 							temp.setEndTime(sd+" 23:59:59");

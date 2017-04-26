@@ -1,15 +1,11 @@
 package com.galaxyinternet.rili.controller;
 
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -21,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.common.controller.BaseControllerImpl;
 import com.galaxyinternet.framework.core.constants.Constants;
+import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.model.PageRequest;
 import com.galaxyinternet.framework.core.model.ResponseData;
 import com.galaxyinternet.framework.core.model.Result;
@@ -31,7 +28,6 @@ import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
 import com.galaxyinternet.rili.service.ScheduleMessageUserService;
-import com.galaxyinternet.rili.util.ScheduleUtil;
 
 
 @Controller
@@ -72,20 +68,28 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 			
 			Integer pageNum = query.getPageNum() != null ? query.getPageNum() : 0;
 			Integer pageSize = query.getPageSize() != null ? query.getPageSize() : 10;
-			String property = query.getProperty() != null ? query.getProperty() : "created_time";
+			String property = query.getProperty() != null ? "mu."+query.getProperty() : "mu.created_time";
 			String dir = query.getDirection() != null ? query.getDirection() : "desc";
 			
 			Direction direction = Direction.fromString(dir);
 			pageable = new PageRequest(pageNum,pageSize, direction, property);
 			
+			//muser 查询条件
 			query.setUid(user.getId());
 			query.setIsDel((byte) 0);
 			
+			//mContent 查询条件
+			ScheduleMessage mQ = new ScheduleMessage();
+			mQ.setStatus((byte) 0);
+			query.setMessage(mQ);
+			
 			
 			//结果查询  封装
-			List<ScheduleMessageUser> qList = scheduleMessageService.queryPerMessAndConvertList(query,pageable);
+			Page<ScheduleMessageUser> qList = scheduleMessageService.queryPerMessAndConvertPage(query,pageable);
 			
-			responseBody.setEntityList(qList);
+			//responseBody.setEntityList(qList);
+			
+			responseBody.setPageList(qList);
 			responseBody.setResult(new Result(Status.OK, ""));
 		} catch (Exception e) {
 			responseBody.setResult(new Result(Status.ERROR, null,"查询失败"));
