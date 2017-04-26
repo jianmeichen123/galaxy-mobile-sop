@@ -62,6 +62,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			}
 			
 			ScheduleMessage mQ = new ScheduleMessage();
+			//mQ.setStatus((byte) 0);
 			mQ.setIds(u_mess_map.keySet());
 			List<ScheduleMessage> mess = scheduleMessageDao.selectList(mQ);
 			
@@ -319,11 +320,11 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 				scheduleMessageUserDao.insertInBatch(toInserts);
 				
 				//通知消息 ：  已经添加新的消息
-				if(DateUtil.checkLongIsToday(message.getSendTime())){
+				//if(DateUtil.checkLongIsToday(message.getSendTime())){
 					//SchedulePushMessControlTask.setHasChanged(true);
 					message.setToUsers(toInserts);
 					schedulePushMessTask.setHasSaved(message);
-				}
+				//}
 				
 			}
 		});
@@ -356,56 +357,61 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					
 					// 消息内容
 					ScheduleMessage mq = new ScheduleMessage();
+					mq.setStatus((byte) 1);
 					mq.setType(mType);
 					mq.setRemarkId(info_model.getId());
 					ScheduleMessage message =scheduleMessageDao.selectOne(mq);
 					
-					//主从判断
-					Long info_pid = info_model.getParentId();
-					if(info_pid != null){
-						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
-						scheduleMessageUser.setMid(message.getId());
-						scheduleMessageUser.setUid(info_model.getCreatedId());
-						scheduleMessageUserDao.delete(scheduleMessageUser);
-						
-						
-						//通知消息 ：  删除消息
-						if(DateUtil.checkLongIsToday(message.getSendTime()) && message.getSendTime().longValue() > System.currentTimeMillis()){
-							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+					if(message!=null){
+						//主从判断
+						Long info_pid = info_model.getParentId();
+						if(info_pid != null){
+							ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+							scheduleMessageUser.setMid(message.getId());
+							scheduleMessageUser.setUid(info_model.getCreatedId());
+							scheduleMessageUserDao.delete(scheduleMessageUser);
 							
-							List<Long> mids = new ArrayList<Long>();
-							mids.add(message.getId());
 							
-							List<Long> muids = new ArrayList<Long>();
-							muids.add(info_model.getCreatedId());
+							//通知消息 ：  删除消息
+							///if(DateUtil.checkLongIsToday(message.getSendTime()) && message.getSendTime().longValue() > System.currentTimeMillis()){
+							//if(message.getStatus() == (byte)1){
+								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+								
+								List<Long> mids = new ArrayList<Long>();
+								mids.add(message.getId());
+								
+								List<Long> muids = new ArrayList<Long>();
+								muids.add(info_model.getCreatedId());
+								
+								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
+								
+								schedulePushMessTask.setHasDeled(delMap);
+							//}
+						}else{
+							scheduleMessageDao.deleteById(message.getId());
 							
-							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
+							ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+							scheduleMessageUser.setMid(message.getId());
+							scheduleMessageUserDao.delete(scheduleMessageUser);
 							
-							schedulePushMessTask.setHasDeled(delMap);
+							
+							//通知消息 ：  删除消息
+							//if(message.getStatus() == (byte)1){
+								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+								
+								List<Long> mids = new ArrayList<Long>();
+								mids.add(message.getId());
+								
+								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+								
+								schedulePushMessTask.setHasDeled(delMap);
+							//}
 						}
-					}else{
-						scheduleMessageDao.deleteById(message.getId());
 						
-						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
-						scheduleMessageUser.setMid(message.getId());
-						scheduleMessageUserDao.delete(scheduleMessageUser);
-						
-						
-						//通知消息 ：  删除消息
-						if(DateUtil.checkLongIsToday(message.getSendTime()) && message.getSendTime().longValue() > System.currentTimeMillis()){
-							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
-							
-							List<Long> mids = new ArrayList<Long>();
-							mids.add(message.getId());
-							
-							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-							
-							schedulePushMessTask.setHasDeled(delMap);
-						}
 					}
+					
 				}
-				
 				
 			}
 		});
@@ -418,6 +424,9 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	 * 修改（日程 、、）操作完成后
 	 * 消息同步修改
 	 * ScheduleMessage    ScheduleMessageUser
+	 * 
+	 * @param scheduleInfo scheduleInfo.setMessageType("1.3.2") handler标识的值
+	 * @param messageType ScheduleMessage表中type值
      */
 	@Override
 	public void operateMessageByUpdateInfo(Object scheduleInfo, String messageType){
@@ -437,75 +446,100 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					
 					// 消息内容
 					ScheduleMessage mq = new ScheduleMessage();
+					//mq.setStatus((byte) 1);
 					mq.setType(mType);
 					mq.setRemarkId(info_model.getId());
 					ScheduleMessage message =scheduleMessageDao.selectOne(mq);
 					
-					//主从判断
-					Long info_pid = info_model.getParentId();
-					if(info_pid != null){
-						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
-						scheduleMessageUser.setMid(message.getId());
-						scheduleMessageUser.setUid(info_model.getCreatedId());
-						scheduleMessageUserDao.delete(scheduleMessageUser);
+					if( message!= null){
 						
-						
-						//通知消息 ：  删除消息
-						if(message.getSendTime().longValue() > System.currentTimeMillis()){
-							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+						if(message.getStatus().intValue() == 1){
+							//主从判断
+							Long info_pid = info_model.getParentId();
+							if(info_pid != null){
+								ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+								scheduleMessageUser.setMid(message.getId());
+								scheduleMessageUser.setUid(info_model.getCreatedId());
+								scheduleMessageUserDao.delete(scheduleMessageUser);
+								
+								
+								//通知消息 ：  删除消息
+								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+								
+								List<Long> mids = new ArrayList<Long>();
+								mids.add(message.getId());
+								
+								List<Long> muids = new ArrayList<Long>();
+								muids.add(info_model.getCreatedId());
+								
+								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
+								
+								schedulePushMessTask.setHasDeled(delMap);
+							}else{
+								scheduleMessageDao.deleteById(message.getId());
+								
+								ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+								scheduleMessageUser.setMid(message.getId());
+								scheduleMessageUserDao.delete(scheduleMessageUser);
+								
+								
+								//通知消息 ：  删除消息
+								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+								
+								List<Long> mids = new ArrayList<Long>();
+								mids.add(message.getId());
+								
+								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+								
+								schedulePushMessTask.setHasDeled(delMap);
+							}
 							
-							List<Long> mids = new ArrayList<Long>();
-							mids.add(message.getId());
+							//新增消息
+							ScheduleMessage messageAdd = messageGenerator.process(info);
+							Long mid = scheduleMessageDao.insert(messageAdd);
 							
-							List<Long> muids = new ArrayList<Long>();
-							muids.add(info_model.getCreatedId());
+							List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
+							for(ScheduleMessageUser toU : messageAdd.getToUsers()){
+								toU.setIsSend((byte) 0);
+								toU.setIsRead((byte) 0);
+								toU.setIsDel((byte) 0);
+								toU.setMid(mid);
+								
+								toInserts.add(toU);
+							}
+							scheduleMessageUserDao.insertInBatch(toInserts);
 							
-							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
-							
-							schedulePushMessTask.setHasDeled(delMap);
+							//通知消息 ：  已经添加新的消息
+							//if(DateUtil.checkLongIsToday(message.getSendTime())){
+								messageAdd.setToUsers(toInserts);
+								schedulePushMessTask.setHasSaved(messageAdd);
+							//}
 						}
+						
 					}else{
-						scheduleMessageDao.deleteById(message.getId());
+						//新增消息
+						ScheduleMessage messageAdd = messageGenerator.process(info);
+						Long mid = scheduleMessageDao.insert(messageAdd);
 						
-						ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
-						scheduleMessageUser.setMid(message.getId());
-						scheduleMessageUserDao.delete(scheduleMessageUser);
-						
-						
-						//通知消息 ：  删除消息
-						if(message.getSendTime().longValue() > System.currentTimeMillis()){
-							Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+						List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
+						for(ScheduleMessageUser toU : messageAdd.getToUsers()){
+							toU.setIsSend((byte) 0);
+							toU.setIsRead((byte) 0);
+							toU.setIsDel((byte) 0);
+							toU.setMid(mid);
 							
-							List<Long> mids = new ArrayList<Long>();
-							mids.add(message.getId());
-							
-							delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-							
-							schedulePushMessTask.setHasDeled(delMap);
+							toInserts.add(toU);
 						}
+						scheduleMessageUserDao.insertInBatch(toInserts);
+						
+						//通知消息 ：  已经添加新的消息
+						//if(DateUtil.checkLongIsToday(message.getSendTime())){
+							messageAdd.setToUsers(toInserts);
+							schedulePushMessTask.setHasSaved(messageAdd);
+						//}
 					}
-				}
-
-				
-				ScheduleMessage message = messageGenerator.process(info);
-				Long mid = scheduleMessageDao.insert(message);
-				
-				List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
-				for(ScheduleMessageUser toU : message.getToUsers()){
-					toU.setIsSend((byte) 0);
-					toU.setIsRead((byte) 0);
-					toU.setIsDel((byte) 0);
-					toU.setMid(mid);
 					
-					toInserts.add(toU);
-				}
-				scheduleMessageUserDao.insertInBatch(toInserts);
-				
-				//通知消息 ：  已经添加新的消息
-				if(DateUtil.checkLongIsToday(message.getSendTime())){
-					message.setToUsers(toInserts);
-					schedulePushMessTask.setHasSaved(message);
 				}
 
 			}

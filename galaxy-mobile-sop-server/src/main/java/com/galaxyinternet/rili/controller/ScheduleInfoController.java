@@ -311,6 +311,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 				scheduleInfo.setUpdatedId(user.getId());
 				int y= scheduleInfoService.updateById(scheduleInfo);
 				responseBody.setResult(new Result(Status.OK, null,"修改其他日程成功"));
+				
+				ss.setUserName(user.getRealName());
+				ss.setMessageType("1.3.2");
 				scheduleMessageService.operateMessageByUpdateInfo(ss, "1.3");
 			}else{				
 				responseBody.setResult(new Result(Status.ERROR, null,"其他日程不存在"));
