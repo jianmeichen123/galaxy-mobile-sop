@@ -132,7 +132,7 @@
 			<if test="projectType != null" > project_type = #{projectType,jdbcType=TINYINT}, </if>
 			<if test="projectId != null" > project_id = #{projectId,jdbcType=BIGINT}, </if>
 			<if test="startTime != null" > start_time = #{startTime,jdbcType=TIMESTAMP}, </if>
-			<if test="endTime != null" > end_time = #{endTime,jdbcType=TIMESTAMP}, </if>
+			 end_time = #{endTime,jdbcType=TIMESTAMP}, 
 			<if test="isAllday != null" > is_allday = #{isAllday,jdbcType=TINYINT}, </if>
 			<if test="wakeupId != null" > wakeup_id = #{wakeupId,jdbcType=BIGINT}, </if>
 			 remark = #{remark,jdbcType=VARCHAR}, 

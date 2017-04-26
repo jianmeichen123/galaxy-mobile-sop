@@ -89,7 +89,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 								sinfo.setStartTime(temp.getStartTime());
 								sinfo.setEndTime(ss+" 23:59:00");
 								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());	
+								sinfo.setId(temp.getId());
+								sinfo.setType(temp.getType());
 								sinfo.setCreatedId(temp.getCreatedId());
 								sinfo.setUpdatedId(temp.getUpdatedId());
 								sinfo.setIsAllday(temp.getIsAllday());
@@ -102,6 +103,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 								sinfo.setEndTime(temp.getEndTime());
 								sinfo.setName(temp.getName());
 								sinfo.setId(temp.getId());	
+								sinfo.setType(temp.getType());
 								sinfo.setCreatedId(temp.getCreatedId());
 								sinfo.setUpdatedId(temp.getUpdatedId());
 								sinfo.setIsAllday(temp.getIsAllday());
@@ -113,6 +115,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 								sinfo.setEndTime(ss+" 23:59:00");
 								sinfo.setName(temp.getName());
 								sinfo.setId(temp.getId());
+								sinfo.setType(temp.getType());
 								sinfo.setCreatedId(temp.getCreatedId());
 								sinfo.setUpdatedId(temp.getUpdatedId());
 								sinfo.setIsAllday(temp.getIsAllday());
