@@ -1,6 +1,7 @@
 package com.galaxyinternet.rili.controller;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -163,7 +164,22 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
 			
-			String cont = scheduleInfoService.getCountSchedule(scheduleInfo);
+			
+			ScheduleInfo scheduleInfoo = new ScheduleInfo();
+			
+			scheduleInfoo.setCreatedId(user.getId());
+			scheduleInfoo.setType((byte) 3);
+			scheduleInfoo.setIsAllday(scheduleInfo.getIsAllday());
+			
+			String bqStartTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 00:00:00";
+			String bqEndTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 23:59:59";
+			
+
+			scheduleInfoo.setBqEndTime(bqEndTime);
+			scheduleInfoo.setBqStartTime(bqStartTime);
+			
+			
+			String cont = scheduleInfoService.getCconflictSchedule(scheduleInfoo);
 			if(cont!=null){
 				responseBody.setResult(new Result(Status.ERROR, null,cont));
 				return responseBody;
