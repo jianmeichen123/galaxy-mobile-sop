@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.galaxyinternet.framework.core.dao.BaseDao;
+import com.galaxyinternet.framework.core.model.Page;
 import com.galaxyinternet.framework.core.model.PageRequest;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
 import com.galaxyinternet.framework.core.thread.GalaxyThreadPool;
@@ -50,11 +51,12 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	/**
 	 * 个人消息 列表查询
      */
-	public List<ScheduleMessageUser> queryPerMessAndConvertList(ScheduleMessageUser query, PageRequest pageable) {
-		List<ScheduleMessageUser> results = new ArrayList<ScheduleMessageUser>();
-
-		List<ScheduleMessageUser> mus = scheduleMessageUserDao.selectList(query, pageable);
+	public Page<ScheduleMessageUser> queryPerMessAndConvertPage(ScheduleMessageUser query, PageRequest pageable) {
 		
+
+		Page<ScheduleMessageUser> mus = scheduleMessageUserDao.selectMuserAndMcontentList(query, pageable);
+		/*
+		List<ScheduleMessageUser> results = new ArrayList<ScheduleMessageUser>();
 		Map<Long,ScheduleMessageUser> u_mess_map = new HashMap<Long,ScheduleMessageUser>();
 		if(mus != null && !mus.isEmpty()){
 			for(ScheduleMessageUser tempU : mus){
@@ -75,8 +77,8 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 				}
 			}
 		}
-		
-		return results;
+		*/
+		return mus;
 	}
 	
 	
@@ -349,7 +351,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 			@Override
 			public void run() {
-				
+				/*
 				if(mType.startsWith("1")){
 					
 					//日程
@@ -412,7 +414,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					}
 					
 				}
-				
+				*/
 			}
 		});
 		
@@ -438,7 +440,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 			@Override
 			public void run() {
-				
+				/*
 				if(mType.startsWith("1")){
 					
 					//日程
@@ -541,7 +543,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					}
 					
 				}
-
+*/
 			}
 		});
 		

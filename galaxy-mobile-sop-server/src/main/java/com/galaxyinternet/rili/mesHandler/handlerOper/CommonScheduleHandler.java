@@ -50,6 +50,9 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 		ScheduleInfo model = (ScheduleInfo) info;
 		
 		String startTime = model.getStartTime().replace("/","-");
+		if(startTime.indexOf(":00.0")!=-1){
+			startTime = startTime.replace(":00.0", "");
+		}
 		byte isAllday = model.getIsAllday(); //是否全天 0:否 1:是
 		Long dictId = model.getWakeupId();
 		Long info_id = model.getId();
