@@ -57,7 +57,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 		ScheduleShared my = new ScheduleShared();
 		my.setCreateUid(user.getId());
 		//my.setCreateUname(user.getRealName());	
-		my.setCreateUname("我的日历");
+		my.setToUname("我的日历");
 		cusers.add(my);
 		
 		ScheduleShared query = new ScheduleShared();
