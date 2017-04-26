@@ -159,12 +159,12 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 					if(temp.getStartTime()!=null && temp.getEndTime()!=null){
 						if(!temp.getStartTime().substring(0, 10).equals(sd)){
 							
-							temp.setStartTime(query.getYear()+"-"+query.getMonth()+"-"+query.getDay()+" 00:00:00");
+							temp.setStartTime(sd+" 00:00:00");
 							
 							
 						}
 						if(!temp.getEndTime().substring(0, 10).equals(sd)){							
-							temp.setEndTime(query.getYear()+"-"+query.getMonth()+"-"+query.getDay()+" 23:59:59");
+							temp.setEndTime(sd+" 23:59:59");
 	
 						}
 						
