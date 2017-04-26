@@ -157,7 +157,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			sInfo.setBqEndTime(bqEndTime);
 			sInfo.setBqStartTime(eqStartTime);
 			sInfo.setIsAllday((byte) 1);
-			
+			sInfo.setCreatedId(query.getCreatedId());
 			
 			scheduleInfoList=scheduleInfoDao.selectList(sInfo);
 			
