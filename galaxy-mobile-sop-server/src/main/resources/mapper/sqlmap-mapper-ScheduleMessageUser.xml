@@ -14,6 +14,10 @@
 		<result column="is_del" 		property="isDel" 		jdbcType="TINYINT" />
 		<result column="created_time" 	property="createdTime" jdbcType="BIGINT" />
 		<result column="updated_time" 	property="updatedTime" jdbcType="BIGINT" />
+		
+		<result column="type" 			property="type" 		jdbcType="VARCHAR" />
+		<result column="remrk_id" 		property="remarkId" 	jdbcType="BIGINT" />
+		<result column="content" 		property="content" 		jdbcType="VARCHAR" />
 	</resultMap>
 
 
@@ -172,6 +176,46 @@
 		delete from schedule_message_user
 		where id = #{id}
 	</delete>
+
+
+
+
+	<!-- 个人消息 列表查询  -->
+	<select id="selectMuserAndMcontentList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+			mu.id, mu.mid, mu.uid, mu.type_role, 
+			me.type, me.remrk_id, me.content 
+		from 
+			schedule_message_user mu ,schedule_message me
+		where
+			mu.mid = me.id
+			<if test="uid != null" > and mu.uid = #{uid ,jdbcType=BIGINT}  </if>
+			<if test="isUse != null" > and mu.is_use = #{isUse ,jdbcType=TINYINT}  </if>
+			<if test="isDel != null" > and mu.is_del = #{isDel ,jdbcType=TINYINT}  </if>
+
+			<if test="message.status != null" > and me.status = #{message.status ,jdbcType=TINYINT}  </if>
+			
+			<if test="sorting != null">order by ${sorting}</if>
+			<if test="offset != null and limit != null">
+				limit #{offset}, #{limit}
+			</if>
+			
+	</select>
+	<!-- 查询总数 -->
+	<select id="selectMuserAndMcontentCount" resultType="java.lang.Long" parameterType="java.util.Map">
+		select 
+			count(mu.id) 
+		from 
+			schedule_message_user mu ,schedule_message me
+		where
+			mu.mid = me.id
+			<if test="uid != null" > and mu.uid = #{uid ,jdbcType=BIGINT}  </if>
+			<if test="isUse != null" > and mu.is_use = #{isUse ,jdbcType=TINYINT}  </if>
+			<if test="isDel != null" > and mu.is_del = #{isDel ,jdbcType=TINYINT}  </if>
+
+			<if test="message.status != null" > and me.status = #{message.status ,jdbcType=TINYINT}  </if>
+	</select>
+
 
 	
 </mapper>
