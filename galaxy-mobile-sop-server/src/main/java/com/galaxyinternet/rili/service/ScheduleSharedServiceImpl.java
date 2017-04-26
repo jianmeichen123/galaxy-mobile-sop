@@ -61,6 +61,8 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 		cusers.add(my);
 		
 		ScheduleShared query = new ScheduleShared();
+		//query.setToUid(16L);
+		query.setToUid(user.getId());
 		List<ScheduleShared> qList = scheduleSharedDao.selectList(query);
 		
 		if(qList!=null && !qList.isEmpty()){
