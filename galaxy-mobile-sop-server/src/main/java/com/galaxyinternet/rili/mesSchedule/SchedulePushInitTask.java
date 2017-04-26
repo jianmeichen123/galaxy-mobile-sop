@@ -66,9 +66,9 @@ public class SchedulePushInitTask extends BaseGalaxyTask { //extends BaseGalaxyT
 		
 		if(!SchedulePushInitTask.initTaskHasRuned) SchedulePushInitTask.initTaskHasRuned = true;
 		
-		if (sMessList != null && !sMessList.isEmpty()) {
+		//if (sMessList != null && !sMessList.isEmpty()) {
 			cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
-		}
+		//}
 	}
 
 }

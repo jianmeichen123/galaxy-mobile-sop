@@ -183,7 +183,7 @@
 	<!-- 个人消息 列表查询  -->
 	<select id="selectMuserAndMcontentList" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
-			mu.id, mu.mid, mu.uid, mu.type_role, 
+			mu.id, mu.mid, mu.uid, mu.type_role, mu.is_read,
 			me.type, me.remrk_id, me.content 
 		from 
 			schedule_message_user mu ,schedule_message me

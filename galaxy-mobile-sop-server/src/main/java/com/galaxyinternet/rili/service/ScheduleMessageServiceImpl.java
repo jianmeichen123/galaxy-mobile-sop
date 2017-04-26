@@ -297,6 +297,16 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			@Override
 			public void run() {
 
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+				calendar.set(Calendar.HOUR_OF_DAY, 23);
+				calendar.set(Calendar.MINUTE, 59);
+				calendar.set(Calendar.SECOND, 59);
+				calendar.set(Calendar.MILLISECOND, 0);
+				
+				long edate = calendar.getTimeInMillis();
+				
+				
 				ScheduleMessage message = messageGenerator.process(info);
 				Long mid = scheduleMessageDao.insert(message);
 				
@@ -321,12 +331,13 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 				}
 				scheduleMessageUserDao.insertInBatch(toInserts);
 				
+				
 				//通知消息 ：  已经添加新的消息
-				//if(DateUtil.checkLongIsToday(message.getSendTime())){
+				if(message.getSendTime().longValue() <= edate){
 					//SchedulePushMessControlTask.setHasChanged(true);
 					message.setToUsers(toInserts);
 					schedulePushMessTask.setHasSaved(message);
-				//}
+				}
 				
 			}
 		});
@@ -352,6 +363,15 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			@Override
 			public void run() {
 				/*
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+				calendar.set(Calendar.HOUR_OF_DAY, 23);
+				calendar.set(Calendar.MINUTE, 59);
+				calendar.set(Calendar.SECOND, 59);
+				calendar.set(Calendar.MILLISECOND, 0);
+				
+				long edate = calendar.getTimeInMillis();
+				
 				if(mType.startsWith("1")){
 					
 					//日程
@@ -374,9 +394,8 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 							scheduleMessageUserDao.delete(scheduleMessageUser);
 							
 							
-							//通知消息 ：  删除消息
-							///if(DateUtil.checkLongIsToday(message.getSendTime()) && message.getSendTime().longValue() > System.currentTimeMillis()){
-							//if(message.getStatus() == (byte)1){
+							//通知消息 ：  已经添加新的消息
+							if(message.getSendTime().longValue() <= edate){
 								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
 								
 								List<Long> mids = new ArrayList<Long>();
@@ -389,7 +408,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
 								
 								schedulePushMessTask.setHasDeled(delMap);
-							//}
+							}
 						}else{
 							scheduleMessageDao.deleteById(message.getId());
 							
@@ -398,8 +417,8 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 							scheduleMessageUserDao.delete(scheduleMessageUser);
 							
 							
-							//通知消息 ：  删除消息
-							//if(message.getStatus() == (byte)1){
+							//通知消息 ：  已经添加新的消息
+							if(message.getSendTime().longValue() <= edate){
 								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
 								
 								List<Long> mids = new ArrayList<Long>();
@@ -408,7 +427,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
 								
 								schedulePushMessTask.setHasDeled(delMap);
-							//}
+							}
 						}
 						
 					}
@@ -441,9 +460,17 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 			@Override
 			public void run() {
 				/*
-				if(mType.startsWith("1")){
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+				calendar.set(Calendar.HOUR_OF_DAY, 23);
+				calendar.set(Calendar.MINUTE, 59);
+				calendar.set(Calendar.SECOND, 59);
+				calendar.set(Calendar.MILLISECOND, 0);
+				
+				long edate = calendar.getTimeInMillis();
+				
+				if(mType.startsWith("1")){  //日程
 					
-					//日程
 					ScheduleInfo info_model = (ScheduleInfo) info;
 					
 					// 消息内容
@@ -465,19 +492,21 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 								scheduleMessageUserDao.delete(scheduleMessageUser);
 								
 								
-								//通知消息 ：  删除消息
-								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
-								
-								List<Long> mids = new ArrayList<Long>();
-								mids.add(message.getId());
-								
-								List<Long> muids = new ArrayList<Long>();
-								muids.add(info_model.getCreatedId());
-								
-								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
-								
-								schedulePushMessTask.setHasDeled(delMap);
+								//通知消息 ：  已经添加新的消息
+								if(message.getSendTime().longValue() <= edate){
+									Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+									
+									List<Long> mids = new ArrayList<Long>();
+									mids.add(message.getId());
+									
+									List<Long> muids = new ArrayList<Long>();
+									muids.add(info_model.getCreatedId());
+									
+									delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+									delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
+									
+									schedulePushMessTask.setHasDeled(delMap);
+								}
 							}else{
 								scheduleMessageDao.deleteById(message.getId());
 								
@@ -486,15 +515,17 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 								scheduleMessageUserDao.delete(scheduleMessageUser);
 								
 								
-								//通知消息 ：  删除消息
-								Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
-								
-								List<Long> mids = new ArrayList<Long>();
-								mids.add(message.getId());
-								
-								delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-								
-								schedulePushMessTask.setHasDeled(delMap);
+								//通知消息 ：  已经添加新的消息
+								if(message.getSendTime().longValue() <= edate){
+									Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+									
+									List<Long> mids = new ArrayList<Long>();
+									mids.add(message.getId());
+									
+									delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+									
+									schedulePushMessTask.setHasDeled(delMap);
+								}
 							}
 							
 							//新增消息
@@ -512,11 +543,12 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 							}
 							scheduleMessageUserDao.insertInBatch(toInserts);
 							
+							
 							//通知消息 ：  已经添加新的消息
-							//if(DateUtil.checkLongIsToday(message.getSendTime())){
+							if(messageAdd.getSendTime().longValue() <= edate){
 								messageAdd.setToUsers(toInserts);
 								schedulePushMessTask.setHasSaved(messageAdd);
-							//}
+							}
 						}
 						
 					}else{
@@ -535,15 +567,16 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 						}
 						scheduleMessageUserDao.insertInBatch(toInserts);
 						
+						
 						//通知消息 ：  已经添加新的消息
-						//if(DateUtil.checkLongIsToday(message.getSendTime())){
+						if(messageAdd.getSendTime().longValue() <= edate){
 							messageAdd.setToUsers(toInserts);
 							schedulePushMessTask.setHasSaved(messageAdd);
-						//}
+						}
 					}
 					
 				}
-*/
+				*/
 			}
 		});
 		
