@@ -47,9 +47,9 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	
 	
 	/**
-	 * 定义跳出 runForMess . for 的超时时间， 默认30秒
+	 * 定义跳出 runForMess . for 的超时时间， 默认0秒
 	 */
-	private static final long TO_BREAK_SENDFOR_TIME = (long)  30 * 1000;
+	private static final long TO_BREAK_SENDFOR_TIME = (long)  0 * 1000;
 	
 	/**
 	 * 定义消息 可以延后发送的时间， 00:1分钟发送 + 延后 5分钟
@@ -148,7 +148,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 
 				List<Long> mids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MID);
 				Long mid = mids.get(0);
-				List<Long> muids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MID);
+				List<Long> muids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MUID);
 
 				for (ScheduleMessage tempM : sMessList) {
 					if (tempM.getId().longValue() == mid.longValue()) {
@@ -207,7 +207,8 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					
 					SchedulePushInitTask.initTaskHasRuned = true;
 					
-					if (initList != null && !initList.isEmpty()) {
+					cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, initList);
+					/*if (initList != null && !initList.isEmpty()) {
 						
 						List<ScheduleMessage> sMessList = null;
 						Object ms = cache.get(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH);
@@ -225,7 +226,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 						}else{
 							cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, initList);
 						}
-					}
+					}*/
 				}
 			} catch (Exception e) {}
 			

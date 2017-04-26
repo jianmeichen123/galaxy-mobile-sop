@@ -210,28 +210,40 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 							code = "e" ;
 						}else{						
 							Long dateKeyLong = DateUtil.stringToLong(temp.getStartTime(), "yyyy-MM-dd HH:mm:ss");
-							
-							for(int i=0;i<group.length;i++){
+							if(dateKeyLong>=t4_b){
+								code = "a" ;
+							}else if(dateKeyLong>=t3_b){
+								code = "b" ;
+							}else if(dateKeyLong>=t2_b){
+								code = "c" ;
+							}else if(dateKeyLong>=t1_b){
+								code = "d" ;
+							}
+/*							for(int i=0;i<group.length;i++){
 								
 								if(dateKeyLong >= group[i]){
 									switch (i) {
-									case 1:
+									case 0:
 										code = "a";
 										break;
-									case 2:
+									case 1:
 										code = "b";
 										break;
-									case 3:
+									case 2:
 										code = "c";
 										break;
-									case 4:
+									case 3:
 										code = "d";
 										break;
 									default:
 										break;
 									}
 								}
-							}
+							}*/
+							
+							
+							
+							
 						}
 						if(dateKey_infos.containsKey(code)){
 							dateKey_infos.get(code).add(temp);
