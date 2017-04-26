@@ -143,6 +143,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		if(query.getDay()!=null){
 			
 			ScheduleInfo scheduleInfo = new ScheduleInfo();
+			ScheduleInfo sInfo = new ScheduleInfo();
 			
 			String bqEndTime = query.getBqEndTime();
 			String eqStartTime = query.getBqStartTime();
@@ -152,6 +153,15 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			scheduleInfo.setCreatedId(query.getCreatedId());
 			
 			qList = scheduleInfoDao.selectList(scheduleInfo);
+			
+			sInfo.setBqEndTime(bqEndTime);
+			sInfo.setBqStartTime(eqStartTime);
+			sInfo.setIsAllday((byte) 1);
+			sInfo.setCreatedId(query.getCreatedId());
+			
+			scheduleInfoList=scheduleInfoDao.selectList(sInfo);
+			
+			
 			String sd = query.getBqEndTime().substring(0, 10);
 			if(qList!=null && !qList.isEmpty()){
 				
@@ -160,8 +170,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 						if(!temp.getStartTime().substring(0, 10).equals(sd)){
 							
 							temp.setStartTime(sd+" 00:00:00");
-							
-							
+	
 						}
 						if(!temp.getEndTime().substring(0, 10).equals(sd)){							
 							temp.setEndTime(sd+" 23:59:59");
@@ -173,6 +182,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 					
 				}
 			}
+			qList.addAll(scheduleInfoList);
 				
 		}
 
@@ -202,7 +212,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 							
 							for(int i=0;i<group.length;i++){
 								
-								if(dateKeyLong > group[i]){
+								if(dateKeyLong >= group[i]){
 									switch (i) {
 									case 1:
 										code = "a";
