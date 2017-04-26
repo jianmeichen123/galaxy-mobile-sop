@@ -705,9 +705,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	public ResponseData<ScheduleInfo> ctSchedule(@RequestBody ScheduleInfo scheduleInfo,
 			HttpServletRequest request) {
 		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
-		
+		User user = (User) getUserFromSession(request);
 		try {
-			
+			scheduleInfo.setCreatedId(user.getId());
 			String ss = scheduleInfoService.getCconflictSchedule(scheduleInfo);	
 			if(ss==null){
 				responseBody.setResult(new Result(Status.OK, null,""));
