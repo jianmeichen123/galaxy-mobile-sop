@@ -24,7 +24,7 @@ public class ScheduleMessage extends PagableEntity {
 
 	private Long sendTime;  // 消息发送时间
 
-	private byte status;   // 0:可用 1:禁用
+	private Byte status;   // 0:可用 1:禁用
 	
 	private Long createdUid;
 
@@ -89,11 +89,11 @@ public class ScheduleMessage extends PagableEntity {
 		this.sendTime = sendTime;
 	}
 
-	public byte getStatus() {
+	public Byte getStatus() {
 		return status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
 

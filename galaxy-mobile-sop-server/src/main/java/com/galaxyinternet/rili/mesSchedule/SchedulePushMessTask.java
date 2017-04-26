@@ -199,7 +199,9 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 		SchedulePushMessTask.hasRunedToCheck = true;
 		
 		try {
-			try { //初始化补充
+			
+			//初始化补充
+			try {
 				if(!SchedulePushInitTask.initTaskHasRuned){
 					List<ScheduleMessage> initList = scheduleMessageService.queryTodayMessToSend();
 					

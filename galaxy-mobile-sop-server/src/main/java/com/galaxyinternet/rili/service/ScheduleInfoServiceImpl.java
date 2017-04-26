@@ -69,13 +69,14 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		List<ScheduleUtil> resultList = new ArrayList<ScheduleUtil>();
 		
 		//结果查询  封装
-		List<ScheduleInfo> qList = scheduleInfoDao.selectList(query);
+		List<ScheduleInfo> qList = null;
 
 		//有隔日的日程list
 		List<ScheduleInfo> scheduleInfoList = new ArrayList<ScheduleInfo>();
 		
 		//有隔日的日程重新封装list按年月查询
 		if(query.getDay()==null){
+			 qList = scheduleInfoDao.selectList(query);
 			if(qList!=null && !qList.isEmpty()){
 				ScheduleInfo sinfo ;
 				for(ScheduleInfo temp : qList){	
@@ -140,44 +141,41 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		}
 		//按天查询时日程跨日的情况
 		if(query.getDay()!=null){
+			
+			ScheduleInfo scheduleInfo = new ScheduleInfo();
+			
+			String bqEndTime = query.getBqEndTime();
+			String eqStartTime = query.getBqStartTime();
+
+			scheduleInfo.setBqEndTime(bqEndTime);
+			scheduleInfo.setEqStartTime(eqStartTime);
+			scheduleInfo.setCreatedId(query.getCreatedId());
+			
+			qList = scheduleInfoDao.selectList(scheduleInfo);
+			String sd = query.getBqEndTime().substring(0, 10);
 			if(qList!=null && !qList.isEmpty()){
-				ScheduleInfo sinfo ;
+				
 				for(ScheduleInfo temp : qList){	
-					if(temp.getStartTime()!=null && temp.getEndTime()!=null && !AccountDate.get(temp.getStartTime(),temp.getEndTime())){																				
-						List<String> sss = AccountDate.getXiuEveryday(temp.getStartTime().substring(0, 10),temp.getEndTime().substring(0, 10), query.getLastMouthDay());
-						for(String ss:sss){
-							sinfo = new ScheduleInfo();
-							if(temp.getStartTime().substring(0, 10).equals(ss)){
-								sinfo.setStartTime(temp.getStartTime());
-								sinfo.setEndTime(ss+" 23:59:00");
-								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());	
-								sinfo.setCreatedId(temp.getCreatedId());
-								sinfo.setUpdatedId(temp.getUpdatedId());
-								sinfo.setIsAllday(temp.getIsAllday());
-								sinfo.setRemark(temp.getRemark());
-								sinfo.setCreatedTime(temp.getCreatedTime());
-								sinfo.setUpdatedTime(temp.getUpdatedTime());
-							}							
-							scheduleInfoList.add(sinfo);
+					if(temp.getStartTime()!=null && temp.getEndTime()!=null){
+						if(!temp.getStartTime().substring(0, 10).equals(sd)){
+							
+							temp.setStartTime(query.getYear()+"-"+query.getMonth()+"-"+query.getDay()+" 00:00:00");
+							
 							
 						}
+						if(!temp.getEndTime().substring(0, 10).equals(sd)){							
+							temp.setEndTime(query.getYear()+"-"+query.getMonth()+"-"+query.getDay()+" 23:59:59");
 	
+						}
+						
 					}
+
 					
 				}
-
 			}
-			qList.addAll(scheduleInfoList);
-			Iterator<ScheduleInfo> it = qList.iterator();
-			while(it.hasNext()){
-				ScheduleInfo x = it.next();
-			    if(x.getStartTime()!=null && x.getEndTime()!=null && !AccountDate.get(x.getStartTime(),x.getEndTime())){
-			        it.remove();
-			    }		    
-			}
+				
 		}
-		
+
 		//结果封装
 		if(qList!=null && !qList.isEmpty()){
 			
