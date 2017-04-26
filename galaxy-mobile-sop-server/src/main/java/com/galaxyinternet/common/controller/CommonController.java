@@ -278,9 +278,11 @@ public class CommonController extends BaseControllerImpl<User, UserBo>{
 		DictBo dict = null;
 		for (Dict s: dictList) {
 				dict = new DictBo();
-				dict.setCode(s.getCode());
-				dict.setName(s.getName());
-				dicts.add(dict);
+				if(!s.getName().equals("投后运营")){
+					dict.setCode(s.getCode());
+					dict.setName(s.getName());
+					dicts.add(dict);
+				}
 			}
 		responseBody.setEntityList(dicts);
 		responseBody.setResult(new Result(Status.OK, null, "获取字典项成功！"));
