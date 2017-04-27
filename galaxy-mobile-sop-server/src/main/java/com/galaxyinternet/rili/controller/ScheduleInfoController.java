@@ -165,7 +165,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			scheduleInfo.setCreatedId(user.getId());
 			
 			
-			ScheduleInfo scheduleInfoo = new ScheduleInfo();
+		/*	ScheduleInfo scheduleInfoo = new ScheduleInfo();
 			
 			scheduleInfoo.setCreatedId(user.getId());
 			scheduleInfoo.setType((byte) 3);
@@ -183,7 +183,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			if(cont!=null){
 				responseBody.setResult(new Result(Status.ERROR, null,cont));
 				return responseBody;
-			}
+			}*/
 			
 			Long id = scheduleInfoService.insert(scheduleInfo);
 			scheduleInfo.setMessageType("1.3.1");
