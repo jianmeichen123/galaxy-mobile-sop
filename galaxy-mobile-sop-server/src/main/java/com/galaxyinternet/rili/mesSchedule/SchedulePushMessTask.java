@@ -188,6 +188,15 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	@Override
 	protected void executeInteral() throws BusinessException {
 		
+		try {
+			Date a = new Date();
+			throw new Exception("schedule - send - mess -  beging - time " + a);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 		while (SchedulePushMessTask.hasRunedToCheck) { // 服务是否正在处理
 			try {
 				Thread.sleep(SchedulePushMessTask.waitServerTime);
@@ -283,6 +292,16 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 		
 		for(ScheduleMessage tempMess : thisTimeToSend){
 			
+			
+			
+			try {
+				Date a = new Date();
+				throw new Exception("for - to - send - mess -  beging - time " + a);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
 			final ScheduleMessage mess = tempMess;
 			
 			// 发送时间  《  当前时间+lazy tm  跳过不发
@@ -298,8 +317,16 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				continue;
 			}
 
+			
+			try {
+				Date a = new Date();
+				throw new Exception("thread - to - send - mess -  beging - time " + a);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			// 消息推送到移动端
 			GalaxyThreadPool.getExecutorService().execute(new Runnable() {
+				
 				@Override
 				public void run() {
 					
@@ -322,6 +349,15 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					
 					// 消息发送
 					org.json.JSONObject result = xinge.pushAccountList(uIds, mesTitle, conts);
+					
+					
+					try {
+						Date a = new Date();
+						throw new Exception("thread - to - send - mess -  end - time " + a);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
 					
 					// 消息发送结果
 					if (result != null) {
