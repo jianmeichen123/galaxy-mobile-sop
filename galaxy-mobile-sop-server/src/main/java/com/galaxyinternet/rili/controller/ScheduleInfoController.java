@@ -165,7 +165,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			scheduleInfo.setCreatedId(user.getId());
 			
 			
-		/*	ScheduleInfo scheduleInfoo = new ScheduleInfo();
+			/*ScheduleInfo scheduleInfoo = new ScheduleInfo();
 			
 			scheduleInfoo.setCreatedId(user.getId());
 			scheduleInfoo.setType((byte) 3);
@@ -177,9 +177,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 
 			scheduleInfoo.setBqEndTime(bqEndTime);
 			scheduleInfoo.setBqStartTime(bqStartTime);
+			*/
 			
-			
-			String cont = scheduleInfoService.getCconflictSchedule(scheduleInfoo);
+/*			String cont = scheduleInfoService.getCountSchedule(scheduleInfo);
 			if(cont!=null){
 				responseBody.setResult(new Result(Status.ERROR, null,cont));
 				return responseBody;
@@ -258,7 +258,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 
 			
 			if(ss==null){
-				responseBody.setResult(new Result(Status.ERROR, null,"其他日程不存在"));
+				responseBody.setResult(new Result(Status.OK, null,"其他日程不存在"));
 				return responseBody;
 			}
 			//为了防止共享的人查看详情
