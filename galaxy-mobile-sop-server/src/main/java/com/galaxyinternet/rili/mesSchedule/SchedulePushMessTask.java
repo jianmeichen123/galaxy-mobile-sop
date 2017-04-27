@@ -254,11 +254,17 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				if(!thisTimeToSend.isEmpty()){
 					final List<ScheduleMessage> toSend = thisTimeToSend;
 					cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
-					new Thread(){ 
+					
+					GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 						public void run() {
 							runForMess(toSend);
 						}
-					}.start();
+					});
+					/*new Thread(){ 
+						public void run() {
+							runForMess(toSend);
+						}
+					}.start();*/
 				}
 			}
 		}finally{
