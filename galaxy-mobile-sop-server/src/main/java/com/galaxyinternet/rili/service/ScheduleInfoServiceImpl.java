@@ -332,8 +332,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		scheduleInfo.setType((byte) 3);
 		String content = null;
 		
-		String bqEndTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 00:00:00";
-		String eqStartTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 23:59:59";
+		String bqEndTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 23:59:59";
+		String eqStartTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 00:00:00";
 		
 
 		if(query.getIsAllday() != null && query.getIsAllday().intValue() == 1){
@@ -342,7 +342,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		scheduleInfo.setBqEndTime(bqEndTime);
 		scheduleInfo.setEqStartTime(eqStartTime);
 
-		List<ScheduleInfo> qList = scheduleInfoDao.selectList(query);
+		List<ScheduleInfo> qList = scheduleInfoDao.selectList(scheduleInfo);
 		if(qList != null && !qList.isEmpty()){
 			if(qList.size() >20){
 				content = "您每天最多可创建20条日程，无法再创建了。";				
