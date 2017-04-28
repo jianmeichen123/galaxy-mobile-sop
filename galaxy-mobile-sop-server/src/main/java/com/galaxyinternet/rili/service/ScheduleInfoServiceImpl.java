@@ -331,14 +331,16 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		scheduleInfo.setCreatedId(query.getCreatedId());
 		scheduleInfo.setType((byte) 3);
 		String content = null;
+		String ss = query.getStartTime().replace("/", "-").substring(0, 10);
 		
-		String bqEndTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 23:59:59";
-		String eqStartTime = DateUtil.convertDateToString(new Date(),"yyyy-MM-dd")+" 00:00:00";
+		
+		String bqEndTime = ss+" 23:59:59";
+		String eqStartTime = ss+" 00:00:00";
 		
 
-		if(query.getIsAllday() != null && query.getIsAllday().intValue() == 1){
+/*		if(query.getIsAllday() != null && query.getIsAllday().intValue() == 1){
 			bqEndTime = eqStartTime + " 23:59:59";
-		}
+		}*/
 		scheduleInfo.setBqEndTime(bqEndTime);
 		scheduleInfo.setEqStartTime(eqStartTime);
 
