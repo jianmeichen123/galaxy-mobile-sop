@@ -127,16 +127,18 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 		
 			            String idss = subObjectt.get("userId").getAsString();
 			            Long userId = Long.valueOf(idss);
-			            String userName = subObjectt.get("userName").getAsString();
-						
-			            UtilUser au = new UtilUser();
-		 				au.setId(userId);
-		 				au.setName(userName);
-		 				au.setDepartId(deptTempId);
-		 				if(deptCheckedUid.contains(userId.longValue())){
-		 					au.setIsChecked(true);
-		 				}
-		 				deptUsers.add(au);
+			            if(userId.longValue()!=user.getId().longValue()){
+				            String userName = subObjectt.get("userName").getAsString();
+							
+				            UtilUser au = new UtilUser();
+			 				au.setId(userId);
+			 				au.setName(userName);
+			 				au.setDepartId(deptTempId);
+			 				if(deptCheckedUid.contains(userId.longValue())){
+			 					au.setIsChecked(true);
+			 				}
+			 				deptUsers.add(au);
+			            }
 					}
  		   }
  			//结果返回
@@ -447,7 +449,7 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 	
 	//查询出全部部门及部门中的人及人是否已经共享的部门是否 默认及
 	public List<SharePerson> queryAppPerson(Object objUser, ScheduleDepartUno query) {
-		
+		User user = (User) objUser;
 		List<SharePerson> sharePersonList = new ArrayList<SharePerson>();
 		
 		Map<String,Object> map = new HashMap<String,Object>();
@@ -466,15 +468,17 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 	 			SharePerson SharePerson =new SharePerson();
 					JsonObject subObjectt=array.get(j).getAsJsonObject();
 
-		            String userId = subObjectt.get("userId").getAsString();		           
-		            String userName = subObjectt.get("userName").getAsString();
-		            String depName = subObjectt.get("depName").getAsString();			           
-		            String depId = subObjectt.get("depId").getAsString();
-		            SharePerson.setUserId(userId);
-		            SharePerson.setUserName(userName);
-		            SharePerson.setDepartName(depName);
-		            SharePerson.setDepartId(depId);
-		            sharePersonList.add(SharePerson);	 				
+		            String userId = subObjectt.get("userId").getAsString();
+		            if(!userId.equals(user.getId().toString())){
+			            String userName = subObjectt.get("userName").getAsString();
+			            String depName = subObjectt.get("depName").getAsString();			           
+			            String depId = subObjectt.get("depId").getAsString();
+			            SharePerson.setUserId(userId);
+			            SharePerson.setUserName(userName);
+			            SharePerson.setDepartName(depName);
+			            SharePerson.setDepartId(depId);
+			            sharePersonList.add(SharePerson);	 				
+		            }
 				}
 	   }				
 		return sharePersonList;
