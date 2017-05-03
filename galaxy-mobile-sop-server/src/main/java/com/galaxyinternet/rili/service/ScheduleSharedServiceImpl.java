@@ -81,18 +81,37 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 			   	 JsonArray array=object.get("value").getAsJsonArray();
 			   	 for(int i=0;i<array.size();i++){
 		             JsonObject subObject=array.get(i).getAsJsonObject();
-		             String ids = subObject.get("userId").getAsString();
-		             String userName = subObject.get("userName").getAsString();
-		             Long userId = Long.valueOf(ids);
-		             name.put(userId, userName);		   		 
+		             
+		             int isDel  = subObject.get("isDel").getAsInt();
+		             int isShow   = subObject.get("isShow").getAsInt();
+		             int isOuttage   = subObject.get("isOuttage").getAsInt();
+		             
+		             if(isDel==0 && isShow==0 && isOuttage==0){
+			             String ids = subObject.get("userId").getAsString();
+			             String userName = subObject.get("userName").getAsString();
+			             Long userId = Long.valueOf(ids);
+			             name.put(userId, userName);
+		             }else{
+		            	 String ids = subObject.get("userId").getAsString();
+		            	 Long userId = Long.valueOf(ids);
+		            	 ScheduleShared scheduleSharedApp = new ScheduleShared();
+		            	 
+		            	 scheduleSharedApp.setToUid(user.getId());
+		            	 scheduleSharedApp.setCreateUid(userId);
+		            	 
+		            	 scheduleSharedDao.delete(scheduleSharedApp);
+		            	 
+		             }
 			   	 }
 		   	}
-		   	for(ScheduleShared tempU : qList){
+		   	
+		   	List<ScheduleShared> qListt = scheduleSharedDao.selectList(query);
+		   	for(ScheduleShared tempU : qListt){
 //				/tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
 				tempU.setToUname(name.get(tempU.getCreateUid()));
 			}
 						
-			cusers.addAll(qList);
+			cusers.addAll(qListt);
 		}
 		return cusers;
 	}
@@ -110,6 +129,7 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 		ScheduleShared query = new ScheduleShared();
 		query.setCreateUid(user.getId());
 		if(toUname==null){
+			List<ScheduleShared> ss = new ArrayList<ScheduleShared>();
 			cusers = scheduleSharedDao.selectList(query);		
 			if(cusers!=null && !cusers.isEmpty()){
 				List<Long> uids = new ArrayList<Long>();
@@ -128,21 +148,40 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 				   	 JsonArray array=object.get("value").getAsJsonArray();
 				   	 for(int i=0;i<array.size();i++){
 			             JsonObject subObject=array.get(i).getAsJsonObject();
-			             String ids = subObject.get("userId").getAsString();
-			             String userName = subObject.get("userName").getAsString();
-			             Long userId = Long.valueOf(ids);
-			             name.put(userId, userName);		   		 
+			             int isDel  = subObject.get("isDel").getAsInt();
+			             int isShow   = subObject.get("isShow").getAsInt();
+			             int isOuttage   = subObject.get("isOuttage").getAsInt();
+			             
+			             if(isDel==0 && isShow==0 && isOuttage==0){
+			            	 String ids = subObject.get("userId").getAsString();
+				             String userName = subObject.get("userName").getAsString();
+				             Long userId = Long.valueOf(ids);
+				             name.put(userId, userName);		
+			             }else{
+			            	 
+			            	  String ids = subObject.get("userId").getAsString();
+			            	  Long userId = Long.valueOf(ids);
+			            	 ScheduleShared scheduleSharedApp = new ScheduleShared();
+			            	 
+			            	 scheduleSharedApp.setToUid(userId);
+			            	 scheduleSharedApp.setCreateUid(user.getId());
+			            	 
+			            	 scheduleSharedDao.delete(scheduleSharedApp);
+			             }
 				   	 }
 			   	 }
 				//Map<Long, String> uidNmaeMap = utilService.queryUidNmaeMap(uids);
 			//	Map<Long, String> deptIdNmaeMap = utilService.queryDeptIdNmaeMap(uids);
-				
-				for(ScheduleShared tempU : cusers){
-	//				/tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
-					tempU.setToUname(name.get(tempU.getToUid()));
-				}
+			   	//删除禁用的   重新查一遍
+			   	ss = scheduleSharedDao.selectList(query);
+			   	if(ss!=null && !ss.isEmpty()){
+					for(ScheduleShared tempU : ss){
+		//				/tempU.setToDeptName(deptIdNmaeMap.get(tempU.getDepartmentId()));
+						tempU.setToUname(name.get(tempU.getToUid()));
+					}
+			   	}			
 			}
-			return cusers ;
+			return ss ;
 		}else{
 			cusers = new ArrayList<ScheduleShared>();
 			Map<String,Object> map = new HashMap<String,Object>();
