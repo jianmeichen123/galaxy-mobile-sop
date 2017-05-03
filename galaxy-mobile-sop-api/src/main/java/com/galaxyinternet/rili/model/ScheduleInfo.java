@@ -11,6 +11,7 @@ public class ScheduleInfo extends PagableEntity{
 
 	private static final long serialVersionUID = 1L;
 	
+	
 	private Long parentId;  // 关联于他人(会议发起人)日程
 
 	private Byte type;      //日程类型 1:会议 2:拜访 3:其它
@@ -42,10 +43,13 @@ public class ScheduleInfo extends PagableEntity{
 	private Integer month;
 	private Integer day;
 	
+	private Long idIsNotEq;      // id != idIsNotEq
 	private String bqStartTime;  // 日程开始  起始时间     startTime  >   bqStartTime
     private String bqEndTime;    // 日程开始  结束时间     startTime  <   bqEndTime
     private String eqStartTime;  // 日程结束  起始时间     endTime >  eqStartTime
 	
+    private String sbTimeForAllday;    // 日程开始  起始时间     startTime  >   sbTimeForAllday
+    private String seTimeForAllday;    // 日程开始  结束时间     startTime  <   seTimeForAllday
     
     
     private String userName;     // 日历创建人姓名
@@ -280,6 +284,30 @@ public class ScheduleInfo extends PagableEntity{
 
 	public void setLastMouthDay(String lastMouthDay) {
 		this.lastMouthDay = lastMouthDay;
+	}
+
+	public String getSbTimeForAllday() {
+		return sbTimeForAllday;
+	}
+
+	public void setSbTimeForAllday(String sbTimeForAllday) {
+		this.sbTimeForAllday = sbTimeForAllday;
+	}
+
+	public String getSeTimeForAllday() {
+		return seTimeForAllday;
+	}
+
+	public void setSeTimeForAllday(String seTimeForAllday) {
+		this.seTimeForAllday = seTimeForAllday;
+	}
+
+	public Long getIdIsNotEq() {
+		return idIsNotEq;
+	}
+
+	public void setIdIsNotEq(Long idIsNotEq) {
+		this.idIsNotEq = idIsNotEq;
 	}
 
 	

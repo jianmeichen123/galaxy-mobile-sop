@@ -132,7 +132,7 @@
 			<if test="projectType != null" > project_type = #{projectType,jdbcType=TINYINT}, </if>
 			<if test="projectId != null" > project_id = #{projectId,jdbcType=BIGINT}, </if>
 			<if test="startTime != null" > start_time = #{startTime,jdbcType=TIMESTAMP}, </if>
-			 end_time = #{endTime,jdbcType=TIMESTAMP}, 
+			 end_time = #{endTime,jdbcType=TIMESTAMP},
 			<if test="isAllday != null" > is_allday = #{isAllday,jdbcType=TINYINT}, </if>
 			<if test="wakeupId != null" > wakeup_id = #{wakeupId,jdbcType=BIGINT}, </if>
 			 remark = #{remark,jdbcType=VARCHAR}, 
@@ -158,6 +158,36 @@
 		delete from schedule_info
 		where id = #{id}
 	</delete>
+
+
+
+	<!-- 查询日程冲突的list -->
+	<select id="selectConflictSchedule" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		id, type, name_id, name
+		from schedule_info
+		<where>
+			<trim prefixOverrides="and">
+			
+			    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime} ]]> </if>
+			    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime} ]]> </if>
+				and is_allday = 0
+				or (
+					<if test="sbTimeForAllday != null"> <![CDATA[  start_time >= #{sbTimeForAllday} ]]> </if>
+				    <if test="seTimeForAllday != null"> <![CDATA[  and start_time <= #{seTimeForAllday} ]]> </if>
+					and is_allday = 1 
+				
+				)
+				
+				<if test="createdId != null" > and created_id = #{createdId,jdbcType=BIGINT} </if>
+				<if test="idIsNotEq != null"> and id != #{idIsNotEq,jdbcType=BIGINT} </if>
+
+			</trim>
+			
+		</where>
+	</select>
+
+
 
 	
 	

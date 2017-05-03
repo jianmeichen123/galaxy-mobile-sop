@@ -155,6 +155,9 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			scheduleInfo.setEqStartTime(eqStartTime);
 			scheduleInfo.setCreatedId(query.getCreatedId());
 			
+			scheduleInfo.setProperty(query.getProperty());
+			scheduleInfo.setDirection(query.getDirection());
+			
 			qList = scheduleInfoDao.selectList(scheduleInfo);
 			
 			sInfo.setBqEndTime(bqEndTime);
@@ -211,7 +214,10 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 					if(temp.getStartTime()!=null){
 						if(temp.getIsAllday()!=null && temp.getIsAllday().intValue()==1){
 							code = "e" ;
-						}else{						
+						}else if(temp.getStartTime()!=null && temp.getEndTime()!=null && temp.getStartTime().indexOf("00:00:00")!=-1 && temp.getEndTime().indexOf("23:59:59")!=-1  ){
+							code = "e" ;
+						}
+						else {						
 							Long dateKeyLong = DateUtil.stringToLong(temp.getStartTime(), "yyyy-MM-dd HH:mm:ss");
 							if(dateKeyLong>=t4_b){
 								code = "a" ;
@@ -301,18 +307,25 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 	public String getCconflictSchedule(ScheduleInfo query){
 		
 		String content = null;
-		
+			    
 		String bqEndTime = query.getEndTime();
 		String eqStartTime = query.getStartTime();
-		
-		if(query.getIsAllday() != null && query.getIsAllday().intValue() == 1){
+		if((query.getIsAllday() != null && query.getIsAllday().intValue() == 1) || bqEndTime == null){
 			bqEndTime = eqStartTime + " 23:59:59";
 		}
-		query.setBqEndTime(bqEndTime);
-		query.setEqStartTime(eqStartTime);
-		query.setStartTime(null);
-		query.setEndTime(null);
-		List<ScheduleInfo> qList = scheduleInfoDao.selectList(query);
+		
+		ScheduleInfo toQ = new ScheduleInfo();
+		toQ.setBqEndTime(bqEndTime);
+		toQ.setEqStartTime(eqStartTime);
+		
+		toQ.setSbTimeForAllday(eqStartTime.substring(0, 10));
+		toQ.setSeTimeForAllday(bqEndTime.substring(0, 10));
+		
+		toQ.setIdIsNotEq(query.getId());
+		toQ.setCreatedId(query.getCreatedId());
+		
+		List<ScheduleInfo> qList = scheduleInfoDao.selectConflictSchedule(toQ);
+		
 		if(qList != null && !qList.isEmpty()){
 			if(qList.size() == 1){
 				content = "日程\""+qList.get(0).getName() +"\"";
