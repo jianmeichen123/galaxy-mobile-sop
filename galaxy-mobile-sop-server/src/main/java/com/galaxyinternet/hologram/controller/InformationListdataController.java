@@ -268,8 +268,8 @@ public class InformationListdataController extends BaseControllerImpl<Informatio
             data.setCode(code);
             data.setProjectId(projectId);
             data.setProperty("created_time");
-            data.setDirection(Direction.DESC.toString());
             List<InformationListdata> list = informationListdataService.queryList(data);
+            data.setDirection(Direction.ASC.toString());
             resp.setEntityList(list);
         }catch(Exception e){
             resp.setResult(new Result(Result.Status.ERROR,null, "查询表格列表失败"));
