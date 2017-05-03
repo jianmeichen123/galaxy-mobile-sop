@@ -111,7 +111,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 				String lastMouthDay = AccountDate.getLastDayOfMonth(query.getYear(), query.getMonth()-1);
 				query.setLastMouthDay(lastMouthDay);
 			}
-			if(query.getProperty()==null)  query.setProperty("start_time"); 
+			if(query.getProperty()==null)  query.setProperty("start_time,created_time"); 
 			if(query.getDirection()==null) query.setDirection("asc");
 			if(query.getCreatedId()==null) query.setCreatedId(user.getId());
 			
