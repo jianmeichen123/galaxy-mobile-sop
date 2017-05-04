@@ -46,8 +46,8 @@ public class SchedulePushInitTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	@Autowired
 	private ScheduleMessageService scheduleMessageService;
 	
-	@Autowired
-	Cache cache;
+	//@Autowired
+	//Cache cache;
 	
 	
 	/**
@@ -67,8 +67,15 @@ public class SchedulePushInitTask extends BaseGalaxyTask { //extends BaseGalaxyT
 		if(!SchedulePushInitTask.initTaskHasRuned) SchedulePushInitTask.initTaskHasRuned = true;
 		
 		//if (sMessList != null && !sMessList.isEmpty()) {
-			cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
+			//cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 		//}
+			
+			
+			SchedulePushInitTask.initTaskHasRuned = true;
+			
+			if(sMessList!=null){
+				SchedulePushMessTask.messForCache = sMessList;
+			}
 	}
 
 }
