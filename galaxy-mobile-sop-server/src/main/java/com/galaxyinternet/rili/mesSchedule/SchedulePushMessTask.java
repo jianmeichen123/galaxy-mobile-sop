@@ -99,7 +99,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				e.printStackTrace();
 			}
 		}
-		
 		SchedulePushMessTask.hasRunedToCheck = true;
 		try {
 			List<ScheduleMessage> sMessList = null;
@@ -107,7 +106,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			if(ms != null){
 				sMessList = (List<ScheduleMessage>) ms;
 				sMessList.add(addMess);
-				
 				Collections.sort(sMessList, new Comparator<ScheduleMessage>() {
 					public int compare(ScheduleMessage arg0, ScheduleMessage arg1) {
 						return (int) (arg0.getSendTime().longValue() - arg1.getSendTime().longValue());
@@ -137,7 +135,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				e.printStackTrace();
 			}
 		}
-		
 		SchedulePushMessTask.hasRunedToCheck = true;
 		
 		try {
@@ -145,14 +142,12 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			Object ms = cache.get(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH);
 			if(ms != null){
 				sMessList = (List<ScheduleMessage>) ms;
-
 				List<Long> mids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MID);
 				Long mid = mids.get(0);
 				List<Long> muids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MUID);
 
 				for (ScheduleMessage tempM : sMessList) {
 					if (tempM.getId().longValue() == mid.longValue()) {
-						
 						if(muids != null && !muids.isEmpty()) {
 							for(Long muid : muids){
 								for (ScheduleMessageUser tempU : tempM.getToUsers()) {
@@ -169,7 +164,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 						break;
 					}
 				}
-				
 				cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 			}
 		} finally{
@@ -187,8 +181,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void executeInteral() throws BusinessException {
-		
-		
 		
 		
 		while (SchedulePushMessTask.hasRunedToCheck) { // 服务是否正在处理
@@ -258,6 +250,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					final List<ScheduleMessage> toSend = thisTimeToSend;
 					cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 					
+					
 					GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 						public void run() {
 							runForMess(toSend);
@@ -283,7 +276,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 
 		final XGPush xinge = XGPush.getInstance();
 		
-		
 		for(ScheduleMessage tempMess : thisTimeToSend){
 			
 
@@ -302,11 +294,15 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				continue;
 			}
 
+			
+			
 			// 消息推送到移动端
 			GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 				
 				@Override
 				public void run() {
+
+					
 					
 					// 消息标题
 					String mesTitle = null;
@@ -325,6 +321,8 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					// 消息内容
 					String conts = UtilOper.getMessContent(mess);
 					
+					
+					
 					// 消息发送
 					org.json.JSONObject result = xinge.pushAccountList(uIds, mesTitle, conts);
 					
@@ -337,7 +335,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 						String andriodmarkV = backStr.substring(backStr.lastIndexOf("ret_code\":") + 10,
 								backStr.lastIndexOf("ret_code\":") + 11);
 						if (!iosmarkV.equals("0") || !andriodmarkV.equals("0")) {
-							logger.error("SchedulePushMessTask . xingge 推送失败 " + backStr);
 						}else {
 							ScheduleMessageUser toU = new ScheduleMessageUser();
 							toU.setMid(mess.getId());
@@ -345,8 +342,14 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 							scheduleMessageUserDao.updateByIdSelective(toU);
 						}
 					}
+					
+					
+					
 				}
+				
+			
 			});
+			
 		}
 	}
 

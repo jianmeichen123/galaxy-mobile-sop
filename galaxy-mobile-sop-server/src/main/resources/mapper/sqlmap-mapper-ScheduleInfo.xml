@@ -169,7 +169,9 @@
 		<where>
 			<trim prefixOverrides="and">
 			
-			    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime} ]]> </if>
+				<if test="idIsNotEq != null"> and id != #{idIsNotEq,jdbcType=BIGINT} </if>
+				
+			    <if test="bqEndTime != null"> <![CDATA[ and (start_time <= #{bqEndTime} ]]> </if>
 			    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime} ]]> </if>
 				and is_allday = 0
 				or (
@@ -178,9 +180,9 @@
 					and is_allday = 1 
 				
 				)
-				
+				)
 				<if test="createdId != null" > and created_id = #{createdId,jdbcType=BIGINT} </if>
-				<if test="idIsNotEq != null"> and id != #{idIsNotEq,jdbcType=BIGINT} </if>
+				
 
 			</trim>
 			
