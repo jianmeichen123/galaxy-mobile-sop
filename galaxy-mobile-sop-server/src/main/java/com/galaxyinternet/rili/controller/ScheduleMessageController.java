@@ -71,8 +71,11 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 			String property = query.getProperty() != null ? "mu."+query.getProperty() : "mu.created_time";
 			String dir = query.getDirection() != null ? query.getDirection() : "desc";
 			
-			Direction direction = Direction.fromString(dir);
-			pageable = new PageRequest(pageNum,pageSize, direction, property);
+			query.setProperty(property);
+			query.setDirection(dir);
+			//Direction direction = Direction.fromString(dir);
+			pageable = new PageRequest(pageNum,pageSize);
+
 			
 			//muser 查询条件
 			query.setUid(user.getId());
