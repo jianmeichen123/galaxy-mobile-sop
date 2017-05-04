@@ -158,6 +158,10 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			
 		}
 		*/
+		if(scheduleInfo.getName()==null){
+			responseBody.setResult(new Result(Status.ERROR, null,"日程名称不能为空"));
+			return responseBody;
+		}
 		try {
 
 			//标识是 其他日程
