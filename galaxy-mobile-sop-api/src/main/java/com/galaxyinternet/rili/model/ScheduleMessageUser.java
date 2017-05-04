@@ -39,6 +39,7 @@ public class ScheduleMessageUser extends PagableEntity {
     private String type;       //消息类型  日程(1.1:会议  1.2:拜访  1.3:其它)
 	private Long remarkId;     //存的是日程的id
 	private String content;    // 消息内容
+	private Long sendTime;  // 消息发送时间
     private ScheduleMessage message;
     
     
@@ -161,6 +162,14 @@ public class ScheduleMessageUser extends PagableEntity {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public Long getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Long sendTime) {
+		this.sendTime = sendTime;
 	}
 
 	
