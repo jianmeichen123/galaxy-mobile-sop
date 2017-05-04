@@ -169,13 +169,6 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			scheduleInfo.setCreatedId(user.getId());
 			
 
-			
-			String cont = scheduleInfoService.getCountSchedule(scheduleInfo);
-			if(cont!=null){
-				responseBody.setResult(new Result(Status.ERROR, null,cont));
-				return responseBody;
-			}
-			
 			Long id = scheduleInfoService.insert(scheduleInfo);
 			scheduleInfo.setMessageType("1.3.1");
 			scheduleInfo.setId(id);
@@ -726,6 +719,36 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.setResult(new Result(Status.ERROR, null,"查询日程冲突失败"));
+			logger.error("异常信息:",e.getMessage());
+		}
+		return responseBody;
+	}
+	
+	/**
+	 * 获取验证条数接口
+	 * @param scheduleInfo
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getCountSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleInfo> getCountSchedule(@RequestBody ScheduleInfo scheduleInfo,
+			HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
+		try {
+			scheduleInfo.setType((byte) 3);
+			scheduleInfo.setCreatedId(user.getId());
+			String ss = scheduleInfoService.getCountSchedule(scheduleInfo);	
+			if(ss==null){
+				responseBody.setResult(new Result(Status.OK, null,""));
+			}else{
+				responseBody.setResult(new Result(Status.ERROR, null,ss));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null,"查询日程条数失败"));
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;

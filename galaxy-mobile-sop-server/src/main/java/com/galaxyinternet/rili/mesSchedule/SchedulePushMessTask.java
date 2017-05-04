@@ -46,6 +46,9 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	
 	
 	
+	public static List<ScheduleMessage> messForCache = new ArrayList<ScheduleMessage>();
+		
+	
 	/**
 	 * 定义跳出 runForMess . for 的超时时间， 默认0秒
 	 */
@@ -75,8 +78,8 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	
 	
 	
-	@Autowired
-	Cache cache;
+	//@Autowired
+	//Cache cache;
 	@Autowired
 	private ScheduleMessageService scheduleMessageService;
 	@Autowired
@@ -90,7 +93,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	/**
 	 * 是否有新增处理 外部调用， 赋值
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized void setHasSaved(ScheduleMessage addMess) {
 		while (SchedulePushMessTask.hasRunedToCheck) { // 服务是否正在处理
 			try {
@@ -101,6 +103,21 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 		}
 		SchedulePushMessTask.hasRunedToCheck = true;
 		try {
+			
+			if(SchedulePushMessTask.messForCache != null && !SchedulePushMessTask.messForCache.isEmpty()){
+				
+				SchedulePushMessTask.messForCache.add(addMess);
+				Collections.sort(SchedulePushMessTask.messForCache, new Comparator<ScheduleMessage>() {
+					public int compare(ScheduleMessage arg0, ScheduleMessage arg1) {
+						return (int) (arg0.getSendTime().longValue() - arg1.getSendTime().longValue());
+					}
+				});
+			}else{
+				SchedulePushMessTask.messForCache.add(addMess);
+			}
+			
+			
+			/*
 			List<ScheduleMessage> sMessList = null;
 			Object ms = cache.get(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH);
 			if(ms != null){
@@ -111,9 +128,14 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 						return (int) (arg0.getSendTime().longValue() - arg1.getSendTime().longValue());
 					}
 				});
-				
-				cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
+			}else{
+				sMessList = new ArrayList<ScheduleMessage>();
+				sMessList.add(addMess);
 			}
+			
+			cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
+			*/
+			
 		}finally{
 			SchedulePushMessTask.hasRunedToCheck = false;
 		}
@@ -126,7 +148,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	 * 是否有删除处理 
 	 * 外部调用， 赋值
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized void setHasDeled(Map<String, List<Long>> delMap) {
 		while (SchedulePushMessTask.hasRunedToCheck) { // 服务是否正在处理
 			try {
@@ -138,6 +159,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 		SchedulePushMessTask.hasRunedToCheck = true;
 		
 		try {
+			/*
 			List<ScheduleMessage> sMessList = null;
 			Object ms = cache.get(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH);
 			if(ms != null){
@@ -166,6 +188,8 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				}
 				cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 			}
+			
+			*/
 		} finally{
 			SchedulePushMessTask.hasRunedToCheck = false;
 		}
@@ -178,7 +202,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	/**
 	 * 每 30 秒调用，发送消息
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void executeInteral() throws BusinessException {
 		
@@ -202,7 +225,12 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					
 					SchedulePushInitTask.initTaskHasRuned = true;
 					
-					cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, initList);
+					if(initList!=null){
+						SchedulePushMessTask.messForCache = initList;
+					}
+					
+					
+					//cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, initList);
 					/*if (initList != null && !initList.isEmpty()) {
 						
 						List<ScheduleMessage> sMessList = null;
@@ -226,6 +254,36 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			} catch (Exception e) {}
 			
 			
+			long current = System.currentTimeMillis();
+			
+			if(SchedulePushMessTask.messForCache != null && !SchedulePushMessTask.messForCache.isEmpty()){
+				
+				List<ScheduleMessage> thisTimeToSend = new ArrayList<ScheduleMessage>();
+				for (int i = 0; i < SchedulePushMessTask.messForCache.size();) {
+					
+					ScheduleMessage mess = SchedulePushMessTask.messForCache.get(i);
+					
+					if(mess.getSendTime().longValue() - current <= SchedulePushMessTask.TO_BREAK_SENDFOR_TIME){
+						thisTimeToSend.add(mess);
+						SchedulePushMessTask.messForCache.remove(i);
+					}else{
+						break;
+					}
+				}
+				
+				if(!thisTimeToSend.isEmpty()){
+					final List<ScheduleMessage> toSend = thisTimeToSend;
+					
+					GalaxyThreadPool.getExecutorService().execute(new Runnable() {
+						public void run() {
+							runForMess(toSend);
+						}
+					});
+				}
+			}
+			
+			
+			/*
 			long current = System.currentTimeMillis();
 			
 			List<ScheduleMessage> sMessList = null;
@@ -256,13 +314,8 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 							runForMess(toSend);
 						}
 					});
-					/*new Thread(){ 
-						public void run() {
-							runForMess(toSend);
-						}
-					}.start();*/
 				}
-			}
+			}*/
 		}finally{
 			SchedulePushMessTask.hasRunedToCheck = false;
 		}

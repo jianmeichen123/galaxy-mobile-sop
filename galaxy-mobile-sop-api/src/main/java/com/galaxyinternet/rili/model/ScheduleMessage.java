@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.galaxyinternet.framework.core.model.PagableEntity;
+import com.galaxyinternet.framework.core.utils.GSONUtil;
 
 /**
  * 消息内容
@@ -152,6 +153,12 @@ public class ScheduleMessage extends PagableEntity {
 
 	public void setSendTimeNotNull(Boolean sendTimeNotNull) {
 		this.sendTimeNotNull = sendTimeNotNull;
+	}
+
+	@Override
+	public String toString() {
+		
+		return GSONUtil.toJson(this);
 	}
 
 
