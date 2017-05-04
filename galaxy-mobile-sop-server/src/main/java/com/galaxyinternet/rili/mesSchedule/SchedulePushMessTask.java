@@ -182,7 +182,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	@Override
 	protected void executeInteral() throws BusinessException {
 		
-		logger.error(" 11111 task to begin ; "    +  new Date());
 		
 		while (SchedulePushMessTask.hasRunedToCheck) { // 服务是否正在处理
 			try {
@@ -252,12 +251,9 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 					
 					
-					logger.error("2222 task to push  to list to begin send  ; "    +  new Date());
 					GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 						public void run() {
-							logger.error("33333 to begin send to in threadPool ; "    +  new Date());
 							runForMess(toSend);
-							logger.error("33333   end" +  new Date());
 						}
 					});
 					/*new Thread(){ 
@@ -271,7 +267,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			SchedulePushMessTask.hasRunedToCheck = false;
 		}
 		
-		logger.error(" 11111 end"    +  new Date());
 	}
 
 	
@@ -299,7 +294,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				continue;
 			}
 
-			logger.error("44444 in runForMess update mess and toin pool  ; "    +  new Date());
 			
 			
 			// 消息推送到移动端
@@ -308,7 +302,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				@Override
 				public void run() {
 
-					logger.error("55555 in runForMess in pool  "    +  new Date());
 					
 					
 					// 消息标题
@@ -330,11 +323,9 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					
 					
 					
-					logger.error("66666 in runForMess in pool bto send ; "    +  new Date());
 					// 消息发送
 					org.json.JSONObject result = xinge.pushAccountList(uIds, mesTitle, conts);
 					
-					logger.error("77777 in runForMess in pool eto send ; "    +  new Date());
 
 					// 消息发送结果
 					if (result != null) {
@@ -344,7 +335,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 						String andriodmarkV = backStr.substring(backStr.lastIndexOf("ret_code\":") + 10,
 								backStr.lastIndexOf("ret_code\":") + 11);
 						if (!iosmarkV.equals("0") || !andriodmarkV.equals("0")) {
-							logger.error("SchedulePushMessTask . xingge 推送失败 " + backStr);
 						}else {
 							ScheduleMessageUser toU = new ScheduleMessageUser();
 							toU.setMid(mess.getId());
@@ -355,13 +345,11 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					
 					
 					
-					logger.error("55555 end  "    +  new Date());
 				}
 				
 			
 			});
 			
-			logger.error("44444 end  ; "    +  new Date());
 		}
 	}
 
