@@ -92,6 +92,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized void setHasSaved(ScheduleMessage addMess) {
+		System.err.println(new Date());
 		while (SchedulePushMessTask.hasRunedToCheck) { // 服务是否正在处理
 			try {
 				Thread.sleep(SchedulePushMessTask.waitServerTime);
@@ -99,7 +100,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				e.printStackTrace();
 			}
 		}
-		
+		System.err.println(new Date());
 		SchedulePushMessTask.hasRunedToCheck = true;
 		try {
 			List<ScheduleMessage> sMessList = null;
@@ -107,12 +108,13 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			if(ms != null){
 				sMessList = (List<ScheduleMessage>) ms;
 				sMessList.add(addMess);
-				
+				System.err.println(new Date());
 				Collections.sort(sMessList, new Comparator<ScheduleMessage>() {
 					public int compare(ScheduleMessage arg0, ScheduleMessage arg1) {
 						return (int) (arg0.getSendTime().longValue() - arg1.getSendTime().longValue());
 					}
 				});
+				System.err.println(new Date());
 				
 				cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 			}
@@ -137,7 +139,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				e.printStackTrace();
 			}
 		}
-		
+		System.err.println(new Date());
 		SchedulePushMessTask.hasRunedToCheck = true;
 		
 		try {
@@ -145,14 +147,14 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			Object ms = cache.get(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH);
 			if(ms != null){
 				sMessList = (List<ScheduleMessage>) ms;
-
+				System.err.println(new Date());
 				List<Long> mids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MID);
 				Long mid = mids.get(0);
 				List<Long> muids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MUID);
 
 				for (ScheduleMessage tempM : sMessList) {
 					if (tempM.getId().longValue() == mid.longValue()) {
-						
+						System.err.println(new Date());
 						if(muids != null && !muids.isEmpty()) {
 							for(Long muid : muids){
 								for (ScheduleMessageUser tempU : tempM.getToUsers()) {
@@ -169,7 +171,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 						break;
 					}
 				}
-				
+				System.err.println(new Date());
 				cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 			}
 		} finally{
@@ -189,7 +191,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	protected void executeInteral() throws BusinessException {
 		
 		
-		
+		System.err.println(" 11111 task to begin ; "    +  new Date());
 		
 		while (SchedulePushMessTask.hasRunedToCheck) { // 服务是否正在处理
 			try {
@@ -258,9 +260,13 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					final List<ScheduleMessage> toSend = thisTimeToSend;
 					cache.set(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH, sMessList);
 					
+					
+					System.err.println("2222 task to push  to list to begin send  ; "    +  new Date());
 					GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 						public void run() {
+							System.err.println("33333 to begin send to in threadPool ; "    +  new Date());
 							runForMess(toSend);
+							System.err.println("33333   end" +  new Date());
 						}
 					});
 					/*new Thread(){ 
@@ -274,6 +280,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			SchedulePushMessTask.hasRunedToCheck = false;
 		}
 		
+		System.err.println(" 11111 end"    +  new Date());
 	}
 
 	
@@ -282,7 +289,6 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	public void runForMess(List<ScheduleMessage> thisTimeToSend) {
 
 		final XGPush xinge = XGPush.getInstance();
-		
 		
 		for(ScheduleMessage tempMess : thisTimeToSend){
 			
@@ -302,11 +308,17 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 				continue;
 			}
 
+			System.err.println("44444 in runForMess update mess and toin pool  ; "    +  new Date());
+			
+			
 			// 消息推送到移动端
 			GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 				
 				@Override
 				public void run() {
+
+					System.err.println("55555 in runForMess in pool  "    +  new Date());
+					
 					
 					// 消息标题
 					String mesTitle = null;
@@ -325,9 +337,13 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 					// 消息内容
 					String conts = UtilOper.getMessContent(mess);
 					
+					
+					
+					System.err.println("66666 in runForMess in pool bto send ; "    +  new Date());
 					// 消息发送
 					org.json.JSONObject result = xinge.pushAccountList(uIds, mesTitle, conts);
 					
+					System.err.println("77777 in runForMess in pool eto send ; "    +  new Date());
 
 					// 消息发送结果
 					if (result != null) {
@@ -345,8 +361,16 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 							scheduleMessageUserDao.updateByIdSelective(toU);
 						}
 					}
+					
+					
+					
+					System.err.println("55555 end  "    +  new Date());
 				}
+				
+			
 			});
+			
+			System.err.println("44444 end  ; "    +  new Date());
 		}
 	}
 
