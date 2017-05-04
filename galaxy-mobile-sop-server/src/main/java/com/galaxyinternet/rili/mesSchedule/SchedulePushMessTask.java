@@ -46,7 +46,7 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 	
 	
 	
-	private static List<ScheduleMessage> messForCache = new ArrayList<ScheduleMessage>();
+	public static List<ScheduleMessage> messForCache = new ArrayList<ScheduleMessage>();
 		
 	
 	/**
