@@ -359,7 +359,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 
 		List<ScheduleInfo> qList = scheduleInfoDao.selectList(scheduleInfo);
 		if(qList != null && !qList.isEmpty()){
-			if(qList.size() >20){
+			if(qList.size() >=20){
 				content = "您每天最多可创建20条日程，无法再创建了。";				
 			}
 		}
