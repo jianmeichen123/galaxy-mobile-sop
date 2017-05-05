@@ -205,11 +205,11 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 				
 				if(System.currentTimeMillis()>st){
 					
-					responseBody.setResult(new Result(Status.ERROR, null,"此其他日程过期了"));
+					responseBody.setResult(new Result(Status.ERROR, null,"此日程过期了"));
 					return responseBody;
 				}				
 				int y = scheduleInfoService.deleteById(Long.valueOf(id));
-				responseBody.setResult(new Result(Status.OK, null,"删除其他日程成功"));
+				responseBody.setResult(new Result(Status.OK, null,"删除日程成功"));
 				System.out.println(y);
 				scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
 			}else{
@@ -219,7 +219,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseBody.setResult(new Result(Status.ERROR, null,"删除其他日程失败"));
+			responseBody.setResult(new Result(Status.ERROR, null,"删除日程失败"));
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;
@@ -242,7 +242,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 
 			
 			if(ss==null){
-				responseBody.setResult(new Result(Status.OK, null,"其他日程不存在"));
+				responseBody.setResult(new Result(Status.OK, null,"日程不存在"));
 				return responseBody;
 			}
 			//为了防止共享的人查看详情
@@ -270,10 +270,10 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			}
 
 			responseBody.setEntity(ss);
-			responseBody.setResult(new Result(Status.OK, null,"查询其他日程成功"));
+			responseBody.setResult(new Result(Status.OK, null,"查询日程成功"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseBody.setResult(new Result(Status.ERROR, null,"查询其他日程失败"));
+			responseBody.setResult(new Result(Status.ERROR, null,"查询日程失败"));
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;
@@ -305,25 +305,25 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 				
 				if(System.currentTimeMillis()>st){
 					
-					responseBody.setResult(new Result(Status.ERROR, null,"此其他日程过期了"));
+					responseBody.setResult(new Result(Status.ERROR, null,"此日程过期了"));
 					return responseBody;
 				}				
 				scheduleInfo.setUpdatedId(user.getId());
 				int y= scheduleInfoService.updateById(scheduleInfo);
-				responseBody.setResult(new Result(Status.OK, null,"修改其他日程成功"));
+				responseBody.setResult(new Result(Status.OK, null,"修改日程成功"));
 				
 				scheduleInfo.setCreatedId(ss.getCreatedId());
 				scheduleInfo.setUserName(user.getRealName());
 				scheduleInfo.setMessageType("1.3.2");
 				scheduleMessageService.operateMessageByUpdateInfo(scheduleInfo, "1.3");
 			}else{				
-				responseBody.setResult(new Result(Status.ERROR, null,"其他日程不存在"));
+				responseBody.setResult(new Result(Status.ERROR, null,"日程不存在"));
 				return responseBody;
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseBody.setResult(new Result(Status.ERROR, null,"修改其他日程失败"));
+			responseBody.setResult(new Result(Status.ERROR, null,"修改日程失败"));
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;
