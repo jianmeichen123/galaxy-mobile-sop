@@ -347,6 +347,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		String ss = query.getStartTime().replace("/", "-").substring(0, 10);
 		
 		
+		scheduleInfo.setIdIsNotEq(query.getId());
 		String bqEndTime = ss+" 23:59:59";
 		String eqStartTime = ss+" 00:00:00";
 		
@@ -368,6 +369,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		scheduleInfoo.setBqEndTime(bqEndTime);
 		scheduleInfoo.setBqStartTime(eqStartTime);
+		scheduleInfoo.setIdIsNotEq(query.getId());
 		
 		List<ScheduleInfo> qListt = scheduleInfoDao.selectList(scheduleInfoo);
 		
