@@ -37,7 +37,7 @@
 				<if test="type != null" > and type = #{type,jdbcType=TINYINT} </if>
 				
 				<if test="nameId != null"> and name_id = #{nameId,jdbcType=BIGINT} </if>
-				
+				<if test="idIsNotEq != null"> and id != #{idIsNotEq,jdbcType=BIGINT} </if>
 				<if test="name != null" > and name = #{name,jdbcType=VARCHAR} </if>
 				<if test="parentId != null" > and parent_id = #{parentId,jdbcType=BIGINT} </if>
 				<if test="projectType != null" > and project_type = #{projectType,jdbcType=TINYINT} </if>
