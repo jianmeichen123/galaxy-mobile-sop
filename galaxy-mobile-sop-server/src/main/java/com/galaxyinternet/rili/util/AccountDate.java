@@ -152,8 +152,8 @@ public class AccountDate {
     }
     
     public static void main(String[] args) {
-    	String ss = getLastDayOfMonth(2017,2);
-        List<String> list = AccountDate.getXiuEveryday("2017-03-29", "2017-04-02",ss);
+    	String ss = getLastDayOfMonth(2017,4);
+        List<String> list = AccountDate.getXiuEveryday("2017-04-01", "2017-05-14",ss);
     
         for (String result : list) {
         	
@@ -198,4 +198,9 @@ public class AccountDate {
 			 return boolen;
 				
 		    }
+		 
+		 
+		 
+		 
+		 
 }
