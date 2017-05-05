@@ -308,6 +308,9 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 				
 				
 				ScheduleMessage message = messageGenerator.process(info);
+				if(message.getSendTime()==null){
+					return;
+				}
 				Long mid = scheduleMessageDao.insert(message);
 				
 				/*

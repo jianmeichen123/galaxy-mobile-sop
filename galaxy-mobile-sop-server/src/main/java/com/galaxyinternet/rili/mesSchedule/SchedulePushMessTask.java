@@ -341,12 +341,12 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 			}
 			
 			// 统一修改 消息内容可用
-			mess.setStatus((byte) 0);
-			scheduleMessageDao.updateById(mess);
+			
 			if (toContinue || mess.getToUsers()==null || mess.getToUsers().isEmpty()) {
 				continue;
 			}
-
+			mess.setStatus((byte) 0);
+			scheduleMessageDao.updateById(mess);
 			
 			
 			// 消息推送到移动端

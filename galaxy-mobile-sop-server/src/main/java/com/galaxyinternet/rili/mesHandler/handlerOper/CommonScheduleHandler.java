@@ -76,7 +76,11 @@ public class CommonScheduleHandler implements ScheduleMessageHandler
 		
 		//消息推送时间
 		try {
-			message.setSendTime(UtilOper.getSendTimeBy(startTime, isAllday, dictId));
+			long sendTime = UtilOper.getSendTimeBy(startTime, isAllday, dictId);
+			if(sendTime<System.currentTimeMillis()){
+				return;
+			}
+			message.setSendTime(sendTime);
 		} catch (ParseException e) {
 			message.setSendTime(null);
 			logger.error("CommonScheduleHandler . handle sendtime 异常 ",e.getMessage());
