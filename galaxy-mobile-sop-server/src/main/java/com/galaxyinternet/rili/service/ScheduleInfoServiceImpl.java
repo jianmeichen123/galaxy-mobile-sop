@@ -354,10 +354,24 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 /*		if(query.getIsAllday() != null && query.getIsAllday().intValue() == 1){
 			bqEndTime = eqStartTime + " 23:59:59";
 		}*/
+		scheduleInfo.setIsAllday((byte) 0);
 		scheduleInfo.setBqEndTime(bqEndTime);
 		scheduleInfo.setEqStartTime(eqStartTime);
 
 		List<ScheduleInfo> qList = scheduleInfoDao.selectList(scheduleInfo);
+		
+
+		ScheduleInfo scheduleInfoo = new ScheduleInfo();
+		
+		scheduleInfoo.setCreatedId(query.getCreatedId());
+		scheduleInfoo.setIsAllday((byte) 1);
+		
+		scheduleInfoo.setBqEndTime(bqEndTime);
+		scheduleInfoo.setBqStartTime(eqStartTime);
+		
+		List<ScheduleInfo> qListt = scheduleInfoDao.selectList(scheduleInfoo);
+		
+		qList.addAll(qListt);
 		if(qList != null && !qList.isEmpty()){
 			if(qList.size() >=20){
 				content = "您每天最多可创建20条日程，无法再创建了。";				
