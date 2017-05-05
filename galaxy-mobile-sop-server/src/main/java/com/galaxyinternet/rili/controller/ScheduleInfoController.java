@@ -213,7 +213,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 				System.out.println(y);
 				scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
 			}else{
-				responseBody.setResult(new Result(Status.ERROR, null,"此日程不存在"));
+				responseBody.setResult(new Result(Status.ERROR, null,"此其他日程不存在"));
 				return responseBody;
 			}
 	
