@@ -68,7 +68,7 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 		
 		Map<String,Object> map = new HashMap<String,Object>();
 		
-		String content = httpClientUtils.send("http://10.8.232.205/authority_service/depart/getLeafDepartList", map);
+		String content = httpClientUtils.send("http://fx.galaxyinternet.com/authority_service/depart/getLeafDepartList", map);
 		
 		//System.out.println("开始1"+ System.currentTimeMillis());
 	   	 JsonParser parser=new JsonParser(); 
@@ -116,7 +116,7 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
              deptUsers = new ArrayList<UtilUser>();
  			//部门下所有人中 对已经选择的人标记
  			 map.put("depId", deptTempId); 			
- 			 String contentt = httpClientUtils.send("http://10.8.232.205/authority_service/user/getUsersByDepId", map); 			
+ 			 String contentt = httpClientUtils.send("http://fx.galaxyinternet.com/authority_service/user/getUsersByDepId", map); 			
  			 //System.out.println("开始2"+ System.currentTimeMillis());
  			 JsonObject objectt=(JsonObject) parser.parse(contentt);
  		   	 JsonArray arrayy;
@@ -455,7 +455,7 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 		Map<String,Object> map = new HashMap<String,Object>();
 		
 		map.put("userKey", query.getUname());
-		String content = httpClientUtils.send("http://10.8.232.205/authority_service/user/getUsersByKey", map);
+		String content = httpClientUtils.send("http://fx.galaxyinternet.com/authority_service/user/getUsersByKey", map);
 		
 		//System.out.println("开始1"+ System.currentTimeMillis());
 	   	 JsonParser parser=new JsonParser(); 
