@@ -442,6 +442,14 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 			responseBody.setResult(new Result(Status.ERROR, null, "必要的参数丢失!"));
 			return responseBody;
 		}
+		//验证项目名是否重复
+		Project obj = new Project();
+		obj.setProjectName(project.getProjectName());
+		List<Project> projectList = projectService.queryList(obj);
+		if (null != projectList && projectList.size() > 0) {
+			responseBody.setResult(new Result(Status.ERROR, "mccf", "项目名重复!"));
+			return responseBody;
+		}
 
 		// 执行转换
 		project.getProjectContribution();

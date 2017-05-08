@@ -268,7 +268,7 @@ public class InformationListdataController extends BaseControllerImpl<Informatio
             data.setCode(code);
             data.setProjectId(projectId);
             data.setProperty("created_time");
-            data.setDirection(Direction.DESC.toString());
+            data.setDirection(Direction.ASC.toString());
             List<InformationListdata> list = informationListdataService.queryList(data);
             resp.setEntityList(list);
         }catch(Exception e){

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxyinternet.rili.model.ScheduleDict">
+
+	<resultMap id="BaseResultMap" type="com.galaxyinternet.rili.model.ScheduleDict">
+	
+		<id column="id" 		  		property="id" 			jdbcType="BIGINT" />
+		<result column="code" 			property="code" 		jdbcType="VARCHAR" />
+		<result column="type" 			property="type" 		jdbcType="TINYINT" />
+		<result column="name" 			property="name" 		jdbcType="VARCHAR" />
+		<result column="value" 			property="value" 		jdbcType="VARCHAR" />
+		<result column="index_num" 	    property="indexNum" 	jdbcType="INTEGER" />
+		<result column="created_id" 	property="createdId" 	jdbcType="BIGINT" />
+		<result column="updated_id" 	property="updatedId"	jdbcType="BIGINT" />
+		<result column="created_time" 	property="createdTime" 	jdbcType="BIGINT" />
+		<result column="updated_time" 	property="updatedTime" 	jdbcType="BIGINT" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+		id, code, type, name, value, index_num, created_id, updated_id, created_time, updated_time
+	</sql>
+
+
+	<sql id="Base_Where_Clause">
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and id = #{id ,jdbcType=BIGINT}  </if>
+				<if test="code != null" > and code = #{code ,jdbcType=VARCHAR}  </if>
+				<if test="type != null" > and type = #{type ,jdbcType=TINYINT}  </if>
+				<if test="name != null" > and name = #{name ,jdbcType=VARCHAR}  </if>
+				<if test="value != null" > and value = #{value ,jdbcType=VARCHAR}  </if>
+				<if test="indexNum != null" > and index_num = #{indexNum ,jdbcType=INTEGER}  </if>
+				<if test="createdId != null" > and created_id = #{createdId ,jdbcType=BIGINT}  </if>
+				<if test="updatedId != null" > and updated_id = #{updatedId ,jdbcType=BIGINT}  </if>
+				<if test="createdTime != null" > and created_time = #{createdTime ,jdbcType=BIGINT}  </if>
+				<if test="updatedTime != null" > and updated_time = #{updatedTime ,jdbcType=BIGINT}  </if>
+				<!-- 
+				<if test="keyword idcodekey != null">
+					AND name LIKE replace('%${keyword}%', ' ', '')     
+					AND name LIKE '%${keyword}%'  
+					AND name like CONCAT("%",#{nameLike},"%")
+					<if test="escapeChar ">
+						escape '/' 
+					</if>
+				</if> 
+				-->
+			</trim>
+			
+			<if test="sorting != null">order by ${sorting}</if>
+			<if test="property != null">order by ${property} ${direction}</if>
+			
+			<if test="offset != null and limit != null">
+				limit #{offset}, #{limit}
+			</if>
+		</where>
+	</sql>
+
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.galaxyinternet.rili.model.ScheduleDict">
+	    <![CDATA[
+	    insert into schedule_dict (id, code, type, 
+	      name, value, index_num, created_id, 
+	      updated_id, created_time, updated_time
+	      )
+	    values (#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, 
+	      #{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{indexNum,jdbcType=INTEGER}, #{createdId,jdbcType=BIGINT}, 
+	      #{updatedId,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT}, #{updatedTime,jdbcType=BIGINT}
+	      )
+	    ]]>
+	</insert>
+	
+				
+				
+	<!-- 查询总数 -->
+	<select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+		select count(id) from schedule_dict
+		<include refid="Base_Where_Clause" />
+	</select>
+
+
+
+	<!-- 查询 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from schedule_dict
+		<include refid="Base_Where_Clause" />
+	</select>
+
+
+	<!-- 根据ID查询 -->
+	<select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from schedule_dict 
+		where id = #{id}
+	</select>
+	
+	
+	<!-- 通过ID更新 -->
+	<update id="updateById" parameterType="com.galaxyinternet.rili.model.ScheduleDict">
+		update schedule_dict
+		<set>
+			<if test="id != null"> id = #{id,jdbcType=BIGINT}, </if>
+			<if test="code != null" > code = #{code,jdbcType=VARCHAR}, </if>
+			<if test="type != null" > type = #{type,jdbcType=TINYINT}, </if>
+			<if test="name != null" > name = #{name,jdbcType=VARCHAR}, </if>
+			<if test="value != null" > value = #{value,jdbcType=VARCHAR}, </if>
+			<if test="indexNum != null" > index_num = #{indexNum,jdbcType=INTEGER}, </if>
+			<if test="createdId != null" > created_id = #{createdId,jdbcType=BIGINT}, </if>
+			<if test="updatedId != null" > updated_id = #{updatedId,jdbcType=BIGINT}, </if>
+			<if test="createdTime != null" > created_time = #{createdTime,jdbcType=BIGINT}, </if>
+			<if test="updatedTime != null" > updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	
+	
+	<!-- 删除 -->
+	<delete id="delete" parameterType="java.util.Map">
+		delete from schedule_dict
+		<include refid="Base_Where_Clause" />
+	</delete>
+	
+	
+	
+	<!-- 根据ID删除 -->
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from schedule_dict
+		where id = #{id}
+	</delete>
+
+	
+	
+</mapper>
+	
