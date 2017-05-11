@@ -167,7 +167,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			//标识是 其他日程
 			scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
-			
+			//给其他日程默认 projectId , projectType
+			scheduleInfo.setParentId(0L);
+			scheduleInfo.setProjectType((byte) 0);
 
 			Long id = scheduleInfoService.insert(scheduleInfo);
 			scheduleInfo.setMessageType("1.3.1");
@@ -210,8 +212,8 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 				}				
 				int y = scheduleInfoService.deleteById(Long.valueOf(id));
 				responseBody.setResult(new Result(Status.OK, null,"删除日程成功"));
-				System.out.println(y);
-				scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
+				//System.out.println(y);
+//				/scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
 			}else{
 				responseBody.setResult(new Result(Status.ERROR, null,"此其他日程不存在"));
 				return responseBody;
@@ -737,7 +739,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
 		User user = (User) getUserFromSession(request);
 		try {
-			scheduleInfo.setType((byte) 3);
+			//scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
 			String ss = scheduleInfoService.getCountSchedule(scheduleInfo);	
 			if(ss==null){
@@ -753,6 +755,71 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		}
 		return responseBody;
 	}
+	
+	/**
+	 * 另外调的接口为了 推送消息
+	 * @param scheduleInfo
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/pushAddSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleInfo> pushSchedule(@RequestBody ScheduleInfo scheduleInfo,
+			HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
+
+
+		
+		try {
+
+			//标识是 其他日程
+			
+			scheduleInfo.setCreatedId(user.getId());
+			
+
+			
+			scheduleInfo.setId(scheduleInfo.getId());
+			scheduleInfo.setUserName(user.getRealName());
+			
+			responseBody.setResult(new Result(Status.OK, null,"推送消息成功"));
+			
+			scheduleMessageService.operateMessageBySaveInfo(scheduleInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null,"添加日程失败"));
+			logger.error("异常信息:",e.getMessage());
+		}
+		return responseBody;
+	}
+	
+	/**
+	 * 更新其他日程
+	 * @param scheduleInfo
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/pushUpdateSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleInfo> pushUpdateSchedule(@RequestBody ScheduleInfo scheduleInfo,
+			HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
+
+
+		try {
+
+				scheduleInfo.setUserName(user.getRealName());
+				scheduleMessageService.operateMessageByUpdateInfo(scheduleInfo, scheduleInfo.getMessageType());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null,"修改日程失败"));
+			logger.error("异常信息:",e.getMessage());
+		}
+		return responseBody;
+	}
+	
 	
 }
 

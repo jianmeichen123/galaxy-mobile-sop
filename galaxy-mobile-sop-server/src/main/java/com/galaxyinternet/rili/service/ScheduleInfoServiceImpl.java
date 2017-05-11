@@ -360,7 +360,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		ScheduleInfo scheduleInfo = new ScheduleInfo();
 		scheduleInfo.setCreatedId(query.getCreatedId());
-		scheduleInfo.setType((byte) 3);
+		//scheduleInfo.setType((byte) 3);
 		String content = null;
 		
 		String ss = query.getStartTime().replace("/", "-").substring(0, 10);
