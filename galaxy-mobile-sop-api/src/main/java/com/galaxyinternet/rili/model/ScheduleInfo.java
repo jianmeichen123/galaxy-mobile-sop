@@ -50,7 +50,7 @@ public class ScheduleInfo extends PagableEntity{
 	
     private String sbTimeForAllday;    // 日程开始  起始时间     startTime  >   sbTimeForAllday
     private String seTimeForAllday;    // 日程开始  结束时间     startTime  <   seTimeForAllday
-    
+    private Boolean queryForMounth;    //xml 查询月视图 特标识
     
     private String userName;     // 日历创建人姓名
 
@@ -308,6 +308,14 @@ public class ScheduleInfo extends PagableEntity{
 
 	public void setIdIsNotEq(Long idIsNotEq) {
 		this.idIsNotEq = idIsNotEq;
+	}
+
+	public Boolean getQueryForMounth() {
+		return queryForMounth;
+	}
+
+	public void setQueryForMounth(Boolean queryForMounth) {
+		this.queryForMounth = queryForMounth;
 	}
 
 	

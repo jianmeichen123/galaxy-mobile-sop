@@ -45,10 +45,25 @@
 				<if test="projectId != null" > and project_id = #{projectId,jdbcType=BIGINT} </if>
 				<if test="startTime != null" > and start_time = #{startTime,jdbcType=TIMESTAMP} </if>
 				<if test="endTime != null" > and end_time = #{endTime,jdbcType=TIMESTAMP} </if>
-				
-				<if test="bqStartTime != null"> <![CDATA[  and start_time >= #{bqStartTime} ]]> </if>
-			    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime} ]]> </if>
-			    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime} ]]> </if>
+				<if test="queryForMounth == null">
+					<if test="bqStartTime != null"> <![CDATA[  and start_time >= #{bqStartTime} ]]> </if>
+				    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime} ]]> </if>
+				    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime} ]]> </if>
+			    </if>
+			    
+			    <if test="queryForMounth != null">
+				    <![CDATA[ and (start_time <= #{bqEndTime} ]]>
+				    <![CDATA[  and end_time >= #{eqStartTime} ]]>
+					and is_allday = 0
+					or (
+						<![CDATA[  start_time >= #{sbTimeForAllday} ]]>
+					    <![CDATA[  and start_time <= #{seTimeForAllday} ]]>
+						and is_allday = 1 
+						)
+					)
+			    
+			    </if>
+    			
     
 				<if test="isAllday != null" > and is_allday = #{isAllday,jdbcType=TINYINT} </if>
 				<if test="wakeupId != null" > and wakeup_id = #{wakeupId,jdbcType=BIGINT} </if>
