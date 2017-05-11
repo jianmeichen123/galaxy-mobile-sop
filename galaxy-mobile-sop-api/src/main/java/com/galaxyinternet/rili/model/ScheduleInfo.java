@@ -68,7 +68,10 @@ public class ScheduleInfo extends PagableEntity{
     
     private String lastMouthDay;//当月最后一天
     
+    private String schedulePerson;//拜访人名称
 
+    
+    private String messageType; //为了 其他工程调用更新的推送时写的参数(拜访1.4)
     
     public Byte getType() {
         return type;
@@ -316,6 +319,22 @@ public class ScheduleInfo extends PagableEntity{
 
 	public void setQueryForMounth(Boolean queryForMounth) {
 		this.queryForMounth = queryForMounth;
+	}
+
+	public String getSchedulePerson() {
+		return schedulePerson;
+	}
+
+	public void setSchedulePerson(String schedulePerson) {
+		this.schedulePerson = schedulePerson;
+	}
+
+	public String getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
 	}
 
 	

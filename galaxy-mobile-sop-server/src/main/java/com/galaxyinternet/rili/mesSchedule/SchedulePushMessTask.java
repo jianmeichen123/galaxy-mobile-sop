@@ -159,6 +159,33 @@ public class SchedulePushMessTask extends BaseGalaxyTask { //extends BaseGalaxyT
 		SchedulePushMessTask.hasRunedToCheck = true;
 		
 		try {
+			
+			 List<ScheduleMessage> sMessList = SchedulePushMessTask.messForCache;
+			 if(sMessList != null){
+				
+				List<Long> mids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MID);
+				Long mid = mids.get(0);
+				List<Long> muids = delMap.get(SchedulePushMessTask.DEL_MAP_KEY_MUID);
+
+				for (ScheduleMessage tempM : sMessList) {
+					if (tempM.getId().longValue() == mid.longValue()) {
+						if(muids != null && !muids.isEmpty()) {
+							for(Long muid : muids){
+								for (ScheduleMessageUser tempU : tempM.getToUsers()) {
+									if (tempU.getUid().longValue() == muid.longValue()) {
+										tempM.getToUsers().remove(tempU);
+										break;
+									}
+								}
+							}
+						}else{
+							sMessList.remove(tempM);
+						}
+						
+						break;
+					}
+				}
+			}
 			/*
 			List<ScheduleMessage> sMessList = null;
 			Object ms = cache.get(SchedulePushInitTask.CACHE_KEY_MESSAGE_TODAY_PUSH);
