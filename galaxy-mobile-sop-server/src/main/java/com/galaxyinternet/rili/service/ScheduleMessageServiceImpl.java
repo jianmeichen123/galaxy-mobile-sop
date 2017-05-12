@@ -365,7 +365,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 			@Override
 			public void run() {
-				/*
+				
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 				calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -436,7 +436,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					}
 					
 				}
-				*/
+				
 			}
 		});
 		

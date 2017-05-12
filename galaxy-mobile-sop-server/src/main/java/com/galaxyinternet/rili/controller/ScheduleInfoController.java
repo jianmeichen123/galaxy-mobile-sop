@@ -163,7 +163,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			return responseBody;
 		}
 		try {
-
+			scheduleInfo.setIsDel(0);
 			//标识是 其他日程
 			scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
@@ -209,8 +209,11 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 					
 					responseBody.setResult(new Result(Status.ERROR, null,"此日程过期了"));
 					return responseBody;
-				}				
-				int y = scheduleInfoService.deleteById(Long.valueOf(id));
+				}	
+				//增加逻辑删除
+				//int y = scheduleInfoService.deleteById(Long.valueOf(id));
+				ss.setIsDel(1);
+				scheduleInfoService.updateById(ss);
 				responseBody.setResult(new Result(Status.OK, null,"删除日程成功"));
 				//System.out.println(y);
 //				/scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
@@ -776,10 +779,8 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			//标识是 其他日程
 			
 			scheduleInfo.setCreatedId(user.getId());
-			
 
-			
-			scheduleInfo.setId(scheduleInfo.getId());
+		//	scheduleInfo.setId(scheduleInfo.getId());
 			scheduleInfo.setUserName(user.getRealName());
 			
 			responseBody.setResult(new Result(Status.OK, null,"推送消息成功"));
@@ -794,7 +795,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	}
 	
 	/**
-	 * 更新其他日程
+	 * 更新消息推送的接口
 	 * @param scheduleInfo
 	 * @param request
 	 * @return
@@ -808,9 +809,9 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 
 
 		try {
-
+				scheduleInfo.setCreatedId(user.getId());
 				scheduleInfo.setUserName(user.getRealName());
-				scheduleMessageService.operateMessageByUpdateInfo(scheduleInfo, scheduleInfo.getMessageType());
+				scheduleMessageService.operateMessageByUpdateInfo(scheduleInfo, scheduleInfo.getVisitType());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

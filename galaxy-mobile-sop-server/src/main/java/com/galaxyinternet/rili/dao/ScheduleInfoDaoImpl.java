@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import com.galaxyinternet.framework.core.constants.SqlId;
 import com.galaxyinternet.framework.core.dao.impl.BaseDaoImpl;
@@ -24,7 +25,15 @@ public class ScheduleInfoDaoImpl extends BaseDaoImpl<ScheduleInfo, Long> impleme
 		}
 	}
 
-	
+	@Override
+	public ScheduleInfo selectVisitNameById(Long queryId) {
+		Assert.notNull(queryId);
+		try {
+			return sqlSessionTemplate.selectOne(getSqlName("selectVisitNameById"), queryId);
+		} catch (Exception e) {
+			throw new DaoException(String.format("根据ID查询拜访对象出错！语句：%s", getSqlName("selectVisitNameById")), e);
+		}
+	}
 
 	
 }

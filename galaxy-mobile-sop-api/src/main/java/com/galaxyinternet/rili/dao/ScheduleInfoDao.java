@@ -8,5 +8,7 @@ import com.galaxyinternet.rili.model.ScheduleInfo;
 public interface ScheduleInfoDao extends BaseDao<ScheduleInfo, Long>{
 
 	List<ScheduleInfo> selectConflictSchedule(ScheduleInfo query);
+	
+	ScheduleInfo selectVisitNameById(Long queryId);
 
 }
