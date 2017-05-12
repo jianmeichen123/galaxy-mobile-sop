@@ -91,7 +91,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			toQ.setCreatedId(query.getCreatedId());
 			toQ.setProperty(query.getProperty());
 			toQ.setDirection(query.getDirection());
-			
+			//增加判断是否删除
+			toQ.setIsDel(0);
 			qList = scheduleInfoDao.selectList(toQ);
 			if(qList!=null && !qList.isEmpty()){
 				ScheduleInfo sinfo ;
@@ -172,7 +173,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			scheduleInfo.setBqEndTime(bqEndTime);
 			scheduleInfo.setEqStartTime(eqStartTime);
 			scheduleInfo.setCreatedId(query.getCreatedId());
-			
+			//增加判断是否删除
+			scheduleInfo.setIsDel(0);
 			scheduleInfo.setProperty(query.getProperty());
 			scheduleInfo.setDirection(query.getDirection());
 			
@@ -182,6 +184,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			sInfo.setBqStartTime(eqStartTime);
 			sInfo.setIsAllday((byte) 1);
 			sInfo.setCreatedId(query.getCreatedId());
+			//增加判断是否删除
+			sInfo.setIsDel(0);
 			
 			scheduleInfoList=scheduleInfoDao.selectList(sInfo);
 			
@@ -211,6 +215,9 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				
 		}
 
+		//获取拜访对象得名称重新封装数据
+
+		
 		//结果封装
 		if(qList!=null && !qList.isEmpty()){
 			
@@ -229,6 +236,14 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				String code = null;
 				
 				for(ScheduleInfo temp : qList){
+					//2017/5/11为了 获取访谈对象得名称
+					if(temp.getType().intValue()==2){
+						
+						ScheduleInfo ss = scheduleInfoDao.selectVisitNameById(temp.getId());
+						if(ss!=null){
+							temp.setSchedulePerson(ss.getSchedulePerson());
+						}
+					}
 					if(temp.getStartTime()!=null){
 						if(temp.getIsAllday()!=null && temp.getIsAllday().intValue()==1){
 							code = "e" ;
@@ -290,6 +305,15 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				}
 				
 				for(ScheduleInfo temp : qList){
+					//2017/5/11为了 获取访谈对象得名称
+					if(temp.getType().intValue()==2){
+						
+						ScheduleInfo ss = scheduleInfoDao.selectVisitNameById(temp.getId());
+						
+						if(ss!=null){
+							temp.setSchedulePerson(ss.getSchedulePerson());
+						}
+					}
 					//2017/4/17号修改 报空指针
 					String stime= temp.getStartTime().substring(0,format.length());
 					//String dateKey = DateUtil.dateFormat(temp.getStartTime(), format);
@@ -544,6 +568,16 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 	}
 
 */
+
+
+
+
+
+	@Override
+	public ScheduleInfo selectVisitNameById(Long queryId) {
+		
+		return scheduleInfoDao.selectVisitNameById(queryId);
+	}
 	
 	
 	

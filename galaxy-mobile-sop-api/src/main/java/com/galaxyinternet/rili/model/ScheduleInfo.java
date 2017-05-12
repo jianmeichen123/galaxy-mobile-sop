@@ -71,7 +71,10 @@ public class ScheduleInfo extends PagableEntity{
     private String schedulePerson;//拜访人名称
 
     
-    private String messageType; //为了 其他工程调用更新的推送时写的参数(拜访1.4)
+    //private String messageType; //为了 其他工程调用更新的推送时写的参数
+    
+    private String visitType;  //用来对应消息列表的type(拜访1.4)
+    private Integer isDel;  //逻辑删除的字段(是否删除字段0:未删除,1:已删除 )
     
     public Byte getType() {
         return type;
@@ -329,12 +332,21 @@ public class ScheduleInfo extends PagableEntity{
 		this.schedulePerson = schedulePerson;
 	}
 
-	public String getMessageType() {
-		return messageType;
+	
+	public Integer getIsDel() {
+		return isDel;
 	}
 
-	public void setMessageType(String messageType) {
-		this.messageType = messageType;
+	public void setIsDel(Integer isDel) {
+		this.isDel = isDel;
+	}
+
+	public String getVisitType() {
+		return visitType;
+	}
+
+	public void setVisitType(String visitType) {
+		this.visitType = visitType;
 	}
 
 	

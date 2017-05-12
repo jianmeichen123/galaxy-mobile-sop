@@ -55,4 +55,9 @@ public interface ScheduleInfoService extends BaseService<ScheduleInfo>{
 	public String getCountSchedule(ScheduleInfo query);
 	
 	
+	/**
+	 * 获取 拜访的对象
+	 */
+	public ScheduleInfo selectVisitNameById(Long queryId); 
+	
 }
