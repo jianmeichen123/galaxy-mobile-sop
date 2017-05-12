@@ -168,7 +168,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
 			//给其他日程默认 projectId , projectType
-			scheduleInfo.setParentId(0L);
+			scheduleInfo.setProjectId(0L);
 			scheduleInfo.setProjectType((byte) 0);
 
 			Long id = scheduleInfoService.insert(scheduleInfo);
