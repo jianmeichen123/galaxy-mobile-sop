@@ -216,7 +216,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 				scheduleInfoService.updateById(ss);
 				responseBody.setResult(new Result(Status.OK, null,"删除日程成功"));
 				//System.out.println(y);
-//				/scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
+				scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
 			}else{
 				responseBody.setResult(new Result(Status.ERROR, null,"此其他日程不存在"));
 				return responseBody;
@@ -783,12 +783,12 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		//	scheduleInfo.setId(scheduleInfo.getId());
 			scheduleInfo.setUserName(user.getRealName());
 			
-			responseBody.setResult(new Result(Status.OK, null,"推送消息成功"));
+			//responseBody.setResult(new Result(Status.OK, null,"推送消息成功"));
 			
 			scheduleMessageService.operateMessageBySaveInfo(scheduleInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseBody.setResult(new Result(Status.ERROR, null,"添加日程失败"));
+			responseBody.setResult(new Result(Status.ERROR, null,"添加推送日程失败"));
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;
@@ -815,12 +815,39 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseBody.setResult(new Result(Status.ERROR, null,"修改日程失败"));
+			responseBody.setResult(new Result(Status.ERROR, null,"修改推送日程失败"));
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;
 	}
 	
+	
+	/**
+	 * 删除消息推送的接口
+	 * @param scheduleInfo
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/pushDeleteSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleInfo> pushDeleteSchedule(@RequestBody ScheduleInfo scheduleInfo,
+			HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
+
+
+		try {
+				scheduleInfo.setCreatedId(user.getId());
+				scheduleInfo.setUserName(user.getRealName());
+				scheduleMessageService.operateMessageByDeleteInfo(scheduleInfo, scheduleInfo.getVisitType());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null,"修改推送日程失败"));
+			logger.error("异常信息:",e.getMessage());
+		}
+		return responseBody;
+	}
 	
 }
 
