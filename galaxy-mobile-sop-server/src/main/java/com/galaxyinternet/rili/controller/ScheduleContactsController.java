@@ -58,7 +58,7 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		ResponseData<ScheduleContacts> responseBody = new ResponseData<ScheduleContacts>();
 		User user = (User) getUserFromSession(request);
 
-		if(scheduleContacts.getName()==null||scheduleContacts.getPhone1()==null){
+		if(scheduleContacts.getName()==null){
 			responseBody.setResult(new Result(Status.ERROR, null,"添加联系人失败参数缺失"));
 			return responseBody;
 		}
@@ -227,8 +227,36 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		return responseBody;
 	}
 	
-	
-	
+	/***
+	 * 查询联系人是否重复
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectPersonByName", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleContacts> selectPersonByName(@RequestBody ScheduleContacts scheduleContacts,
+			HttpServletRequest request) {
+		ResponseData<ScheduleContacts> responseBody = new ResponseData<ScheduleContacts>();
+		User user = (User) getUserFromSession(request);
+		try{		
+			scheduleContacts.setCreatedId(user.getId());
+			scheduleContacts.setIsDel(0);
+			//List<ScheduleContacts> ss = scheduleContactsService.queryList(scheduleContacts);
+			
+			ScheduleContacts ss =scheduleContactsService.queryOne(scheduleContacts);
+			if(ss!= null){
+				responseBody.setEntity(ss);
+				responseBody.setResult(new Result(Status.OK, null,"您添加的拜访对象的姓名在联系人中已存在，是否使用此联系人？"));
+			}else{
+				responseBody.setResult(new Result(Status.OK, null,"不存在"));
+			}
+
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"查询联系人列表失败"));
+			logger.error("异常信息:",e.getMessage());
+			e.printStackTrace();
+		}
+		return responseBody;
+	}
 	
 	
 	
