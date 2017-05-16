@@ -75,6 +75,7 @@ public class ScheduleInfo extends PagableEntity{
     
     private String visitType;  //用来对应消息列表的type(拜访1.4)
     private Integer isDel;  //逻辑删除的字段(是否删除字段0:未删除,1:已删除 )
+    private Long callonPerson;//拜访 联系人 关联字段
     
     public Byte getType() {
         return type;
@@ -347,6 +348,14 @@ public class ScheduleInfo extends PagableEntity{
 
 	public void setVisitType(String visitType) {
 		this.visitType = visitType;
+	}
+
+	public Long getCallonPerson() {
+		return callonPerson;
+	}
+
+	public void setCallonPerson(Long callonPerson) {
+		this.callonPerson = callonPerson;
 	}
 
 	

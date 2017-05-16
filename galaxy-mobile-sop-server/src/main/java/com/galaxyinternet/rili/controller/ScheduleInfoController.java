@@ -1,7 +1,6 @@
 package com.galaxyinternet.rili.controller;
 
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +27,11 @@ import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.rili.model.ScheduleDict;
 import com.galaxyinternet.rili.model.ScheduleInfo;
-import com.galaxyinternet.rili.model.ScheduleMessage;
-import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleDictService;
 import com.galaxyinternet.rili.service.ScheduleInfoService;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
 import com.galaxyinternet.rili.service.ScheduleMessageUserService;
 import com.galaxyinternet.rili.service.ScheduleMettingUsersService;
-import com.galaxyinternet.rili.service.SchedulePersonPlanService;
 import com.galaxyinternet.rili.util.AccountDate;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 import com.galaxyinternet.service.ProjectService;
@@ -55,8 +51,6 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	private ScheduleDictService scheduleDictService;
 	@Autowired
 	private ScheduleMettingUsersService scheduleMettingUsersService;
-	@Autowired
-	private SchedulePersonPlanService  schedulePersonPlanService;	
 	@Autowired
 	private ScheduleMessageService scheduleMessageService;
 	

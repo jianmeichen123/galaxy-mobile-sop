@@ -1,7 +1,6 @@
 package com.galaxyinternet.rili.service;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,14 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.galaxyinternet.framework.core.dao.BaseDao;
-import com.galaxyinternet.framework.core.model.Result;
-import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
 import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.rili.dao.ScheduleDepartUnoDao;
 import com.galaxyinternet.rili.dao.ScheduleInfoDao;
 import com.galaxyinternet.rili.dao.ScheduleMettingUsersDao;
-import com.galaxyinternet.rili.dao.SchedulePersonPlanDao;
 import com.galaxyinternet.rili.model.ScheduleInfo;
 import com.galaxyinternet.rili.util.AccountDate;
 import com.galaxyinternet.rili.util.ScheduleUtil;
@@ -35,8 +31,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 	private ScheduleMettingUsersDao scheduleMettingUsersDao;
 	
 	
-	@Autowired
-	private SchedulePersonPlanDao schedulePersonPlanDao;
+
 	
 	@Autowired
 	private UtilService utilService;
@@ -240,7 +235,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 					if(temp.getType().intValue()==2){
 						
 						ScheduleInfo ss = scheduleInfoDao.selectVisitNameById(temp.getId());
-						if(ss!=null){
+						if(ss!=null && ss.getSchedulePerson()!=null){
 							temp.setSchedulePerson(ss.getSchedulePerson());
 						}
 					}
@@ -310,7 +305,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 						
 						ScheduleInfo ss = scheduleInfoDao.selectVisitNameById(temp.getId());
 						
-						if(ss!=null){
+						if(ss!=null && ss.getSchedulePerson()!=null){
 							temp.setSchedulePerson(ss.getSchedulePerson());
 						}
 					}
