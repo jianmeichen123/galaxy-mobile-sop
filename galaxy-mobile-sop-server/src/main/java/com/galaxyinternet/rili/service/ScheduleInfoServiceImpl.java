@@ -396,7 +396,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		scheduleInfo.setIsAllday((byte) 0);
 		scheduleInfo.setBqEndTime(bqEndTime);
 		scheduleInfo.setEqStartTime(eqStartTime);
-
+		scheduleInfo.setIsDel(0);
 		List<ScheduleInfo> qList = scheduleInfoDao.selectList(scheduleInfo);
 		
 
@@ -404,7 +404,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		scheduleInfoo.setCreatedId(query.getCreatedId());
 		scheduleInfoo.setIsAllday((byte) 1);
-		
+		scheduleInfoo.setIsDel(0);
 		scheduleInfoo.setBqEndTime(bqEndTime);
 		scheduleInfoo.setBqStartTime(eqStartTime);
 		scheduleInfoo.setIdIsNotEq(query.getId());
