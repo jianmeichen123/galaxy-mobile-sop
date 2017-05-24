@@ -1,7 +1,6 @@
 package com.galaxyinternet.rili.service;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,14 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.galaxyinternet.framework.core.dao.BaseDao;
-import com.galaxyinternet.framework.core.model.Result;
-import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.impl.BaseServiceImpl;
 import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.rili.dao.ScheduleDepartUnoDao;
 import com.galaxyinternet.rili.dao.ScheduleInfoDao;
 import com.galaxyinternet.rili.dao.ScheduleMettingUsersDao;
-import com.galaxyinternet.rili.dao.SchedulePersonPlanDao;
 import com.galaxyinternet.rili.model.ScheduleInfo;
 import com.galaxyinternet.rili.util.AccountDate;
 import com.galaxyinternet.rili.util.ScheduleUtil;
@@ -35,8 +31,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 	private ScheduleMettingUsersDao scheduleMettingUsersDao;
 	
 	
-	@Autowired
-	private SchedulePersonPlanDao schedulePersonPlanDao;
+
 	
 	@Autowired
 	private UtilService utilService;
@@ -76,58 +71,77 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		//有隔日的日程重新封装list按年月查询
 		if(query.getDay()==null){
-			 qList = scheduleInfoDao.selectList(query);
+			
+			String bqEndTime = query.getBqEndTime();
+			String eqStartTime = query.getBqStartTime();
+			
+			ScheduleInfo toQ = new ScheduleInfo();
+			toQ.setQueryForMounth(true);
+			toQ.setBqEndTime(bqEndTime);
+			toQ.setEqStartTime(eqStartTime);
+			
+			toQ.setSbTimeForAllday(eqStartTime.substring(0, 10));
+			toQ.setSeTimeForAllday(bqEndTime.substring(0, 10));
+			
+			toQ.setCreatedId(query.getCreatedId());
+			toQ.setProperty(query.getProperty());
+			toQ.setDirection(query.getDirection());
+			//增加判断是否删除
+			toQ.setIsDel(0);
+			qList = scheduleInfoDao.selectList(toQ);
 			if(qList!=null && !qList.isEmpty()){
 				ScheduleInfo sinfo ;
 				for(ScheduleInfo temp : qList){	
 					if(temp.getStartTime()!=null && temp.getEndTime()!=null && !AccountDate.get(temp.getStartTime(),temp.getEndTime())){														
-						
+						String mouths = "0"+ query.getMonth();
+						//跨日日程的操作
 						List<String> sss = AccountDate.getXiuEveryday(temp.getStartTime().substring(0, 10),temp.getEndTime().substring(0, 10), query.getLastMouthDay());
 						for(String ss:sss){
-							sinfo = new ScheduleInfo();
-							if(temp.getStartTime().substring(0, 10).equals(ss)){
-								sinfo.setStartTime(temp.getStartTime());
-								sinfo.setEndTime(ss+" 23:59:00");
-								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());
-								sinfo.setType(temp.getType());
-								sinfo.setCreatedId(temp.getCreatedId());
-								sinfo.setUpdatedId(temp.getUpdatedId());
-								sinfo.setIsAllday(temp.getIsAllday());
-								sinfo.setRemark(temp.getRemark());
-								sinfo.setCreatedTime(temp.getCreatedTime());
-								sinfo.setUpdatedTime(temp.getUpdatedTime());
-							}
-							else if(temp.getEndTime().substring(0, 10).equals(ss)){
-								sinfo.setStartTime(ss+" 00:00:00");
-								sinfo.setEndTime(temp.getEndTime());
-								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());	
-								sinfo.setType(temp.getType());
-								sinfo.setCreatedId(temp.getCreatedId());
-								sinfo.setUpdatedId(temp.getUpdatedId());
-								sinfo.setIsAllday(temp.getIsAllday());
-								sinfo.setRemark(temp.getRemark());
-								sinfo.setCreatedTime(temp.getCreatedTime());
-								sinfo.setUpdatedTime(temp.getUpdatedTime());
-							}else{				
-								sinfo.setStartTime(ss+" 00:00:00");
-								sinfo.setEndTime(ss+" 23:59:00");
-								sinfo.setName(temp.getName());
-								sinfo.setId(temp.getId());
-								sinfo.setType(temp.getType());
-								sinfo.setCreatedId(temp.getCreatedId());
-								sinfo.setUpdatedId(temp.getUpdatedId());
-								sinfo.setIsAllday(temp.getIsAllday());
-								sinfo.setRemark(temp.getRemark());
-								sinfo.setCreatedTime(temp.getCreatedTime());
-								sinfo.setUpdatedTime(temp.getUpdatedTime());
+							if(ss.substring(5, 7).equals(mouths)){
+								sinfo = new ScheduleInfo();
+								if(temp.getStartTime().substring(0, 10).equals(ss)){
+									sinfo.setStartTime(temp.getStartTime());
+									sinfo.setEndTime(ss+" 23:59:00");
+									sinfo.setName(temp.getName());
+									sinfo.setId(temp.getId());
+									sinfo.setType(temp.getType());
+									sinfo.setCreatedId(temp.getCreatedId());
+									sinfo.setUpdatedId(temp.getUpdatedId());
+									sinfo.setIsAllday(temp.getIsAllday());
+									sinfo.setRemark(temp.getRemark());
+									sinfo.setCreatedTime(temp.getCreatedTime());
+									sinfo.setUpdatedTime(temp.getUpdatedTime());
+								}
+								else if(temp.getEndTime().substring(0, 10).equals(ss)){
+									sinfo.setStartTime(ss+" 00:00:00");
+									sinfo.setEndTime(temp.getEndTime());
+									sinfo.setName(temp.getName());
+									sinfo.setId(temp.getId());	
+									sinfo.setType(temp.getType());
+									sinfo.setCreatedId(temp.getCreatedId());
+									sinfo.setUpdatedId(temp.getUpdatedId());
+									sinfo.setIsAllday(temp.getIsAllday());
+									sinfo.setRemark(temp.getRemark());
+									sinfo.setCreatedTime(temp.getCreatedTime());
+									sinfo.setUpdatedTime(temp.getUpdatedTime());
+								}else{				
+									sinfo.setStartTime(ss+" 00:00:00");
+									sinfo.setEndTime(ss+" 23:59:00");
+									sinfo.setName(temp.getName());
+									sinfo.setId(temp.getId());
+									sinfo.setType(temp.getType());
+									sinfo.setCreatedId(temp.getCreatedId());
+									sinfo.setUpdatedId(temp.getUpdatedId());
+									sinfo.setIsAllday(temp.getIsAllday());
+									sinfo.setRemark(temp.getRemark());
+									sinfo.setCreatedTime(temp.getCreatedTime());
+									sinfo.setUpdatedTime(temp.getUpdatedTime());
+									
+								}	
+								scheduleInfoList.add(sinfo);
 								
-							}	
-							scheduleInfoList.add(sinfo);
-							
+							}
 						}
-	
 					}
 					
 				}
@@ -154,7 +168,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			scheduleInfo.setBqEndTime(bqEndTime);
 			scheduleInfo.setEqStartTime(eqStartTime);
 			scheduleInfo.setCreatedId(query.getCreatedId());
-			
+			//增加判断是否删除
+			scheduleInfo.setIsDel(0);
 			scheduleInfo.setProperty(query.getProperty());
 			scheduleInfo.setDirection(query.getDirection());
 			
@@ -164,6 +179,8 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			sInfo.setBqStartTime(eqStartTime);
 			sInfo.setIsAllday((byte) 1);
 			sInfo.setCreatedId(query.getCreatedId());
+			//增加判断是否删除
+			sInfo.setIsDel(0);
 			
 			scheduleInfoList=scheduleInfoDao.selectList(sInfo);
 			
@@ -193,6 +210,9 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				
 		}
 
+		//获取拜访对象得名称重新封装数据
+
+		
 		//结果封装
 		if(qList!=null && !qList.isEmpty()){
 			
@@ -211,6 +231,14 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				String code = null;
 				
 				for(ScheduleInfo temp : qList){
+					//2017/5/11为了 获取访谈对象得名称
+					if(temp.getType().intValue()==2){
+						
+						ScheduleInfo ss = scheduleInfoDao.selectVisitNameById(temp.getId());
+						if(ss!=null && ss.getSchedulePerson()!=null){
+							temp.setSchedulePerson(ss.getSchedulePerson());
+						}
+					}
 					if(temp.getStartTime()!=null){
 						if(temp.getIsAllday()!=null && temp.getIsAllday().intValue()==1){
 							code = "e" ;
@@ -272,6 +300,15 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 				}
 				
 				for(ScheduleInfo temp : qList){
+					//2017/5/11为了 获取访谈对象得名称
+					if(temp.getType().intValue()==2){
+						
+						ScheduleInfo ss = scheduleInfoDao.selectVisitNameById(temp.getId());
+						
+						if(ss!=null && ss.getSchedulePerson()!=null){
+							temp.setSchedulePerson(ss.getSchedulePerson());
+						}
+					}
 					//2017/4/17号修改 报空指针
 					String stime= temp.getStartTime().substring(0,format.length());
 					//String dateKey = DateUtil.dateFormat(temp.getStartTime(), format);
@@ -323,7 +360,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		toQ.setIdIsNotEq(query.getId());
 		toQ.setCreatedId(query.getCreatedId());
-		
+		toQ.setIsDel(0);
 		List<ScheduleInfo> qList = scheduleInfoDao.selectConflictSchedule(toQ);
 		
 		if(qList != null && !qList.isEmpty()){
@@ -342,8 +379,9 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		ScheduleInfo scheduleInfo = new ScheduleInfo();
 		scheduleInfo.setCreatedId(query.getCreatedId());
-		scheduleInfo.setType((byte) 3);
+		//scheduleInfo.setType((byte) 3);
 		String content = null;
+		
 		String ss = query.getStartTime().replace("/", "-").substring(0, 10);
 		
 		
@@ -358,7 +396,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		scheduleInfo.setIsAllday((byte) 0);
 		scheduleInfo.setBqEndTime(bqEndTime);
 		scheduleInfo.setEqStartTime(eqStartTime);
-
+		scheduleInfo.setIsDel(0);
 		List<ScheduleInfo> qList = scheduleInfoDao.selectList(scheduleInfo);
 		
 
@@ -366,7 +404,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		scheduleInfoo.setCreatedId(query.getCreatedId());
 		scheduleInfoo.setIsAllday((byte) 1);
-		
+		scheduleInfoo.setIsDel(0);
 		scheduleInfoo.setBqEndTime(bqEndTime);
 		scheduleInfoo.setBqStartTime(eqStartTime);
 		scheduleInfoo.setIdIsNotEq(query.getId());
@@ -525,6 +563,16 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 	}
 
 */
+
+
+
+
+
+	@Override
+	public ScheduleInfo selectVisitNameById(Long queryId) {
+		
+		return scheduleInfoDao.selectVisitNameById(queryId);
+	}
 	
 	
 	

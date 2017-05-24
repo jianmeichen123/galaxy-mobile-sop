@@ -16,13 +16,15 @@
     <result column="created_id" property="createdId" jdbcType="BIGINT" />
     <result column="updated_time" property="updatedTime" jdbcType="BIGINT" />
     <result column="updated_id" property="updatedId" jdbcType="BIGINT" />
+    <result column="firstpinyin" property="firstpinyin" jdbcType="VARCHAR" />
+    <result column="is_del" 		property="isDel" 		jdbcType="TINYINT" />
   </resultMap>
   
   
   
   <sql id="Base_Column_List" >
     id, name, phone1, phone2, phone3, email, post, company, address, created_time, created_id, 
-    updated_time, updated_id
+    updated_time, updated_id, firstpinyin, is_del
   </sql>
 	
 	<sql id="Base_Where_Clause">
@@ -41,18 +43,12 @@
 				<if test="createdId != null"> and created_id = #{createdId,jdbcType=BIGINT} </if>
 				<if test="updatedTime != null"> and updated_time = #{updatedTime,jdbcType=BIGINT} </if>
 				<if test="updatedId != null"> and updated_id = #{updatedId,jdbcType=BIGINT} </if>
-				
+				<if test="firstpinyin != null"> and firstpinyin = #{firstpinyin,jdbcType=VARCHAR} </if>
+				<if test="isDel != null" > and is_del = #{isDel ,jdbcType=TINYINT}  </if>
 				
 				<if test="keyword != null">
-					and (upper(name) like CONCAT("%",upper(#{keyword}),"%")
-					<if test="escapeChar ">
-						escape '/'
-					</if>
-					or upper(company) like CONCAT("%",upper(#{keyword}),"%")
-					<if test="escapeChar ">
-						escape '/'
-					</if>
-					)			 		
+					and upper(name) like CONCAT("%",upper(#{keyword}),"%")
+						 		
 				</if>
 			</trim>
 		</where>
@@ -70,12 +66,12 @@
 		      phone2, phone3, email, 
 		      post, company, address, 
 		      created_time, created_id, updated_time, 
-		      updated_id)
+		      updated_id, firstpinyin, is_del)
 	    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{phone1,jdbcType=VARCHAR}, 
 	      #{phone2,jdbcType=VARCHAR}, #{phone3,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
 	      #{post,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
 	      #{createdTime,jdbcType=BIGINT}, #{createdId,jdbcType=BIGINT}, #{updatedTime,jdbcType=BIGINT}, 
-	      #{updatedId,jdbcType=BIGINT})
+	      #{updatedId,jdbcType=BIGINT}, #{firstpinyin,jdbcType=VARCHAR}, #{isDel,jdbcType=TINYINT})
 	</insert>
 
 	<!-- 根据ID查询 -->
@@ -84,6 +80,7 @@
 		<include refid="Base_Column_List" />
 		from schedule_contacts
 		where id = #{id,jdbcType=BIGINT}
+		and is_del= 0
 	</select>
 
 	<!-- 查询 -->
@@ -127,7 +124,9 @@
 			<if test="createdTime != null"> created_time = #{createdTime,jdbcType=BIGINT}, </if>
 			<if test="createdId != null"> created_id = #{createdId,jdbcType=BIGINT}, </if>
 			<if test="updatedTime != null"> updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
-			<if test="updatedId != null">  updated_id = #{updatedId,jdbcType=BIGINT} </if>
+			<if test="updatedId != null">  updated_id = #{updatedId,jdbcType=BIGINT}, </if>
+			<if test="firstpinyin != null">  firstpinyin = #{firstpinyin,jdbcType=VARCHAR}, </if>
+			<if test="isDel != null" > is_del = #{isDel,jdbcType=TINYINT} </if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
@@ -147,7 +146,9 @@
 			<if test="createdTime != null"> created_time = #{createdTime,jdbcType=BIGINT}, </if>
 			<if test="createdId != null"> created_id = #{createdId,jdbcType=BIGINT}, </if>
 			<if test="updatedTime != null"> updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
-			<if test="updatedId != null">  updated_id = #{updatedId,jdbcType=BIGINT} </if>		  
+			<if test="updatedId != null">  updated_id = #{updatedId,jdbcType=BIGINT}, </if>
+			<if test="firstpinyin != null">  firstpinyin = #{firstpinyin,jdbcType=VARCHAR}, </if>
+			<if test="isDel != null" > is_del = #{isDel,jdbcType=TINYINT} </if>		  
 		</set>
 		<where>
 			<trim prefixOverrides="and">
@@ -163,7 +164,8 @@
 				<if test="createdTime != null"> and created_time = #{createdTime,jdbcType=BIGINT} </if>
 				<if test="createdId != null"> and created_id = #{createdId,jdbcType=BIGINT} </if>
 				<if test="updatedTime != null"> and updated_time = #{updatedTime,jdbcType=BIGINT} </if>
-				<if test="updatedId != null"> and updated_id = #{updatedId,jdbcType=BIGINT} </if>		
+				<if test="updatedId != null"> and updated_id = #{updatedId,jdbcType=BIGINT} </if>
+				<if test="firstpinyin != null">and firstpinyin = #{firstpinyin,jdbcType=VARCHAR} </if>		
 			</trim>
 		</where>
 	</update>

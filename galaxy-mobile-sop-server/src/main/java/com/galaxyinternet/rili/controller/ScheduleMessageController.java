@@ -24,10 +24,12 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.user.User;
+import com.galaxyinternet.rili.model.ScheduleContacts;
 import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
 import com.galaxyinternet.rili.service.ScheduleMessageUserService;
+import com.galaxyinternet.rili.util.UtilOper;
 
 
 @Controller
@@ -185,6 +187,35 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 		
 		return responseBody;
 	}
+	/**
+	 * 测试获取 消息 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleMessage> selectById(@PathVariable String id) {
+		ResponseData<ScheduleMessage> responseBody = new ResponseData<ScheduleMessage>();
+				
+		try{			
+			ScheduleMessage ss = scheduleMessageService.queryById(Long.valueOf(id));
+			if(ss==null){
+				responseBody.setResult(new Result(Status.ERROR, null,"该联系人不存在"));
+				return responseBody;
+			}else{
+				UtilOper.getMessContent(ss);
+				
+				
+				responseBody.setEntity(ss);				    
+			    responseBody.setResult(new Result(Status.OK, null,"查询联系人详情"));
+			}
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"查询联系人失败"));
+			logger.error("异常信息:",e.getMessage());
+			e.printStackTrace();
+		}
+		return responseBody;
+	}
+	
+	
 	
 	
 }

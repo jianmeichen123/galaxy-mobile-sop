@@ -50,7 +50,7 @@ public class ScheduleInfo extends PagableEntity{
 	
     private String sbTimeForAllday;    // 日程开始  起始时间     startTime  >   sbTimeForAllday
     private String seTimeForAllday;    // 日程开始  结束时间     startTime  <   seTimeForAllday
-    
+    private Boolean queryForMounth;    //xml 查询月视图 特标识
     
     private String userName;     // 日历创建人姓名
 
@@ -68,7 +68,14 @@ public class ScheduleInfo extends PagableEntity{
     
     private String lastMouthDay;//当月最后一天
     
+    private String schedulePerson;//拜访人名称
 
+    
+    //private String messageType; //为了 其他工程调用更新的推送时写的参数
+    
+    private String visitType;  //用来对应消息列表的type(拜访1.4)
+    private Integer isDel;  //逻辑删除的字段(是否删除字段0:未删除,1:已删除 )
+    private Long callonPerson;//拜访 联系人 关联字段
     
     public Byte getType() {
         return type;
@@ -308,6 +315,47 @@ public class ScheduleInfo extends PagableEntity{
 
 	public void setIdIsNotEq(Long idIsNotEq) {
 		this.idIsNotEq = idIsNotEq;
+	}
+
+	public Boolean getQueryForMounth() {
+		return queryForMounth;
+	}
+
+	public void setQueryForMounth(Boolean queryForMounth) {
+		this.queryForMounth = queryForMounth;
+	}
+
+	public String getSchedulePerson() {
+		return schedulePerson;
+	}
+
+	public void setSchedulePerson(String schedulePerson) {
+		this.schedulePerson = schedulePerson;
+	}
+
+	
+	public Integer getIsDel() {
+		return isDel;
+	}
+
+	public void setIsDel(Integer isDel) {
+		this.isDel = isDel;
+	}
+
+	public String getVisitType() {
+		return visitType;
+	}
+
+	public void setVisitType(String visitType) {
+		this.visitType = visitType;
+	}
+
+	public Long getCallonPerson() {
+		return callonPerson;
+	}
+
+	public void setCallonPerson(Long callonPerson) {
+		this.callonPerson = callonPerson;
 	}
 
 	

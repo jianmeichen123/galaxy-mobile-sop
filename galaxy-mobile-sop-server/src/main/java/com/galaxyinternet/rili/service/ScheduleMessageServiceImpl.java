@@ -284,7 +284,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 	
 	
 	/**
-	 * 新增（日程 、、）操作完成后
+	 * 新增（日程 、、 拜访）操作完成后
 	 * 生成对应消息
 	 * ScheduleMessage    ScheduleMessageUser
      */
@@ -365,7 +365,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 			@Override
 			public void run() {
-				/*
+				
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 				calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -436,7 +436,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					}
 					
 				}
-				*/
+				
 			}
 		});
 		
@@ -462,7 +462,7 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		GalaxyThreadPool.getExecutorService().execute(new Runnable() {
 			@Override
 			public void run() {
-				/*
+				
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 				calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -478,82 +478,87 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					
 					// 消息内容
 					ScheduleMessage mq = new ScheduleMessage();
-					//mq.setStatus((byte) 1);
+					mq.setStatus((byte) 1);
 					mq.setType(mType);
 					mq.setRemarkId(info_model.getId());
-					ScheduleMessage message =scheduleMessageDao.selectOne(mq);
 					
-					if( message!= null){
-						
-						if(message.getStatus().intValue() == 1){
-							//主从判断
-							Long info_pid = info_model.getParentId();
-							if(info_pid != null){
-								ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
-								scheduleMessageUser.setMid(message.getId());
-								scheduleMessageUser.setUid(info_model.getCreatedId());
-								scheduleMessageUserDao.delete(scheduleMessageUser);
+					List<ScheduleMessage> messagelist =scheduleMessageDao.selectList(mq);
+					
+					if(messagelist!=null && messagelist.size()>0){
+						ScheduleMessage message = messagelist.get(0);
+						if( message!= null){
+							
+							if(message.getStatus().intValue() == 1){
+								//主从判断
+								Long info_pid = info_model.getParentId();
+								if(info_pid != null){
+									ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+									scheduleMessageUser.setMid(message.getId());
+									scheduleMessageUser.setUid(info_model.getCreatedId());
+									scheduleMessageUserDao.delete(scheduleMessageUser);
+									
+									
+									//通知消息 ：  已经添加新的消息
+									if(message.getSendTime().longValue() <= edate){
+										Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+										
+										List<Long> mids = new ArrayList<Long>();
+										mids.add(message.getId());
+										
+										List<Long> muids = new ArrayList<Long>();
+										muids.add(info_model.getCreatedId());
+										
+										delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+										delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
+										
+										schedulePushMessTask.setHasDeled(delMap);
+									}
+								}else{
+									scheduleMessageDao.deleteById(message.getId());
+									
+									ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+									scheduleMessageUser.setMid(message.getId());
+									scheduleMessageUserDao.delete(scheduleMessageUser);
+									
+									
+									//通知消息 ：  已经添加新的消息
+									if(message.getSendTime().longValue() <= edate){
+										Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
+										
+										List<Long> mids = new ArrayList<Long>();
+										mids.add(message.getId());
+										
+										delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
+										
+										schedulePushMessTask.setHasDeled(delMap);
+									}
+								}
+								
+								//新增消息
+								ScheduleMessage messageAdd = messageGenerator.process(info);
+								Long mid = scheduleMessageDao.insert(messageAdd);
+								
+								List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
+								for(ScheduleMessageUser toU : messageAdd.getToUsers()){
+									toU.setIsSend((byte) 0);
+									toU.setIsRead((byte) 0);
+									toU.setIsDel((byte) 0);
+									toU.setMid(mid);
+									
+									toInserts.add(toU);
+								}
+								scheduleMessageUserDao.insertInBatch(toInserts);
 								
 								
 								//通知消息 ：  已经添加新的消息
-								if(message.getSendTime().longValue() <= edate){
-									Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
-									
-									List<Long> mids = new ArrayList<Long>();
-									mids.add(message.getId());
-									
-									List<Long> muids = new ArrayList<Long>();
-									muids.add(info_model.getCreatedId());
-									
-									delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-									delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MUID, muids);
-									
-									schedulePushMessTask.setHasDeled(delMap);
+								if(messageAdd.getSendTime().longValue() <= edate){
+									messageAdd.setToUsers(toInserts);
+									schedulePushMessTask.setHasSaved(messageAdd);
 								}
-							}else{
-								scheduleMessageDao.deleteById(message.getId());
-								
-								ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
-								scheduleMessageUser.setMid(message.getId());
-								scheduleMessageUserDao.delete(scheduleMessageUser);
-								
-								
-								//通知消息 ：  已经添加新的消息
-								if(message.getSendTime().longValue() <= edate){
-									Map<String, List<Long>> delMap = new HashMap<String, List<Long>>();
-									
-									List<Long> mids = new ArrayList<Long>();
-									mids.add(message.getId());
-									
-									delMap.put(SchedulePushMessTask.DEL_MAP_KEY_MID, mids);
-									
-									schedulePushMessTask.setHasDeled(delMap);
-								}
+							
 							}
-							
-							//新增消息
-							ScheduleMessage messageAdd = messageGenerator.process(info);
-							Long mid = scheduleMessageDao.insert(messageAdd);
-							
-							List<ScheduleMessageUser> toInserts = new ArrayList<ScheduleMessageUser>();
-							for(ScheduleMessageUser toU : messageAdd.getToUsers()){
-								toU.setIsSend((byte) 0);
-								toU.setIsRead((byte) 0);
-								toU.setIsDel((byte) 0);
-								toU.setMid(mid);
-								
-								toInserts.add(toU);
-							}
-							scheduleMessageUserDao.insertInBatch(toInserts);
-							
-							
-							//通知消息 ：  已经添加新的消息
-							if(messageAdd.getSendTime().longValue() <= edate){
-								messageAdd.setToUsers(toInserts);
-								schedulePushMessTask.setHasSaved(messageAdd);
-							}
+
 						}
-						
 					}else{
 						//新增消息
 						ScheduleMessage messageAdd = messageGenerator.process(info);
@@ -579,8 +584,9 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 					}
 					
 				}
-				*/
+				
 			}
+			
 		});
 		
 	}
