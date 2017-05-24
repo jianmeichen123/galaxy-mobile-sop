@@ -33,7 +33,6 @@ import com.galaxyinternet.rili.util.PingYinUtil;
 @Controller
 @RequestMapping("/galaxy/scheduleContacts")
 public class ScheduleContactsController  extends BaseControllerImpl<ScheduleContacts, ScheduleContacts> {
-
 	final Logger logger = LoggerFactory.getLogger(ScheduleContactsController.class);
 	
 	
