@@ -1,6 +1,7 @@
 package com.galaxyinternet.rili.service;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import com.galaxyinternet.rili.dao.ScheduleInfoDao;
 import com.galaxyinternet.rili.dao.ScheduleMettingUsersDao;
 import com.galaxyinternet.rili.model.ScheduleInfo;
 import com.galaxyinternet.rili.util.AccountDate;
+import com.galaxyinternet.rili.util.ComparatorDate;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 import com.galaxyinternet.rili.util.UtilService;
 
@@ -325,8 +327,11 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 			for(Map.Entry<String, List<ScheduleInfo>> tempE : dateKey_infos.entrySet()){
 				ScheduleUtil au = new ScheduleUtil();
 				au.setDateKey(tempE.getKey());
-				au.setSchedules(tempE.getValue());
 				
+				ComparatorDate ss = new ComparatorDate();
+				Collections.sort(tempE.getValue(),ss);
+				
+				au.setSchedules(tempE.getValue());
 				resultList.add(au);
 			}
 		}
