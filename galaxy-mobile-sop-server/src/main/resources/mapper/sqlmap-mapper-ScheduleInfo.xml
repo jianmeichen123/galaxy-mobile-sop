@@ -204,7 +204,7 @@
 				)
 				)
 				<if test="createdId != null" > and created_id = #{createdId,jdbcType=BIGINT} </if>
-				
+				<if test="isDel != null" > and is_del = #{isDel,jdbcType=TINYINT} </if>
 
 			</trim>
 			

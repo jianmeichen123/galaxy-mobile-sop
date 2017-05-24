@@ -360,7 +360,7 @@ public class ScheduleInfoServiceImpl extends BaseServiceImpl<ScheduleInfo> imple
 		
 		toQ.setIdIsNotEq(query.getId());
 		toQ.setCreatedId(query.getCreatedId());
-		
+		toQ.setIsDel(0);
 		List<ScheduleInfo> qList = scheduleInfoDao.selectConflictSchedule(toQ);
 		
 		if(qList != null && !qList.isEmpty()){
