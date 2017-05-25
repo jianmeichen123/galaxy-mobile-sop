@@ -94,11 +94,12 @@
 				<dubbo.protocol.name>dubbo</dubbo.protocol.name>
 				<dubbo.registry.address>zookeeper://127.0.0.1:2181?client=zkclient</dubbo.registry.address>
 				<dubbo.protocol.port>8082</dubbo.protocol.port>
-
-				<project.server.url>http://zijian.local.com/</project.server.url>
-				<galaxy.project.platform.endpoint>http://zijian.local.com/mobilePlatform/</galaxy.project.platform.endpoint>
-				<galaxy.project.report.endpoint>http://zijian.local.com/mobileReport/</galaxy.project.report.endpoint>
-				<galaxy.project.sop.endpoint>http://zijian.local.com/mobileSop/</galaxy.project.sop.endpoint>
+				<!-- 本地配置 -->
+				<project.server.url>http://fx.local.galaxyinternet.com/</project.server.url>
+				<galaxy.project.platform.endpoint>http://fx.local.galaxyinternet.com/mobile_platform/</galaxy.project.platform.endpoint>
+				<galaxy.project.report.endpoint>http://fx.local.galaxyinternet.com/mobile_report/</galaxy.project.report.endpoint>
+				<galaxy.project.sop.endpoint>http://fx.local.galaxyinternet.com/mobile_sop/</galaxy.project.sop.endpoint>
+				
 				<xinge.enviroment>2</xinge.enviroment>
 				<app.uploadimage.up>/data/apps/fxmob/files/</app.uploadimage.up>
                 <app.uploadimage.path>http://fxmob.dev.galaxyinternet.com/files/</app.uploadimage.path>
