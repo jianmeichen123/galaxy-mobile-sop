@@ -26,7 +26,9 @@ public class PingYinUtil {
         format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
         format.setVCharType(HanyuPinyinVCharType.WITH_V);
  
-        char[] input = inputString.trim().toCharArray();
+        //去掉了过滤空格
+        //char[] input = inputString.trim().toCharArray();
+        char[] input = inputString.toCharArray();
         String output = "";
  
         try {
@@ -95,6 +97,6 @@ public class PingYinUtil {
     }  
      
     public static void main(String[] as){
-        System.out.println(getFullSpell("qeqq非诚勿扰"));
+        System.out.println(getPingYin("k     l"));
     }
 }  
