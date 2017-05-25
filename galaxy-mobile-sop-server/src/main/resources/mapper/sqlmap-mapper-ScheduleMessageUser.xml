@@ -213,7 +213,7 @@
 			<if test="uid != null" > and mu.uid = #{uid ,jdbcType=BIGINT}  </if>
 			<if test="isUse != null" > and mu.is_use = #{isUse ,jdbcType=TINYINT}  </if>
 			<if test="isDel != null" > and mu.is_del = #{isDel ,jdbcType=TINYINT}  </if>
-
+			<if test="isRead != null" > and mu.is_read = #{isRead ,jdbcType=TINYINT}  </if>
 			<if test="message.status != null" > and me.status = #{message.status ,jdbcType=TINYINT}  </if>
 	</select>
 

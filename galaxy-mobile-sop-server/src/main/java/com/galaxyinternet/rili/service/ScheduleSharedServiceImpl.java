@@ -43,7 +43,8 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 		return this.scheduleSharedDao;
 	}
 
-	
+	//httpClient 需要连接的路径
+	private static String url="http://fx.galaxyinternet.com/authority_service" ;
 	/**
 	 * 选择查看成员，成员包括：自己
 	 * 共享给自己的成员（默认为自己）
@@ -73,7 +74,9 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 			
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("userIds", object2JSONString(uids));
-			String content = httpClientUtils.send("http://fx.galaxyinternet.com/authority_service/user/getUserByIds", map);
+
+			String content = httpClientUtils.send(url+"/user/getUserByIds", map);
+
 			Map<Long, String> name = new HashMap<Long, String>();
 			 JsonParser parser=new JsonParser(); 
 		   	 JsonObject object=(JsonObject) parser.parse(content);
@@ -140,7 +143,9 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 				}
 				Map<String,Object> map = new HashMap<String,Object>();
 				map.put("userIds", object2JSONString(uids));
-				String content = httpClientUtils.send("http://fx.galaxyinternet.com/authority_service/user/getUserByIds", map);
+
+				String content = httpClientUtils.send(url+"/user/getUserByIds", map);
+
 				Map<Long, String> name = new HashMap<Long, String>();
 				 JsonParser parser=new JsonParser(); 
 			   	 JsonObject object=(JsonObject) parser.parse(content);
@@ -186,7 +191,9 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 			cusers = new ArrayList<ScheduleShared>();
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("userName", toUname);
-			String content = httpClientUtils.send("http://fx.galaxyinternet.com/authority_service/user/findUserByName", map);
+
+			String content = httpClientUtils.send(url+"/user/findUserByName", map);
+
 //			/content.indexOf("\"value":"null"/");
 			 JsonParser parser=new JsonParser(); 
 		   	 JsonObject object=(JsonObject) parser.parse(content);

@@ -33,7 +33,12 @@ public class ScheduleContacts  extends PagableEntity{
 
     private Long updatedId;
 
-  
+    //添加是用来识别首字母的字段 进行姓名的排序2017/5/12
+    private String firstpinyin;
+    //是否删除的字段 2017/5/12
+    private Integer isDel;
+    
+    
     public String getName() {
         return name;
     }
@@ -115,4 +120,21 @@ public class ScheduleContacts  extends PagableEntity{
     public void setUpdatedId(Long updatedId) {
         this.updatedId = updatedId;
     }
+
+	public String getFirstpinyin() {
+		return firstpinyin;
+	}
+
+	public void setFirstpinyin(String firstpinyin) {
+		this.firstpinyin = firstpinyin;
+	}
+
+	public Integer getIsDel() {
+		return isDel;
+	}
+
+	public void setIsDel(Integer isDel) {
+		this.isDel = isDel;
+	}
+    
 }

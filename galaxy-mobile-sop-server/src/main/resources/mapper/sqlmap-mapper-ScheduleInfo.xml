@@ -21,12 +21,14 @@
 		<result column="updated_id" 	property="updatedId" 	jdbcType="BIGINT" />
 		<result column="created_time" 	property="createdTime" 	jdbcType="BIGINT" />
 		<result column="updated_time" 	property="updatedTime" 	jdbcType="BIGINT" />
+		<result column="is_del" 		property="isDel" 		jdbcType="TINYINT" />
+		<result column="callon_person"		property="callonPerson" 	jdbcType="BIGINT" />
 	</resultMap>
 
 
 	<sql id="Base_Column_List">
 		id, type, name_id, name, parent_id, project_type, project_id, start_time, end_time, is_allday, wakeup_id, remark, created_id, 
-    	updated_id, created_time, updated_time
+    	updated_id, created_time, updated_time, is_del, callon_person
 	</sql>
 
 
@@ -45,10 +47,26 @@
 				<if test="projectId != null" > and project_id = #{projectId,jdbcType=BIGINT} </if>
 				<if test="startTime != null" > and start_time = #{startTime,jdbcType=TIMESTAMP} </if>
 				<if test="endTime != null" > and end_time = #{endTime,jdbcType=TIMESTAMP} </if>
-				
-				<if test="bqStartTime != null"> <![CDATA[  and start_time >= #{bqStartTime} ]]> </if>
-			    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime} ]]> </if>
-			    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime} ]]> </if>
+				<if test="isDel != null" > and is_del = #{isDel ,jdbcType=TINYINT}  </if>
+				<if test="queryForMounth == null">
+					<if test="bqStartTime != null"> <![CDATA[  and start_time >= #{bqStartTime} ]]> </if>
+				    <if test="bqEndTime != null"> <![CDATA[ and start_time <= #{bqEndTime} ]]> </if>
+				    <if test="eqStartTime != null"> <![CDATA[  and end_time >= #{eqStartTime} ]]> </if>
+			    </if>
+			    
+			    <if test="queryForMounth != null">
+				    <![CDATA[ and (start_time <= #{bqEndTime} ]]>
+				    <![CDATA[  and end_time >= #{eqStartTime} ]]>
+					and is_allday = 0
+					or (
+						<![CDATA[  start_time >= #{sbTimeForAllday} ]]>
+					    <![CDATA[  and start_time <= #{seTimeForAllday} ]]>
+						and is_allday = 1 
+						)
+					)
+			    
+			    </if>
+    			
     
 				<if test="isAllday != null" > and is_allday = #{isAllday,jdbcType=TINYINT} </if>
 				<if test="wakeupId != null" > and wakeup_id = #{wakeupId,jdbcType=BIGINT} </if>
@@ -57,6 +75,7 @@
 				<if test="updatedId != null" > and updated_id = #{updatedId,jdbcType=BIGINT} </if>
 				<if test="createdTime != null" > and created_time = #{createdTime,jdbcType=BIGINT} </if>
 				<if test="updatedTime != null" > and updated_time = #{updatedTime,jdbcType=BIGINT} </if>
+				<if test="callonPerson != null" > and callon_person = #{callonPerson,jdbcType=BIGINT} </if>
 				<!-- 
 				<if test="ids != null">
 					AND project_id IN
@@ -84,12 +103,12 @@
 	      project_id, start_time, end_time, 
 	      is_allday, wakeup_id, remark, 
 	      created_id, updated_id, created_time, 
-	      updated_time)
+	      updated_time, is_del, callon_person)
 	    values (#{id,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, #{nameId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, #{projectType,jdbcType=TINYINT}, 
 	      #{projectId,jdbcType=BIGINT}, #{startTime}, #{endTime}, 
 	      #{isAllday,jdbcType=TINYINT}, #{wakeupId,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, 
 	      #{createdId,jdbcType=BIGINT}, #{updatedId,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT}, 
-	      #{updatedTime,jdbcType=BIGINT})
+	      #{updatedTime,jdbcType=BIGINT}, #{isDel,jdbcType=TINYINT}, #{callonPerson,jdbcType=BIGINT})
 	    ]]>
 	</insert>
 	
@@ -118,6 +137,7 @@
 		<include refid="Base_Column_List" />
 		from schedule_info 
 		where id = #{id}
+		and is_del= 0
 	</select>
 	
 	
@@ -140,6 +160,8 @@
 			<if test="updatedId != null" > updated_id = #{updatedId,jdbcType=BIGINT}, </if>
 			<if test="createdTime != null" > created_time = #{createdTime,jdbcType=BIGINT}, </if>
 			<if test="updatedTime != null" > updated_time = #{updatedTime,jdbcType=BIGINT}, </if>
+			<if test="isDel != null" > is_del = #{isDel,jdbcType=TINYINT}, </if>
+			<if test="callonPerson != null" > callon_person = #{callonPerson,jdbcType=BIGINT} </if>
 		</set>
 		where id = #{id}
 	</update>
@@ -182,16 +204,31 @@
 				)
 				)
 				<if test="createdId != null" > and created_id = #{createdId,jdbcType=BIGINT} </if>
-				
+				<if test="isDel != null" > and is_del = #{isDel,jdbcType=TINYINT} </if>
 
 			</trim>
 			
 		</where>
 	</select>
 
+	<!-- 连表查询获取拜访对象 -->
+<!-- 	<select id="selectVisitNameById"   resultType ="com.galaxyinternet.rili.model.ScheduleInfo" parameterType="java.lang.Long">
+		SELECT con.name as schedulePerson ,
+				sc.id as id
+				FROM 
+			schedule_info sc LEFT JOIN schedule_person_plan spp ON spp.schedule_id=sc.id
+				LEFT JOIN schedule_contacts con ON spp.contacts_id=con.id
+				WHERE sc.id=#{id};
+	</select> -->
 
-
-	
+	<select id="selectVisitNameById"   resultType ="com.galaxyinternet.rili.model.ScheduleInfo" parameterType="java.lang.Long">
+		SELECT con.name as schedulePerson ,
+				sc.id as id
+				FROM 
+				schedule_info sc 
+				LEFT JOIN schedule_contacts con ON sc.callon_person=con.id
+				WHERE sc.id=#{id};
+	</select>
 	
 </mapper>
 	

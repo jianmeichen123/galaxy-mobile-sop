@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,12 +27,12 @@ import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.rili.model.ScheduleContacts;
 import com.galaxyinternet.rili.service.ScheduleContactsService;
+import com.galaxyinternet.rili.util.PingYinUtil;
 
 
 @Controller
 @RequestMapping("/galaxy/scheduleContacts")
 public class ScheduleContactsController  extends BaseControllerImpl<ScheduleContacts, ScheduleContacts> {
-
 	final Logger logger = LoggerFactory.getLogger(ScheduleContactsController.class);
 	
 	
@@ -56,11 +57,16 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		ResponseData<ScheduleContacts> responseBody = new ResponseData<ScheduleContacts>();
 		User user = (User) getUserFromSession(request);
 
-		if(scheduleContacts.getName()==null||scheduleContacts.getPhone1()==null){
+		if(scheduleContacts.getName()==null){
 			responseBody.setResult(new Result(Status.ERROR, null,"添加联系人失败参数缺失"));
 			return responseBody;
 		}
+		if(scheduleContacts.getName()!=null){
+			String pn = PingYinUtil.getPingYin(scheduleContacts.getName());
+			scheduleContacts.setFirstpinyin(pn);
+		}
 		try{
+			scheduleContacts.setIsDel(0);
 			scheduleContacts.setCreatedId(user.getId());
 			Long id = scheduleContactsService.insert(scheduleContacts);	
 			logger.info("添加联系人["+"联系人名称:"+scheduleContacts.getName()+"]");
@@ -112,8 +118,12 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		try{
 			ScheduleContacts ss = scheduleContactsService.queryById(Long.valueOf(id));
 			if(ss!=null){
-				int y = scheduleContactsService.deleteById(Long.valueOf(id));
-				System.out.println(y);
+				
+				//改为逻辑删除
+				//int y = scheduleContactsService.deleteById(Long.valueOf(id));
+				ss.setIsDel(1);
+				scheduleContactsService.updateById(ss);
+				
 			    responseBody.setResult(new Result(Status.OK, null,"删除联系人成功"));
 			}else{
 				responseBody.setResult(new Result(Status.ERROR, null,"该联系人不存在"));
@@ -142,8 +152,12 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 			responseBody.setResult(new Result(Status.ERROR, null,"联系人id为null缺少必要参数"));
 			return responseBody;
 		}
+		if(scheduleContacts.getName()!=null){
+			String pn = PingYinUtil.getPingYin(scheduleContacts.getName());
+			scheduleContacts.setFirstpinyin(pn);
+		}
 		try{
-			ScheduleContacts ss = 	scheduleContactsService.queryById(scheduleContacts.getId());
+			ScheduleContacts ss = scheduleContactsService.queryById(scheduleContacts.getId());
 			
 			if(ss!=null){
 				scheduleContacts.setUpdatedId(user.getId());
@@ -174,7 +188,11 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		User user = (User) getUserFromSession(request);
 		try{		
 			scheduleContacts.setCreatedId(user.getId());
-			Page<ScheduleContacts> pageProject = scheduleContactsService.queryPageList(scheduleContacts,new PageRequest(scheduleContacts.getPageNum(), scheduleContacts.getPageSize()));
+			//按首字母排序及查询的是未逻辑删除的列表
+			Direction direction = Direction.ASC;
+			String property = "firstpinyin";
+			scheduleContacts.setIsDel(0);
+			Page<ScheduleContacts> pageProject = scheduleContactsService.queryPageList(scheduleContacts,new PageRequest(scheduleContacts.getPageNum(), scheduleContacts.getPageSize(),direction,property));
 			responseBody.setPageList(pageProject);
 			responseBody.setResult(new Result(Status.OK, null,"查询联系人列表成功"));
 			
@@ -195,6 +213,7 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		User user = (User) getUserFromSession(request);
 		try{		
 			scheduleContacts.setCreatedId(user.getId());
+			scheduleContacts.setIsDel(0);
 			List<ScheduleContacts> ss = scheduleContactsService.queryList(scheduleContacts);
 			responseBody.setEntityList(ss);
 			responseBody.setResult(new Result(Status.OK, null,"查询联系人列表成功"));
@@ -207,8 +226,36 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 		return responseBody;
 	}
 	
-	
-	
+	/***
+	 * 查询联系人是否重复
+	 * 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectPersonByName", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleContacts> selectPersonByName(@RequestBody ScheduleContacts scheduleContacts,
+			HttpServletRequest request) {
+		ResponseData<ScheduleContacts> responseBody = new ResponseData<ScheduleContacts>();
+		User user = (User) getUserFromSession(request);
+		try{		
+			scheduleContacts.setCreatedId(user.getId());
+			scheduleContacts.setIsDel(0);
+			//List<ScheduleContacts> ss = scheduleContactsService.queryList(scheduleContacts);
+			
+			ScheduleContacts ss =scheduleContactsService.queryOne(scheduleContacts);
+			if(ss!= null){
+				responseBody.setEntity(ss);
+				responseBody.setResult(new Result(Status.OK, null,"您添加的拜访对象的姓名在联系人中已存在，是否使用此联系人？"));
+			}else{
+				responseBody.setResult(new Result(Status.OK, null,"不存在"));
+			}
+
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"查询联系人列表失败"));
+			logger.error("异常信息:",e.getMessage());
+			e.printStackTrace();
+		}
+		return responseBody;
+	}
 	
 	
 	

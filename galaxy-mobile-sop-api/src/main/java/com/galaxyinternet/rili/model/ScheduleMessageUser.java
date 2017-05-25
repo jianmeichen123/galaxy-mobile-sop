@@ -42,7 +42,7 @@ public class ScheduleMessageUser extends PagableEntity {
 	private Long sendTime;  // 消息发送时间
     private ScheduleMessage message;
     
-    
+    private String messageisRead;  //2017/5/25 消息添加 所有的是否有已读未读
     
     public Long getMid() {
         return mid;
@@ -170,6 +170,14 @@ public class ScheduleMessageUser extends PagableEntity {
 
 	public void setSendTime(Long sendTime) {
 		this.sendTime = sendTime;
+	}
+
+	public String getMessageisRead() {
+		return messageisRead;
+	}
+
+	public void setMessageisRead(String messageisRead) {
+		this.messageisRead = messageisRead;
 	}
 
 	

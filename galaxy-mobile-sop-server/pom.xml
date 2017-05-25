@@ -93,11 +93,12 @@
 				<dubbo.protocol.name>dubbo</dubbo.protocol.name>
 				<dubbo.registry.address>zookeeper://127.0.0.1:2181?client=zkclient</dubbo.registry.address>
 				<dubbo.protocol.port>8082</dubbo.protocol.port>
-
-				<project.server.url>http://zijian.local.com/</project.server.url>
-				<galaxy.project.platform.endpoint>http://zijian.local.com/mobilePlatform/</galaxy.project.platform.endpoint>
-				<galaxy.project.report.endpoint>http://zijian.local.com/mobileReport/</galaxy.project.report.endpoint>
-				<galaxy.project.sop.endpoint>http://zijian.local.com/mobileSop/</galaxy.project.sop.endpoint>
+				<!-- 本地配置 -->
+				<project.server.url>http://fx.local.galaxyinternet.com/</project.server.url>
+				<galaxy.project.platform.endpoint>http://fx.local.galaxyinternet.com/mobile_platform/</galaxy.project.platform.endpoint>
+				<galaxy.project.report.endpoint>http://fx.local.galaxyinternet.com/mobile_report/</galaxy.project.report.endpoint>
+				<galaxy.project.sop.endpoint>http://fx.local.galaxyinternet.com/mobile_sop/</galaxy.project.sop.endpoint>
+				
 				<xinge.enviroment>2</xinge.enviroment>
 				<app.uploadimage.up>/data/apps/fxmob/files/</app.uploadimage.up>
                 <app.uploadimage.path>http://fxmob.dev.galaxyinternet.com/files/</app.uploadimage.path>
@@ -191,26 +192,19 @@
 			</activation>
 			<properties>
 
-
-		<!-- 			    仿真数据库 -->
-				<jdbc.url>
+				<!-- 仿真数据库 -->
+				<!-- <jdbc.url>
 					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
 				</jdbc.url>
 			    <jdbc.username>fxuser</jdbc.username>
+ 				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password> -->
 
- 				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password> 
-
-				<!-- qa数据库连接地址和数据库名 -->
-
-
-
-
-				<!-- <jdbc.url>
-
+				<!-- 数据库连接地址和数据库名 -->
+				<jdbc.url>
 					jdbc:mysql://10.9.11.234:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
 				</jdbc.url>
 				<jdbc.username>fxuser</jdbc.username>
-				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>-->						
+				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>					
 
 
 
@@ -546,6 +540,14 @@
             <artifactId>httpasyncclient</artifactId>
             <version>4.1.1</version>
         </dependency>
+       <!--  拼音 -->
+		<dependency>
+		    <groupId>com.belerweb</groupId>
+		    <artifactId>pinyin4j</artifactId>
+		    <version>2.5.0</version>
+		</dependency>
+        
+        
 	</dependencies>
 	
 </project>

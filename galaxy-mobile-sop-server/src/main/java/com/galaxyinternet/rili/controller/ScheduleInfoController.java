@@ -1,7 +1,6 @@
 package com.galaxyinternet.rili.controller;
 
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +27,11 @@ import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.model.user.User;
 import com.galaxyinternet.rili.model.ScheduleDict;
 import com.galaxyinternet.rili.model.ScheduleInfo;
-import com.galaxyinternet.rili.model.ScheduleMessage;
-import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleDictService;
 import com.galaxyinternet.rili.service.ScheduleInfoService;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
 import com.galaxyinternet.rili.service.ScheduleMessageUserService;
 import com.galaxyinternet.rili.service.ScheduleMettingUsersService;
-import com.galaxyinternet.rili.service.SchedulePersonPlanService;
 import com.galaxyinternet.rili.util.AccountDate;
 import com.galaxyinternet.rili.util.ScheduleUtil;
 import com.galaxyinternet.service.ProjectService;
@@ -55,8 +51,6 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 	private ScheduleDictService scheduleDictService;
 	@Autowired
 	private ScheduleMettingUsersService scheduleMettingUsersService;
-	@Autowired
-	private SchedulePersonPlanService  schedulePersonPlanService;	
 	@Autowired
 	private ScheduleMessageService scheduleMessageService;
 	
@@ -163,11 +157,13 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 			return responseBody;
 		}
 		try {
-
+			scheduleInfo.setIsDel(0);
 			//标识是 其他日程
 			scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
-			
+			//给其他日程默认 projectId , projectType
+			scheduleInfo.setProjectId(0L);
+			scheduleInfo.setProjectType((byte) 0);
 
 			Long id = scheduleInfoService.insert(scheduleInfo);
 			scheduleInfo.setMessageType("1.3.1");
@@ -207,10 +203,13 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 					
 					responseBody.setResult(new Result(Status.ERROR, null,"此日程过期了"));
 					return responseBody;
-				}				
-				int y = scheduleInfoService.deleteById(Long.valueOf(id));
+				}	
+				//增加逻辑删除
+				//int y = scheduleInfoService.deleteById(Long.valueOf(id));
+				ss.setIsDel(1);
+				scheduleInfoService.updateById(ss);
 				responseBody.setResult(new Result(Status.OK, null,"删除日程成功"));
-				System.out.println(y);
+				//System.out.println(y);
 				scheduleMessageService.operateMessageByDeleteInfo(ss, "1.3");
 			}else{
 				responseBody.setResult(new Result(Status.ERROR, null,"此其他日程不存在"));
@@ -737,7 +736,7 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
 		User user = (User) getUserFromSession(request);
 		try {
-			scheduleInfo.setType((byte) 3);
+			//scheduleInfo.setType((byte) 3);
 			scheduleInfo.setCreatedId(user.getId());
 			String ss = scheduleInfoService.getCountSchedule(scheduleInfo);	
 			if(ss==null){
@@ -749,6 +748,96 @@ public class ScheduleInfoController  extends BaseControllerImpl<ScheduleInfo, Sc
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.setResult(new Result(Status.ERROR, null,"查询日程条数失败"));
+			logger.error("异常信息:",e.getMessage());
+		}
+		return responseBody;
+	}
+	
+	/**
+	 * 另外调的接口为了 推送消息
+	 * @param scheduleInfo
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/pushAddSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleInfo> pushSchedule(@RequestBody ScheduleInfo scheduleInfo,
+			HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
+
+
+		
+		try {
+
+			//标识是 其他日程
+			
+			scheduleInfo.setCreatedId(user.getId());
+
+		//	scheduleInfo.setId(scheduleInfo.getId());
+			scheduleInfo.setUserName(user.getRealName());
+			
+			//responseBody.setResult(new Result(Status.OK, null,"推送消息成功"));
+			
+			scheduleMessageService.operateMessageBySaveInfo(scheduleInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null,"添加推送日程失败"));
+			logger.error("异常信息:",e.getMessage());
+		}
+		return responseBody;
+	}
+	
+	/**
+	 * 更新消息推送的接口
+	 * @param scheduleInfo
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/pushUpdateSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleInfo> pushUpdateSchedule(@RequestBody ScheduleInfo scheduleInfo,
+			HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
+
+
+		try {
+				scheduleInfo.setCreatedId(user.getId());
+				scheduleInfo.setUserName(user.getRealName());
+				scheduleMessageService.operateMessageByUpdateInfo(scheduleInfo, scheduleInfo.getVisitType());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null,"修改推送日程失败"));
+			logger.error("异常信息:",e.getMessage());
+		}
+		return responseBody;
+	}
+	
+	
+	/**
+	 * 删除消息推送的接口
+	 * @param scheduleInfo
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/pushDeleteSchedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleInfo> pushDeleteSchedule(@RequestBody ScheduleInfo scheduleInfo,
+			HttpServletRequest request) {
+		ResponseData<ScheduleInfo> responseBody = new ResponseData<ScheduleInfo>();
+		User user = (User) getUserFromSession(request);
+
+
+		try {
+				scheduleInfo.setCreatedId(user.getId());
+				scheduleInfo.setUserName(user.getRealName());
+				scheduleMessageService.operateMessageByDeleteInfo(scheduleInfo, scheduleInfo.getVisitType());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.setResult(new Result(Status.ERROR, null,"修改推送日程失败"));
 			logger.error("异常信息:",e.getMessage());
 		}
 		return responseBody;

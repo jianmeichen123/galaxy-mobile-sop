@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +27,7 @@ import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
 import com.galaxyinternet.rili.service.ScheduleMessageUserService;
+import com.galaxyinternet.rili.util.UtilOper;
 
 
 @Controller
@@ -89,6 +89,20 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 			
 			//结果查询  封装
 			Page<ScheduleMessageUser> qList = scheduleMessageService.queryPerMessAndConvertPage(query,pageable);
+			
+			ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+			scheduleMessageUser.setUid(user.getId());
+			scheduleMessageUser.setIsDel((byte) 0);
+			
+			scheduleMessageUser.setMessage(mQ);
+			scheduleMessageUser.setIsRead((byte) 0);
+			Long count = scheduleMessageService.selectMuserAndMcontentCount(scheduleMessageUser);
+			if(count!=null && count !=0L){
+				ScheduleMessageUser sscheduleMessageUser = new ScheduleMessageUser();
+				//代表是 有未读的
+				sscheduleMessageUser.setMessageisRead("0");
+				responseBody.setEntity(sscheduleMessageUser);
+			}
 			
 			//responseBody.setEntityList(qList);
 			
@@ -185,6 +199,35 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 		
 		return responseBody;
 	}
+	/**
+	 * 测试获取 消息 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectById/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<ScheduleMessage> selectById(@PathVariable String id) {
+		ResponseData<ScheduleMessage> responseBody = new ResponseData<ScheduleMessage>();
+				
+		try{			
+			ScheduleMessage ss = scheduleMessageService.queryById(Long.valueOf(id));
+			if(ss==null){
+				responseBody.setResult(new Result(Status.ERROR, null,"该联系人不存在"));
+				return responseBody;
+			}else{
+				UtilOper.getMessContent(ss);
+				
+				
+				responseBody.setEntity(ss);				    
+			    responseBody.setResult(new Result(Status.OK, null,"查询联系人详情"));
+			}
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR, null,"查询联系人失败"));
+			logger.error("异常信息:",e.getMessage());
+			e.printStackTrace();
+		}
+		return responseBody;
+	}
+	
+	
 	
 	
 }
