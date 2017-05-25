@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +23,6 @@ import com.galaxyinternet.framework.core.model.Result;
 import com.galaxyinternet.framework.core.model.Result.Status;
 import com.galaxyinternet.framework.core.service.BaseService;
 import com.galaxyinternet.model.user.User;
-import com.galaxyinternet.rili.model.ScheduleContacts;
 import com.galaxyinternet.rili.model.ScheduleMessage;
 import com.galaxyinternet.rili.model.ScheduleMessageUser;
 import com.galaxyinternet.rili.service.ScheduleMessageService;
@@ -91,6 +89,20 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 			
 			//结果查询  封装
 			Page<ScheduleMessageUser> qList = scheduleMessageService.queryPerMessAndConvertPage(query,pageable);
+			
+			ScheduleMessageUser scheduleMessageUser = new ScheduleMessageUser();
+			scheduleMessageUser.setUid(user.getId());
+			scheduleMessageUser.setIsDel((byte) 0);
+			
+			scheduleMessageUser.setMessage(mQ);
+			scheduleMessageUser.setIsRead((byte) 0);
+			Long count = scheduleMessageService.selectMuserAndMcontentCount(scheduleMessageUser);
+			if(count!=null && count !=0L){
+				ScheduleMessageUser sscheduleMessageUser = new ScheduleMessageUser();
+				//代表是 有未读的
+				sscheduleMessageUser.setMessageisRead("0");
+				responseBody.setEntity(sscheduleMessageUser);
+			}
 			
 			//responseBody.setEntityList(qList);
 			
