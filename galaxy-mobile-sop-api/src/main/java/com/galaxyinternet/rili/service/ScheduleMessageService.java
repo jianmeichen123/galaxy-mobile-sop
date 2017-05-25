@@ -49,7 +49,10 @@ public interface ScheduleMessageService extends BaseService<ScheduleMessage>{
 	void operateMessageByUpdateInfo(Object scheduleInfo, String messageType);
 
 	
-	
-
+	/**
+	 * 
+	 * 按条件获取消息列表的总数
+	 */
+	 Long selectMuserAndMcontentCount(ScheduleMessageUser query);
 	
 }

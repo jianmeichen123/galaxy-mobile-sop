@@ -590,6 +590,14 @@ public class ScheduleMessageServiceImpl extends BaseServiceImpl<ScheduleMessage>
 		});
 		
 	}
+
+
+
+	@Override
+	public Long selectMuserAndMcontentCount(ScheduleMessageUser query) {
+		// TODO Auto-generated method stub
+		return scheduleMessageUserDao.selectMuserAndMcontentCount(query);
+	}
 	
 	
 }
