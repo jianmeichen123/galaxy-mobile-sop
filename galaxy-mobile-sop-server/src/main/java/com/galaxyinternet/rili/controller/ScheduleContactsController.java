@@ -153,7 +153,7 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 			return responseBody;
 		}
 		if(scheduleContacts.getName()!=null){
-			String pn = PingYinUtil.getFullSpell(scheduleContacts.getName());
+			String pn = PingYinUtil.getPingYin(scheduleContacts.getName());
 			scheduleContacts.setFirstpinyin(pn);
 		}
 		try{
