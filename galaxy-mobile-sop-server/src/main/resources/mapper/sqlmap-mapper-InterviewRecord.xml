@@ -72,10 +72,47 @@
 
 	<!-- 查询 -->
 	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
-		select
+		<!-- select
 		<include refid="Base_Column_List" />
 		from sop_interview_record
-		<include refid="Base_Where_Clause" />
+		<include refid="Base_Where_Clause" /> 拜访计划的是关系联系人表取名称-->
+		SELECT  
+			tt.id,
+			tt.project_id,
+			tt.file_id,
+			tt.view_date,
+			tt.view_notes,
+			tt.view_notes_text,
+			tt.created_time,
+			tt.update_time,
+			tt.created_id,
+			case tt.schedule_id
+			WHEN 0 THEN tt.view_target
+			else tt.`name`
+			end view_target
+		FROM(
+			SELECT  
+				r.id,
+				r.project_id,
+				r.file_id,
+				r.view_date,
+				r.view_target,
+				r.view_notes,
+				r.view_notes_text,
+				r.created_time,
+				r.update_time,
+				r.created_id,
+				con.name,
+				r.schedule_id
+			FROM sop_interview_record r 
+			left join schedule_contacts con on r.view_target=con.id 
+			WHERE r.project_id=#{projectId} ) tt 
+			<if test="direction == null">
+				order by view_date desc,created_time desc
+			</if>
+			<if test="offset != null and limit != null">
+				limit #{offset}, #{limit};
+			</if>
 	</select>
 
 	<!-- 根据ID查询 -->

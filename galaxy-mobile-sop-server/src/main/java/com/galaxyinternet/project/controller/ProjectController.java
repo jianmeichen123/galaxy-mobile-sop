@@ -446,6 +446,16 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 		Project obj = new Project();
 		obj.setProjectName(project.getProjectName());
 		List<Project> projectList = projectService.queryList(obj);
+		//去掉自己的重复（编辑）
+		if(null != projectList && projectList.size()>0){
+			for(int i=0;i<projectList.size();i++){
+				Project p =projectList.get(i);
+				if(String.valueOf(project.getId()).equals(String.valueOf(p.getId()))){
+					projectList.remove(p);
+				}
+			}
+		}
+		
 		if (null != projectList && projectList.size() > 0) {
 			responseBody.setResult(new Result(Status.ERROR, "mccf", "项目名重复!"));
 			return responseBody;
