@@ -10,7 +10,7 @@
 		<result property="financeUnit" column="finance_unit" />
 		<result property="financeProportion" column="finance_proportion" />
 		<result property="financeStatus" column="finance_status" />
-		<result property="updateUid" column="updated_uid" />
+		<result property="updatedUid" column="updated_uid" />
 		<result property="updatedTime" column="updated_time" />
 		<result property="createUid" column="create_uid" />
 		<result property="createdTime" column="create_time" />
