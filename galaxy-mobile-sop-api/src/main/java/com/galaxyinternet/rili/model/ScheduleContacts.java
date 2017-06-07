@@ -38,6 +38,8 @@ public class ScheduleContacts  extends PagableEntity{
     //是否删除的字段 2017/5/12
     private Integer isDel;
     
+    private Long uId;
+    
     
     public String getName() {
         return name;
@@ -136,5 +138,13 @@ public class ScheduleContacts  extends PagableEntity{
 	public void setIsDel(Integer isDel) {
 		this.isDel = isDel;
 	}
-    
+
+	public Long getuId() {
+		return uId;
+	}
+
+	public void setuId(Long uId) {
+		this.uId = uId;
+	}
+
 }

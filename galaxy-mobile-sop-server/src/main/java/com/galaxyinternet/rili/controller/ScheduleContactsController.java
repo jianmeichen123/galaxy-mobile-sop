@@ -243,7 +243,7 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 			
 			ScheduleContacts ss =scheduleContactsService.queryOne(scheduleContacts);
 			if(ss!= null){
-				if(scheduleContacts.getId()!=null && String.valueOf(ss.getId()).equals(scheduleContacts.getId().toString())){
+				if(scheduleContacts.getuId()!=null && String.valueOf(ss.getId()).equals(scheduleContacts.getuId().toString())){
 					responseBody.setResult(new Result(Status.OK, null,"不存在"));
 				}else{
 					responseBody.setEntity(ss);
