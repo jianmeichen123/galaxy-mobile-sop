@@ -68,7 +68,7 @@ public class ScheduleMessageController  extends BaseControllerImpl<ScheduleMessa
 			
 			Integer pageNum = query.getPageNum() != null ? query.getPageNum() : 0;
 			Integer pageSize = query.getPageSize() != null ? query.getPageSize() : 10;
-			String property = query.getProperty() != null ? "mu."+query.getProperty() : "mu.created_time";
+			String property = query.getProperty() != null ? "me."+query.getProperty() : "mu.created_time";
 			String dir = query.getDirection() != null ? query.getDirection() : "desc";
 			
 			query.setProperty(property);

@@ -243,8 +243,12 @@ public class ScheduleContactsController  extends BaseControllerImpl<ScheduleCont
 			
 			ScheduleContacts ss =scheduleContactsService.queryOne(scheduleContacts);
 			if(ss!= null){
-				responseBody.setEntity(ss);
-				responseBody.setResult(new Result(Status.OK, null,"您添加的拜访对象的姓名在联系人中已存在，是否使用此联系人？"));
+				if(scheduleContacts.getuId()!=null && String.valueOf(ss.getId()).equals(scheduleContacts.getuId().toString())){
+					responseBody.setResult(new Result(Status.OK, null,"不存在"));
+				}else{
+					responseBody.setEntity(ss);
+					responseBody.setResult(new Result(Status.OK, null,"您添加的拜访对象的姓名在联系人中已存在，是否使用此联系人？"));
+				}
 			}else{
 				responseBody.setResult(new Result(Status.OK, null,"不存在"));
 			}
