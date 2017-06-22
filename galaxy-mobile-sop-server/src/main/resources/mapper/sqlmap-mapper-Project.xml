@@ -572,6 +572,7 @@
 		      <if test="operationalData != null" >  operational_data = #{operationalData,jdbcType=LONGVARCHAR}, </if>
 		      <if test="faFlag != null" >  fa_flag = #{faFlag,jdbcType=INTEGER} ,</if>
 		      <if test="faName != null" >  fa_name = #{faName,jdbcType=VARCHAR} ,</if>
+		      <if test="financeMode != null" >  finance_mode = #{financeMode,jdbcType=VARCHAR} ,</if>
 		      <if test="projectTime != null" > project_time = #{projectTime,jdbcType=BIGINT} </if>
 		</set>
 		where id = #{id}

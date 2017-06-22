@@ -71,6 +71,10 @@ public class Project extends PagableEntity {
 	private Long startTime; 
 	private Long endTime;
 	
+	//投资形式
+	private String financeMode;
+	
+	
 	//查询出星河的项目(全部)
 	private String xhquanbu;
 	//查询的是融快的项目(全部)
@@ -888,6 +892,14 @@ public class Project extends PagableEntity {
 
 	public void setProjectHhrName(String projectHhrName) {
 		this.projectHhrName = projectHhrName;
+	}
+
+	public String getFinanceMode() {
+		return financeMode;
+	}
+
+	public void setFinanceMode(String financeMode) {
+		this.financeMode = financeMode;
 	}
 
 
