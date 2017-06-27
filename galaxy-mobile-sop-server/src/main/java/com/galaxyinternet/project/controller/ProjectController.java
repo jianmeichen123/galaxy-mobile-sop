@@ -502,7 +502,9 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 				p.getCreateDate().trim(), "yyyy-MM-dd").getTime());
 
 		int num = projectService.updateById(project);
-		if (num > 0) {
+		//修改项目相关的所有投资方的投资方式
+		int res = projectService.updateInvestById(project);
+		if (num > 0 && res>0) {
 			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
 			ControllerUtils.setRequestParamsForMessageTip(request,
 					project.getProjectName(), project.getId(),"2");

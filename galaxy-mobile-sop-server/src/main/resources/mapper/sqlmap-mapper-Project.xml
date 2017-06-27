@@ -760,7 +760,10 @@
 		</if>			
 	</select>
 	
-	
+	<!-- 更新项目下的所有投资方的投资形式 -->
+	<update id="updateInvestById" parameterType="com.galaxyinternet.model.project.Project">
+		update joint_delivery set delivery_type=#{financeMode} WHERE project_id=#{id};
+	</update>
 	
 	
 	
