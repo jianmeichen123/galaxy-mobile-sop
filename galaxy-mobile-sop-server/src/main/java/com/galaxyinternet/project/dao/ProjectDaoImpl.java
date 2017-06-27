@@ -96,5 +96,15 @@ public class ProjectDaoImpl extends BaseDaoImpl<Project, Long> implements Projec
 		
 	}
 
+	@Override
+	public int updateInvestById(Project project) {
+		Assert.notNull(project);
+		try {
+			return sqlSessionTemplate.update(getSqlName("updateInvestById"), project);
+		} catch (Exception e) {
+			throw new DaoException(String.format("编辑对象出错！语句：%s", getSqlName("updateInvestById")), e);
+		}
+	}
+
 
 }

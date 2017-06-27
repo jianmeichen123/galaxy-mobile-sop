@@ -33,6 +33,8 @@ public interface ProjectService extends BaseService<Project> {
 	 * 为项目补全档案
 	 */
 	public long perfectFilesForProject(Project project) throws Exception;
+
+	public int updateInvestById(Project project);
 	
 
 }
