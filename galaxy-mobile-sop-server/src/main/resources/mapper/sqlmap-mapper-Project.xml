@@ -764,7 +764,10 @@
 	<update id="updateInvestById" parameterType="com.galaxyinternet.model.project.Project">
 		update joint_delivery set delivery_type=#{financeMode} WHERE project_id=#{id};
 	</update>
-	
+	 <!-- 删 项目下的所有投资方的投资形式-->
+	<delete id="deleteInvestById" parameterType="com.galaxyinternet.model.project.Project">
+		DELETE FROM joint_delivery WHERE project_id=#{id};
+	</delete>
 	
 	
 </mapper>

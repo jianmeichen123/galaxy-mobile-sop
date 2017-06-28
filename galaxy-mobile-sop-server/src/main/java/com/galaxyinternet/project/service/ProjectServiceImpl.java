@@ -487,6 +487,11 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project> implements Proj
 	public int updateInvestById(Project project) {
 		return projectDao.updateInvestById(project);
 	}
+	//删除项目下的所有投资方
+	@Override
+	public int deleteInvestById(Project project) {
+		return projectDao.deleteInvestById(project);
+	}
 
 	
 }
