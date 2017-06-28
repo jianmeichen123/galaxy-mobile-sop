@@ -503,7 +503,12 @@ public class ProjectController extends BaseControllerImpl<Project, ProjectBo> {
 
 		int num = projectService.updateById(project);
 		//修改项目相关的所有投资方的投资方式
-		int res = projectService.updateInvestById(project);
+		int res=0;
+		if(project.getFinanceMode().equals("financeMode:0")){
+			res = projectService.deleteInvestById(project);
+		}else{
+			res = projectService.updateInvestById(project);
+		}
 		if (num > 0 && res>0) {
 			responseBody.setResult(new Result(Status.OK, null, "项目修改成功!"));
 			ControllerUtils.setRequestParamsForMessageTip(request,

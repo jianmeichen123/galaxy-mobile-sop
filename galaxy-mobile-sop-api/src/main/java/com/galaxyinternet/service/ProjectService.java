@@ -35,6 +35,8 @@ public interface ProjectService extends BaseService<Project> {
 	public long perfectFilesForProject(Project project) throws Exception;
 
 	public int updateInvestById(Project project);
+
+	public int deleteInvestById(Project project);
 	
 
 }

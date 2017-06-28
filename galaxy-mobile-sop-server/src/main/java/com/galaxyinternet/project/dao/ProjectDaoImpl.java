@@ -106,5 +106,15 @@ public class ProjectDaoImpl extends BaseDaoImpl<Project, Long> implements Projec
 		}
 	}
 
+	@Override
+	public int deleteInvestById(Project project) {
+		Assert.notNull(project);
+		try {
+			return sqlSessionTemplate.delete(getSqlName("deleteInvestById"), project);
+		} catch (Exception e) {
+			throw new DaoException(String.format("删除对象出错！语句：%s", getSqlName("deleteInvestById")), e);
+		}
+	}
+
 
 }

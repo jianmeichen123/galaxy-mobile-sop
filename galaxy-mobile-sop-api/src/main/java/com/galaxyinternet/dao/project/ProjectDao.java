@@ -34,4 +34,6 @@ public interface ProjectDao extends BaseDao<Project, Long> {
 	public long queryCountProject(ProjectBo query);
 
 	public int updateInvestById(Project project);
+
+	public int deleteInvestById(Project project);
 }
