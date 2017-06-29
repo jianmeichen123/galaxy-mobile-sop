@@ -32,4 +32,8 @@ public interface ProjectDao extends BaseDao<Project, Long> {
 	public Page<ProjectVO> queryPagingList(ProjectBo query , Pageable pageable);
 	
 	public long queryCountProject(ProjectBo query);
+
+	public int updateInvestById(Project project);
+
+	public int deleteInvestById(Project project);
 }
