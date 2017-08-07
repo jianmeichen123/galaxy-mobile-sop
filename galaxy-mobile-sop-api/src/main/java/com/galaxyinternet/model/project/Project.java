@@ -178,6 +178,8 @@ public class Project extends PagableEntity {
 	//2017/3/27 新增项目合伙人字段
 	private String projectHhrName;
 	
+	private String progressHistory;				//流程历史记录(逗号分割)
+	
     public String getProjectYjz() {
 		return projectYjz;
 	}
@@ -900,6 +902,14 @@ public class Project extends PagableEntity {
 
 	public void setFinanceMode(String financeMode) {
 		this.financeMode = financeMode;
+	}
+
+	public String getProgressHistory() {
+		return progressHistory;
+	}
+
+	public void setProgressHistory(String progressHistory) {
+		this.progressHistory = progressHistory;
 	}
 
 
