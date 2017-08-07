@@ -86,7 +86,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 	public InformationTitle selectTitleByPinfo(String pinfoKey) {
 		InformationTitleBo pquery = new InformationTitleBo();
 		pquery.setIdcodekey(pinfoKey);
-		
+		pquery.setIsShow("t");
 		InformationTitle title = informationTitleDao.selectOne(pquery);
 		if(title!=null && title.getSign() != null && title.getSign().intValue() == 2){
 			title.setName(title.getName()+":");
@@ -107,6 +107,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 		Map<String, Object> params = new HashMap<String,Object>();
 		params.put("parentId",pid);
 		params.put("isValid",0);
+		params.put("isShow","t");
 		params.put("sorting", new Sort(direction, property).toString().replace(":", ""));
 		List<InformationTitle> ptitleList = informationTitleDao.selectChildsByPid(params);
 		
