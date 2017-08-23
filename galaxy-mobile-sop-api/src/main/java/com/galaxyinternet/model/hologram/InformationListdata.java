@@ -44,6 +44,8 @@ public class InformationListdata extends PagableEntity{
     private Long createTime;
 
     private Long createId;
+    private String createName;
+	private String updateName;
 
     private Long updateTime;
 
@@ -303,4 +305,20 @@ public class InformationListdata extends PagableEntity{
     public void setDirection(String direction) {
         this.direction = direction;
     }
+
+	public String getCreateName() {
+		return createName;
+	}
+
+	public void setCreateName(String createName) {
+		this.createName = createName;
+	}
+
+	public String getUpdateName() {
+		return updateName;
+	}
+
+	public void setUpdateName(String updateName) {
+		this.updateName = updateName;
+	}
 }
