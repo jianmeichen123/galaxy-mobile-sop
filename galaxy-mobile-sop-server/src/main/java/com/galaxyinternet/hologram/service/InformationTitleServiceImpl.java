@@ -29,8 +29,12 @@ import com.galaxyinternet.model.hologram.InformationListdata;
 import com.galaxyinternet.model.hologram.InformationListdataRemark;
 import com.galaxyinternet.model.hologram.InformationResult;
 import com.galaxyinternet.model.hologram.InformationTitle;
+import com.galaxyinternet.rili.util.httpClientUtils;
 import com.galaxyinternet.service.hologram.InformationDictionaryService;
 import com.galaxyinternet.service.hologram.InformationTitleService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @Service("com.galaxyinternet.service.hologram.InformationTitleService")
 public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitle> implements InformationTitleService{
@@ -61,7 +65,8 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 	}
 
 	
-	
+	//httpClient 需要连接的路径
+	private static String url="http://fx.dev.galaxyinternet.com/authority_service" ;
 	
 	// ===  TODO 字典功能
 	
@@ -704,6 +709,18 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			List<InformationListdata> tempList = null;
 			for(InformationListdata item : listdataList)
 			{
+				//获取用户名称----20170823
+			    if(item.getCreateId()!=null&&item.getCreateId()!=0){
+			    	if(!"".equals(getUserName(item.getCreateId())) && getUserName(item.getCreateId())!=null){
+			    		item.setCreateName(getUserName(item.getCreateId()));
+			    	}
+			    }
+			    if(item.getUpdateId()!=null&&item.getUpdateId()!=0){
+			    	if(!"".equals(getUserName(item.getUpdateId())) && getUserName(item.getUpdateId())!=null){
+			    		item.setUpdateName(getUserName(item.getUpdateId()));
+			    	}
+			    }
+			    
 				title = titleMap.get(item.getTitleId()+"");
 				if(title != null)
 				{
@@ -723,6 +740,26 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 		
 		return list;
 	}
+	
+	private String getUserName(Long createId) {
+		String createName="";
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("createdId", createId);
+		String content = httpClientUtils.send(url+"/user/getCreadIdInfo", map);
+		JsonParser parser=new JsonParser(); 
+	   	JsonObject object=(JsonObject) parser.parse(content);
+	   	JsonArray array=object.get("value").getAsJsonArray();
+	   	for(int i=0;i<array.size();i++){
+	   		JsonObject subObject=array.get(i).getAsJsonObject();
+	   		createName = subObject.get("userName").getAsString();
+	   	}
+		return createName;
+	   	
+	}
+
+
+
+
 	private void popTitleMap(List<InformationTitle> list, Map<String,InformationTitle> map)
 	{
 		if(list != null && list.size() >0)
