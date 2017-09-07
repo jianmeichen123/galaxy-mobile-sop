@@ -754,7 +754,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			        }
 					item.setField2(s);
 				}
-				
+
 				title = titleMap.get(item.getTitleId()+"");
 				if(title != null)
 				{
