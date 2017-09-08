@@ -221,7 +221,7 @@
 
 
 	<!-- 查询 -->
-	<select id="select" resultMap="BaseResultMapTeam" parameterType="java.util.Map">
+	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
 		
 		<!-- select <include refid="Base_Column_List" />
 		from information_listdata -->
