@@ -725,7 +725,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			for(InformationListdata item : listdataList)
 			{
 				//获取用户名称----20170823
-			    if(item.getCreateId()!=null&&item.getCreateId()!=0){
+			    /*if(item.getCreateId()!=null&&item.getCreateId()!=0){
 			    	if(!"".equals(getUserName(item.getCreateId())) && getUserName(item.getCreateId())!=null){
 			    		item.setCreateName(getUserName(item.getCreateId()));
 			    	}
@@ -734,7 +734,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			    	if(!"".equals(getUserName(item.getUpdateId())) && getUserName(item.getUpdateId())!=null){
 			    		item.setUpdateName(getUserName(item.getUpdateId()));
 			    	}
-			    }
+			    }*/
 			    /*//去0操作
 				if(item.getField5()!=null){
 					String s= item.getField5();
