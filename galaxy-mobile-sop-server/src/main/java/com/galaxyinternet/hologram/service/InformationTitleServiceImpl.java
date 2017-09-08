@@ -636,7 +636,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					else
 					{
 						tempList = title.getResultList();
-						if(title.getType()!=null && (title.getType().equals(19) || title.getType().equals(20))){
+						if(title.getType()!=null && (title.getType()==19 || title.getType()==20)){
 							title.setType(1);
 						}
 					}
