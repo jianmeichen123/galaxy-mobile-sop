@@ -25,6 +25,30 @@
 		<result column="updated_time" jdbcType="BIGINT" 	property="updatedTime" />
 		<result column="update_id" 	jdbcType="BIGINT" 		property="updateId" />
 	</resultMap>
+	
+	<resultMap id="BaseResultMapTeam" type="com.galaxyinternet.model.hologram.InformationListdata">
+
+		<id column="ld.id" 			jdbcType="BIGINT" 		property="id" />
+		<result column="ld.project_id" jdbcType="BIGINT" 		property="projectId" />
+		<result column="ld.title_id" 	jdbcType="BIGINT" 		property="titleId" />
+		<result column="ld.parent_id" 	jdbcType="BIGINT" 		property="parentId" />
+		<result column="ld.code" 		jdbcType="VARCHAR" 		property="code" />
+		<result column="ld.field_1" 	jdbcType="VARCHAR" 		property="field1" />
+		<result column="ld.field_2" 	jdbcType="VARCHAR" 		property="field2" />
+		<result column="ld.field_3" 	jdbcType="VARCHAR" 		property="field3" />
+		<result column="ld.field_4" 	jdbcType="VARCHAR" 		property="field4" />
+		<result column="ld.field_5" 	jdbcType="VARCHAR" 		property="field5" />
+		<result column="ld.field_6" 	jdbcType="VARCHAR" 		property="field6" />
+		<result column="ld.field_7" 	jdbcType="VARCHAR" 		property="field7" />
+		<result column="ld.field_8" 	jdbcType="VARCHAR" 		property="field8" />
+		<result column="ld.field_9" 	jdbcType="VARCHAR" 		property="field9" />
+		<result column="ld.field_10" 	jdbcType="VARCHAR" 		property="field10" />
+		<result column="ld.is_valid" 	jdbcType="INTEGER" 		property="isValid" />
+		<result column="ld.created_time" jdbcType="BIGINT" 	property="createdTime" />
+		<result column="ld.create_id" 	jdbcType="BIGINT" 		property="createId" />
+		<result column="ld.updated_time" jdbcType="BIGINT" 	property="updatedTime" />
+		<result column="ld.update_id" 	jdbcType="BIGINT" 		property="updateId" />
+	</resultMap>
 
 
 
@@ -139,6 +163,57 @@
 		</where>
 	</sql>
 
+	<sql id="Base_WhereTeam_Clause">
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null"> and ld.id = #{id,jdbcType=BIGINT} </if>
+				<if test="projectId != null"> and ld.project_id = #{projectId,jdbcType=BIGINT} </if>
+				<if test="titleId != null"> and ld.title_id = #{titleId,jdbcType=BIGINT} </if>
+				<if test="parentId != null"> and ld.parent_id = #{parentId,jdbcType=BIGINT} </if>
+				<if test="code != null"> and ld.code = #{code,jdbcType=VARCHAR} </if>
+				<if test="field1 != null"> and ld.field_1 = #{field1,jdbcType=VARCHAR} </if>
+				<if test="field2 != null"> and ld.field_2 = #{field2,jdbcType=VARCHAR} </if>
+				<if test="field3 != null"> and ld.field_3 = #{field3,jdbcType=VARCHAR} </if>
+				<if test="field4 != null"> and ld.field_4 = #{field4,jdbcType=VARCHAR} </if>
+				<if test="field5 != null"> and ld.field_5 = #{field5,jdbcType=VARCHAR} </if>
+				<if test="field6 != null"> and ld.field_6 = #{field6,jdbcType=VARCHAR} </if>
+				<if test="field7 != null"> and ld.field_7 = #{field7,jdbcType=VARCHAR} </if>
+				<if test="field8 != null"> and ld.field_8 = #{field8,jdbcType=VARCHAR} </if>
+				<if test="field9 != null"> and ld.field_9 = #{field9,jdbcType=VARCHAR} </if>
+				<if test="field10 != null"> and ld.field_10 = #{field10,jdbcType=VARCHAR} </if>
+				<if test="isValid != null"> and ld.is_valid = #{isValid,jdbcType=VARCHAR} </if>
+				<if test="createdTime != null"> and ld.created_time = #{createdTime,jdbcType=VARCHAR} </if>
+				<if test="createId != null"> and ld.create_id = #{createId,jdbcType=VARCHAR} </if>
+				<if test="updatedTime != null"> and ld.updated_time = #{updatedTime,jdbcType=VARCHAR} </if>
+				<if test="updateId != null"> and ld.update_id = #{updateId,jdbcType=VARCHAR} </if>
+				<if test="titleIds != null">
+					and ld.title_id in 
+					<foreach collection="titleIds" item="item" open="(" separator="," close=")">
+					#{item}
+					</foreach>
+				</if>
+				<if test="codes != null">
+					and ld.code in
+					<foreach collection="codes" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				<if test="ids != null">
+					and ld.id in 
+					<foreach collection="ids" item="item" open="(" separator="," close=")">
+					#{item}
+					</foreach>
+				</if>
+			</trim>
+			
+			<if test="sorting != null">order by ${sorting}</if>
+			<if test="property != null">order by ${property} ${direction}</if>
+			
+			<if test="offset != null and limit != null">
+				limit #{offset}, #{limit}
+			</if>
+		</where>
+	</sql>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.galaxyinternet.model.hologram.InformationListdata">
 	    <![CDATA[
@@ -199,9 +274,9 @@
 
 
 	<!-- 查询 -->
-	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
-		select
-		<!-- <include refid="Base_Column_List" />
+	<select id="select" resultMap="BaseResultMapTeam" parameterType="java.util.Map">
+		
+		<!-- select <include refid="Base_Column_List" />
 		from information_listdata -->
 		SELECT  ld.id, ld.project_id, ld.title_id,ld.parent_id, ld.code,
 				CASE
