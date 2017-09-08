@@ -302,7 +302,7 @@
 				LEFT JOIN information_dictionary d5 on ld.field_5 = d5.id and ld.title_id=1548 
 				LEFT JOIN information_dictionary d6 on ld.field_3 = d6.id and ld.title_id=1906
 				LEFT JOIN information_dictionary d7 on ld.field_1 = d7.id and ld.title_id=1908 
-		where id = #{id}
+		where ld.id = #{id}
 	</select>
 	
 	
