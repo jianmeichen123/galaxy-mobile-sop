@@ -265,9 +265,42 @@
 
 	<!-- 根据ID查询 -->
 	<select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
-		select
+		<!-- select
 		<include refid="Base_Column_List" />
-		from information_listdata
+		from information_listdata -->
+		SELECT  ld.id, ld.project_id, ld.title_id,ld.parent_id, ld.code,
+				CASE
+				WHEN (ld.title_id=1908) THEN d7.name
+				else ld.field_1
+				end field_1,
+				CASE
+				WHEN (ld.title_id=1303 and ld.code='team-members') THEN d1.name
+				else ld.field_2
+				end field_2,
+				CASE
+				WHEN (ld.title_id=1303 and ld.code='team-members') THEN d2.name
+				WHEN (ld.title_id=1906) THEN d6.name
+				else ld.field_3
+				end field_3,
+				CASE
+				WHEN (ld.title_id=1303 and ld.code='study-experience') THEN d4.name
+				else ld.field_4
+				end field_4,
+				CASE
+				WHEN (ld.title_id=1303 and ld.code='team-members') THEN d3.name
+				WHEN (ld.title_id=1548) THEN d5.name
+				else ld.field_5
+				end field_5,
+				ld.field_6,ld.field_7,ld.field_8,
+				ld.field_9,ld.field_10, ld.is_valid, ld.created_time, ld.create_id, ld.updated_time, ld.update_id
+				FROM information_listdata ld
+				LEFT JOIN information_dictionary d1 on ld.field_2 = d1.id and ld.title_id=1303 and ld.code='team-members'
+				LEFT JOIN information_dictionary d2 on ld.field_3 = d2.id and ld.title_id=1303 and ld.code='team-members'
+				LEFT JOIN information_dictionary d3 on ld.field_5 = d3.id and ld.title_id=1303 and ld.code='team-members'
+				LEFT JOIN information_dictionary d4 on ld.field_4 = d4.id and ld.title_id=1303 and ld.code='study-experience'
+				LEFT JOIN information_dictionary d5 on ld.field_5 = d5.id and ld.title_id=1548 
+				LEFT JOIN information_dictionary d6 on ld.field_3 = d6.id and ld.title_id=1906
+				LEFT JOIN information_dictionary d7 on ld.field_1 = d7.id and ld.title_id=1908 
 		where id = #{id}
 	</select>
 	
