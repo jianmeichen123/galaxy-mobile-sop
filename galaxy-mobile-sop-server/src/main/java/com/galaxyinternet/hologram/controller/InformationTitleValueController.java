@@ -126,9 +126,7 @@ public class InformationTitleValueController  extends BaseControllerImpl<Informa
 		
 		try{
 			InformationTitle title = informationTitleService.selectPchildsByPinfo(pinfoKey);
-			if(title.getType()!=null && (title.getType().equals(19) || title.getType().equals(20))){
-				title.setType(1);
-			}
+			
 			responseBody.setEntity(title);
 			responseBody.setResult(new Result(Status.OK, ""));
 		} catch (Exception e) {

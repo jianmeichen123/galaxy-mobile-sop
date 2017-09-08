@@ -624,6 +624,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 						item.setValueName(dict.get(Long.valueOf(item.getContentChoose())));
 					}
 				}
+				
 				title = titleMap.get(item.getTitleId());
 				if(title != null)
 				{
@@ -635,6 +636,9 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					else
 					{
 						tempList = title.getResultList();
+						if(title.getType()!=null && (title.getType().equals(19) || title.getType().equals(20))){
+							title.setType(1);
+						}
 					}
 					/*//去0操作
 					if(item.getContentDescribe1()!=null){
