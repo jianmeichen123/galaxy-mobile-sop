@@ -638,6 +638,23 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					{
 						tempList = title.getResultList();
 					}
+					/*//去0操作
+					if(item.getContentDescribe1()!=null){
+						String s= item.getContentDescribe1();
+						if(s.indexOf(".") > 0){  
+				            s = s.replaceAll("0+?$", "");//去掉多余的0  
+				            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
+				        }
+						item.setContentDescribe1(s);
+					}
+					if(item.getContentDescribe2()!=null){
+						String s= item.getContentDescribe2();
+						if(s.indexOf(".") > 0){  
+				            s = s.replaceAll("0+?$", "");//去掉多余的0  
+				            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
+				        }
+						item.setContentDescribe2(s);
+					}*/
 					tempList.add(item);
 				}
 			}
@@ -720,7 +737,24 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			    		item.setUpdateName(getUserName(item.getUpdateId()));
 			    	}
 			    }
-			    
+			    /*//去0操作
+				if(item.getField5()!=null){
+					String s= item.getField5();
+					if(s.indexOf(".") > 0){  
+			            s = s.replaceAll("0+?$", "");//去掉多余的0  
+			            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
+			        }
+					item.setField5(s);
+				}
+				if(item.getField2()!=null){
+					String s= item.getField2();
+					if(s.indexOf(".") > 0){  
+			            s = s.replaceAll("0+?$", "");//去掉多余的0  
+			            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
+			        }
+					item.setField2(s);
+				}*/
+
 				title = titleMap.get(item.getTitleId()+"");
 				if(title != null)
 				{
