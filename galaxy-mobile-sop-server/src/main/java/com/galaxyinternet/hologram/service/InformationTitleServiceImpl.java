@@ -650,7 +650,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 								item.setContentDescribe1(item.getContentDescribe1()+"万美元");
 							}
 						}else{
-							item.setContentDescribe1(item.getContentDescribe1()+"万");
+							item.setContentDescribe1(item.getContentDescribe1());
 						}
 					}
 					/*//去0操作
