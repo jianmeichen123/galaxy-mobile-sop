@@ -641,6 +641,18 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					{
 						tempList = title.getResultList();
 					}
+					//20170909
+					if(item.getContentDescribe1()!=null){
+						if(item.getContentDescribe2()!=null){
+							if(item.getContentDescribe2().contains("人民币")){
+								item.setContentDescribe1(item.getContentDescribe1()+"万人民币");
+							}else if(item.getContentDescribe2().contains("美元")){
+								item.setContentDescribe1(item.getContentDescribe1()+"万美元");
+							}
+						}else{
+							item.setContentDescribe1(item.getContentDescribe1()+"万");
+						}
+					}
 					/*//去0操作
 					if(item.getContentDescribe1()!=null){
 						String s= item.getContentDescribe1();
