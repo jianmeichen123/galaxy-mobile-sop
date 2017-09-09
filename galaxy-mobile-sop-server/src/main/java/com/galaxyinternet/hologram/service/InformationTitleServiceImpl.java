@@ -645,7 +645,8 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					for(InformationTitle tt : list){
 						if(item.getTitleId().equals(tt.getId().toString())){
 							if(item.getContentDescribe1()!=null){
-								if(tt.getContent()!=null){
+								if(tt.getContent()!=null&&(tt.getContent().contains("万元")||
+										tt.getContent().contains("万")||tt.getContent().contains("%"))){
 									if(item.getContentDescribe2()!=null){
 										if(item.getContentDescribe2().contains("人民币")){
 											item.setContentDescribe1(item.getContentDescribe1()+tt.getContent()+"人民币");
