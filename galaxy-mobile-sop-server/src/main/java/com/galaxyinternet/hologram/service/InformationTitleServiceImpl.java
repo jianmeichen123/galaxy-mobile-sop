@@ -122,6 +122,10 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			if(title.getSign() != null && title.getSign().intValue() == 2){
 				title.setName(title.getName()+"：");
 			}
+			//20170909
+			if(title.getType()!=null && (title.getType().equals(19) || title.getType().equals(20))){
+				title.setType(1);
+			}
 		}
 		
 		return ptitleList;
@@ -636,9 +640,6 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					else
 					{
 						tempList = title.getResultList();
-						if(title.getType()!=null && (title.getType()==19 || title.getType()==20)){
-							title.setType(1);
-						}
 					}
 					/*//去0操作
 					if(item.getContentDescribe1()!=null){
