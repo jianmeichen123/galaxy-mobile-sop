@@ -123,9 +123,9 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 				title.setName(title.getName()+"：");
 			}
 			//20170909
-			if(title.getType()!=null && (title.getType().equals(19) || title.getType().equals(20))){
+			/*if(title.getType()!=null && (title.getType().equals(19) || title.getType().equals(20))){
 				title.setType(1);
-			}
+			}*/
 		}
 		
 		return ptitleList;
@@ -642,7 +642,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 						tempList = title.getResultList();
 					}
 					//20170909
-					for(InformationTitle tt : list){
+					/*for(InformationTitle tt : list){
 						if(item.getTitleId().equals(tt.getId().toString())){
 							if(item.getContentDescribe1()!=null){
 								if(tt.getContent()!=null&&(tt.getContent().contains("万元")||
@@ -659,7 +659,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 								}
 							}
 						}
-					}
+					}*/
 					
 					/*//去0操作
 					if(item.getContentDescribe1()!=null){
@@ -750,7 +750,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			for(InformationListdata item : listdataList)
 			{
 				//获取用户名称----20170823
-			    /*if(item.getCreateId()!=null&&item.getCreateId()!=0){
+			    if(item.getCreateId()!=null&&item.getCreateId()!=0){
 			    	if(!"".equals(getUserName(item.getCreateId())) && getUserName(item.getCreateId())!=null){
 			    		item.setCreateName(getUserName(item.getCreateId()));
 			    	}
@@ -759,7 +759,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			    	if(!"".equals(getUserName(item.getUpdateId())) && getUserName(item.getUpdateId())!=null){
 			    		item.setUpdateName(getUserName(item.getUpdateId()));
 			    	}
-			    }*/
+			    }
 			    /*//去0操作
 				if(item.getField5()!=null){
 					String s= item.getField5();

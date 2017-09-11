@@ -47,17 +47,17 @@ public class InformationListdataServiceImpl extends BaseServiceImpl<InformationL
 			query.setParentId(data.getId());
 			//按毕业时间倒序查询学习经历
 			query.setCode(STUDYEXPERIENCE);
-			query.setProperty("ld.field_1");
+			query.setProperty("field_1");
 			query.setDirection("desc");
 			List<InformationListdata> studyList = informationListdataDao.selectList(query);
 			//按结束时间倒序查询创业经历
 			query.setCode(WORKEXPERIENCE);
-			query.setProperty("ld.field_2");
+			query.setProperty("field_2");
 			query.setDirection("desc");
 			List<InformationListdata> workList = informationListdataDao.selectList(query);
 			//按结束时间倒序查询创业经历
 			query.setCode(STARTUPEXPERIENCE);
-			query.setProperty("ld.field_2");
+			query.setProperty("field_2");
 			query.setDirection("desc");
 			List<InformationListdata> startupList = informationListdataDao.selectList(query);
 			data.setWorkList(workList);
