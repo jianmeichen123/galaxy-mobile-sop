@@ -550,18 +550,18 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 	private Map<String,InformationTitle> getChildTitleMap(String parentId)
 	{
 		Map<String,InformationTitle> titleMap = null;
-		String key = "title:map:pid="+parentId;
+		/*String key = "title:map:pid="+parentId;
 		if(localCache.containsKey(key))
 		{
 			titleMap = (Map<String,InformationTitle>)localCache.get(key);
 		}
 		else
-		{
+		{*/
 			List<InformationTitle> list = selectByTlist(selectChildsByPid(Long.valueOf(parentId)));
 			titleMap = new HashMap<>();
 			popTitleMap(list, titleMap);
-			localCache.put(key, titleMap);
-		}
+			/*localCache.put(key, titleMap);
+		}*/
 		return titleMap;
 	}
 	
