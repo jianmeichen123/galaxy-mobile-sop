@@ -661,7 +661,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 						}
 					}*/
 					
-					/*//去0操作
+					//去0操作
 					if(item.getContentDescribe1()!=null){
 						String s= item.getContentDescribe1();
 						if(s.indexOf(".") > 0){  
@@ -677,7 +677,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 				            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
 				        }
 						item.setContentDescribe2(s);
-					}*/
+					}
 					tempList.add(item);
 				}
 			}
@@ -760,7 +760,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			    		item.setUpdateName(getUserName(item.getUpdateId()));
 			    	}
 			    }
-			    /*//去0操作
+			    //去0操作
 				if(item.getField5()!=null){
 					String s= item.getField5();
 					if(s.indexOf(".") > 0){  
@@ -776,7 +776,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
 			        }
 					item.setField2(s);
-				}*/
+				}
 
 				title = titleMap.get(item.getTitleId()+"");
 				if(title != null)
