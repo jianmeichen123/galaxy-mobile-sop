@@ -625,7 +625,11 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 				{
 					if(dict != null)
 					{
-						item.setValueName(dict.get(Long.valueOf(item.getContentChoose())));
+						if(item.getContentChoose().equals("尚未获投") || item.getContentChoose().equals("不明确")){
+							item.setValueName(item.getContentChoose());
+						}else{
+							item.setValueName(dict.get(Long.valueOf(item.getContentChoose())));
+						}
 					}
 				}
 				
@@ -661,8 +665,8 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 						}
 					}*/
 					
-					/*//去0操作
-					if(item.getContentDescribe1()!=null){
+					//去0操作
+					/*if(item.getContentDescribe1()!=null){
 						String s= item.getContentDescribe1();
 						if(s.indexOf(".") > 0){  
 				            s = s.replaceAll("0+?$", "");//去掉多余的0  
@@ -678,6 +682,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 				        }
 						item.setContentDescribe2(s);
 					}*/
+					
 					tempList.add(item);
 				}
 			}
@@ -760,8 +765,8 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			    		item.setUpdateName(getUserName(item.getUpdateId()));
 			    	}
 			    }
-			    /*//去0操作
-				if(item.getField5()!=null){
+			    //去0操作
+				/*if(item.getField5()!=null){
 					String s= item.getField5();
 					if(s.indexOf(".") > 0){  
 			            s = s.replaceAll("0+?$", "");//去掉多余的0  

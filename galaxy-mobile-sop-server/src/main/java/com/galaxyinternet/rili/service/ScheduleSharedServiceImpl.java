@@ -44,7 +44,10 @@ public class ScheduleSharedServiceImpl extends BaseServiceImpl<ScheduleShared> i
 	}
 
 	//httpClient 需要连接的路径
+
 	private static String url="http://fx.galaxyinternet.com/authority_service" ;
+
+
 
 	/**
 	 * 选择查看成员，成员包括：自己

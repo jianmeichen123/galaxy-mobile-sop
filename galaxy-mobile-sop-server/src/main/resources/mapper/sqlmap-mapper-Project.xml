@@ -41,7 +41,7 @@
     <result column="operational_data" property="operationalData" jdbcType="LONGVARCHAR" />
     <result column="count" property="count" jdbcType="BIGINT" />
     <result column="idea_id" property="ideaId" jdbcType="BIGINT" />
-    <result column="fa_flag" property="faFlag" jdbcType="INTEGER" />
+    <result column="fa_flag" property="faFlag" jdbcType="VARCHAR" />
     <result column="fa_name" property="faName" jdbcType="VARCHAR"/>
     <result column="project_time" property="projectTime" jdbcType="BIGINT"/>
   </resultMap>
@@ -413,7 +413,7 @@
 	      #{projectStatus,jdbcType=VARCHAR}, #{updatedTime,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT}, 
 	      #{projectDescribe,jdbcType=LONGVARCHAR}, #{projectDescribeFinancing,jdbcType=LONGVARCHAR}, #{projectBusinessModel,jdbcType=LONGVARCHAR}, 
 	      #{companyLocation,jdbcType=LONGVARCHAR}, #{userPortrait,jdbcType=LONGVARCHAR}, 
-	      #{prospectAnalysis,jdbcType=LONGVARCHAR},#{ideaId,jdbcType=BIGINT},#{faFlag,jdbcType=BIGINT},#{faName,jdbcType=VARCHAR},#{projectTime,jdbcType=BIGINT},#{progressHistory,jdbcType=VARCHAR})
+	      #{prospectAnalysis,jdbcType=LONGVARCHAR},#{ideaId,jdbcType=BIGINT},#{faFlag,jdbcType=VARCHAR},#{faName,jdbcType=VARCHAR},#{projectTime,jdbcType=BIGINT},#{progressHistory,jdbcType=VARCHAR})
 	    ]]>
     </insert>
     
@@ -436,7 +436,7 @@
 	      #{projectStatus,jdbcType=VARCHAR}, #{updatedTime,jdbcType=BIGINT}, #{createdTime,jdbcType=BIGINT}, 
 	      #{projectDescribe,jdbcType=LONGVARCHAR}, #{projectDescribeFinancing,jdbcType=LONGVARCHAR}, #{projectBusinessModel,jdbcType=LONGVARCHAR}, 
 	      #{companyLocation,jdbcType=LONGVARCHAR}, #{userPortrait,jdbcType=LONGVARCHAR}, 
-	      #{prospectAnalysis,jdbcType=LONGVARCHAR},#{ideaId,jdbcType=BIGINT},#{faFlag,jdbcType=BIGINT},#{faName,jdbcType=VARCHAR},#{projectTime,jdbcType=BIGINT})
+	      #{prospectAnalysis,jdbcType=LONGVARCHAR},#{ideaId,jdbcType=BIGINT},#{faFlag,jdbcType=VARCHAR},#{faName,jdbcType=VARCHAR},#{projectTime,jdbcType=BIGINT})
 	    ]]>
     </insert>
     
@@ -483,7 +483,7 @@
 		      <if test="nextFinancingSource != null" >  next_financing_source = #{nextFinancingSource,jdbcType=LONGVARCHAR}, </if>
 		      <if test="industryAnalysis != null" >  industry_analysis = #{industryAnalysis,jdbcType=LONGVARCHAR}, </if>
 		      <if test="operationalData != null" >  operational_data = #{operationalData,jdbcType=LONGVARCHAR}, </if>
-			  <if test="faFlag != null" >  fa_flag = #{faFlag,jdbcType=INTEGER}, </if>
+			  <if test="faFlag != null" >  fa_flag = #{faFlag,jdbcType=VARCHAR}, </if>
 		      <if test="faName != null" >  fa_name = #{faName,jdbcType=VARCHAR}, </if>
 		      <if test="projectTime != null" > project_time = #{projectTime,jdbcType=BIGINT}, </if>	
 		</set>
@@ -570,7 +570,7 @@
 		      <if test="nextFinancingSource != null" >  next_financing_source = #{nextFinancingSource,jdbcType=LONGVARCHAR}, </if>
 		      <if test="industryAnalysis != null" >  industry_analysis = #{industryAnalysis,jdbcType=LONGVARCHAR}, </if>
 		      <if test="operationalData != null" >  operational_data = #{operationalData,jdbcType=LONGVARCHAR}, </if>
-		      <if test="faFlag != null" >  fa_flag = #{faFlag,jdbcType=INTEGER} ,</if>
+		      <if test="faFlag != null" >  fa_flag = #{faFlag,jdbcType=VARCHAR} ,</if>
 		      <if test="faName != null" >  fa_name = #{faName,jdbcType=VARCHAR} ,</if>
 		      <if test="financeMode != null" >  finance_mode = #{financeMode,jdbcType=VARCHAR} ,</if>
 		      <if test="projectTime != null" > project_time = #{projectTime,jdbcType=BIGINT} </if>
