@@ -30,7 +30,6 @@ import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.model.common.Config;
 import com.galaxyinternet.model.common.ProgressLog;
 import com.galaxyinternet.model.department.Department;
-import com.galaxyinternet.model.hologram.InformationResult;
 import com.galaxyinternet.model.idea.Abandoned;
 import com.galaxyinternet.model.idea.Idea;
 import com.galaxyinternet.model.project.MeetingRecord;
@@ -43,7 +42,6 @@ import com.galaxyinternet.service.IdeaService;
 import com.galaxyinternet.service.ProgressLogService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.UserService;
-import com.galaxyinternet.service.hologram.InformationResultService;
 import com.galaxyinternet.utils.CollectionUtils;
 @Service
 public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService {
@@ -66,8 +64,6 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 	private SopFileDao sopFileDao;
 	@Autowired
 	private ProgressLogService progressLogService;
-	@Autowired
-	private InformationResultService informationResultService;
 	
 	
 	@Override
@@ -248,16 +244,7 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 			String projectCode = generateProjectCode(project.getProjectDepartid());
 			project.setProjectCode(projectCode);
 			project.setFaFlag("projectSource:0");
-			long newProject = projectService.newProject(project);
-			Long userId = user != null ? user.getId() : null;
-			Long now = new Date().getTime();
-			InformationResult re=new InformationResult();
-			re.setTitleId("1108");
-			re.setProjectId(String.valueOf(newProject));
-			re.setContentChoose("尚未获投");
-			re.setCreatedTime(now);
-			re.setCreateId(userId.toString());
-			informationResultService.insert(re);
+			projectService.newProject(project);
 			idea.setProjectId(project.getId());
 			idea.setIdeaProgress(SopConstant.IDEA_PROGRESS_CJXM);
 			updateById(idea);
