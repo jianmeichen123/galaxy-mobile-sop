@@ -309,14 +309,14 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 			project.setFaFlag("projectSource:0");
 			projectService.newProject(project);
 			Long userId = user != null ? user.getId() : null;
-			Long now = new Date().getTime();
 			InformationResult re=new InformationResult();
 			re.setTitleId("1108");
-			re.setProjectId(String.valueOf(id));
+			re.setProjectId(String.valueOf(project.getId()));
 			re.setContentChoose("尚未获投");
-			re.setCreatedTime(now);
+			re.setCreatedTime(new Date().getTime());
 			re.setCreateId(userId.toString());
-			informationResultService.insert(re);
+			Long result = informationResultService.insert(re);
+			System.out.println(result);
 			idea.setProjectId(project.getId());
 			idea.setIdeaProgress(SopConstant.IDEA_PROGRESS_CJXM);
 			updateById(idea);
