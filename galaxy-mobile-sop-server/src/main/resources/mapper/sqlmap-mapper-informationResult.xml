@@ -68,7 +68,7 @@
 			#{contentChoose,jdbcType=VARCHAR}, 
 			#{contentDescribe1,jdbcType=VARCHAR},
 			#{contentDescribe2,jdbcType=VARCHAR},
-			#{sort}
+			#{sort})
 	    ]]>
 	</insert>
 	
