@@ -1,5 +1,6 @@
 package com.galaxyinternet.idea;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -30,6 +31,7 @@ import com.galaxyinternet.framework.core.utils.DateUtil;
 import com.galaxyinternet.model.common.Config;
 import com.galaxyinternet.model.common.ProgressLog;
 import com.galaxyinternet.model.department.Department;
+import com.galaxyinternet.model.hologram.InformationResult;
 import com.galaxyinternet.model.idea.Abandoned;
 import com.galaxyinternet.model.idea.Idea;
 import com.galaxyinternet.model.project.MeetingRecord;
@@ -42,6 +44,7 @@ import com.galaxyinternet.service.IdeaService;
 import com.galaxyinternet.service.ProgressLogService;
 import com.galaxyinternet.service.ProjectService;
 import com.galaxyinternet.service.UserService;
+import com.galaxyinternet.service.hologram.InformationResultService;
 import com.galaxyinternet.utils.CollectionUtils;
 @Service
 public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService {
@@ -64,6 +67,8 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 	private SopFileDao sopFileDao;
 	@Autowired
 	private ProgressLogService progressLogService;
+	@Autowired
+	private InformationResultService informationResultService;
 	
 	
 	@Override
@@ -185,7 +190,7 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 	@Override
 	public void createProject(Long id, String projectName) throws BusinessException
 	{
-		Idea idea = queryById(id);
+		/*Idea idea = queryById(id);
 		if(idea == null)
 		{
 			throw new BusinessException("数据错误。");
@@ -208,9 +213,9 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 		project.setIdeaId(id);
 		project.setProjectName(projectName);
 	
-		/**
+		*//**
 		 * 2017/2/27号修改 时间 
-		 */
+		 *//*
 		//project.setCreatedTime(new Date().getTime());
 		Date date=new Date();
 		String str= DateUtil.convertDateToString(date);
@@ -245,6 +250,73 @@ public class IdeaServiceImpl extends BaseServiceImpl<Idea>implements IdeaService
 			project.setProjectCode(projectCode);
 			project.setFaFlag("projectSource:0");
 			projectService.newProject(project);
+			idea.setProjectId(project.getId());
+			idea.setIdeaProgress(SopConstant.IDEA_PROGRESS_CJXM);
+			updateById(idea);
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}*/
+		
+		Idea idea = queryById(id);
+		if(idea == null)
+		{
+			throw new BusinessException("数据错误。");
+		}
+		if(idea.getProjectId() != null)
+		{
+			throw new BusinessException("不能重复创建项目。");
+		}
+		
+		
+		ProjectBo projectQuery = new ProjectBo();
+		projectQuery.setProjectName(projectName);
+		List<Project> projectList = projectService.queryList(projectQuery);
+		if(projectList != null && projectList.size() > 0)
+		{
+			throw new BusinessException("项目名已存在。");
+		}
+		User user = userService.queryById(idea.getClaimantUid());
+		Project project = new Project();
+		project.setIdeaId(id);
+		project.setProjectName(projectName);
+		Date date=new Date();
+		String str= DateUtil.convertDateToString(date);
+		try {
+			project.setCreatedTime(DateUtil.stringToLong(str,"yyyy-MM-dd"));
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		project.setUpdatedTime(new Date().getTime());
+		project.setProjectTime(new Date().getTime());
+		project.setCreateUid(idea.getClaimantUid());
+		project.setCurrencyUnit(0);
+		project.setFinanceStatus(DictEnum.financeStatus.尚未获投.getCode());
+		if(user != null)
+		{
+			project.setCreateUname(user.getRealName());
+		}
+		project.setProjectDepartid(idea.getDepartmentId());
+		project.setIndustryOwn(idea.getDepartmentId());
+		project.setStockTransfer(0);
+		project.setProjectProgress(DictEnum.projectProgress.接触访谈.getCode());
+		project.setProjectType(DictEnum.projectType.内部创建.getCode());
+		project.setProjectStatus(DictEnum.projectStatus.GJZ.getCode());
+		try 
+		{
+			String projectCode = generateProjectCode(project.getProjectDepartid());
+			project.setProjectCode(projectCode);
+			project.setFaFlag("projectSource:0");
+			projectService.newProject(project);
+			Long userId = user != null ? user.getId() : null;
+			Long now = new Date().getTime();
+			InformationResult re=new InformationResult();
+			re.setTitleId("1108");
+			re.setProjectId(String.valueOf(id));
+			re.setContentChoose("尚未获投");
+			re.setCreatedTime(now);
+			re.setCreateId(userId.toString());
+			informationResultService.insert(re);
 			idea.setProjectId(project.getId());
 			idea.setIdeaProgress(SopConstant.IDEA_PROGRESS_CJXM);
 			updateById(idea);
