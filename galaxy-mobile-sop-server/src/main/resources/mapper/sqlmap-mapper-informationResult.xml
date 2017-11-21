@@ -59,7 +59,11 @@
 			content_choose, 
 			content_describe1,
 			content_describe2,
-			sort
+			sort,
+			created_time,
+			create_id,
+			updated_time,
+			update_id
 		)
 		values (
 			#{id,jdbcType=BIGINT}, 
@@ -68,7 +72,11 @@
 			#{contentChoose,jdbcType=VARCHAR}, 
 			#{contentDescribe1,jdbcType=VARCHAR},
 			#{contentDescribe2,jdbcType=VARCHAR},
-			#{sort}
+			#{sort},
+			#{createdTime},
+			#{createId},
+			#{createdTime},
+			#{createId} )
 	    ]]>
 	</insert>
 	
