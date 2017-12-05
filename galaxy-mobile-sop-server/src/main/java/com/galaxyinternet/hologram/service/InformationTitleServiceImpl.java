@@ -645,44 +645,6 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					{
 						tempList = title.getResultList();
 					}
-					//20170909
-					/*for(InformationTitle tt : list){
-						if(item.getTitleId().equals(tt.getId().toString())){
-							if(item.getContentDescribe1()!=null){
-								if(tt.getContent()!=null&&(tt.getContent().contains("万元")||
-										tt.getContent().contains("万")||tt.getContent().contains("%"))){
-									if(item.getContentDescribe2()!=null){
-										if(item.getContentDescribe2().contains("人民币")){
-											item.setContentDescribe1(item.getContentDescribe1()+tt.getContent()+"人民币");
-										}else if(item.getContentDescribe2().contains("美元")){
-											item.setContentDescribe1(item.getContentDescribe1()+tt.getContent()+"美元");
-										}
-									}else{
-										item.setContentDescribe1(item.getContentDescribe1()+tt.getContent());
-									}
-								}
-							}
-						}
-					}*/
-					
-					//去0操作
-					/*if(item.getContentDescribe1()!=null){
-						String s= item.getContentDescribe1();
-						if(s.indexOf(".") > 0){  
-				            s = s.replaceAll("0+?$", "");//去掉多余的0  
-				            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
-				        }
-						item.setContentDescribe1(s);
-					}
-					if(item.getContentDescribe2()!=null){
-						String s= item.getContentDescribe2();
-						if(s.indexOf(".") > 0){  
-				            s = s.replaceAll("0+?$", "");//去掉多余的0  
-				            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
-				        }
-						item.setContentDescribe2(s);
-					}*/
-					
 					tempList.add(item);
 				}
 			}
@@ -765,23 +727,6 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 			    		item.setUpdateName(getUserName(item.getUpdateId()));
 			    	}
 			    }
-			    //去0操作
-				/*if(item.getField5()!=null){
-					String s= item.getField5();
-					if(s.indexOf(".") > 0){  
-			            s = s.replaceAll("0+?$", "");//去掉多余的0  
-			            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
-			        }
-					item.setField5(s);
-				}
-				if(item.getField2()!=null){
-					String s= item.getField2();
-					if(s.indexOf(".") > 0){  
-			            s = s.replaceAll("0+?$", "");//去掉多余的0  
-			            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
-			        }
-					item.setField2(s);
-				}*/
 
 				title = titleMap.get(item.getTitleId()+"");
 				if(title != null)
