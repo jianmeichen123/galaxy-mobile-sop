@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.galaxyinternet.bo.hologram.InformationTitleBo;
@@ -354,6 +355,31 @@ public class InformationTitleValueController  extends BaseControllerImpl<Informa
 		} catch (Exception e) {
 			responseBody.setResult(new Result(Status.ERROR,null, "题和保存的结果信息获取失败"));
 			logger.error("queryTitleInfo 题和保存的结果信息 : ",e);
+		}
+		
+		return responseBody;
+	}
+	
+	
+	/**
+	 * 传入题 id 或 code， 返回该题信息及其下的所有级的 题和value信息
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/queryAllTitleForTable/{pinfoKey}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseData<InformationTitle> queryAllTitleForTable(HttpServletRequest request,
+			@PathVariable("pinfoKey") String pinfoKey,
+			@RequestParam(value ="reportType", required =false) String reportType,
+			@RequestParam(value ="proId", required =false) Long proId) {
+		ResponseData<InformationTitle> responseBody = new ResponseData<InformationTitle>();
+		InformationTitle title = null;
+		try{
+			title = informationDictionaryService.selectTitlesisShowForTable(pinfoKey,"f");
+
+			responseBody.setEntity(title);
+			responseBody.setResult(new Result(Status.OK, ""));
+		} catch (Exception e) {
+			responseBody.setResult(new Result(Status.ERROR,null, "题信息获取失败"));
+			logger.error("queryAllTitleValues 题及所有子集及value信息获取失败："+pinfoKey,e);
 		}
 		
 		return responseBody;

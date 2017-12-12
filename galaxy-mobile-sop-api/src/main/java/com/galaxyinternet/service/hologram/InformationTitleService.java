@@ -76,6 +76,9 @@ public interface InformationTitleService extends BaseService<InformationTitle>{
 	List<InformationDictionary> selectProNvaluesInfo(String pid, String tid, String vpid);
 
 
+	List<InformationTitle> selectChildsByPidForTable(Long id, String isShow);
+
+
 
 
 
