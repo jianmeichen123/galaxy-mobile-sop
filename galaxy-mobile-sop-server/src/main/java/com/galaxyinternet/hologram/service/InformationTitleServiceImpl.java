@@ -625,7 +625,9 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 				{
 					if(dict != null)
 					{
-						if(item.getContentChoose().equals("尚未获投") || item.getContentChoose().equals("不明确")){
+						if(item.getContentChoose().equals("尚未获投") || item.getContentChoose().equals("不明确")||
+								item.getContentChoose().equals("外部独立合伙人")||item.getContentChoose().equals("自开发")||
+								item.getContentChoose().equals("创业者")){
 							item.setValueName(item.getContentChoose());
 						}else{
 							item.setValueName(dict.get(Long.valueOf(item.getContentChoose())));
