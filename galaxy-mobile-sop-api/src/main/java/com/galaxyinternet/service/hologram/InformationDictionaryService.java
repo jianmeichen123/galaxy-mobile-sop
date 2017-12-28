@@ -59,6 +59,8 @@ public interface InformationDictionaryService extends BaseService<InformationDic
 	 */
 	InformationTitle selectTitlesValues(String pinfoKey);
 
+	InformationTitle selectTitlesisShowForTable(String pinfoKey, String string);
+
 	
 
 	

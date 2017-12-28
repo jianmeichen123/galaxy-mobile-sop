@@ -276,6 +276,17 @@ public class InformationDictionaryServiceImpl extends BaseServiceImpl<Informatio
 		return tList;
 
 	}
+
+
+	@Override
+	public InformationTitle selectTitlesisShowForTable(String pinfoKey, String isShow) {
+		InformationTitle ptitle = selectValuesByTinfo(pinfoKey);
+		if(ptitle!=null){
+			List<InformationTitle> childList = selectByTlist(informationTitleService.selectChildsByPidForTable(ptitle.getId(),isShow));
+			ptitle.setChildList(childList);
+		}
+		return ptitle;
+	}
 	
 	
 	
