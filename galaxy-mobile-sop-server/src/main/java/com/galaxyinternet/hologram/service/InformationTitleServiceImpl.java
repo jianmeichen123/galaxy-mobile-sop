@@ -67,7 +67,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 	
 	//httpClient 需要连接的路径
 
-	private static String url="http://fx.galaxyinternet.com/authority_service" ;
+	private static String url="http://fxnew.galaxyinternet.com/authority_service" ;
 
 	
 	// ===  TODO 字典功能
