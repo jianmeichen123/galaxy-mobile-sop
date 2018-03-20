@@ -165,11 +165,14 @@
 				<dubbo.protocol.name>dubbo</dubbo.protocol.name>
 				<dubbo.registry.address>zookeeper://10.9.210.22:12184?client=zkclient</dubbo.registry.address>
 				<dubbo.protocol.port>8082</dubbo.protocol.port>
-
-				<project.server.url>http://fxmob.dev.galaxyinternet.com/</project.server.url>
+				<project.server.url>http://fxmob.tm.galaxyinternet.com/</project.server.url>
+				<galaxy.project.platform.endpoint>http://fxmob.tm.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
+				<galaxy.project.report.endpoint>http://fxmob.tm.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
+				<galaxy.project.sop.endpoint>http://fxmob.tm.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
+				<!-- <project.server.url>http://fxmob.dev.galaxyinternet.com/</project.server.url>
 				<galaxy.project.platform.endpoint>http://fxmob.dev.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
 				<galaxy.project.report.endpoint>http://fxmob.dev.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
-				<galaxy.project.sop.endpoint>http://fxmob.dev.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
+				<galaxy.project.sop.endpoint>http://fxmob.dev.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint> -->
 				<!-- memcached <memcached.list_1.ip>192.168.101.22</memcached.list_1.ip> 
 					<memcached.list_1.port>11211</memcached.list_1.port> <memcached.object_1.ip>192.168.101.22</memcached.object_1.ip> 
 					<memcached.object_1.port>11211</memcached.object_1.port> <mongodb.dbname>community</mongodb.dbname> 
