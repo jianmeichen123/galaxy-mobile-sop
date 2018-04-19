@@ -76,7 +76,7 @@
 		<profile>
 			<id>local</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<!-- 数据库连接地址和数据库名 -->
@@ -148,31 +148,39 @@
 		<profile>
 			<id>dev</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<!-- 开发数据库 -->
-				<jdbc.url>
-					jdbc:mysql://10.9.11.232:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
+				<!-- <jdbc.url>
+					jdbc:mysql://10.9.11.219:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
 				</jdbc.url>				
 				<jdbc.username>fxuser</jdbc.username>
-				<jdbc.password>fxdb_Fp9EPkG2</jdbc.password>
+				<jdbc.password>7EPCi4vCoZzqIcrW</jdbc.password> -->
+				<jdbc.url>
+					jdbc:mysql://10.11.8.36:3306/fx_db?createDatabaseIfNotExist=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8
+				</jdbc.url>
+				<jdbc.username>fxuser</jdbc.username>
+				<jdbc.password>qrcYkO2Vxt</jdbc.password>
+				
 				<!-- 本地项目地址 -->
 				<log4j.path>${catalina.base}/logs/</log4j.path>
 				<sop.oss.tempfile.path>/data/apps/osstemp/</sop.oss.tempfile.path>
 				<!-- dubbo -->
 				<dubbo.application.name>galaxySopDubboProvider</dubbo.application.name>
 				<dubbo.protocol.name>dubbo</dubbo.protocol.name>
-				<dubbo.registry.address>zookeeper://10.9.210.22:12184?client=zkclient</dubbo.registry.address>
+				<dubbo.registry.address>zookeeper://10.11.8.36:2181?client=zkclient</dubbo.registry.address>
 				<dubbo.protocol.port>8082</dubbo.protocol.port>
 				<project.server.url>http://fxmob.tm.galaxyinternet.com/</project.server.url>
 				<galaxy.project.platform.endpoint>http://fxmob.tm.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
 				<galaxy.project.report.endpoint>http://fxmob.tm.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
 				<galaxy.project.sop.endpoint>http://fxmob.tm.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint>
-				<!-- <project.server.url>http://fxmob.dev.galaxyinternet.com/</project.server.url>
-				<galaxy.project.platform.endpoint>http://fxmob.dev.galaxyinternet.com/mobilePlatform/</galaxy.project.platform.endpoint>
-				<galaxy.project.report.endpoint>http://fxmob.dev.galaxyinternet.com/mobileReport/</galaxy.project.report.endpoint>
-				<galaxy.project.sop.endpoint>http://fxmob.dev.galaxyinternet.com/mobileSop/</galaxy.project.sop.endpoint> -->
+				
+				<!-- <project.server.url>http://fx.local.galaxyinternet.com/</project.server.url>
+				<galaxy.project.platform.endpoint>http://fx.local.galaxyinternet.com/mobile_platform/</galaxy.project.platform.endpoint>
+				<galaxy.project.report.endpoint>http://fx.local.galaxyinternet.com/mobile_report/</galaxy.project.report.endpoint>
+				<galaxy.project.sop.endpoint>http://fx.local.galaxyinternet.com/mobile_sop/</galaxy.project.sop.endpoint> -->
+				
 				<!-- memcached <memcached.list_1.ip>192.168.101.22</memcached.list_1.ip> 
 					<memcached.list_1.port>11211</memcached.list_1.port> <memcached.object_1.ip>192.168.101.22</memcached.object_1.ip> 
 					<memcached.object_1.port>11211</memcached.object_1.port> <mongodb.dbname>community</mongodb.dbname> 
