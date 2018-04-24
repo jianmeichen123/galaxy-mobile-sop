@@ -49,8 +49,8 @@ public class ScheduleDepartUnoServiceImpl  extends BaseServiceImpl<ScheduleDepar
 	}
 
 	//httpClient 需要连接的路径
-
 	private static String url="http://fx.qa.galaxyinternet.com/authority_service" ;
+
 	
 	/**
 	 * 查询所有部门信息 id-name
