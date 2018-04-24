@@ -65,8 +65,8 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 	}
 
 	
-	//httpClient 需要连接的路径
 
+	//httpClient 需要连接的路径
 	private static String url="http://fx.galaxyinternet.com/authority_service" ;
 
 	
@@ -629,7 +629,7 @@ public class InformationTitleServiceImpl extends BaseServiceImpl<InformationTitl
 					{
 						if(item.getContentChoose().equals("尚未获投") || item.getContentChoose().equals("不明确")||
 								item.getContentChoose().equals("外部独立合伙人")||item.getContentChoose().equals("自开发")||
-								item.getContentChoose().equals("创业者")){
+								item.getContentChoose().equals("创业者")||item.getContentChoose().equals("非投资线员工")){
 							item.setValueName(item.getContentChoose());
 						}else{
 							item.setValueName(dict.get(Long.valueOf(item.getContentChoose())));
